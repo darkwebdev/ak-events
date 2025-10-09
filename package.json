@@ -1,0 +1,16 @@
+{
+  "name": "ak-events",
+  "version": "1.0.0",
+  "description": "Website for Arknights events",
+  "scripts": {
+    "scrape": "node scrape.js",
+    "emulate-action": "yarn scrape && (git diff --quiet events.json || echo 'events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
+    "start": "http-server",
+    "stop": "echo 'To stop the server, press Ctrl+C in the terminal running the server'"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "puppeteer": "^24.23.0"
+  },
+  "devDependencies": {}
+}

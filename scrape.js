@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const https = require('https');
 
 const url = 'https://oldwell.info/';
 
@@ -83,6 +84,49 @@ async function scrapeEvents() {
   // Save to events.json (all events, no filtering)
   fs.writeFileSync('events.json', JSON.stringify(processed, null, 2));
   console.log('Saved all events to events.json');
+
+  // Download images
+  const downloadImage = (url, filepath) => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Referer': 'https://oldwell.info/'
+        }
+      };
+      https.get(url, options, (res) => {
+        if (res.statusCode === 200) {
+          const file = fs.createWriteStream(filepath);
+          res.pipe(file);
+          file.on('finish', () => {
+            file.close();
+            resolve();
+          });
+        } else {
+          reject(new Error(`Failed to download ${url}: ${res.statusCode}`));
+        }
+      }).on('error', reject);
+    });
+  };
+
+  for (const event of processed) {
+    if (event.image) {
+      const filename = event.image.split('/').pop();
+      const filepath = `images/${filename}`;
+      try {
+        await downloadImage(event.image, filepath);
+        event.image = filepath; // update to local path
+        console.log('Downloaded image for', event.name);
+      } catch (err) {
+        console.error('Error downloading image for', event.name, err.message);
+        event.image = null;
+      }
+    }
+  }
+
+  // Save updated events.json with local image paths
+  fs.writeFileSync('events.json', JSON.stringify(processed, null, 2));
+  console.log('Updated events.json with local image paths');
 }
 
 scrapeEvents().catch(console.error);

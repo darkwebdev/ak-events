@@ -1,12 +1,5 @@
 [
   {
-    "name": "Arknights:",
-    "start": "TBD",
-    "end": "",
-    "type": "Event",
-    "image": null
-  },
-  {
     "name": "The Masses' Travels",
     "start": "2025-10-14",
     "end": "2025-10-21",
@@ -21,18 +14,25 @@
     "image": "images/Act_or_Die.png"
   },
   {
-    "name": "Path of",
+    "name": "Path of Life",
     "start": "TBD",
     "end": "",
     "type": "Rerun",
     "image": "images/PathOfLife_0.png"
   },
   {
-    "name": "Fantasy in The",
+    "name": "Fantasy in The Mirage",
     "start": "TBD",
     "end": "",
     "type": "Vignette",
     "image": "images/Fantasy_in_The_Mirage_banner.png"
+  },
+  {
+    "name": "Integrated",
+    "start": "TBD",
+    "end": "",
+    "type": "Strategies",
+    "image": "images/IS6_Sui's_Garden_of_Grotesqueries.png"
   },
   {
     "name": "Gyoko Kichion CollabVery",
@@ -42,14 +42,14 @@
     "image": "images/Gyoko_Kichion.png"
   },
   {
-    "name": "Ato",
+    "name": "Contingency",
     "start": "TBD",
     "end": "",
-    "type": "Event",
-    "image": "images/Ato.png"
+    "type": "Contract",
+    "image": "images/Contingency_Contract_4_Arclight.png"
   },
   {
-    "name": "Inudi Harek",
+    "name": "Inudi Harek Horakhet",
     "start": "TBD",
     "end": "",
     "type": "Rerun",
@@ -70,7 +70,7 @@
     "image": "images/ending-a-grand-overture.jpeg"
   },
   {
-    "name": "Rebuilding",
+    "name": "Rebuilding Mandate",
     "start": "TBD",
     "end": "",
     "type": "Special",

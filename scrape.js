@@ -35,8 +35,7 @@ async function scrapeEvents() {
       else if (text.includes('Collab')) splitOn = 'Collab';
       else if (text.includes('Special')) splitOn = 'Special';
       if (splitOn) {
-        const parts = text.split(splitOn)[0].trim().split(' ');
-        let name = parts.slice(0, -1).join(' ').replace('🔗', '').trim();
+        const name = text.split(splitOn)[0].trim().replace('🔗', '').trim().replace(/\s*(limited|side)\s*$/i, '');
         const dateMatch = text.match(/Date:\s*(\d{2}\.\d{2}\.\d{4})/);
         let dateStr = null;
         if (dateMatch) {
@@ -47,7 +46,7 @@ async function scrapeEvents() {
         if (img) {
           image = img.src;
         }
-        if (name) {
+        if (name && !name.includes('Arknights:') && name.length > 3) {
           events.push({ name, dateStr, type: splitOn, image });
         }
       }

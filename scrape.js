@@ -128,4 +128,7 @@ async function scrapeEvents() {
   console.log('Updated events.json with local image paths');
 }
 
-scrapeEvents().catch(console.error);
+scrapeEvents().catch(err => {
+  console.error('Scraping failed:', err);
+  process.exit(1);
+});

@@ -41,8 +41,13 @@ async function scrapeEvents() {
         if (dateMatch) {
           dateStr = dateMatch[1];
         }
+        const img = el.querySelector('img');
+        let image = null;
+        if (img) {
+          image = img.src;
+        }
         if (name) {
-          events.push({ name, dateStr, type: splitOn });
+          events.push({ name, dateStr, type: splitOn, image });
         }
       }
     });
@@ -70,7 +75,7 @@ async function scrapeEvents() {
       start = 'TBD';
       end = '';
     }
-    return { name: event.name, start, end, type: event.type };
+    return { name: event.name, start, end, type: event.type, image: event.image };
   });
 
   console.log('Processed events:', processed);

@@ -27,7 +27,8 @@ fetch('events.json')
       events.forEach(e => {
         const li = document.createElement('li');
         const dateText = e.start === 'TBD' ? 'Date: TBD' : `${e.start} to ${e.end}`;
-        li.innerHTML = `<strong>${e.name}</strong> (${e.type}) - ${dateText}`;
+        const imageHtml = e.image ? `<img src="${e.image}" alt="${e.name}" style="width: 100px; height: auto; margin-right: 10px;">` : '';
+        li.innerHTML = `${imageHtml}<strong>${e.name}</strong> (${e.type}) - ${dateText}`;
         ul.appendChild(li);
         console.log('Added event to list:', e.name);
       });

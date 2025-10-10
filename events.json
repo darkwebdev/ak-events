@@ -3,66 +3,77 @@
     "name": "Arknights:",
     "start": "TBD",
     "end": "",
-    "type": "Event"
+    "type": "Event",
+    "image": null
   },
   {
     "name": "The Masses' Travels",
     "start": "2025-10-14",
     "end": "2025-10-21",
-    "type": "Event"
+    "type": "Event",
+    "image": "https://oldwell.b-cdn.net/events/The_Masses_Travels.png"
   },
   {
     "name": "Act or Die",
     "start": "TBD",
     "end": "",
-    "type": "Story"
+    "type": "Story",
+    "image": "https://oldwell.b-cdn.net/events/Act_or_Die.png"
   },
   {
     "name": "Path of",
     "start": "TBD",
     "end": "",
-    "type": "Rerun"
+    "type": "Rerun",
+    "image": "https://oldwell.b-cdn.net/events/PathOfLife_0.png"
   },
   {
     "name": "Fantasy in The",
     "start": "TBD",
     "end": "",
-    "type": "Vignette"
+    "type": "Vignette",
+    "image": "https://oldwell.b-cdn.net/events/Fantasy_in_The_Mirage_banner.png"
   },
   {
     "name": "Gyoko Kichion CollabVery",
     "start": "TBD",
     "end": "",
-    "type": "Event"
+    "type": "Event",
+    "image": "https://oldwell.b-cdn.net/events/Gyoko_Kichion.png"
   },
   {
     "name": "Ato",
     "start": "TBD",
     "end": "",
-    "type": "Event"
+    "type": "Event",
+    "image": "https://oldwell.b-cdn.net/events/Ato.png"
   },
   {
     "name": "Inudi Harek",
     "start": "TBD",
     "end": "",
-    "type": "Rerun"
+    "type": "Rerun",
+    "image": "https://oldwell.b-cdn.net/events/Inudi_Harek_Horakhet.png"
   },
   {
     "name": "Somniloquium Serenum CollabVery",
     "start": "TBD",
     "end": "",
-    "type": "Event"
+    "type": "Event",
+    "image": "https://oldwell.b-cdn.net/events/Somniloquium_Serenum.jpg"
   },
   {
     "name": "Ending a Grand Overture Rerun",
     "start": "TBD",
     "end": "",
-    "type": "Story"
+    "type": "Story",
+    "image": "https://oldwell.b-cdn.net/events/ending-a-grand-overture.jpeg"
   },
   {
     "name": "Rebuilding",
     "start": "TBD",
     "end": "",
-    "type": "Special"
+    "type": "Special",
+    "image": "https://oldwell.b-cdn.net/events/Rebuilding_Mandate_banner.png"
   }
 ]

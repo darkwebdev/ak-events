@@ -24,7 +24,7 @@ async function scrapeEvents() {
     console.log('Found', elements.length, 'event elements');
     const events = [];
     elements.forEach(el => {
-      const text = el.textContent;
+      const text = el.parentElement ? el.parentElement.textContent : el.textContent;
       let splitOn = '';
       if (text.includes('Event')) splitOn = 'Event';
       else if (text.includes('Story')) splitOn = 'Story';
@@ -51,8 +51,14 @@ async function scrapeEvents() {
         if (linkEl) {
           link = linkEl.href;
         }
+        // Extract Originite Prime
+        const primeMatch = text.match(/All AD operations are worth (\d+) Originite Prime/);
+        let origPrime = null;
+        if (primeMatch) {
+          origPrime = parseInt(primeMatch[1]);
+        }
         if (name && !name.includes('Arknights:') && name.length > 3) {
-          events.push({ name, dateStr, type: splitOn, image, link });
+          events.push({ name, dateStr, type: splitOn, image, link, origPrime });
         }
       }
     });
@@ -80,7 +86,7 @@ async function scrapeEvents() {
       start = 'TBD';
       end = '';
     }
-    return { name: event.name, start, end, type: event.type, image: event.image, link: event.link };
+    return { name: event.name, start, end, type: event.type, image: event.image, link: event.link, origPrime: event.origPrime };
   });
 
   console.log('Processed events:', processed);

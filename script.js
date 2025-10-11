@@ -29,7 +29,8 @@ fetch('events.json')
         const dateText = e.start === 'TBD' ? 'Date: TBD' : `${e.start} to ${e.end}`;
         const imageHtml = e.image ? `<img src="${e.image}" alt="${e.name}" style="width: 100px; height: auto; margin-right: 10px;">` : '';
         const nameHtml = e.link ? `<a href="${e.link}" target="_blank">${e.name}</a>` : e.name;
-        li.innerHTML = `${imageHtml}<strong>${nameHtml}</strong> (${e.type}) - ${dateText}`;
+        const primeHtml = e.origPrime ? ` - ${e.origPrime} Originite Prime` : '';
+        li.innerHTML = `${imageHtml}<strong>${nameHtml}</strong> (${e.type}) - ${dateText}${primeHtml}`;
         ul.appendChild(li);
         console.log('Added event to list:', e.name);
       });

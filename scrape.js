@@ -46,8 +46,13 @@ async function scrapeEvents() {
         if (img) {
           image = img.src;
         }
+        const linkEl = el.tagName === 'A' ? el : el.querySelector('a');
+        let link = null;
+        if (linkEl) {
+          link = linkEl.href;
+        }
         if (name && !name.includes('Arknights:') && name.length > 3) {
-          events.push({ name, dateStr, type: splitOn, image });
+          events.push({ name, dateStr, type: splitOn, image, link });
         }
       }
     });
@@ -75,7 +80,7 @@ async function scrapeEvents() {
       start = 'TBD';
       end = '';
     }
-    return { name: event.name, start, end, type: event.type, image: event.image };
+    return { name: event.name, start, end, type: event.type, image: event.image, link: event.link };
   });
 
   console.log('Processed events:', processed);

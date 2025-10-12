@@ -24,7 +24,8 @@ async function scrapeEvents() {
     console.log('Found', elements.length, 'event elements');
     const events = [];
     elements.forEach(el => {
-      const text = el.parentElement ? el.parentElement.textContent : el.textContent;
+      const text = el.textContent;
+      const parentText = el.parentElement ? el.parentElement.textContent : text;
       let splitOn = '';
       if (text.includes('Event')) splitOn = 'Event';
       else if (text.includes('Story')) splitOn = 'Story';
@@ -43,7 +44,7 @@ async function scrapeEvents() {
         }
         const img = el.querySelector('img');
         let image = null;
-        if (img) {
+        if (img && img.src.includes('/events/')) {
           image = img.src;
         }
         const linkEl = el.tagName === 'A' ? el : el.querySelector('a');
@@ -52,7 +53,7 @@ async function scrapeEvents() {
           link = linkEl.href;
         }
         // Extract Originite Prime
-        const primeMatch = text.match(/All AD operations are worth (\d+) Originite Prime/);
+        const primeMatch = parentText.match(/All AD operations are worth (\d+) Originite Prime/);
         let origPrime = null;
         if (primeMatch) {
           origPrime = parseInt(primeMatch[1]);

@@ -1,6 +1,6 @@
 [
   {
-    "name": "4 Hour Maintenance Maintenance Date: 14.10.2025 (Official Announcement) Time left: 2d 13h 30m 41s🔗The Masses' Travels",
+    "name": "The Masses' Travels",
     "start": "2025-10-14",
     "end": "2025-10-21",
     "type": "Event",
@@ -9,20 +9,11 @@
     "origPrime": null
   },
   {
-    "name": "The Masses' Travels",
-    "start": "2025-10-14",
-    "end": "2025-10-21",
-    "type": "Event",
-    "image": "images/aketon.png",
-    "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels",
-    "origPrime": null
-  },
-  {
     "name": "Act or Die",
     "start": "TBD",
     "end": "",
     "type": "Story",
-    "image": "images/integrated-device.png",
+    "image": "images/Act_or_Die.png",
     "link": "https://arknights.wiki.gg/wiki/Act_or_Die",
     "origPrime": null
   },
@@ -31,7 +22,7 @@
     "start": "TBD",
     "end": "",
     "type": "Rerun",
-    "image": "images/sugar-pack.png",
+    "image": "images/PathOfLife_0.png",
     "link": "https://arknights.wiki.gg/wiki/Path_of_Life/Rerun",
     "origPrime": null
   },
@@ -40,7 +31,7 @@
     "start": "TBD",
     "end": "",
     "type": "Vignette",
-    "image": "images/char_1043_leizi2.png",
+    "image": "images/Fantasy_in_The_Mirage_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Fantasy_in_The_Mirage",
     "origPrime": null
   },
@@ -49,7 +40,7 @@
     "start": "TBD",
     "end": "",
     "type": "Strategies",
-    "image": "images/char_4195_radian.png",
+    "image": "images/IS6_Sui's_Garden_of_Grotesqueries.png",
     "link": "https://arknights.wiki.gg/wiki/Sui%27s_Garden_of_Grotesqueries",
     "origPrime": null
   },
@@ -58,7 +49,7 @@
     "start": "TBD",
     "end": "",
     "type": "Event",
-    "image": "images/Gyoko_kichion.jpg",
+    "image": "images/Gyoko_Kichion.png",
     "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion",
     "origPrime": null
   },
@@ -67,7 +58,7 @@
     "start": "TBD",
     "end": "",
     "type": "Contract",
-    "image": null,
+    "image": "images/Contingency_Contract_4_Arclight.png",
     "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight",
     "origPrime": null
   },
@@ -76,7 +67,7 @@
     "start": "TBD",
     "end": "",
     "type": "Rerun",
-    "image": "images/oriron-cluster.png",
+    "image": "images/Inudi_Harek_Horakhet.png",
     "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun/Rerun",
     "origPrime": null
   },
@@ -85,7 +76,7 @@
     "start": "TBD",
     "end": "",
     "type": "Event",
-    "image": "images/polyester-pack.png",
+    "image": "images/Somniloquium_Serenum.jpg",
     "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
     "origPrime": null
   },
@@ -94,7 +85,7 @@
     "start": "TBD",
     "end": "",
     "type": "Story",
-    "image": "images/orirock-cluster.png",
+    "image": "images/ending-a-grand-overture.jpeg",
     "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
     "origPrime": null
   },
@@ -103,7 +94,7 @@
     "start": "TBD",
     "end": "",
     "type": "Special",
-    "image": null,
+    "image": "images/Rebuilding_Mandate_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate",
     "origPrime": null
   }

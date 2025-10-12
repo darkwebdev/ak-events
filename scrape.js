@@ -48,18 +48,9 @@ async function scrapeEvents() {
           image = img.src;
         }
         const linkEl = el.tagName === 'A' ? el : el.querySelector('a');
-        let link = null;
-        if (linkEl) {
-          link = linkEl.href;
-        }
-        // Extract Originite Prime
-        const primeMatch = parentText.match(/All AD operations are worth (\d+) Originite Prime/);
-        let origPrime = null;
-        if (primeMatch) {
-          origPrime = parseInt(primeMatch[1]);
-        }
+        const link = linkEl?.href;
         if (name && !name.includes('Arknights:') && name.length > 3) {
-          events.push({ name, dateStr, type: splitOn, image, link, origPrime });
+          events.push({ name, dateStr, type: splitOn, image, link });
         }
       }
     });
@@ -70,6 +61,31 @@ async function scrapeEvents() {
   });
 
   await browser.close();
+
+  // Fetch Originite Prime from wiki pages
+  for (const event of events) {
+    if (event.link) {
+      try {
+        const fetchUrl = event.link.replace('/Rerun', '');
+        console.log('Fetching wiki for', event.name, fetchUrl);
+        const response = await fetch(fetchUrl);
+        const html = await response.text();
+
+        // Extract Originite Prime
+        const opMatch = html.match(/operations are worth <span[^>]*>(\d+)/);
+
+        if (opMatch) {
+          const origPrime = parseInt(opMatch[1]);
+          event.origPrime = isNaN(origPrime) ? 0 : origPrime;
+          console.log('Found Originite Prime for', event.name, ':', event.origPrime);
+        } else {
+          console.log('No Originite Prime found for', event.name);
+        }
+      } catch (err) {
+        console.error('Error fetching wiki for', event.name, err.message);
+      }
+    }
+  }
 
   console.log('Scraped events:', events);
 

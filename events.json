@@ -6,7 +6,7 @@
     "type": "Event",
     "image": "images/The_Masses_Travels.png",
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels",
-    "origPrime": null
+    "origPrime": 41
   },
   {
     "name": "Act or Die",
@@ -15,7 +15,7 @@
     "type": "Story",
     "image": "images/Act_or_Die.png",
     "link": "https://arknights.wiki.gg/wiki/Act_or_Die",
-    "origPrime": null
+    "origPrime": 28
   },
   {
     "name": "Path of Life",
@@ -24,7 +24,7 @@
     "type": "Rerun",
     "image": "images/PathOfLife_0.png",
     "link": "https://arknights.wiki.gg/wiki/Path_of_Life/Rerun",
-    "origPrime": null
+    "origPrime": 29
   },
   {
     "name": "Fantasy in The Mirage",
@@ -33,7 +33,7 @@
     "type": "Vignette",
     "image": "images/Fantasy_in_The_Mirage_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Fantasy_in_The_Mirage",
-    "origPrime": null
+    "origPrime": 18
   },
   {
     "name": "Integrated",
@@ -41,8 +41,7 @@
     "end": "",
     "type": "Strategies",
     "image": "images/IS6_Sui's_Garden_of_Grotesqueries.png",
-    "link": "https://arknights.wiki.gg/wiki/Sui%27s_Garden_of_Grotesqueries",
-    "origPrime": null
+    "link": "https://arknights.wiki.gg/wiki/Sui%27s_Garden_of_Grotesqueries"
   },
   {
     "name": "Gyoko Kichion CollabVery",
@@ -50,8 +49,7 @@
     "end": "",
     "type": "Event",
     "image": "images/Gyoko_Kichion.png",
-    "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion",
-    "origPrime": null
+    "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
   },
   {
     "name": "Contingency",
@@ -59,8 +57,7 @@
     "end": "",
     "type": "Contract",
     "image": "images/Contingency_Contract_4_Arclight.png",
-    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight",
-    "origPrime": null
+    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
     "name": "Inudi Harek Horakhet",
@@ -69,7 +66,7 @@
     "type": "Rerun",
     "image": "images/Inudi_Harek_Horakhet.png",
     "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun/Rerun",
-    "origPrime": null
+    "origPrime": 38
   },
   {
     "name": "Somniloquium Serenum CollabVery",
@@ -78,7 +75,7 @@
     "type": "Event",
     "image": "images/Somniloquium_Serenum.jpg",
     "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
-    "origPrime": null
+    "origPrime": 26
   },
   {
     "name": "Ending a Grand Overture Rerun",
@@ -87,7 +84,7 @@
     "type": "Story",
     "image": "images/ending-a-grand-overture.jpeg",
     "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
-    "origPrime": null
+    "origPrime": 30
   },
   {
     "name": "Rebuilding Mandate",
@@ -95,7 +92,6 @@
     "end": "",
     "type": "Special",
     "image": "images/Rebuilding_Mandate_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate",
-    "origPrime": null
+    "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
   }
 ]

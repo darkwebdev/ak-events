@@ -5,3 +5,4 @@ output.log
 PLAN.md
 ak-events.iml
 test.txt
+data/events_index.json

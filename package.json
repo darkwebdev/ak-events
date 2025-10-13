@@ -4,17 +4,16 @@
   "description": "Website for Arknights events",
   "scripts": {
     "scrape": "node src/server/scrape.js",
-    "emulate-action": "yarn scrape && (git diff --quiet events.json || echo 'events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 5173",
-    "start": "http-server",
+  "emulate-action": "yarn scrape && (git diff --quiet data/events.json || echo 'data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
+  "dev": "cd src/client && vite",
+  "build": "cd src/client && vite build",
+  "preview": "cd src/client && vite preview --port 5173",
+  "start": "cd src/client && vite preview --port 5173",
     "stop": "echo 'To stop the server, press Ctrl+C in the terminal running the server'",
     "test": "jest --runInBand"
   },
   "dependencies": {
-    "http-server": "^14.1.1",
-    "puppeteer": "^24.23.0",
+  "puppeteer": "^24.23.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

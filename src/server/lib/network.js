@@ -69,8 +69,6 @@ function fetchWikiApi(title) {
 
 const { createRenderer } = require('./renderer');
 
-const indexUrl = config.indexUrl;
-
 // Parse index HTML into array of event descriptors (name, dateStr, type, image, link)
 function parseIndexHtml(html) {
   if (!html) return [];
@@ -177,7 +175,7 @@ function downloadImage(url, filepath) {
     const options = {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Referer': config.referer || indexUrl
+        'Referer': config.indexUrl
       }
     };
     https.get(url, options, (res) => {
@@ -207,4 +205,4 @@ function fetchEventHtml(url, renderer) {
   return fetchRenderedHtml(url, { waitUntil: 'networkidle2', delay: 300 }, renderer);
 }
 
-module.exports = { indexUrl, parseIndexHtml, fetchHtml, fetchWikiApi, downloadImage, fetchRenderedHtml, fetchIndexHtml, fetchEventHtml, isBlockedHtml };
+module.exports = { parseIndexHtml, fetchHtml, fetchWikiApi, downloadImage, fetchRenderedHtml, fetchIndexHtml, fetchEventHtml, isBlockedHtml };

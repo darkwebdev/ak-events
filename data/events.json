@@ -4,102 +4,109 @@
     "start": "2025-10-14",
     "end": "2025-10-21",
     "type": "Event",
-    "image": "images/The_Masses_Travels.png",
+    "image": "data/images/The_Masses_Travels.png",
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels",
-    "origPrime": 41
+    "origPrime": 41,
+    "hhPermits": 3
   },
   {
     "name": "Act or Die",
     "start": "TBD",
     "end": "",
     "type": "Story",
-    "image": "images/Act_or_Die.png",
+    "image": "data/images/Act_or_Die.png",
     "link": "https://arknights.wiki.gg/wiki/Act_or_Die",
-    "origPrime": 28
+    "origPrime": 28,
+    "hhPermits": 3
   },
   {
-    "name": "Path of Life",
+    "name": "Path of Life (Rerun)",
     "start": "TBD",
     "end": "",
     "type": "Rerun",
-    "image": "images/PathOfLife_0.png",
+    "image": "data/images/PathOfLife_0.png",
     "link": "https://arknights.wiki.gg/wiki/Path_of_Life/Rerun",
-    "origPrime": 29
+    "origPrime": 29,
+    "hhPermits": 3
   },
   {
     "name": "Fantasy in The Mirage",
     "start": "TBD",
     "end": "",
     "type": "Vignette",
-    "image": "images/Fantasy_in_The_Mirage_banner.png",
+    "image": "data/images/Fantasy_in_The_Mirage_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Fantasy_in_The_Mirage",
     "origPrime": 18
   },
   {
-    "name": "Integrated",
+    "name": "Sui's Garden of Grotesqueries",
     "start": "TBD",
     "end": "",
     "type": "Strategies",
-    "image": "images/IS6_Sui's_Garden_of_Grotesqueries.png",
+    "image": "data/images/IS6_Sui's_Garden_of_Grotesqueries.png",
     "link": "https://arknights.wiki.gg/wiki/Sui%27s_Garden_of_Grotesqueries"
   },
   {
-    "name": "Gyoko Kichion CollabVery",
+    "name": "Gyoko Kichion",
     "start": "TBD",
     "end": "",
     "type": "Event",
-    "image": "images/Gyoko_Kichion.png",
+    "image": "data/images/Gyoko_Kichion.png",
     "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
   },
   {
-    "name": "Contingency",
+    "name": "Contingency Contract Arclight",
     "start": "TBD",
     "end": "",
     "type": "Contract",
-    "image": "images/Contingency_Contract_4_Arclight.png",
+    "image": "data/images/Contingency_Contract_4_Arclight.png",
     "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
-    "name": "Inudi Harek Horakhet",
+    "name": "Adventure That Cannot Wait for the Sun (Rerun)",
     "start": "TBD",
     "end": "",
     "type": "Rerun",
-    "image": "images/Inudi_Harek_Horakhet.png",
+    "image": "data/images/Inudi_Harek_Horakhet.png",
     "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun/Rerun",
-    "origPrime": 38
+    "origPrime": 38,
+    "hhPermits": 3
   },
   {
-    "name": "Somniloquium Serenum CollabVery",
+    "name": "Somniloquium Serenum",
     "start": "TBD",
     "end": "",
     "type": "Event",
-    "image": "images/Somniloquium_Serenum.jpg",
+    "image": "data/images/Somniloquium_Serenum.jpg",
     "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
-    "origPrime": 26
+    "origPrime": 26,
+    "hhPermits": 3
   },
   {
-    "name": "Ending a Grand Overture Rerun",
+    "name": "Ending a Grand Overture (Rerun)",
     "start": "TBD",
     "end": "",
     "type": "Story",
-    "image": "images/ending-a-grand-overture.jpeg",
+    "image": "data/images/ending-a-grand-overture.jpeg",
     "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
-    "origPrime": 30
+    "origPrime": 30,
+    "hhPermits": 3
   },
   {
     "name": "Rebuilding Mandate",
     "start": "TBD",
     "end": "",
     "type": "Special",
-    "image": "images/Rebuilding_Mandate_banner.png",
+    "image": "data/images/Rebuilding_Mandate_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
   },
   {
-    "name": "Abnormal Spectrum EpisodeA new Episode. Although it will stay permanently, the benefits of the",
+    "name": "Abnormal Spectrum",
     "start": "TBD",
     "end": "",
     "type": "Event",
-    "image": "images/abnormal-spectrum.png",
-    "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum"
+    "image": "data/images/abnormal-spectrum.png",
+    "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum",
+    "hhPermits": 3
   }
 ]

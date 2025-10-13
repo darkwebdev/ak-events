@@ -212,31 +212,63 @@ function parseIndexHtml(html) {
   const elements = Array.from(doc.querySelectorAll('*')).filter(el => {
     const t = el.textContent || '';
     return t.includes('wiki.gg') &&
-      (t.includes('Event') || t.includes('Story') || t.includes('Vignette') || t.includes('Strategies') || t.includes('Contract') || t.includes('Rerun') || t.includes('Collab') || t.includes('Special')) &&
+      (t.includes('Event') || t.includes('Story') || t.includes('Vignette') || t.includes('Strategies') || t.includes('Contract') || t.includes('Rerun') || t.includes('Collab') || t.includes('Special') || t.includes('Episode')) &&
       !t.includes('Maintenance');
   });
   const events = [];
   elements.forEach(el => {
     const text = el.textContent || '';
+  // Determine link element early so type detection can inspect it
+  const linkEl = el.tagName === 'A' ? el : el.querySelector('a');
+  const link = linkEl ? (linkEl.href || linkEl.getAttribute('href')) : null;
+  // If the element contains a dedicated `.type` element, prefer that explicit value
+  const typeEl = el.querySelector('.type') || (linkEl && linkEl.querySelector('.type'));
     let splitOn = '';
-    if (text.includes('Event')) splitOn = 'Event';
-    else if (text.includes('Story')) splitOn = 'Story';
-    else if (text.includes('Vignette')) splitOn = 'Vignette';
-    else if (text.includes('Strategies')) splitOn = 'Strategies';
-    else if (text.includes('Contract')) splitOn = 'Contract';
-    else if (text.includes('Rerun')) splitOn = 'Rerun';
-    else if (text.includes('Collab')) splitOn = 'Collab';
-    else if (text.includes('Special')) splitOn = 'Special';
+    if (typeEl && (typeEl.textContent || '').trim().length > 0) {
+      splitOn = typeEl.textContent.trim();
+    } else {
+      if (text.match(/\bEvent\b/i)) splitOn = 'Event';
+      else if (text.match(/\bStory\b/i)) splitOn = 'Story';
+      else if (text.match(/\bVignette\b/i)) splitOn = 'Vignette';
+      else if (text.match(/\bStrategies\b/i)) splitOn = 'Strategies';
+      else if (text.match(/\bContract\b/i)) splitOn = 'Contract';
+      else if (text.match(/\bRerun\b/i)) splitOn = 'Rerun';
+      else if (text.match(/\bCollab\b/i)) splitOn = 'Collab';
+      else if (text.match(/\bSpecial\b/i)) splitOn = 'Special';
+      else if (text.match(/\bEpisode\b/i)) splitOn = 'Episode';
+    }
     if (!splitOn) return;
-    const name = text.split(splitOn)[0].trim().replace('🔗', '').trim().replace(/\s*(limited|side)\s*$/i, '');
+    // Prefer anchor text if available (cleaner title), otherwise split on the detected type word using word-boundaries
+    let name = null;
+    if (linkEl && linkEl.textContent && linkEl.textContent.trim().length > 0) {
+      name = linkEl.textContent.trim();
+    } else {
+      const rx = new RegExp("\\b" + splitOn + "\\b", 'i');
+      const parts = text.split(rx);
+      name = parts && parts.length ? parts[0].trim() : text.trim();
+      name = name.replace('🔗', '').trim().replace(/\s*(limited|side)\s*$/i, '');
+    }
+
+    // If the parsed name looks like a long concatenated paragraph, fallback to deriving a short name from the link path
+    if (name && name.length > 80) {
+      if (link) {
+        try {
+          const u = link.split('/').pop() || link;
+          const short = decodeURIComponent(u).replace(/[_\-]/g, ' ').replace(/\(.*\)/g, '').trim();
+          if (short && short.length < 80) name = short;
+        } catch (e) {
+          // ignore and keep original name if decoding fails
+        }
+      }
+      // as last resort, truncate to a reasonable length
+      if (name.length > 80) name = name.slice(0, 60).trim();
+    }
     const dateMatch = text.match(/Date:\s*(\d{2}\.\d{2}\.\d{4})/);
     let dateStr = null;
     if (dateMatch) dateStr = dateMatch[1];
-    const img = el.querySelector('img');
-    let image = null;
-    if (img && (img.src || '').includes('/events/')) image = img.src;
-    const linkEl = el.tagName === 'A' ? el : el.querySelector('a');
-    const link = linkEl ? (linkEl.href || linkEl.getAttribute('href')) : null;
+  const img = el.querySelector('img');
+  let image = null;
+  if (img && (img.src || '').includes('/events/')) image = img.src;
     if (name && !name.includes('Arknights:') && name.length > 3) {
       events.push({ name, dateStr, type: splitOn, image, link });
     }
@@ -245,5 +277,8 @@ function parseIndexHtml(html) {
   const unique = events.filter((e, i, arr) => arr.findIndex(e2 => e2.name === e.name) === i);
   return unique;
 }
+
+// Export parseIndexHtml for external use (keeps earlier exports intact)
+module.exports.parseIndexHtml = parseIndexHtml;
 
 

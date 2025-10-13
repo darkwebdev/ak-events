@@ -1,4 +1,4 @@
-const { normalizeEvent } = require('../lib/normalizeEvent');
+const { normalizeEvent } = require('../src/server/lib/normalizeEvent');
 
 test('normalizes DD.MM.YYYY date string into start/end and slug', () => {
   const raw = { name: 'Act or Die Event', dateStr: '05.06.2025', type: 'Event', image: 'https://cdn/events/act.png', link: 'https://arknights.wiki.gg/wiki/Act_or_Die', origPrime: '28', hhPermits: '3' };

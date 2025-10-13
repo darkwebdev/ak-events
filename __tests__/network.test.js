@@ -1,6 +1,6 @@
 const https = require('https');
-const { fetchHtml, fetchWikiApi } = require('../lib/network');
-const config = require('../config');
+const { fetchHtml, fetchWikiApi } = require('../src/server/lib/network');
+const config = require('./../src/server/config');
 
 jest.mock('https');
 

@@ -1,4 +1,4 @@
-const { isBlockedHtml } = require('../lib/network');
+const { isBlockedHtml } = require('../src/server/lib/network');
 
 describe('isBlockedHtml', () => {
   test('detects cloudflare challenge text', () => {

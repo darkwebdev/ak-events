@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { parseIndexHtml } = require('../lib/network');
+const { parseIndexHtml } = require('../src/server/lib/network');
 
 describe('parseIndexHtml', () => {
   test('parses a simple index fixture into events', () => {

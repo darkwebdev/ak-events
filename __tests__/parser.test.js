@@ -3,7 +3,7 @@ const path = require('path');
 const { extractOrigPrimeFromHtml, extractHhPermitsFromHtml } = require('../lib/parser');
 
 function loadApiHtml(slug) {
-  const p = path.join(__dirname, '..', 'debug_html', `${slug}_api.json`);
+  const p = path.join(__dirname, 'debug_html', `${slug}_api.json`);
   const raw = fs.readFileSync(p, 'utf8');
   const json = JSON.parse(raw);
   return json.parse && json.parse.text && json.parse.text['*'] ? json.parse.text['*'] : '';

@@ -93,5 +93,13 @@
     "type": "Special",
     "image": "images/Rebuilding_Mandate_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
+  },
+  {
+    "name": "Abnormal Spectrum EpisodeA new Episode. Although it will stay permanently, the benefits of the",
+    "start": "TBD",
+    "end": "",
+    "type": "Event",
+    "image": "images/abnormal-spectrum.png",
+    "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum"
   }
 ]

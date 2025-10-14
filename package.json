@@ -4,7 +4,7 @@
   "description": "Website for Arknights events",
   "scripts": {
     "scrape": "node src/server/scrape.js",
-  "emulate-action": "yarn scrape && (git diff --quiet public/data/events.json || echo 'public/data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
+    "emulate-action": "yarn scrape && (git diff --quiet public/data/events.json || echo 'public/data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
     "dev": "cd src/client && vite",
     "build": "cd src/client && vite build",
     "preview": "cd src/client && vite preview --port 5173",

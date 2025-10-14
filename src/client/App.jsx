@@ -9,19 +9,10 @@ function calcOrundum(e) {
 
 function normalizeImageSrc(raw) {
   if (!raw) return null;
-  let img = raw;
-  // already an absolute remote URL
-  if (img.startsWith('http')) return encodeURI(img);
-  // already under /data/
-  if (img.startsWith('/data/')) return encodeURI(img);
-  // turned into '/data/...' if it started as 'data/...'
-  if (img.startsWith('data/')) return encodeURI('/' + img);
-  // map /images/... to /data/images/ when possible
-  if (img.startsWith('/images/')) return encodeURI('/data' + img);
-  // relative paths -> /data/<path>
-  if (!img.startsWith('/')) return encodeURI('/data/' + img.replace(/^\//, ''));
-  // fallback: encode whatever we have
-  return encodeURI(img);
+  // If it's already a remote URL or absolute path, just encode and return.
+  if (raw.startsWith('http') || raw.startsWith('/')) return encodeURI(raw);
+  // Otherwise we expect stored images to live under /data/images/
+  return encodeURI('/data/images/' + raw.replace(/^\//, ''));
 }
 
 export default function App() {

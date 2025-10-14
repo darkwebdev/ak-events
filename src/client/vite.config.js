@@ -8,5 +8,5 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   root: __dirname,
-  publicDir: resolve(__dirname, '..', '..'),
+  publicDir: resolve(__dirname, '..', '..', 'public'),
 });

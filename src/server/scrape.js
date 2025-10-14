@@ -102,8 +102,8 @@ async function scrapeEvents() {
     const batch = events.slice(i, i + concurrency);
     const results = await Promise.all(batch.map(e => fetchAndParseEvent(e)));
     for (let j = 0; j < results.length; j++) events[i + j] = results[j];
-  // persist progress after each batch
-  saveJson('data/events.json', events);
+  // persist progress after each batch to public so the client can access interim results
+  saveJson('public/data/events.json', events);
   }
 
   console.log('Scraped events:', events);

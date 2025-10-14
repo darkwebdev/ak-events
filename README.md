@@ -1,6 +1,6 @@
 # Arknights Events
 
-A static website that displays upcoming and ongoing Arknights events, scraped daily from [oldwell.info](https://oldwell.info/).
+A static website that displays upcoming and ongoing Arknights events. The scraper now uses the Arknights wiki (MediaWiki API) as the canonical source.
 
 ## Live Demo
 
@@ -15,7 +15,7 @@ View the live site at: [https://darkwebdev.github.io/ak-events/](https://darkweb
 ## Technologies Used
 
 - **Frontend**: HTML, CSS, JavaScript
-- **Backend/Automation**: Node.js, Puppeteer for scraping
+- **Backend/Automation**: Node.js (API-first scraping via the Arknights wiki)
 - **Hosting**: GitHub Pages
 - **CI/CD**: GitHub Actions
 
@@ -48,7 +48,7 @@ View the live site at: [https://darkwebdev.github.io/ak-events/](https://darkweb
 
 - `index.html`: Main HTML page
 - `script.js`: Client-side JavaScript for loading and displaying events
-- `scrape.js`: Node.js script for scraping events from oldwell.info
+- `scrape.js`: Node.js script for scraping events from the Arknights wiki via its MediaWiki API
 - `data/events.json`: JSON file containing the scraped events
 - `.github/workflows/scrape.yml`: GitHub Actions workflow for daily updates
 

@@ -1,6 +1,6 @@
 module.exports = {
-  indexUrl: 'https://oldwell.info/',
+  // Primary index: use the Arknights wiki 'Event' page as the canonical source
+  indexUrl: 'https://arknights.wiki.gg/wiki/Event',
   wikiBase: 'https://arknights.wiki.gg/wiki/',
-  wikiPrintableBase: 'https://arknights.wiki.gg/w/index.php?title=',
   wikiApiBase: 'https://arknights.wiki.gg/api.php'
 };

@@ -1,5 +1,7 @@
 const { JSDOM } = require('jsdom');
 
+// (Table-aware parseIndexHtml removed from this position; the exported version lives further down.)
+
 function extractOrigPrimeFromHtml(html) {
   if (!html) return null;
   // strip tags and search text for typical phrasing
@@ -138,9 +140,48 @@ function extractHhPermitsFromHtml(html) {
   return null;
 }
 
-// High level parse: given an HTML string (rendered/printable/API), return best guesses
+// Extract event "Type" from the event detail API HTML.
+// The markup looks like:
+// <div class="druid-row druid-row-type" data-druid-section-row="Intro"><div class="druid-label druid-label-type">Type</div><div class="druid-data druid-data-type druid-data-nonempty">
+// <a href="/wiki/Event/Side_Story" title="Event/Side Story">Side Story</a>–Celebration</div></div>
+// We want to return: "Side Story (Celebration)"
+function extractEventTypeFromHtml(html) {
+  if (!html) return null;
+  try {
+    const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
+    const dom = new JSDOM(clean);
+    const doc = dom.window.document;
+    const row = doc.querySelector('.druid-row-type');
+    if (!row) return null;
+    const dataEl = row.querySelector('.druid-data-type');
+    if (!dataEl) return null;
+    // Gather text nodes and links
+    const link = dataEl.querySelector('a');
+    const primary = link ? (link.textContent || '').trim() : '';
+    // Normalize raw text (convert non-breaking spaces to regular spaces and collapse whitespace)
+    const rawText = (dataEl.textContent || '').replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
+    // The remainder (e.g. –Celebration) may be plain text or separated by an en-dash
+    let remainder = rawText.replace((link && link.textContent) || '', '').trim();
+    // If no link present, return the normalized raw text
+    if (!link) {
+      // remove leading dash characters if any
+      const cleaned = rawText.replace(/^[\s\u2013\-–—]+/, '').trim();
+      if (cleaned) return cleaned;
+      return null;
+    }
+    // normalize en-dash/minus/dash characters
+    remainder = remainder.replace(/^[\s\u2013\-–—]+/, '').trim();
+    if (primary && remainder) return `${primary} (${remainder})`;
+    if (primary) return primary;
+  } catch (e) {
+    // fallthrough
+  }
+  return null;
+}
+
+// High level parse: given an HTML string (API parse HTML), return best guesses
 function parseEventFromHtml(html) {
-  const result = { origPrime: null, hhPermits: null, debug: null };
+  const result = { origPrime: null, hhPermits: null, type: null, debug: null };
   if (!html) return result;
   try {
     const op = extractOrigPrimeFromHtml(html);
@@ -149,6 +190,11 @@ function parseEventFromHtml(html) {
   try {
     const hh = extractHhPermitsFromHtml(html);
     if (hh != null) result.hhPermits = hh;
+  } catch (e) {}
+
+  try {
+    const t = extractEventTypeFromHtml(html);
+    if (t) result.type = t;
   } catch (e) {}
 
   if (result.origPrime == null) {
@@ -161,124 +207,76 @@ function parseEventFromHtml(html) {
   return result;
 }
 
-// Given multiple possible HTML sources, try them in order and merge missing fields.
-function parseFromSources(sources = {}) {
-  // sources: { renderedHtml, printableHtml, apiJson }
-  const out = { origPrime: null, hhPermits: null, debug: null };
-  try {
-    if (sources.renderedHtml) {
-      const r = parseEventFromHtml(sources.renderedHtml);
-      if (r.origPrime != null) out.origPrime = r.origPrime;
-      if (r.hhPermits != null) out.hhPermits = r.hhPermits;
-      if (r.debug) out.debug = r.debug;
-    }
-    if ((out.origPrime == null || out.hhPermits == null) && sources.printableHtml) {
-      const p = parseEventFromHtml(sources.printableHtml);
-      if (out.origPrime == null && p.origPrime != null) out.origPrime = p.origPrime;
-      if (out.hhPermits == null && p.hhPermits != null) out.hhPermits = p.hhPermits;
-      if (!out.debug && p.debug) out.debug = p.debug;
-    }
-    if ((out.origPrime == null || out.hhPermits == null) && sources.apiJson) {
-      const htmlText = sources.apiJson?.parse?.text?.['*'] || '';
-      if (htmlText) {
-        const a = parseEventFromHtml(htmlText);
-        if (out.origPrime == null && a.origPrime != null) out.origPrime = a.origPrime;
-        if (out.hhPermits == null && a.hhPermits != null) out.hhPermits = a.hhPermits;
-        if (!out.debug && a.debug) out.debug = a.debug;
-      }
-    }
-  } catch (e) {
-    // swallow and fall through to best-effort result
-  }
-  // If still missing origPrime, produce small debug snippet from first available source
-  if (out.origPrime == null) {
-    const src = sources.renderedHtml || sources.printableHtml || (sources.apiJson?.parse?.text?.['*']) || '';
-    const txt = (src || '').replace(/<[^>]+>/g, ' ');
-    const idx = txt.search(/Originite|Originite Prime|operations are worth/i);
-    if (idx >= 0) out.debug = txt.slice(Math.max(0, idx - 200), idx + 400);
-    else out.debug = txt.slice(0, 600);
-  }
-  return out;
-}
+// Multi-source parsing was removed in favor of the API-only flow. Use
+// `parseEventFromHtml(html)` directly with the API parse HTML.
 
-module.exports = { extractOrigPrimeFromHtml, extractHhPermitsFromHtml, parseEventFromHtml, parseFromSources };
 
-// Extract events from the oldwell index HTML. Returns array of { name, dateStr, type, image, link }
+// Extract events from the MediaWiki API parse HTML for the Event page.
+// Returns array of { name, dateStr, type, image, link } where dateStr is the raw cell text.
 function parseIndexHtml(html) {
   if (!html) return [];
   const { JSDOM } = require('jsdom');
-  const dom = new JSDOM(html);
+  const clean = (html || '').replace(/<style[\s\S]*?<\/style>/gi, '');
+  const dom = new JSDOM(clean);
   const doc = dom.window.document;
-  const elements = Array.from(doc.querySelectorAll('*')).filter(el => {
-    const t = el.textContent || '';
-    return t.includes('wiki.gg') &&
-      (t.includes('Event') || t.includes('Story') || t.includes('Vignette') || t.includes('Strategies') || t.includes('Contract') || t.includes('Rerun') || t.includes('Collab') || t.includes('Special') || t.includes('Episode')) &&
-      !t.includes('Maintenance');
-  });
-  const events = [];
-  elements.forEach(el => {
-    const text = el.textContent || '';
-  // Determine link element early so type detection can inspect it
-  const linkEl = el.tagName === 'A' ? el : el.querySelector('a');
-  const link = linkEl ? (linkEl.href || linkEl.getAttribute('href')) : null;
-  // If the element contains a dedicated `.type` element, prefer that explicit value
-  const typeEl = el.querySelector('.type') || (linkEl && linkEl.querySelector('.type'));
-    let splitOn = '';
-    if (typeEl && (typeEl.textContent || '').trim().length > 0) {
-      splitOn = typeEl.textContent.trim();
-    } else {
-      if (text.match(/\bEvent\b/i)) splitOn = 'Event';
-      else if (text.match(/\bStory\b/i)) splitOn = 'Story';
-      else if (text.match(/\bVignette\b/i)) splitOn = 'Vignette';
-      else if (text.match(/\bStrategies\b/i)) splitOn = 'Strategies';
-      else if (text.match(/\bContract\b/i)) splitOn = 'Contract';
-      else if (text.match(/\bRerun\b/i)) splitOn = 'Rerun';
-      else if (text.match(/\bCollab\b/i)) splitOn = 'Collab';
-      else if (text.match(/\bSpecial\b/i)) splitOn = 'Special';
-      else if (text.match(/\bEpisode\b/i)) splitOn = 'Episode';
-    }
-    if (!splitOn) return;
-    // Prefer anchor text if available (cleaner title), otherwise split on the detected type word using word-boundaries
-    let name = null;
-    if (linkEl && linkEl.textContent && linkEl.textContent.trim().length > 0) {
-      name = linkEl.textContent.trim();
-    } else {
-      const rx = new RegExp("\\b" + splitOn + "\\b", 'i');
-      const parts = text.split(rx);
-      name = parts && parts.length ? parts[0].trim() : text.trim();
-      name = name.replace('🔗', '').trim().replace(/\s*(limited|side)\s*$/i, '');
-    }
 
-    // If the parsed name looks like a long concatenated paragraph, fallback to deriving a short name from the link path
-    if (name && name.length > 80) {
-      if (link) {
-        try {
-          const u = link.split('/').pop() || link;
-          const short = decodeURIComponent(u).replace(/[_\-]/g, ' ').replace(/\(.*\)/g, '').trim();
-          if (short && short.length < 80) name = short;
-        } catch (e) {
-          // ignore and keep original name if decoding fails
-        }
+  const events = [];
+
+  const tables = Array.from(doc.querySelectorAll('table'));
+  for (const table of tables) {
+    const th = table.querySelector('th');
+    const headerText = th ? (th.textContent || '').toLowerCase() : '';
+    if (!headerText.includes('event') || !table.textContent.toLowerCase().includes('release date')) continue;
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    for (let i = 1; i < rows.length; i++) {
+      const cells = Array.from(rows[i].querySelectorAll('td'));
+      if (!cells || cells.length < 1) continue;
+      const first = cells[0];
+      const linkEl = first.querySelector('a[href]');
+      let name = '';
+      let link = null;
+      if (linkEl) {
+        link = linkEl.getAttribute('href') || linkEl.href || null;
+        name = (linkEl.getAttribute('title') || linkEl.textContent || '').trim();
       }
-      // as last resort, truncate to a reasonable length
-      if (name.length > 80) name = name.slice(0, 60).trim();
+      if ((!name || name.length === 0) && first.querySelector('b')) {
+        name = (first.querySelector('b').textContent || '').trim();
+      }
+      if ((!name || name.length === 0)) {
+        name = (first.textContent || '').replace(/\s+/g, ' ').replace(/\[[^\]]+\]/g, '').trim();
+      }
+
+      let dateStr = null;
+      if (cells.length >= 2) {
+        const secondText = (cells[1].textContent || '').replace(/\s+/g, ' ').trim();
+        if (secondText.length > 0) dateStr = secondText;
+      }
+
+      const img = first.querySelector('img');
+      let image = null;
+      if (img) image = img.getAttribute('src') || img.src || null;
+
+      if (link && link.startsWith('/') ) {
+        try { link = new URL(link, require('../config').wikiBase).toString(); } catch (e) { /* ignore */ }
+      }
+
+      if (name && name.length > 0 && !name.toLowerCase().includes('arknights:')) {
+        events.push({ name: name.replace(/\s+/g, ' ').trim(), dateStr, type: null, image, link });
+      }
     }
-    const dateMatch = text.match(/Date:\s*(\d{2}\.\d{2}\.\d{4})/);
-    let dateStr = null;
-    if (dateMatch) dateStr = dateMatch[1];
-  const img = el.querySelector('img');
-  let image = null;
-  if (img && (img.src || '').includes('/events/')) image = img.src;
-    if (name && !name.includes('Arknights:') && name.length > 3) {
-      events.push({ name, dateStr, type: splitOn, image, link });
-    }
-  });
-  // Deduplicate by name
-  const unique = events.filter((e, i, arr) => arr.findIndex(e2 => e2.name === e.name) === i);
-  return unique;
+    if (events.length > 0) return events.filter((e, i, arr) => arr.findIndex(e2 => e2.name === e.name) === i);
+  }
+  return [];
 }
 
-// Export parseIndexHtml for external use (keeps earlier exports intact)
-module.exports.parseIndexHtml = parseIndexHtml;
+// Consolidated exports: provide all public functions from this module
+module.exports = {
+  extractOrigPrimeFromHtml,
+  extractHhPermitsFromHtml,
+  extractEventTypeFromHtml,
+  parseEventFromHtml,
+  parseIndexHtml
+};
 
 

@@ -1,104 +1,100 @@
-const { createRenderer } = require('./lib/renderer');
-const { parseFromSources } = require('./lib/parser');
-const { parseIndexHtml, fetchHtml, fetchWikiApi, downloadImage, fetchIndexHtml, fetchEventHtml } = require('./lib/network');
+const { parseIndexHtml, parseEventFromHtml } = require('./lib/parser');
+const { downloadImage, fetchEventDetailsViaApi, fetchEventsViaApi } = require('./lib/network');
 const { ensureDir, saveJson, saveText, fileExists } = require('./lib/storage');
 const config = require('./config');
 
+// Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
+
 async function scrapeEvents() {
-  console.log('Creating renderer...');
-  const renderer = await createRenderer();
+  console.log('Fetching index (prefer API over fetched/index API)...');
 
-  console.log('Fetching index page and extracting events...');
-  const extractEventsFromIndexHtml = async () => {
-    try {
-      return await fetchIndexHtml(renderer);
-    } catch (e) {
-      console.error('Failed to fetch or render index page:', e.message);
-      return null;
-    }
-  };
-
-  const fetchRenderedEventHtml = async (eventUrl) => {
-    try {
-      return await fetchEventHtml(eventUrl, renderer);
-    } catch (e) {
-      console.warn('Failed to fetch rendered HTML for', eventUrl, e.message);
-      return null;
-    }
-  };
-
-  const { printableUrlFor, titleFromUrl } = require('./lib/wiki');
+  const { applyRerunSuffix } = require('./lib/wiki');
 
   const fetchAndParseEvent = async (event) => {
     // Skip fetching the wiki page if we already have both values
     if (event.origPrime != null && event.hhPermits != null) return event;
-    if (!event.link) return event;
-    const fetchUrl = event.link.replace('/Rerun', '');
-    let htmlStatus = 'err';
-    let printStatus = 'err';
+  if (!event.link) return event;
+  // If the link ends with '/Rerun', we should fetch the original event page
+  // (without '/Rerun') and then mark the parsed type as a rerun by appending
+  // ' (Rerun)'. This ensures types like 'Side Story (Carnival)' become
+  // 'Side Story (Carnival) (Rerun)'. Avoid appending twice if type already
+  // includes '(Rerun)'.
+  const isRerunLink = /\/Rerun$/.test(event.link);
+  const fetchUrl = isRerunLink ? event.link.replace(/\/Rerun$/, '') : event.link;
     let jsonStatus = 'err';
     try {
       console.log('Fetching wiki for', event.name, fetchUrl);
+  // Only use API parse JSON for event details
+  const apiJson = await fetchEventDetailsViaApi(fetchUrl);
+  if (apiJson) jsonStatus = 'ok';
+  const apiHtml = apiJson?.parse?.text?.['*'] || '';
+  const parsed = parseEventFromHtml(apiHtml);
 
-      const renderedHtml = await fetchRenderedEventHtml(fetchUrl);
-      // determine html status
-      if (renderedHtml) {
-        if (typeof renderedHtml === 'object' && renderedHtml.blocked) {
-          htmlStatus = 'err';
-        } else {
-          htmlStatus = 'ok';
-        }
+  if (parsed.origPrime != null) { event.origPrime = parsed.origPrime; }
+  if (parsed.hhPermits != null) { event.hhPermits = parsed.hhPermits; }
+  if (parsed.type) {
+    event.type = applyRerunSuffix(parsed.type, event.link);
+  }
+
+  // If this was a rerun link and we didn't find origPrime or hhPermits on the
+  // returned page, try fetching the original event page (without rerun suffix)
+  // and merge missing values from that parse. This handles cases where the
+  // '/Rerun' or '_Rerun' page lacks store/priming info but the original page
+  // contains it.
+  try {
+    const wiki = require('./lib/wiki');
+    if (wiki.isRerunLink(event.link) && (event.origPrime == null || event.hhPermits == null)) {
+      const originalTitle = wiki.titleFromUrl(event.link);
+      if (originalTitle) {
+        const originalApi = await fetchEventDetailsViaApi(originalTitle);
+        const originalHtml = originalApi?.parse?.text?.['*'] || '';
+        const parsed2 = parseEventFromHtml(originalHtml);
+        if (event.origPrime == null && parsed2.origPrime != null) event.origPrime = parsed2.origPrime;
+        if (event.hhPermits == null && parsed2.hhPermits != null) event.hhPermits = parsed2.hhPermits;
+        // If we didn't get a type earlier, use the original type and mark as rerun
+        if (!event.type && parsed2.type) event.type = applyRerunSuffix(parsed2.type, event.link);
       }
-
-      let parsed = parseFromSources({ renderedHtml: (typeof renderedHtml === 'string' ? renderedHtml : (renderedHtml && renderedHtml.body) || null) });
-
-      // If missing, try printable
-      if ((parsed.origPrime == null || parsed.hhPermits == null) ) {
-        try {
-          const apiPrintableUrl = printableUrlFor(fetchUrl);
-          const res = await fetchHtml(apiPrintableUrl);
-          if (res && res.blocked) {
-            printStatus = 'err';
-          } else if (res && res.statusCode === 200 && res.body) {
-            printStatus = 'ok';
-            parsed = parseFromSources({ renderedHtml: (typeof renderedHtml === 'string' ? renderedHtml : null), printableHtml: res.body });
-          }
-        } catch (e) {
-          // ignore printable errors
-        }
-      }
-
-      // If still missing, try API parse
-      if ((parsed.origPrime == null || parsed.hhPermits == null)) {
-        try {
-          const title = titleFromUrl(fetchUrl);
-          const api = await fetchWikiApi(title);
-          if (api && api.statusCode === 200 && api.body) {
-            jsonStatus = 'ok';
-            parsed = parseFromSources({ renderedHtml: (typeof renderedHtml === 'string' ? renderedHtml : null), apiJson: api.body });
-          }
-        } catch (e) {
-          // ignore api errors
-        }
-      }
-
-      if (parsed.origPrime != null) { event.origPrime = parsed.origPrime; }
-      if (parsed.hhPermits != null) { event.hhPermits = parsed.hhPermits; }
-    } catch (err) {
-      console.error('Error fetching wiki for', event.name, err.message);
     }
-    console.log(`[${fetchUrl}] html: ${htmlStatus} print:${printStatus} json:${jsonStatus}`);
+  } catch (e) {
+    // ignore any errors in the fallback attempt
+  }
+    } catch (err) {
+      console.error('Error fetching wiki for', event.name, err && err.message);
+    }
+  console.log(`[${fetchUrl}] json:${jsonStatus}`);
     if (event.origPrime != null) console.log('Found Originite Prime for', event.name, ':', event.origPrime);
     if (event.hhPermits != null) console.log('Found Headhunting Permits for', event.name, ':', event.hhPermits);
     return event;
   };
 
-  const indexHtml = await extractEventsFromIndexHtml();
-  const events = parseIndexHtml(indexHtml || '');
+  // Fetch the index via the wiki API. fetchEventsViaApi already returns a parsed
+  // array of events when successful, or null when blocked/failed.
+  const events = await fetchEventsViaApi() || [];
+  // Also fetch the CN 'Upcoming' page and merge events that aren't already present.
+  try {
+    const { fetchUpcomingViaApi } = require('./lib/network');
+    const cnUpcoming = await fetchUpcomingViaApi();
+    if (Array.isArray(cnUpcoming) && cnUpcoming.length) {
+      for (const ce of cnUpcoming) {
+        // prefer existing events from main index; match by name
+        const exists = events.find(e => e.name === ce.name);
+        if (!exists) {
+          // CN upcoming only has CN release date; leave dateStr null so processed row will be TBD
+          ce.dateStr = null;
+          events.push(ce);
+        }
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  if (!events || !events.length) {
+    console.log('No events found in index (index fetch may have been blocked or page structure changed).');
+  }
 
-  // save initial index snapshot
-  saveJson('data/events_index.json', events);
-  console.log('Saved index snapshot to data/events_index.json');
+  // save initial index snapshot to public so the client can fetch /data/events_index.json
+  saveJson('public/data/events_index.json', events);
+  console.log('Saved index snapshot to public/data/events_index.json');
 
   // Concurrency limiter: process events in batches
   const concurrency = parseInt(process.env.AK_CONCURRENCY || '3');
@@ -109,7 +105,6 @@ async function scrapeEvents() {
   // persist progress after each batch
   saveJson('data/events.json', events);
   }
-  await renderer.close();
 
   console.log('Scraped events:', events);
 
@@ -117,46 +112,80 @@ async function scrapeEvents() {
   const processed = events.map(event => {
     let start, end;
     if (event.dateStr) {
-      const [dd, mm, yyyy] = event.dateStr.split('.');
-      start = `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
-      const startDate = new Date(start);
-      const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 7);
-      end = endDate.toISOString().split('T')[0];
+      // Try to locate a YYYY/MM/DD or YYYY-MM-DD date in the cell text.
+      // The Event page commonly uses formats like: "Global: 2025/10/14–2025/11/04"
+      const m = event.dateStr.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/g);
+      if (m && m.length > 0) {
+        // first match is start
+        const s = m[0];
+        const parts = s.split(/\D/).filter(Boolean);
+        const yyyy = parts[0];
+        const mm = parts[1].padStart(2, '0');
+        const dd = parts[2].padStart(2, '0');
+        start = `${yyyy}-${mm}-${dd}`;
+        if (m.length > 1) {
+          const s2 = m[1];
+          const parts2 = s2.split(/\D/).filter(Boolean);
+          const yyyy2 = parts2[0];
+          const mm2 = parts2[1].padStart(2, '0');
+          const dd2 = parts2[2].padStart(2, '0');
+          end = `${yyyy2}-${mm2}-${dd2}`;
+        } else {
+          // If only a start date is present, leave end empty (no default range)
+          end = '';
+        }
+      } else {
+        start = null;
+        end = null;
+      }
     } else {
-      start = 'TBD';
-      end = '';
+      start = null;
+      end = null;
     }
-    return { name: event.name, start, end, type: event.type, image: event.image, link: event.link, origPrime: event.origPrime, hhPermits: event.hhPermits };
+    // Strip common rerun markers from the event name for the final output
+    const cleanedName = (event.name || '').replace(/(?:\s*\(Rerun\)|[\/\-_\s]+Rerun|\s*:\s*Re-run)/ig, '').trim();
+    return { name: cleanedName || event.name, start, end, type: event.type, image: event.image, link: event.link, origPrime: event.origPrime, hhPermits: event.hhPermits };
   });
 
   console.log('Processed events:', processed);
 
-  // Save to data/events.json (all events, no filtering)
-  ensureDir('data/images');
-  saveJson('data/events.json', processed);
-  console.log('Saved all events to data/events.json');
+  // Save to public/data/events.json so the client can fetch /data/events.json
+  ensureDir('public/data/images');
+  saveJson('public/data/events.json', processed);
+  console.log('Saved all events to public/data/events.json');
 
   // Download images uses downloadImage from lib/network.js
 
   for (const event of processed) {
     if (event.image) {
       // if image already points to local file, skip
-      if (event.image.startsWith('images/')) {
-        console.log('Image for', event.name, 'already local:', event.image);
-        continue;
+      // If the event.image already looks like a public URL (/data/images/...),
+      // derive the disk path and skip if present
+      if (event.image.startsWith('/data/images/')) {
+        const filename = event.image.split('/').pop();
+        const diskPath = `public/data/images/${filename}`;
+        if (fileExists(diskPath)) {
+          console.log('Image for', event.name, 'already local:', diskPath);
+          // ensure the client-facing URL is normalized
+          event.image = `/data/images/${filename}`;
+          continue;
+        }
       }
-  const filename = event.image.split('/').pop();
-  const filepath = `data/images/${filename}`;
+
+      // Remove any query string from the image URL so the saved filename is clean
+      const rawFilename = event.image.split('/').pop() || '';
+      const filename = rawFilename.split('?')[0];
+      const filepath = `public/data/images/${filename}`;
       // skip download if file exists already
       if (fileExists(filepath)) {
         console.log('Skipping download; local image exists for', event.name, filepath);
-        event.image = filepath;
+        event.image = `/data/images/${filename}`;
         continue;
       }
       try {
         await downloadImage(event.image, filepath);
-  event.image = filepath; // update to local path
+        // update to public-facing URL
+        event.image = `/data/images/${filename}`;
         console.log('Downloaded image for', event.name);
       } catch (err) {
         console.error('Error downloading image for', event.name, err.message);

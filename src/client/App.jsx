@@ -1,9 +1,27 @@
 import React, { useEffect, useState } from 'react'
+import './App.css'
 
 function calcOrundum(e) {
   const op = parseInt(e.origPrime) || 0
   const hh = parseInt(e.hhPermits) || 0
   return op * 180 + hh * 600
+}
+
+function normalizeImageSrc(raw) {
+  if (!raw) return null;
+  let img = raw;
+  // already an absolute remote URL
+  if (img.startsWith('http')) return encodeURI(img);
+  // already under /data/
+  if (img.startsWith('/data/')) return encodeURI(img);
+  // turned into '/data/...' if it started as 'data/...'
+  if (img.startsWith('data/')) return encodeURI('/' + img);
+  // map /images/... to /data/images/ when possible
+  if (img.startsWith('/images/')) return encodeURI('/data' + img);
+  // relative paths -> /data/<path>
+  if (!img.startsWith('/')) return encodeURI('/data/' + img.replace(/^\//, ''));
+  // fallback: encode whatever we have
+  return encodeURI(img);
 }
 
 export default function App() {
@@ -31,48 +49,39 @@ export default function App() {
   }, 0)
 
   return (
-    <div style={{ padding: 18, fontFamily: 'Arial, sans-serif' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div className="ak-root">
+      <table className="ak-table">
         <thead>
-          <tr style={{ background: '#eee', textAlign: 'left' }}>
-            <th style={{ width: 110, padding: 8 }}>Image</th>
-            <th style={{ padding: 8 }}>Name</th>
-            <th style={{ width: 120, padding: 8 }}>Type</th>
-            <th style={{ width: 200, padding: 8 }}>Dates</th>
-            <th style={{ width: 80, padding: 8 }}>OP</th>
-            <th style={{ width: 120, padding: 8 }}>HH Permits</th>
-            <th style={{ width: 120, padding: 8 }}>Orundum</th>
-            <th style={{ width: 80, padding: 8 }}>Select</th>
+          <tr className="ak-thead-tr">
+          <th className="ak-th col-img">Image</th>
+          <th className="ak-th">Name</th>
+          <th className="ak-th col-type">Type</th>
+          <th className="ak-th col-dates">Global Dates</th>
+          <th className="ak-th col-op">OP</th>
+          <th className="ak-th col-hh">HH Permits</th>
+          <th className="ak-th col-orundum">Orundum</th>
+          <th className="ak-th col-select">Select</th>
           </tr>
         </thead>
         <tbody>
           {events.map((e, idx) => (
-            <tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ padding: 6 }}>
-                {e.image ? (() => {
-                  let img = e.image
-                  // normalize different image path formats to absolute paths under /data/
-                  if (!img) {
-                    img = ''
-                  } else if (img.startsWith('http')) {
-                    // leave remote URLs alone
-                  } else if (img.startsWith('/data/')) {
-                    // already correct
-                  } else if (img.startsWith('data/')) {
-                    img = '/' + img // turn into '/data/...'
-                  } else if (img.startsWith('/images/')) {
-                    // move /images/... to /data/images/ when possible
-                    img = '/data' + img
-                  } else if (!img.startsWith('/')) {
-                    // relative path like 'images/foo.png' or 'images/foo'
-                    img = '/data/' + img.replace(/^\//, '')
-                  }
-                  return <img src={img} alt={e.name} style={{ width: 100, height: 'auto' }} />
-                })() : null}
+            <tr key={idx} className="ak-row">
+              <td className="ak-img-td">
+                {(() => {
+                  const src = normalizeImageSrc(e.image);
+                  return src ? <img src={src} alt={e.name} className="ak-img" /> : null;
+                })()}
               </td>
               <td>{e.link ? <a href={e.link} target="_blank" rel="noreferrer">{e.name}</a> : e.name}</td>
               <td>{e.type || ''}</td>
-              <td>{e.start === 'TBD' ? 'TBD' : `${e.start} — ${e.end}`}</td>
+              <td>{(() => {
+                // Display rules: if start is falsy/null -> show nothing.
+                // If start exists but end is falsy -> show start only.
+                // If both exist -> show start — end.
+                if (!e.start) return '';
+                if (!e.end) return e.start;
+                return `${e.start} — ${e.end}`;
+              })()}</td>
               <td>{e.origPrime != null ? String(e.origPrime) : ''}</td>
               <td>{e.hhPermits != null ? String(e.hhPermits) : ''}</td>
               <td>{calcOrundum(e)}</td>
@@ -80,24 +89,24 @@ export default function App() {
             </tr>
           ))}
         </tbody>
-    <tfoot style={{ borderTop: '2px solid #ccc' }}>
+    <tfoot className="ak-tfoot">
       <tr>
-        <td colSpan={2} style={{ padding: 8 }}><strong>Total Orundum</strong></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ fontWeight: 700, padding: 8 }}>{total}</td>
-        <td style={{ padding: 8 }}></td>
+        <td colSpan={2} className="ak-strong"><strong>Total Orundum</strong></td>
+        <td className="ak-cell"></td>
+        <td className="ak-cell"></td>
+        <td className="ak-cell"></td>
+        <td className="ak-cell"></td>
+        <td className="ak-value">{total}</td>
+        <td className="ak-cell"></td>
       </tr>
       <tr>
-        <td colSpan={2} style={{ padding: 8 }}><strong>Total Pulls</strong></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ padding: 8 }}></td>
-        <td style={{ fontWeight: 700, padding: 8 }}>{Math.floor(total / 600)}</td>
-        <td style={{ padding: 8 }}></td>
+        <td colSpan={2} className="ak-strong"><strong>Total Pulls</strong></td>
+        <td className="ak-cell"></td>
+        <td className="ak-cell"></td>
+        <td className="ak-cell"></td>
+        <td className="ak-cell"></td>
+        <td className="ak-value">{Math.floor(total / 600)}</td>
+        <td className="ak-cell"></td>
       </tr>
     </tfoot>
       </table>

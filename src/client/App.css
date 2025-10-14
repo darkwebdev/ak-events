@@ -1,0 +1,21 @@
+.ak-root { padding: 18px; font-family: Arial, sans-serif; }
+.ak-table { width: 100%; border-collapse: collapse; }
+.ak-thead-tr { background: #eee; text-align: left; }
+.ak-th { padding: 8px; }
+.ak-img-td { padding: 6px; }
+.ak-row { border-bottom: 1px solid #eee; }
+.ak-img { width: 100px; height: auto; }
+.ak-tfoot { border-top: 2px solid #ccc; }
+.ak-strong { padding: 8px; }
+.ak-value { font-weight: 700; padding: 8px; }
+.ak-cell { padding: 8px; }
+
+/* Column width helpers (moved from inline styles in App.jsx) */
+.col-img { width: 110px; }
+.col-type { width: 120px; }
+.col-dates { width: 200px; }
+.col-op { width: 80px; }
+.col-hh { width: 120px; }
+.col-orundum { width: 120px; }
+.col-select { width: 80px; }
+

@@ -1,5 +1,5 @@
 const https = require('https');
-const { fetchHtml, fetchWikiApi } = require('../src/server/lib/network');
+const { fetchWikiApi } = require('../src/server/lib/network');
 const config = require('./../src/server/config');
 
 jest.mock('https');
@@ -9,20 +9,6 @@ describe('network helpers', () => {
     https.get.mockReset();
   });
 
-  test('fetchHtml returns statusCode and body when https returns data', async () => {
-    const fakeResponse = {
-      statusCode: 200,
-      on: jest.fn((ev, cb) => {
-        if (ev === 'data') cb('OK');
-        if (ev === 'end') cb();
-      })
-    };
-    const mockReq = { on: jest.fn() };
-    https.get.mockImplementation((url, options, cb) => { cb(fakeResponse); return mockReq; });
-    const res = await fetchHtml('https://example.com/test');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toBe('OK');
-  });
 
   test('fetchWikiApi constructs URL using config.wikiApiBase', async () => {
     const fakeResponse = {

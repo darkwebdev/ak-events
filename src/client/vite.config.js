@@ -7,6 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
+  // When deploying to GitHub Pages for a project site, set base to '/<repo>/'
+  // so asset URLs become '/ak-events/assets/...' instead of '/assets/...'.
+  base: '/ak-events/',
   root: __dirname,
   publicDir: resolve(__dirname, '..', '..', 'public'),
   build: {

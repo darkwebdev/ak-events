@@ -9,10 +9,17 @@ function calcOrundum(e) {
 
 function normalizeImageSrc(raw) {
   if (!raw) return null;
-  // If it's already a remote URL or absolute path, just encode and return.
-  if (raw.startsWith('http') || raw.startsWith('/')) return encodeURI(raw);
+  // If it's already a remote URL, just encode and return.
+  if (raw.startsWith('http')) return encodeURI(raw);
+  const BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '/';
+  // If it's an absolute path starting with '/' and the BASE is not root,
+  // prefix it with BASE so GitHub Pages project sites resolve correctly.
+  if (raw.startsWith('/')) {
+    if (BASE === '/' || raw.startsWith(BASE)) return encodeURI(raw);
+    return encodeURI(BASE + raw.replace(/^\//, ''));
+  }
   // Otherwise we expect stored images to live under /data/images/
-  return encodeURI('/data/images/' + raw.replace(/^\//, ''));
+  return encodeURI(BASE + 'data/images/' + raw.replace(/^\//, ''));
 }
 
 export default function App() {
@@ -20,7 +27,8 @@ export default function App() {
   const [selected, setSelected] = useState(new Set())
 
   useEffect(() => {
-    fetch('/data/events.json')
+    const BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '/';
+    fetch(BASE + 'data/events.json')
       .then(r => r.json())
       .then(setEvents)
       .catch(console.error)

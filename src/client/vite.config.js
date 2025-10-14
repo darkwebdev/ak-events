@@ -9,4 +9,8 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   root: __dirname,
   publicDir: resolve(__dirname, '..', '..', 'public'),
+  build: {
+    // output the production build to the repository root `dist/` directory
+    outDir: resolve(__dirname, '..', '..', 'dist')
+  }
 });

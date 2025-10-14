@@ -7,6 +7,8 @@
     "emulate-action": "yarn scrape && (git diff --quiet public/data/events.json || echo 'public/data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
     "dev": "cd src/client && vite",
     "build": "cd src/client && vite build",
+    "build:dist": "yarn build && echo Built to ./dist",
+    "deploy:ci": "echo 'CI should publish ./dist to GitHub Pages'",
     "preview": "cd src/client && vite preview --port 5173",
     "start": "cd src/client && vite preview --port 5173",
     "stop": "echo 'To stop the server, press Ctrl+C in the terminal running the server'",

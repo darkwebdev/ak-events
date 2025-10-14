@@ -29,10 +29,10 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add data/events.json data/images/
+        git add public/data/events.json public/data/images/
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Update data/events.json and data/images with latest events"
+          git commit -m "Update public/data/events.json and public/data/images with latest events"
           git push
         fi

@@ -32,7 +32,7 @@ View the live site at: [https://darkwebdev.github.io/ak-events/](https://darkweb
    yarn install
    ```
 
-3. Run the scraper to update `data/events.json`:
+3. Run the scraper to update `public/data/events.json`:
    ```bash
    yarn scrape
    ```
@@ -49,7 +49,7 @@ View the live site at: [https://darkwebdev.github.io/ak-events/](https://darkweb
 - `index.html`: Main HTML page
 - `script.js`: Client-side JavaScript for loading and displaying events
 - `scrape.js`: Node.js script for scraping events from the Arknights wiki via its MediaWiki API
-- `data/events.json`: JSON file containing the scraped events
+- `public/data/events.json`: JSON file containing the scraped events (served at `/data/events.json`)
 - `.github/workflows/scrape.yml`: GitHub Actions workflow for daily updates
 
 ## License

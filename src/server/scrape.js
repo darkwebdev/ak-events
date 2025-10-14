@@ -194,9 +194,9 @@ async function scrapeEvents() {
     }
   }
 
-  // Save updated data/events.json with local image paths
-  saveJson('data/events.json', processed);
-  console.log('Updated data/events.json with local image paths');
+  // Save updated public/data/events.json with public image paths
+  saveJson('public/data/events.json', processed);
+  console.log('Updated public/data/events.json with public image paths');
 }
 
 scrapeEvents().catch(err => {

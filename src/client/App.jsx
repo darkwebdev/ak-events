@@ -3,10 +3,14 @@ import { useStorage } from './hooks/useStorage.js';
 import { calcEventOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
 import { getEffectiveEnd } from './utils/dates.js'
 
-import { PullCounter } from './components/PullCounter'
 import { CurrentlyOwned } from './components/CurrentlyOwned'
 import { DailyOrundum } from './components/DailyOrundum'
 import { EventsList } from './components/EventsList'
+import { Breakdown } from './components/Breakdown'
+import { InfoButton } from './components/InfoButton'
+import { Orundum } from './components/Orundum'
+import { TotalOrundum } from './components/TotalOrundum'
+import { Header } from './components/Header'
 
 import defaultSettings from './settings.json';
 import defaultPlayerStatus from './playerStatus.json';
@@ -100,20 +104,30 @@ export default function App() {
   const totalOrundum = calcTotalOrundum(filteredEvents, selectedEvents, totalDailyOrundum, playerOrundumTotal);
   const totalPulls = pullsFromOrundum(totalOrundum);
 
+  // Compute values for total section
+  const totalEventsOrundum = calcTotalOrundum(filteredEvents, selectedEvents, 0, 0);
+  const eventStarts = selectedList.map(event => {
+    const start = event.globalStart || event.cnStart ? new Date(event.globalStart || event.cnStart) : null;
+    return start;
+  }).filter(Boolean);
+  const latestEventStart = eventStarts.length > 0
+    ? new Date(Math.max(...eventStarts.map(start => start.getTime())))
+    : null;
+
   return (
-    <div className="ak-root">
+    <>
 
-      <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5em' }}>
-        Arknights Pull Prophecy
-        {totalPulls > 0 ? (
-          <PullCounter value={totalPulls} />
-        ) : (
-          <img src="images/icon-diamond-black.svg" alt="Diamond icon" style={{ height: '2.5rem', verticalAlign: 'middle' }} />
-        )}
-      </h1>
+      <Header totalPulls={totalPulls} />
 
-      <div className="ak-container">
-        <div className="ak-main-content">
+      <div className="ak-main-content">
+        <EventsList 
+          filteredEvents={filteredEvents}
+          selectedEvents={selectedEvents}
+          onEventToggle={handleEventToggle}
+          settingsTotal={dailyOrundum}
+          playerOrundumTotal={playerOrundumTotal}
+        />
+
         <div className="ak-aside-column">
           <CurrentlyOwned 
             owned={playerStatus}
@@ -126,17 +140,17 @@ export default function App() {
             updateSetting={updateSetting}
             settingsTotal={dailyOrundum}
           />
-        </div>
 
-        <EventsList 
-          filteredEvents={filteredEvents}
-          selectedEvents={selectedEvents}
-          onEventToggle={handleEventToggle}
-          settingsTotal={dailyOrundum}
-          playerOrundumTotal={playerOrundumTotal}
-        />
+          <TotalOrundum
+            latestEventStart={latestEventStart}
+            totalOrundum={totalOrundum}
+            totalEventsOrundum={totalEventsOrundum}
+            totalDailyOrundum={totalDailyOrundum}
+            maxDays={maxDays}
+            playerOrundumTotal={playerOrundumTotal}
+          />
         </div>
       </div>
-    </div>
+    </>
   )
 }

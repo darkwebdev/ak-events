@@ -3,21 +3,13 @@
   --ak-font-family: Arial, sans-serif;
   --ak-font-size: 16px;
 }
-.ak-root {
+#ak-root {
   padding: 18px;
   font-family: var(--ak-font-family);
   font-size: var(--ak-font-size);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-/* Layout for aside and table side by side */
-.ak-container { 
-  display: flex; 
-  gap: 20px; 
-  align-items: flex-start; 
-  flex: 1;
 }
 
 /* main content wrapper used by App.jsx */
@@ -31,7 +23,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 0 0 280px;
+  flex: 0 0 300px;
 }
 
 .ak-aside { 
@@ -60,7 +52,7 @@
 
 .ak-aside-label { 
   display: flex; 
-  align-items: center; 
+  align-items: first baseline; 
   gap: 8px; 
   cursor: pointer; 
   font-size: 14px; 
@@ -80,6 +72,7 @@
   color: var(--ak-accent);
   min-width: 40px;
   text-align: right;
+  align-self: last baseline;
 }
 input[type="checkbox"]:checked {
   accent-color: var(--ak-accent);

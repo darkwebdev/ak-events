@@ -1,0 +1,16 @@
+.ak-total-section {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ak-total-orundum {
+  display: flex;
+  justify-content: space-between;
+  align-items: last baseline;
+  gap: 12px;
+}

@@ -1,0 +1,38 @@
+.ak-breakdown {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  font-weight: normal;
+}
+
+.ak-breakdown-row {
+  display: table-row;
+  white-space: nowrap;
+}
+
+.ak-breakdown-item,
+.ak-breakdown-calc,
+.ak-breakdown-total {
+  display: table-cell;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.ak-breakdown-row:last-child .ak-breakdown-item,
+.ak-breakdown-row:last-child .ak-breakdown-calc,
+.ak-breakdown-row:last-child .ak-breakdown-total {
+  border-bottom: none;
+}
+
+.ak-breakdown-item {
+}
+
+.ak-breakdown-calc {
+  color: #666;
+  font-size: 14px;  
+}
+
+.ak-breakdown-total {
+  color: var(--ak-accent);
+}

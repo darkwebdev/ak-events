@@ -7,3 +7,6 @@ ak-events.iml
 test.txt
 dist
 public/data/events_index.json
+*storybook.log
+storybook-static
+.DS_Store

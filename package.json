@@ -1,6 +1,7 @@
 {
   "name": "ak-events",
   "version": "1.0.0",
+  "type": "module",
   "description": "Website for Arknights events",
   "scripts": {
     "scrape": "node src/server/scrape.js",
@@ -12,15 +13,21 @@
     "preview": "cd src/client && vite preview --port 5173",
     "start": "cd src/client && vite preview --port 5173",
     "stop": "echo 'To stop the server, press Ctrl+C in the terminal running the server'",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@storybook/react-vite": "^9.1.13",
     "jest": "^29.6.1",
     "jsdom": "^22.1.0",
+    "prop-types": "^15.8.1",
+    "storybook": "^9.1.13",
     "vite": "^5.0.0"
   }
 }

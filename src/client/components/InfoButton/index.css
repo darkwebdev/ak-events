@@ -1,0 +1,54 @@
+ .info-button-wrapper {
+      position: relative;
+ }
+
+ .info-button {
+      line-height: 1.5;
+      cursor: pointer;
+      text-decoration-line: underline;
+      text-decoration-style: dashed;
+      text-decoration-color: var(--ak-accent);
+      font-size: var(--ak-font-size);
+ }
+
+ .info-popover {
+      position: fixed;
+      top: auto;
+      left: auto;
+      min-width: 260px;
+      max-width: 420px;
+      background: white;
+      border: 1px solid rgba(0, 123, 255, 0.5);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+      padding: 12px 16px;
+      border-radius: 8px;
+      z-index: 9999;
+      font-size: 14px;
+      font-weight: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      white-space: normal;
+      box-sizing: border-box;
+      right: auto;
+      pointer-events: auto;
+      position: relative;
+
+      h3 {
+           margin: 0 0 8px;
+           font-size: 14px;
+      }
+ }
+
+ @media (max-width: 600px) {
+      .info-popover {
+           max-width: 98vw;
+      }
+ }
+
+ .info-popover:focus {
+      outline: none;
+ }
+
+ .info-arrow {
+      fill: var(--ak-accent);
+ }

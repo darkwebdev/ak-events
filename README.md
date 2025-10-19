@@ -1,48 +1,70 @@
 # Arknights Events
 
-A static website that displays upcoming and ongoing Arknights events. The scraper now uses the Arknights wiki (MediaWiki API) as the canonical source.
+Calculate your Orundum and pulls by any event.
 
 ## Live Demo
 
 View the live site at: [https://darkwebdev.github.io/ak-events/](https://darkwebdev.github.io/ak-events/)
 
-## Features
-
-- Displays event names, types (e.g., Limited Event, Side Story), and dates
-- Automatically updated daily via GitHub Actions
-- Responsive design with basic styling
-
-## Technologies Used
-
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend/Automation**: Node.js (API-first scraping via the Arknights wiki)
-- **Hosting**: GitHub Pages
-- **CI/CD**: GitHub Actions
-
 ## Local Development
-
 1. Clone the repository:
    ```bash
    git clone https://github.com/darkwebdev/ak-events.git
    cd ak-events
    ```
 
-2. Install dependencies:
+2. Use Yarn for local development (recommended)
+
+   This project uses Yarn to run scripts and manage dependencies. Please use `yarn` instead of `npm` for all repository commands to avoid subtle differences in script execution and environment.
+
+   Install dependencies:
    ```bash
-   yarn install
+   yarn
    ```
 
-3. Run the scraper to update `public/data/events.json`:
+   Run the scraper to update `public/data/events.json`:
    ```bash
    yarn scrape
    ```
 
-4. Start the local server:
+   Start the Vite dev server (development):
+   ```bash
+   yarn dev
+   ```
+
+   Build the frontend (production):
+   ```bash
+   yarn build
+   ```
+
+   Run the preview server (serve built files):
    ```bash
    yarn start
    ```
 
-5. Open `http://localhost:8080` in your browser.
+   Run the project's test suite (Jest):
+   ```bash
+   yarn test
+   ```
+  
+   Start the Storybook component explorer:
+   ```bash
+   yarn storybook
+   ```
+  
+   Build Storybook for production:
+   ```bash
+   yarn build-storybook
+   ```
+
+3. Open the app in your browser:
+
+   - Dev server: http://localhost:5173 (when running `yarn dev`)
+   - Preview server (after `yarn build` + `yarn start`): the CLI will show the port (default 5173)
+
+Notes:
+  - Prefer `yarn` for running scripts to keep environment parity across contributors.
+  - If you must use `npm`, use `npm run <script>` but be aware some scripts rely on Yarn-specific behaviors in CI or documentation.
 
 ## Project Structure
 

@@ -1,0 +1,10 @@
+{
+  "Annihilation": { "value": 1700, "enabled": true },
+  "Missions": { "value": 171, "enabled": true },
+  "Green Cert T1": { "value": 60, "enabled": true },
+  "Green Cert T2": { "value": 40, "enabled": true },
+  "Monthly Card": { "value": 200, "enabled": true },
+  "OP from Monthly card": { "value": 36, "enabled": true },
+  "Orundum from new Anni every 2 months": { "value": 25, "enabled": true },
+  "1 HH from Monthly log in": { "value": 20, "enabled": true }
+}

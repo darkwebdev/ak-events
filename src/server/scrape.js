@@ -110,11 +110,13 @@ async function scrapeEvents() {
 
   // Process events
   const processed = events.map(event => {
-    let start, end;
-    if (event.dateStr) {
-      // Try to locate a YYYY/MM/DD or YYYY-MM-DD date in the cell text.
-      // The Event page commonly uses formats like: "Global: 2025/10/14–2025/11/04"
-      const m = event.dateStr.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/g);
+    let globalStart, globalEnd, cnStart, cnEnd;
+    
+    // Helper function to parse date strings like "2025/10/14–2025/11/04"
+    const parseDateRange = (dateStr) => {
+      if (!dateStr) return { start: null, end: null };
+      
+      const m = dateStr.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/g);
       if (m && m.length > 0) {
         // first match is start
         const s = m[0];
@@ -122,7 +124,9 @@ async function scrapeEvents() {
         const yyyy = parts[0];
         const mm = parts[1].padStart(2, '0');
         const dd = parts[2].padStart(2, '0');
-        start = `${yyyy}-${mm}-${dd}`;
+        const start = `${yyyy}-${mm}-${dd}`;
+        
+        let end = null;
         if (m.length > 1) {
           const s2 = m[1];
           const parts2 = s2.split(/\D/).filter(Boolean);
@@ -130,21 +134,45 @@ async function scrapeEvents() {
           const mm2 = parts2[1].padStart(2, '0');
           const dd2 = parts2[2].padStart(2, '0');
           end = `${yyyy2}-${mm2}-${dd2}`;
-        } else {
-          // If only a start date is present, leave end empty (no default range)
-          end = '';
         }
-      } else {
-        start = null;
-        end = null;
+        
+        return { start, end };
       }
-    } else {
-      start = null;
-      end = null;
-    }
+      return { start: null, end: null };
+    };
+    
+    // Parse global dates
+    const globalDates = parseDateRange(event.globalDateStr);
+    globalStart = globalDates.start;
+    globalEnd = globalDates.end;
+    
+    // Parse CN dates
+    const cnDates = parseDateRange(event.cnDateStr);
+    cnStart = cnDates.start;
+    cnEnd = cnDates.end;
+    
+    // For backward compatibility, use global dates as primary start/end
+    // If no global dates, fall back to CN dates
+    let start = globalStart || cnStart;
+    let end = globalEnd || cnEnd;
+    
     // Strip common rerun markers from the event name for the final output
     const cleanedName = (event.name || '').replace(/(?:\s*\(Rerun\)|[\/\-_\s]+Rerun|\s*:\s*Re-run)/ig, '').trim();
-    return { name: cleanedName || event.name, start, end, type: event.type, image: event.image, link: event.link, origPrime: event.origPrime, hhPermits: event.hhPermits };
+    
+    return { 
+      name: cleanedName || event.name, 
+      start, 
+      end, 
+      globalStart, 
+      globalEnd, 
+      cnStart, 
+      cnEnd, 
+      type: event.type, 
+      image: event.image, 
+      link: event.link, 
+      origPrime: event.origPrime, 
+      hhPermits: event.hhPermits 
+    };
   });
 
   console.log('Processed events:', processed);

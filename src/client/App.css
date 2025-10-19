@@ -1,21 +1,108 @@
-.ak-root { padding: 18px; font-family: Arial, sans-serif; }
-.ak-table { width: 100%; border-collapse: collapse; }
-.ak-thead-tr { background: #eee; text-align: left; }
-.ak-th { padding: 8px; }
-.ak-img-td { padding: 6px; }
-.ak-row { border-bottom: 1px solid #eee; }
-.ak-img { width: 100px; height: auto; }
-.ak-tfoot { border-top: 2px solid #ccc; }
-.ak-strong { padding: 8px; }
-.ak-value { font-weight: 700; padding: 8px; }
-.ak-cell { padding: 8px; }
+:root {
+  --ak-accent: #007bff;
+  --ak-font-family: Arial, sans-serif;
+  --ak-font-size: 16px;
+}
+.ak-root {
+  padding: 18px;
+  font-family: var(--ak-font-family);
+  font-size: var(--ak-font-size);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-/* Column width helpers (moved from inline styles in App.jsx) */
-.col-img { width: 110px; }
-.col-type { width: 120px; }
-.col-dates { width: 200px; }
-.col-op { width: 80px; }
-.col-hh { width: 120px; }
-.col-orundum { width: 120px; }
-.col-select { width: 80px; }
+/* Layout for aside and table side by side */
+.ak-container { 
+  display: flex; 
+  gap: 20px; 
+  align-items: flex-start; 
+  flex: 1;
+}
 
+/* main content wrapper used by App.jsx */
+.ak-main-content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.ak-aside-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 0 0 280px;
+}
+
+.ak-aside { 
+  background: #f8f9fa; 
+  padding: 16px; 
+  border-radius: 8px; 
+  border: 1px solid #dee2e6; 
+}
+
+.ak-aside-title { 
+  margin: 0 0 16px 0; 
+  font-size: 18px; 
+  font-weight: 600; 
+  color: #333; 
+}
+
+.ak-aside-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+}
+
+.ak-aside-item { 
+  margin: 0; 
+}
+
+.ak-aside-label { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  cursor: pointer; 
+  font-size: 14px; 
+}
+
+.ak-aside-label input[type="checkbox"] { 
+  margin: 0; 
+}
+
+.ak-aside-name { 
+  flex: 1; 
+  min-width: 0; 
+}
+
+.ak-aside-value {
+  font-weight: 600;
+  color: var(--ak-accent);
+  min-width: 40px;
+  text-align: right;
+}
+input[type="checkbox"]:checked {
+  accent-color: var(--ak-accent);
+}
+.ak-number-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: right;
+}
+
+.ak-number-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+.ak-aside-total {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px solid #dee2e6;
+  font-size: 16px;
+  color: #333;
+}

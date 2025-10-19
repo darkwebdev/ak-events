@@ -248,9 +248,26 @@ function parseIndexHtml(html) {
       }
 
       let dateStr = null;
+      let globalDateStr = null;
+      let cnDateStr = null;
+      
       if (cells.length >= 2) {
         const secondText = (cells[1].textContent || '').replace(/\s+/g, ' ').trim();
-        if (secondText.length > 0) dateStr = secondText;
+        if (secondText.length > 0) {
+          dateStr = secondText;
+          
+          // Extract Global dates: look for "Global: YYYY/MM/DD–YYYY/MM/DD" or similar
+          const globalMatch = secondText.match(/Global:\s*([^()]+?)(?:\s*\(|$)/i);
+          if (globalMatch) {
+            globalDateStr = globalMatch[1].trim();
+          }
+          
+          // Extract CN dates: look for "CN: YYYY/MM/DD–YYYY/MM/DD" or similar
+          const cnMatch = secondText.match(/CN:\s*([^()]+?)(?:\s*\(|$)/i);
+          if (cnMatch) {
+            cnDateStr = cnMatch[1].trim();
+          }
+        }
       }
 
       const img = first.querySelector('img');
@@ -262,7 +279,15 @@ function parseIndexHtml(html) {
       }
 
       if (name && name.length > 0 && !name.toLowerCase().includes('arknights:')) {
-        events.push({ name: name.replace(/\s+/g, ' ').trim(), dateStr, type: null, image, link });
+        events.push({ 
+          name: name.replace(/\s+/g, ' ').trim(), 
+          dateStr, 
+          globalDateStr, 
+          cnDateStr, 
+          type: null, 
+          image, 
+          link 
+        });
       }
     }
     if (events.length > 0) return events.filter((e, i, arr) => arr.findIndex(e2 => e2.name === e.name) === i);

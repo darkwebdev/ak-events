@@ -148,15 +148,15 @@
     "start": null,
     "end": null,
     "type": null,
-    "image": null,
+    "image": "/data/images/1280px-CN_Icebreaker_Games_2_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
   },
   {
-    "name": "Unnamed 2nd Sanrio Characters crossover",
+    "name": "Tender Moments",
     "start": null,
     "end": null,
-    "type": null,
-    "image": null,
-    "link": null
+    "type": "Crossover special event",
+    "image": "/data/images/1280px-CN_Tender_Moments_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
   }
 ]

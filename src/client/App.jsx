@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useStorage } from './hooks/useStorage.js';
-import { calcEventOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
-import { getEffectiveEnd } from './utils/dates.js'
+import { calcDailyOrundum, calcEventOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
+import { filterUpcomingEvents, calculateSelectedEventData, calculateLatestEventStart } from './utils/events.js';
 
 import { CurrentlyOwned } from './components/CurrentlyOwned'
 import { DailyOrundum } from './components/DailyOrundum'
 import { EventsList } from './components/EventsList'
-import { Breakdown } from './components/Breakdown'
-import { InfoButton } from './components/InfoButton'
-import { Orundum } from './components/Orundum'
 import { TotalOrundum } from './components/TotalOrundum'
 import { Header } from './components/Header'
 
@@ -25,18 +22,12 @@ export default function App() {
   const updateSetting = (key, property, value) => {
     setSettings(prev => ({
       ...prev,
-      [key]: {
-        ...prev[key],
-        [property]: value
-      }
+      [key]: { ...prev[key], [property]: value }
     }))
   }
 
   const updatePlayerStatus = (key, value) => {
-    setPlayerStatus(prev => ({
-      ...prev,
-      [key]: value
-    }))
+    setPlayerStatus(prev => ({ ...prev, [key]: value }))
   }
 
   // Fetch events from API
@@ -53,22 +44,14 @@ export default function App() {
     fetchEvents()
   }, [])
 
-  // Calculate totals
-  const dailyOrundum = Object.values(settings).reduce((sum, setting) => {
-    return setting.enabled ? sum + setting.value : sum
-  }, 0)
+  const dailyOrundum = calcDailyOrundum(settings);
+  console.log('dailyOrundum', dailyOrundum)
 
   const playerOrundumTotal = playerStatus.orundum + (playerStatus.op * 180) + (playerStatus.hhPermits * 600)
 
   // Filter events to only show future events
   const today = new Date()
-  today.setHours(23, 59, 59, 999) // Set to end of today to include today's events
-  
-  const filteredEvents = events.filter(event => {
-    const eventEnd = getEffectiveEnd(event);
-    if (!eventEnd) return false;
-    return eventEnd >= today;
-  })
+  const filteredEvents = filterUpcomingEvents(events, today)
 
   const handleEventToggle = (eventName) => {
     setSelectedEvents(prev => {
@@ -89,30 +72,14 @@ export default function App() {
     })
   }
 
-  // Compute grand total orundum and pulls (matches EventsList logic)
-  const selectedList = filteredEvents.filter(ev => selectedEvents.has(ev.name));
-  const maxDays = selectedList.length > 0
-    ? Math.max(...selectedList.map(event => {
-        const start = event.globalStart || event.cnStart ? new Date(event.globalStart || event.cnStart) : null;
-        if (!start) return 0;
-        const now = new Date();
-        now.setHours(0,0,0,0);
-        return Math.max(0, Math.ceil((start - now) / (1000 * 60 * 60 * 24)));
-      }))
-    : 0;
-  const totalDailyOrundum = dailyOrundum * maxDays;
+  const { selectedList, daysUntilLastEvent } = calculateSelectedEventData(filteredEvents, selectedEvents);
+  const totalDailyOrundum = dailyOrundum * daysUntilLastEvent;
   const totalOrundum = calcTotalOrundum(filteredEvents, selectedEvents, totalDailyOrundum, playerOrundumTotal);
   const totalPulls = pullsFromOrundum(totalOrundum);
 
   // Compute values for total section
   const totalEventsOrundum = calcTotalOrundum(filteredEvents, selectedEvents, 0, 0);
-  const eventStarts = selectedList.map(event => {
-    const start = event.globalStart || event.cnStart ? new Date(event.globalStart || event.cnStart) : null;
-    return start;
-  }).filter(Boolean);
-  const latestEventStart = eventStarts.length > 0
-    ? new Date(Math.max(...eventStarts.map(start => start.getTime())))
-    : null;
+  const latestEventStart = calculateLatestEventStart(selectedList);
 
   return (
     <>
@@ -144,9 +111,10 @@ export default function App() {
           <TotalOrundum
             latestEventStart={latestEventStart}
             totalOrundum={totalOrundum}
-            totalEventsOrundum={totalEventsOrundum}
+            totalEventsOrundum={calcTotalOrundum(filteredEvents, selectedEvents, 0, 0)}
+            eventsOrundumCalc={`from ${selectedList.length} event(s)`}
             totalDailyOrundum={totalDailyOrundum}
-            maxDays={maxDays}
+            dailyOrundumCalc={`${Math.floor(dailyOrundum)} × ${daysUntilLastEvent} days`}
             playerOrundumTotal={playerOrundumTotal}
           />
         </div>

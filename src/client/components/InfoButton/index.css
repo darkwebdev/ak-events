@@ -3,12 +3,12 @@
  }
 
  .info-button {
-      line-height: 1.5;
+      /* line-height: 1.5; */
       cursor: pointer;
       text-decoration-line: underline;
       text-decoration-style: dashed;
       text-decoration-color: var(--ak-accent);
-      font-size: var(--ak-font-size);
+      font-size: inherit;
  }
 
  .info-popover {

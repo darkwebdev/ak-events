@@ -1,12 +1,14 @@
 import React from 'react';
 import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
+import { orundumFromOP, orundumFromHH } from '../../utils/orundum.js';
 
 export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
   return (
     <div className="ak-aside">
       <h3 className="ak-aside-title">Daily Orundum Equivalent</h3>
       <div className="ak-aside-list">
+
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <input 
@@ -14,10 +16,29 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
               checked={settings['Annihilation'].enabled}
               onChange={(e) => updateSetting('Annihilation', 'enabled', e.target.checked)}
             />
-            <span className="ak-aside-name">Annihilation</span>
-            <span className="ak-aside-value"><Orundum>{settings['Annihilation'].value}</Orundum></span>
+            <span className="ak-aside-name">
+              <InfoButton label="Annihilation">{settings['Annihilation'].weeklyOrundum} weekly Orundum</InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{settings['Annihilation'].weeklyOrundum / 7}</Orundum></span>
           </label>
         </div>
+        <div className="ak-aside-item">
+          <label className="ak-aside-label">
+            <input 
+              type="checkbox" 
+              checked={settings['New Annihilation'].enabled}
+              onChange={(e) => updateSetting('New Annihilation', 'enabled', e.target.checked)}
+            />
+            <span className="ak-aside-name">
+              <InfoButton label="Rotating Bi-Monthly Annihilation">
+                <div>{settings['New Annihilation'].biMonthlyOrundum} Orundum every 2 months</div>
+                <div>+ {settings['New Annihilation'].weeklyOrundum} increased weekly Orundum cap</div>
+              </InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{settings['New Annihilation'].biMonthlyOrundum / 60 + settings['New Annihilation'].weeklyOrundum / 7}</Orundum></span>
+          </label>
+        </div>
+
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <input 
@@ -25,10 +46,13 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
               checked={settings['Missions'].enabled}
               onChange={(e) => updateSetting('Missions', 'enabled', e.target.checked)}
             />
-            <span className="ak-aside-name">Missions</span>
-            <span className="ak-aside-value"><Orundum>{settings['Missions'].value}</Orundum></span>
+            <span className="ak-aside-name">
+              <InfoButton label="Daily & Weekly Missions">{settings['Missions'].weeklyOrundum} weekly Orundum</InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{settings['Missions'].weeklyOrundum / 7}</Orundum></span>
           </label>
         </div>
+
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <input 
@@ -36,8 +60,13 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
               checked={settings['Green Cert T1'].enabled}
               onChange={(e) => updateSetting('Green Cert T1', 'enabled', e.target.checked)}
             />
-            <span className="ak-aside-name">Green Cert T1</span>
-            <span className="ak-aside-value"><Orundum>{settings['Green Cert T1'].value}</Orundum></span>
+            <span className="ak-aside-name">
+              <InfoButton label="Commendations Store 1">
+                <div>{settings['Green Cert T1'].monthlyOrundum} monthly Orundum</div>
+                <div>+ {settings['Green Cert T1'].monthlyHH} monthly HH Permits</div>
+              </InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{settings['Green Cert T1'].monthlyOrundum / 30 + orundumFromHH(settings['Green Cert T1'].monthlyHH) / 30}</Orundum></span>
           </label>
         </div>
         <div className="ak-aside-item">
@@ -47,10 +76,15 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
               checked={settings['Green Cert T2'].enabled}
               onChange={(e) => updateSetting('Green Cert T2', 'enabled', e.target.checked)}
             />
-            <span className="ak-aside-name">Green Cert T2</span>
-            <span className="ak-aside-value"><Orundum>{settings['Green Cert T2'].value}</Orundum></span>
+            <span className="ak-aside-name">
+              <InfoButton label="Commendations Store 2">
+                {settings['Green Cert T2'].monthlyHH} monthly HH Permits
+              </InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{orundumFromHH(settings['Green Cert T2'].monthlyHH) / 30}</Orundum></span>
           </label>
         </div>
+
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <input 
@@ -58,52 +92,36 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
               checked={settings['Monthly Card'].enabled}
               onChange={(e) => updateSetting('Monthly Card', 'enabled', e.target.checked)}
             />
-            <span className="ak-aside-name">Monthly Card</span>
-            <span className="ak-aside-value"><Orundum>{settings['Monthly Card'].value}</Orundum></span>
+            <span className="ak-aside-name">
+              <InfoButton label="Monthly Card">
+                <div>{settings['Monthly Card'].dailyOrundum} daily Orundum</div>
+                <div>+ {settings['Monthly Card'].monthlyOP} monthly OP</div>
+              </InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{settings['Monthly Card'].dailyOrundum + orundumFromOP(settings['Monthly Card'].monthlyOP) / 30}</Orundum></span>
           </label>
         </div>
+
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <input 
               type="checkbox" 
-              checked={settings['OP from Monthly card'].enabled}
-              onChange={(e) => updateSetting('OP from Monthly card', 'enabled', e.target.checked)}
+              checked={settings['Monthly Login'].enabled}
+              onChange={(e) => updateSetting('Monthly Login', 'enabled', e.target.checked)}
             />
-            <span className="ak-aside-name">OP from Monthly card</span>
-            <span className="ak-aside-value"><Orundum>{settings['OP from Monthly card'].value}</Orundum></span>
-          </label>
-        </div>
-        <div className="ak-aside-item">
-          <label className="ak-aside-label">
-            <input 
-              type="checkbox" 
-              checked={settings['Orundum from new Anni every 2 months'].enabled}
-              onChange={(e) => updateSetting('Orundum from new Anni every 2 months', 'enabled', e.target.checked)}
-            />
-            <span className="ak-aside-name">Orundum from new Anni every 2 months</span>
-            <span className="ak-aside-value"><Orundum>{settings['Orundum from new Anni every 2 months'].value}</Orundum></span>
-          </label>
-        </div>
-        <div className="ak-aside-item">
-          <label className="ak-aside-label">
-            <input 
-              type="checkbox" 
-              checked={settings['1 HH from Monthly log in'].enabled}
-              onChange={(e) => updateSetting('1 HH from Monthly log in', 'enabled', e.target.checked)}
-            />
-            <span className="ak-aside-name">1 HH from Monthly log in</span>
-            <span className="ak-aside-value"><Orundum>{settings['1 HH from Monthly log in'].value}</Orundum></span>
+            <span className="ak-aside-name">
+              <InfoButton label="Daily Sign-in">
+                <div>{settings['Monthly Login'].monthlyHH} monthly HH Permit</div>
+              </InfoButton>
+            </span>
+            <span className="ak-aside-value"><Orundum>{orundumFromHH(settings['Monthly Login'].monthlyHH) / 30}</Orundum></span>
           </label>
         </div>
       </div>
       <div className="ak-aside-total">
         <div className="ak-aside-item">
           <div className="ak-aside-label">
-            <span className="ak-aside-name">
-              <InfoButton label="Total Orundum">
-                Total daily orundum: {settingsTotal} (sum of enabled sources)
-              </InfoButton>
-            </span>
+            <span className="ak-aside-name">Total Orundum</span>
             <span className="ak-aside-value"><Orundum withPulls pullsPrecision={1}>{settingsTotal}</Orundum></span>
           </div>
         </div>

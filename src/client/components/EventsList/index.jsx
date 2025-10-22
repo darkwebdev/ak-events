@@ -12,22 +12,8 @@ import { normalizeImageSrc } from '../../utils/images.js';
  */
 export function EventsList({ filteredEvents, selectedEvents, onEventToggle, settingsTotal, playerOrundumTotal: ownedOrundum }) {
   const totalEventsOrundum = calcTotalOrundum(filteredEvents, selectedEvents, 0, 0);
-  const totalEventsPulls = pullsFromOrundum(totalEventsOrundum);
   
-  // Calculate the maximum days between now and the latest selected event's effective start
-  // This ensures daily income is counted only up to selected events, not all future events.
   const selectedList = filteredEvents.filter(ev => selectedEvents.has(ev.name));
-  const eventStarts = selectedList.map(event => getEffectiveStart(event)).filter(Boolean);
-  const maxDays = eventStarts.length > 0
-    ? Math.max(...eventStarts.map(start => calculateDaysBetween(start)))
-    : 0;
-  const latestEventStart = eventStarts.length > 0
-    ? new Date(Math.max(...eventStarts.map(start => start.getTime())))
-    : null;
-  
-  const dailyOrundum = settingsTotal * maxDays;
-  const totalOrundum = calcTotalOrundum(filteredEvents, selectedEvents, dailyOrundum, ownedOrundum);
-  const totalPulls = pullsFromOrundum(totalOrundum);
 
   return (
     <div className="ak-events">
@@ -55,7 +41,10 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle, sett
                 }}
               >
                 <div className="ak-event">
-                  <div className="ak-event-title">{event.name}</div>
+                  <div className="ak-event-title">
+                    <span className="ak-event-name">{event.name}</span>
+                    {event.type && <span className="ak-event-type">{event.type}</span>}
+                  </div>
                   {event.image && (() => {
                     const raw = event.image;
                     const prefixed = (raw.startsWith('/') || raw.startsWith('http')) ? raw : `/data/images/${raw}`;
@@ -83,9 +72,7 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle, sett
 
       <div className="ak-events-footer">
         <div className="ak-events-footer-left">
-          <strong><InfoButton label="Total Orundum from events">
-            Amount of Orundum that can be earned from {selectedList.length} selected events
-          </InfoButton></strong>
+          <strong>Total Orundum from events</strong>
         </div>
         <div className="ak-events-footer-right">
           <Orundum withPulls>{totalEventsOrundum}</Orundum>

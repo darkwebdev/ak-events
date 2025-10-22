@@ -3,8 +3,11 @@
   --ak-font-family: Arial, sans-serif;
   --ak-font-size: 16px;
 }
+body {
+  margin: 0;
+}
+
 #ak-root {
-  padding: 18px;
   font-family: var(--ak-font-family);
   font-size: var(--ak-font-size);
   min-height: 100vh;
@@ -12,18 +15,19 @@
   flex-direction: column;
 }
 
-/* main content wrapper used by App.jsx */
 .ak-main-content {
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  margin-top: 4.5em;
 }
 
 .ak-aside-column {
+  position: fixed;
+  right: 1em;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 0 0 300px;
 }
 
 .ak-aside { 

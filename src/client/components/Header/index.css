@@ -1,1 +1,12 @@
-/* Header styles */
+.ak-header {
+    position: fixed;
+    padding: 1.5em 2em 2em;
+    width: 100%;
+    background: linear-gradient(to bottom, #fff 60%, #fff0);
+    z-index: 1;
+}
+
+h1 {
+    display: inline-block;
+    margin: 0;
+}

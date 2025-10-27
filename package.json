@@ -1,7 +1,6 @@
 {
   "name": "ak-events",
   "version": "1.0.0",
-  "type": "module",
   "description": "Website for Arknights events",
   "scripts": {
     "scrape": "node src/server/scrape.js",

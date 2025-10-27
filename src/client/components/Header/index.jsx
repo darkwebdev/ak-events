@@ -10,6 +10,7 @@ export function Header({ totalPulls }) {
   return (
     <header className="ak-header">
         <h1>Arknights Pull Prophecy</h1>
+        &nbsp;
         <PullCounter value={totalPulls} />
     </header>
   );

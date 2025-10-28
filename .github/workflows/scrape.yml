@@ -36,6 +36,6 @@ jobs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Update public/data/events.json and public/data/images with latest events"
+          git commit -m "Update events"
           git push
         fi

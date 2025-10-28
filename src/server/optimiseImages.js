@@ -1,9 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import * as JimpPkg from 'jimp';
-import { fileURLToPath } from 'url';
-
-const Jimp = (JimpPkg && (JimpPkg.Jimp || JimpPkg.default)) || JimpPkg;
+import { PNG } from 'pngjs';
+import jpegJs from 'jpeg-js';
 
 const defaultDir = () => path.join(process.cwd(), 'public/data/images');
 
@@ -14,41 +12,27 @@ async function processFile(file, dir) {
   const output = path.join(dir, `${base}.jpg`);
   if (ext === '.jpg' || ext === '.jpeg') return;
   if (fs.existsSync(output)) {
-    console.log('JPG exists, skipping', output);
+    // already converted
     return;
   }
+
   try {
-    if (!Jimp || (typeof Jimp.read !== 'function' && typeof Jimp !== 'function'))
-      throw new Error('Jimp.read not available');
-    let image;
-    if (typeof Jimp.read === 'function') {
-      image = await Jimp.read(input);
-    } else if (typeof Jimp === 'function' && typeof Jimp.create === 'function') {
-      image = await new Promise((resolve, reject) => {
-        Jimp.create(input, (err, img) => (err ? reject(err) : resolve(img)));
-      });
-    } else {
-      // try Jimp.Jimp.read
-      const J = Jimp.Jimp || Jimp;
-      if (J && typeof J.read === 'function') image = await J.read(input);
-      else throw new Error('Jimp.read not available');
+    // Only handle PNG files using pngjs. For other formats (webp/gif) we skip.
+    if (ext === '.png') {
+      const inputBuf = fs.readFileSync(input);
+      const png = PNG.sync.read(inputBuf);
+      // png.data is RGBA Buffer
+      const { data, width, height } = png;
+      const encoded = jpegJs.encode({ data, width, height }, 80);
+      fs.writeFileSync(output, encoded.data);
+      return true;
     }
-    try {
-      if (typeof image.background === 'function') image.background(0xffffffff);
-    } catch (e) {}
-    if (typeof image.quality === 'function' && typeof image.writeAsync === 'function') {
-      await image.quality(80).writeAsync(output);
-    } else if (typeof image.quality === 'function' && typeof image.write === 'function') {
-      image.quality(80).write(output);
-    } else if (typeof image.getBufferAsync === 'function') {
-      const buf = await image.getBufferAsync(Jimp.MIME_JPEG);
-      fs.writeFileSync(output, buf);
-    } else {
-      throw new Error('No supported write method on Jimp image');
-    }
-    console.log('Converted', input, '->', output);
+
+    console.warn('unsupported format for conversion:', input);
+    return false;
   } catch (e) {
     console.error('Failed to convert', input, e && e.message);
+    return false;
   }
 }
 
@@ -59,19 +43,15 @@ export async function main(dirArg) {
     return;
   }
   const files = fs.readdirSync(dirToUse);
+  let convertedCount = 0;
   for (const f of files) {
     const ext = path.extname(f).toLowerCase();
     if (['.png', '.webp', '.gif', '.jpeg'].includes(ext)) {
-      await processFile(f, dirToUse);
+      // do not parallelize to avoid memory spikes
+      // eslint-disable-next-line no-await-in-loop
+      const ok = await processFile(f, dirToUse);
+      if (ok) convertedCount += 1;
     }
   }
-}
-
-// If run as CLI, execute
-const __filename = fileURLToPath(import.meta.url);
-if (process.argv[1] === __filename) {
-  main().catch((err) => {
-    console.error('optimiseImages failed:', err && err.message);
-    process.exit(1);
-  });
+  return convertedCount;
 }

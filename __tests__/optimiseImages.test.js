@@ -1,55 +1,50 @@
 const fs = require('fs');
 const path = require('path');
-// execSync not needed for this test
-
-// Small 1x1 PNG pixel (red) as Buffer
-const onePixelPng = Buffer.from([
-  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
-  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
-  0xde, 0x00, 0x00, 0x00, 0x0a, 0x49, 0x44, 0x41, 0x54, 0x08, 0xd7, 0x63, 0xf8, 0xcf, 0x00, 0x00,
-  0x04, 0x00, 0x01, 0x45, 0x3a, 0x2b, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42,
-  0x60, 0x82,
-]);
 
 describe('optimiseImages script', () => {
+  // allow longer for image processing in CI environments
+  jest.setTimeout(20000);
   const tmpDir = path.join(__dirname, 'tmp-images');
-  beforeAll(() => {
+  beforeAll(async () => {
     if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
-    fs.writeFileSync(path.join(tmpDir, 'test.png'), onePixelPng);
+    // create a tiny valid PNG using pngjs to ensure it's readable by pngjs
+    // eslint-disable-next-line global-require
+    const { PNG } = require('pngjs');
+    const png = new PNG({ width: 1, height: 1 });
+    // RGBA: red pixel
+    png.data[0] = 255; // R
+    png.data[1] = 0; // G
+    png.data[2] = 0; // B
+    png.data[3] = 255; // A
+    const outPath = path.join(tmpDir, 'test.png');
+    const buffer = PNG.sync.write(png);
+    require('fs').writeFileSync(outPath, buffer);
   });
 
   afterAll(() => {
-    // cleanup
-    try {
-      const files = fs.readdirSync(tmpDir);
-      for (const f of files) fs.unlinkSync(path.join(tmpDir, f));
-      fs.rmdirSync(tmpDir);
-    } catch (e) {}
+    cleanup(tmpDir);
   });
 
-  test('creates jpg from png when jimp is available', async () => {
-    // Skip test if jimp not installed
-    let jimpAvailable = true;
+  // helper to remove all files in a temp dir and then the dir itself
+  function cleanup(dir) {
     try {
-      require.resolve('jimp');
+      if (!fs.existsSync(dir)) return;
+      const files = fs.readdirSync(dir);
+      for (const f of files) fs.unlinkSync(path.join(dir, f));
+      fs.rmdirSync(dir);
     } catch (e) {
-      jimpAvailable = false;
+      // ignore cleanup failures in tests
     }
-    if (!jimpAvailable) {
-      console.warn('jimp not installed; skipping optimiseImages test');
-      return;
-    }
+  }
 
-    // programmatically call the CJS module main() function
-    let mod;
-    try {
-      mod = await import('../src/server/optimiseImages.js');
-    } catch (e) {
-      console.warn('optimiseImages module not available via import, skipping');
-      return;
-    }
-    const main = mod.main || mod.default || mod;
-    await main(tmpDir);
+  test('creates jpg from png', async () => {
+    // Import the module at test-time; the module is import-safe and will not
+    // execute work on import.
+    // eslint-disable-next-line global-require
+    const { main } = require('../src/server/optimiseImages.js');
+    const converted = await main(tmpDir);
+    expect(typeof converted).toBe('number');
+    expect(converted).toBeGreaterThan(0);
 
     const jpgPath = path.join(tmpDir, 'test.jpg');
     expect(fs.existsSync(jpgPath)).toBe(true);

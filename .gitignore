@@ -10,3 +10,4 @@ public/data/events_index.json
 *storybook.log
 storybook-static
 .DS_Store
+/images/

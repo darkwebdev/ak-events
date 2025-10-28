@@ -25,6 +25,9 @@ jobs:
     - name: Run scraper
       run: yarn scrape
 
+    - name: Optimise downloaded images
+      run: yarn optimise-images
+
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"

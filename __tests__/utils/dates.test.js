@@ -1,4 +1,10 @@
-const { getEffectiveStart, getEffectiveEnd, formatEventDates } = require('../../src/client/utils/dates.cjs')
+let getEffectiveStart, getEffectiveEnd, formatEventDates;
+beforeAll(async () => {
+  const mod = await import('../../src/client/utils/dates.js');
+  getEffectiveStart = mod.getEffectiveStart;
+  getEffectiveEnd = mod.getEffectiveEnd;
+  formatEventDates = mod.formatEventDates;
+});
 
 describe('date utils', () => {
   test('prefers global start/end when present', () => {

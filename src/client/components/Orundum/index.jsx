@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Pulls } from '../Pulls';
 import { pullsFromOrundum } from '../../utils/orundum';
 
@@ -7,7 +7,7 @@ import { pullsFromOrundum } from '../../utils/orundum';
  * @param {number} orundum - Orundum amount
  * @returns {string} Formatted string with pulls
  */
-export const Orundum = ({ children = 0, withPulls = false, pullsPrecision = 0 }) => {
+export function Orundum({ children = 0, withPulls = false, pullsPrecision = 0 }) {
   const orundum = parseInt(children, 10);
   const pulls = pullsFromOrundum(orundum, pullsPrecision);
   if (!withPulls || pulls === 0) {
@@ -18,4 +18,4 @@ export const Orundum = ({ children = 0, withPulls = false, pullsPrecision = 0 })
       {orundum}&nbsp;(<Pulls>{pulls}</Pulls>)
     </>
   );
-};
+}

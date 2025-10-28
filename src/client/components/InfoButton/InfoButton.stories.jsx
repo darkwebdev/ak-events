@@ -1,12 +1,14 @@
 import React from 'react';
-import { InfoButton } from ".";
+import { InfoButton } from '.';
 
 export default {
   title: 'Components/InfoButton',
   component: InfoButton,
 };
 
-const Template = (args) => <InfoButton {...args}>{args.children || 'This is a tooltip content'}</InfoButton>;
+function Template(args) {
+  return <InfoButton {...args}>{args.children || 'This is a tooltip content'}</InfoButton>;
+}
 
 export const Default = Template.bind({});
 Default.args = {
@@ -23,7 +25,8 @@ export const LongContent = Template.bind({});
 LongContent.args = {
   title: 'Detailed Information',
   label: 'More details',
-  children: 'This is a longer tooltip content that provides more detailed information about the feature. It can span multiple lines and include more comprehensive explanations.',
+  children:
+    'This is a longer tooltip content that provides more detailed information about the feature. It can span multiple lines and include more comprehensive explanations.',
 };
 
 export const ShortLabel = Template.bind({});
@@ -35,6 +38,8 @@ ShortLabel.args = {
 export const LongLabel = Template.bind({});
 LongLabel.args = {
   title: 'Detailed Information',
-  label: 'This is a longer tooltip content that provides more detailed information about the feature. It can span multiple lines and include more comprehensive explanations.',
-  children: 'This is a longer tooltip content that provides more detailed information about the feature. It can span multiple lines and include more comprehensive explanations.',
+  label:
+    'This is a longer tooltip content that provides more detailed information about the feature. It can span multiple lines and include more comprehensive explanations.',
+  children:
+    'This is a longer tooltip content that provides more detailed information about the feature. It can span multiple lines and include more comprehensive explanations.',
 };

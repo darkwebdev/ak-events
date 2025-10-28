@@ -1,5 +1,3 @@
-import { func } from "prop-types";
-
 /**
  * Calculate total orundum from events, daily, and owned
  * @param {Object[]} events - Array of event objects with .orundum
@@ -23,7 +21,7 @@ export function calcTotalOrundum(events, selectedEvents, dailyOrundum, ownedOrun
  * @param {number} orundum
  * @returns {number} Pulls
  */
-export function pullsFromOrundum(orundum, precision=0) {
+export function pullsFromOrundum(orundum, precision = 0) {
   return Number((orundum / 600).toFixed(precision));
 }
 /**
@@ -39,17 +37,19 @@ export function calcDailyOrundum(settings) {
   return Object.values(settings).reduce((total, value) => {
     if (!value.enabled) return total;
 
-    return total +
+    return (
+      total +
       (value.dailyOrundum || 0) +
       (value.weeklyOrundum ? value.weeklyOrundum / 7 : 0) +
       (value.biMonthlyOrundum ? value.biMonthlyOrundum / 60 : 0) +
       (value.monthlyOP ? orundumFromOP(value.monthlyOP) / 30 : 0) +
-      (value.monthlyHH ? orundumFromHH(value.monthlyHH) / 30 : 0);
+      (value.monthlyHH ? orundumFromHH(value.monthlyHH) / 30 : 0)
+    );
   }, 0);
 }
 
 export function orundumFromOP(origPrime = 0) {
-  return origPrime*180;
+  return origPrime * 180;
 }
 
 export function orundumFromHH(hhPermits = 0) {

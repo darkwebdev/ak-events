@@ -1,19 +1,23 @@
 import React from 'react';
-import { calcTotalOrundum, pullsFromOrundum } from '../../utils/orundum.js';
-import { formatEventDates, calculateDaysBetween, getEffectiveStart, getEffectiveEnd } from '../../utils/dates.js';
-import { InfoButton } from "../InfoButton";
+import { calcTotalOrundum } from '../../utils/orundum.js';
+import { getEffectiveStart, getEffectiveEnd } from '../../utils/dates.js';
 import { Orundum } from '../Orundum';
 import './index.css';
-import { Breakdown } from '../Breakdown/index.jsx';
-import { normalizeImageSrc } from '../../utils/images.js';
+import { jpgifyLocal } from '../../utils/images.js';
 
 /**
  * Component for displaying events list with calculations
  */
-export function EventsList({ filteredEvents, selectedEvents, onEventToggle, settingsTotal, playerOrundumTotal: ownedOrundum }) {
+export function EventsList({
+  filteredEvents,
+  selectedEvents,
+  onEventToggle,
+  settingsTotal,
+  playerOrundumTotal: ownedOrundum,
+}) {
   const totalEventsOrundum = calcTotalOrundum(filteredEvents, selectedEvents, 0, 0);
-  
-  const selectedList = filteredEvents.filter(ev => selectedEvents.has(ev.name));
+
+  // derived list left intentionally unused for now (kept for future UI)
 
   return (
     <div className="ak-events">
@@ -21,7 +25,7 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle, sett
         <div className="ak-empty-row">No upcoming events</div>
       ) : (
         <ul className="ak-events-list">
-          {filteredEvents.map(event => {
+          {filteredEvents.map((event) => {
             const start = getEffectiveStart(event);
             const end = getEffectiveEnd(event);
             const startStr = start ? start.toLocaleDateString() : 'Unknown';
@@ -29,7 +33,9 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle, sett
             return (
               <li
                 key={event.name}
-                className={`ak-events-list-item ${selectedEvents.has(event.name) ? 'selected' : ''}`}
+                className={`ak-events-list-item ${
+                  selectedEvents.has(event.name) ? 'selected' : ''
+                }`}
                 role="button"
                 tabIndex={0}
                 onClick={() => onEventToggle(event.name)}
@@ -45,23 +51,32 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle, sett
                     <span className="ak-event-name">{event.name}</span>
                     {event.type && <span className="ak-event-type">{event.type}</span>}
                   </div>
-                  {event.image && (() => {
-                    const raw = event.image;
-                    const prefixed = (raw.startsWith('/') || raw.startsWith('http')) ? raw : `/data/images/${raw}`;
-                    const imgSrc = normalizeImageSrc(prefixed);
-                    return (
-                      <div className="ak-event-image-wrap">
-                        <img
-                          className="ak-event-image"
-                          src={imgSrc}
-                          alt={`${event.name} banner`}
-                        />
-                      </div>
-                    );
-                  })()}
+                  {event.image &&
+                    (() => {
+                      const raw = event.image;
+                      const prefixed =
+                        raw.startsWith('/') || raw.startsWith('http') ? raw : `/data/images/${raw}`;
+                      // prefer jpg sibling for display, but link to original image
+                      const { displaySrc, originalSrc } = jpgifyLocal(prefixed);
+                      return (
+                        <div className="ak-event-image-wrap">
+                          <a href={originalSrc} target="_blank" rel="noopener noreferrer">
+                            <img
+                              className="ak-event-image"
+                              src={displaySrc}
+                              alt={`${event.name} banner`}
+                            />
+                          </a>
+                        </div>
+                      );
+                    })()}
                   <div className="ak-event-meta">
-                    <div className="ak-event-date">{startStr} - {endStr}</div>
-                    <div className="ak-event-orundum"><Orundum withPulls>{event.orundum}</Orundum></div>
+                    <div className="ak-event-date">
+                      {startStr} - {endStr}
+                    </div>
+                    <div className="ak-event-orundum">
+                      <Orundum withPulls>{event.orundum}</Orundum>
+                    </div>
                   </div>
                 </div>
               </li>

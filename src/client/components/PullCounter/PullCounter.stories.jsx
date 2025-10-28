@@ -18,5 +18,9 @@ export const Default = {
   },
 };
 
-export const OneToTen = () => <PullCounter value={10} />;
-export const Five = () => <PullCounter value={5} />;
+export function OneToTen() {
+  return <PullCounter value={10} />;
+}
+export function Five() {
+  return <PullCounter value={5} />;
+}

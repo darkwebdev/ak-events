@@ -4,9 +4,9 @@ import { calcDailyOrundum } from '../../utils/orundum.js';
 
 // Mock settings for DailyOrundum story
 const mockSettings = {
-  'Annihilation': { weeklyOrundum: 1700, enabled: true },
+  Annihilation: { weeklyOrundum: 1700, enabled: true },
   'New Annihilation': { biMonthlyOrundum: 1500, weeklyOrundum: 100, enabled: true },
-  'Missions': { weeklyOrundum: 1200, enabled: true },
+  Missions: { weeklyOrundum: 1200, enabled: true },
   'Green Cert T1': { monthlyOrundum: 600, monthlyHH: 2, enabled: false },
   'Green Cert T2': { monthlyHH: 2, enabled: false },
   'Monthly Card': { dailyOrundum: 200, monthlyOP: 6, enabled: true },
@@ -19,18 +19,20 @@ export default {
   component: DailyOrundum,
 };
 
-export const Default = () => (
-  <DailyOrundum
-    settings={mockSettings}
-    updateSetting={() => {}}
-    settingsTotal={mockSettingsTotal}
-  />
-);
+export function Default() {
+  return (
+    <DailyOrundum
+      settings={mockSettings}
+      updateSetting={() => {}}
+      settingsTotal={mockSettingsTotal}
+    />
+  );
+}
 
 const allEnabledSettings = {
-  'Annihilation': { weeklyOrundum: 1700, enabled: true },
+  Annihilation: { weeklyOrundum: 1700, enabled: true },
   'New Annihilation': { biMonthlyOrundum: 1500, weeklyOrundum: 100, enabled: true },
-  'Missions': { weeklyOrundum: 1200, enabled: true },
+  Missions: { weeklyOrundum: 1200, enabled: true },
   'Green Cert T1': { monthlyOrundum: 600, monthlyHH: 2, enabled: true },
   'Green Cert T2': { monthlyHH: 2, enabled: true },
   'Monthly Card': { dailyOrundum: 200, monthlyOP: 6, enabled: true },
@@ -38,28 +40,26 @@ const allEnabledSettings = {
 };
 const allEnabledTotal = calcDailyOrundum(allEnabledSettings);
 
-export const AllEnabled = () => (
-  <DailyOrundum
-    settings={allEnabledSettings}
-    updateSetting={() => {}}
-    settingsTotal={allEnabledTotal}
-  />
-);
+export function AllEnabled() {
+  return (
+    <DailyOrundum
+      settings={allEnabledSettings}
+      updateSetting={() => {}}
+      settingsTotal={allEnabledTotal}
+    />
+  );
+}
 
 const noneEnabledSettings = {
-  'Annihilation': { weeklyOrundum: 1700, enabled: false },
+  Annihilation: { weeklyOrundum: 1700, enabled: false },
   'New Annihilation': { biMonthlyOrundum: 1500, weeklyOrundum: 100, enabled: false },
-  'Missions': { weeklyOrundum: 1200, enabled: false },
+  Missions: { weeklyOrundum: 1200, enabled: false },
   'Green Cert T1': { monthlyOrundum: 600, monthlyHH: 2, enabled: false },
   'Green Cert T2': { monthlyHH: 2, enabled: false },
   'Monthly Card': { dailyOrundum: 200, monthlyOP: 6, enabled: false },
   'Monthly Login': { monthlyHH: 1, enabled: false },
 };
 
-export const NoneEnabled = () => (
-  <DailyOrundum
-    settings={noneEnabledSettings}
-    updateSetting={() => {}}
-    settingsTotal={0}
-  />
-);
+export function NoneEnabled() {
+  return <DailyOrundum settings={noneEnabledSettings} updateSetting={() => {}} settingsTotal={0} />;
+}

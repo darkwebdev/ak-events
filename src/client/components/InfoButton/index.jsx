@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 import {
   useFloating,
   offset,
@@ -10,13 +10,13 @@ import {
   useHover,
   useClick,
   useInteractions,
-} from "@floating-ui/react";
-import "./index.css";
+} from '@floating-ui/react';
+import './index.css';
 
 const ARROW_HEIGHT = 7;
 const GAP = 2;
 
-export const InfoButton = ({ children, title, label }) => {
+export function InfoButton({ children, title, label }) {
   const [open, setOpen] = useState(false);
   const arrowRef = useRef(null);
   const { refs, context, floatingStyles } = useFloating({
@@ -29,7 +29,7 @@ export const InfoButton = ({ children, title, label }) => {
       arrow({ element: arrowRef }),
     ],
     whileElementsMounted: autoUpdate,
-    placement: "bottom",
+    placement: 'bottom',
   });
   const hover = useHover(context, { delay: { open: 50, close: 100 } });
   const click = useClick(context);
@@ -37,12 +37,8 @@ export const InfoButton = ({ children, title, label }) => {
 
   return (
     <span className="info-button-wrapper">
-      <span
-        className="info-button"
-        ref={refs.setReference}
-        {...getReferenceProps()}
-      >
-          {label}
+      <span className="info-button" ref={refs.setReference} {...getReferenceProps()}>
+        {label}
       </span>
       {open && (
         <div

@@ -1,4 +1,5 @@
-const { JSDOM } = require('jsdom');
+import { JSDOM } from 'jsdom';
+import { wikiBase } from '../config.js';
 
 // (Table-aware parseIndexHtml removed from this position; the exported version lives further down.)
 
@@ -236,7 +237,6 @@ function parseEventFromHtml(html) {
 // Returns array of { name, dateStr, type, image, link } where dateStr is the raw cell text.
 function parseIndexHtml(html) {
   if (!html) return [];
-  const { JSDOM } = require('jsdom');
   const clean = (html || '').replace(/<style[\s\S]*?<\/style>/gi, '');
   const dom = new JSDOM(clean);
   const doc = dom.window.document;
@@ -301,7 +301,7 @@ function parseIndexHtml(html) {
 
       if (link && link.startsWith('/')) {
         try {
-          link = new URL(link, require('../config').wikiBase).toString();
+          link = new URL(link, wikiBase).toString();
         } catch (e) {
           /* ignore */
         }
@@ -326,7 +326,15 @@ function parseIndexHtml(html) {
 }
 
 // Consolidated exports: provide all public functions from this module
-module.exports = {
+export {
+  extractOrigPrimeFromHtml,
+  extractHhPermitsFromHtml,
+  extractEventTypeFromHtml,
+  parseEventFromHtml,
+  parseIndexHtml,
+};
+
+export default {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractEventTypeFromHtml,

@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -19,4 +19,6 @@ function fileExists(filepath) {
   return fs.existsSync(filepath);
 }
 
-module.exports = { ensureDir, saveJson, saveText, fileExists };
+export { ensureDir, saveJson, saveText, fileExists };
+
+export default { ensureDir, saveJson, saveText, fileExists };

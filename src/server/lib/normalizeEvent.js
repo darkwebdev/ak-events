@@ -59,4 +59,6 @@ function normalizeEvent(raw) {
   return out;
 }
 
-module.exports = { normalizeEvent };
+export { normalizeEvent };
+
+export default { normalizeEvent };

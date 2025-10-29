@@ -1,13 +1,18 @@
-const { parseEventFromHtml } = require('./lib/parser');
-const { downloadImage, fetchEventDetailsViaApi, fetchEventsViaApi } = require('./lib/network');
-const { ensureDir, saveJson, fileExists } = require('./lib/storage');
+import { parseEventFromHtml } from './lib/parser.js';
+import {
+  downloadImage,
+  fetchEventDetailsViaApi,
+  fetchEventsViaApi,
+  fetchUpcomingViaApi,
+} from './lib/network.js';
+import { ensureDir, saveJson, fileExists } from './lib/storage.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
 
 async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
-  const { applyRerunSuffix } = require('./lib/wiki');
+  const { applyRerunSuffix } = (await import('./lib/wiki.js')).default;
 
   const fetchAndParseEvent = async (event) => {
     // Skip fetching the wiki page if we already have both values
@@ -45,7 +50,7 @@ async function scrapeEvents() {
       // '/Rerun' or '_Rerun' page lacks store/priming info but the original page
       // contains it.
       try {
-        const wiki = require('./lib/wiki');
+        const wiki = (await import('./lib/wiki.js')).default;
         if (wiki.isRerunLink(event.link) && (event.origPrime == null || event.hhPermits == null)) {
           const originalTitle = wiki.titleFromUrl(event.link);
           if (originalTitle) {
@@ -80,7 +85,6 @@ async function scrapeEvents() {
   const events = (await fetchEventsViaApi()) || [];
   // Also fetch the CN 'Upcoming' page and merge events that aren't already present.
   try {
-    const { fetchUpcomingViaApi } = require('./lib/network');
     const cnUpcoming = await fetchUpcomingViaApi();
     if (Array.isArray(cnUpcoming) && cnUpcoming.length) {
       for (const ce of cnUpcoming) {

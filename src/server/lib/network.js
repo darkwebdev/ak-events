@@ -1,14 +1,8 @@
 import https from 'https';
 import fs from 'fs';
 import { wikiApiBase, wikiBase, indexUrl } from '../config.js';
-// parser is used to parse index HTML returned by the wiki API
 import { parseIndexHtml } from './parser.js';
 
-// Note: raw HTML fetching removed; we rely on the wiki API parse endpoints instead.
-
-// Note: anti-bot HTML detection has been removed; network helpers now rely on API JSON responses.
-
-// Fetch parsed HTML via the wiki API (action=parse) for a given page title
 function fetchWikiApi(title) {
   return new Promise((resolve, reject) => {
     // Ensure title is not double-encoded (some links include percent-encoding like %27)
@@ -153,14 +147,6 @@ async function fetchUpcomingViaApi() {
 }
 
 export {
-  fetchWikiApi,
-  downloadImage,
-  fetchEventDetailsViaApi,
-  fetchEventsViaApi,
-  fetchUpcomingViaApi,
-};
-
-export default {
   fetchWikiApi,
   downloadImage,
   fetchEventDetailsViaApi,

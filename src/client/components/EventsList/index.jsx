@@ -53,20 +53,15 @@ export function EventsList({
                   </div>
                   {event.image &&
                     (() => {
-                      const raw = event.image;
-                      const prefixed =
-                        raw.startsWith('/') || raw.startsWith('http') ? raw : `/data/images/${raw}`;
-                      // prefer jpg sibling for display, but link to original image
-                      const { displaySrc, originalSrc } = jpgifyLocal(prefixed);
+                      // Let jpgifyLocal normalize and prefix the image path correctly
+                      const { displaySrc } = jpgifyLocal(event.image);
                       return (
                         <div className="ak-event-image-wrap">
-                          <a href={originalSrc} target="_blank" rel="noopener noreferrer">
-                            <img
-                              className="ak-event-image"
-                              src={displaySrc}
-                              alt={`${event.name} banner`}
-                            />
-                          </a>
+                          <img
+                            className="ak-event-image"
+                            src={displaySrc}
+                            alt={`${event.name} banner`}
+                          />
                         </div>
                       );
                     })()}

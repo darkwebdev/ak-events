@@ -191,25 +191,21 @@ async function scrapeEvents() {
 
   console.log('Processed events:', processed);
 
-  // Save to public/data/events.json so the client can fetch /data/events.json
   ensureDir('public/data/images');
   saveJson('public/data/events.json', processed);
   console.log('Saved all events to public/data/events.json');
 
-  // Download images uses downloadImage from lib/network.js
-
   for (const event of processed) {
     if (event.image) {
-      // if image already points to local file, skip
       // If the event.image already looks like a public URL (/data/images/...),
       // derive the disk path and skip if present
-      if (event.image.startsWith('/data/images/')) {
+      if (event.image.startsWith('/data/images/') || event.image.startsWith('data/images/')) {
         const filename = event.image.split('/').pop();
         const diskPath = `public/data/images/${filename}`;
         if (fileExists(diskPath)) {
           console.log('Image for', event.name, 'already local:', diskPath);
-          // ensure the client-facing URL is normalized
-          event.image = `/data/images/${filename}`;
+          // store project-relative path (no leading slash) so client prefixes base
+          event.image = `data/images/${filename}`;
           continue;
         }
       }
@@ -221,13 +217,12 @@ async function scrapeEvents() {
       // skip download if file exists already
       if (fileExists(filepath)) {
         console.log('Skipping download; local image exists for', event.name, filepath);
-        event.image = `/data/images/${filename}`;
+        event.image = `data/images/${filename}`;
         continue;
       }
       try {
         await downloadImage(event.image, filepath);
-        // update to public-facing URL
-        event.image = `/data/images/${filename}`;
+        event.image = `data/images/${filename}`;
         console.log('Downloaded image for', event.name);
       } catch (err) {
         console.error('Error downloading image for', event.name, err.message);

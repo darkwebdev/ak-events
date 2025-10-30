@@ -7,15 +7,16 @@ export function normalizeImageSrc(raw) {
   if (!raw) return null;
   // If it's already a remote URL, just encode and return.
   if (raw.startsWith('http')) return encodeURI(raw);
-  const BASE = '/';
+  const BASE = getBase();
   // If it's an absolute path starting with '/' and the BASE is not root,
   // prefix it with BASE so GitHub Pages project sites resolve correctly.
   if (raw.startsWith('/')) {
     if (BASE === '/' || raw.startsWith(BASE)) return encodeURI(raw);
     return encodeURI(BASE + raw.replace(/^\//, ''));
   }
-  // Otherwise we expect stored images to live under /data/images/
-  return encodeURI(`${BASE}data/images/${raw.replace(/^\//, '')}`);
+  // Otherwise we expect stored images to live under data/images/ (project-relative)
+  const rel = raw.startsWith('data/') ? raw : `data/images/${raw.replace(/^\//, '')}`;
+  return encodeURI(BASE === '/' ? `/${rel}` : `${BASE}${rel}`);
 }
 
 /**
@@ -25,13 +26,10 @@ export function normalizeImageSrc(raw) {
  */
 export function jpgifyLocal(raw) {
   if (!raw) return { displaySrc: null, originalSrc: null };
-  const isRemote = raw.startsWith('http');
-  const BASE = '/';
+  const BASE = getBase();
   // normalize prefix
   let pref = raw;
-  if (!isRemote && !raw.startsWith('/')) pref = `/data/images/${raw}`;
-  // If remote, just return same for both
-  if (isRemote) return { displaySrc: encodeURI(pref), originalSrc: encodeURI(pref) };
+  if (!raw.startsWith('/')) pref = raw.startsWith('data/') ? `/${raw}` : `/data/images/${raw}`;
   // derive jpg path
   const parts = pref.split('/');
   const last = parts.pop();
@@ -44,4 +42,27 @@ export function jpgifyLocal(raw) {
   return { displaySrc: encodeURI(display), originalSrc: encodeURI(original) };
 }
 
-// (ESM module) no CommonJS fallback to avoid duplicated logic
+function getBase() {
+  // Safe base detection for browser (document.baseURI) and test/node (process.env)
+  let BASE = '/';
+  try {
+    if (typeof document !== 'undefined' && document.baseURI) {
+      try {
+        const parsed = new URL(document.baseURI);
+        BASE = parsed.pathname || '/';
+      } catch (e) {
+        // ignore
+      }
+      if (!BASE.endsWith('/')) BASE += '/';
+    }
+  } catch (e) {}
+  if (
+    (typeof BASE === 'undefined' || BASE === '/') &&
+    typeof process !== 'undefined' &&
+    process.env &&
+    process.env.BASE_URL
+  ) {
+    BASE = process.env.BASE_URL;
+  }
+  return BASE;
+}

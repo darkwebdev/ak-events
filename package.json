@@ -65,7 +65,7 @@
     "deploy:ci": "echo 'CI should publish ./dist to GitHub Pages'",
     "preview": "cd src/client && vite preview --port 5173",
     "start": "cd src/client && vite preview --port 5173",
-    "stop": "echo 'To stop the server, press Ctrl+C in the terminal running the server'",
+    "stop": "node scripts/stop-server.js",
     "test": "jest --runInBand",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build"

@@ -119,7 +119,10 @@ async function scrapeEvents() {
     saveJson('public/data/events.json', events);
   }
 
-  console.log('Scraped events:', events);
+  console.log(
+    `Scraped ${events.length} events:`,
+    events.map((e) => e.name)
+  );
 
   // Process events
   const processed = events.map((event) => {
@@ -188,7 +191,7 @@ async function scrapeEvents() {
     };
   });
 
-  console.log('Processed events:', processed);
+  console.log(`Processed ${processed.length} events`);
 
   ensureDir('public/data/images');
   saveJson('public/data/events.json', processed);

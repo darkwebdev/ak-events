@@ -1,5 +1,6 @@
 import https from 'https';
 import fs from 'fs';
+import path from 'path';
 import { wikiApiBase, wikiBase, indexUrl } from '../config.js';
 import { parseIndexHtml } from './parser.js';
 
@@ -59,7 +60,7 @@ function downloadImage(url, filepath) {
     https
       .get(url, options, (res) => {
         if (res.statusCode === 200) {
-          const dir = require('path').dirname(filepath);
+          const dir = path.dirname(filepath);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
           const file = fs.createWriteStream(filepath);
           res.pipe(file);

@@ -51,8 +51,5 @@ module.exports = {
     'react/no-array-index-key': 'off',
     'react/destructuring-assignment': 'off',
     'prefer-const': 'warn',
-
-    // Enable the custom rule from the local rules directory
-    'no-duplicate-exports': 'error',
   },
 };

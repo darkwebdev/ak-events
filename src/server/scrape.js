@@ -6,13 +6,12 @@ import {
   fetchUpcomingViaApi,
 } from './lib/network.js';
 import { ensureDir, saveJson, fileExists } from './lib/storage.js';
+import { applyRerunSuffix } from './lib/wiki.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
 
 async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
-
-  const { applyRerunSuffix } = (await import('./lib/wiki.js')).default;
 
   const fetchAndParseEvent = async (event) => {
     // Skip fetching the wiki page if we already have both values
@@ -128,7 +127,7 @@ async function scrapeEvents() {
     const parseDateRange = (dateStr) => {
       if (!dateStr) return { start: null, end: null };
 
-      const m = dateStr.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/g);
+      const m = dateStr.match(/(\d{4})[/-](\d{1,2})[/-](\d{1,2})/g);
       if (m && m.length > 0) {
         // first match is start
         const s = m[0];
@@ -170,7 +169,7 @@ async function scrapeEvents() {
 
     // Strip common rerun markers from the event name for the final output
     const cleanedName = (event.name || '')
-      .replace(/(?:\s*\(Rerun\)|[\/\-_\s]+Rerun|\s*:\s*Re-run)/gi, '')
+      .replace(/(?:\s*\(Rerun\)|[/\-_\s]+Rerun|\s*:\s*Re-run)/gi, '')
       .trim();
 
     return {

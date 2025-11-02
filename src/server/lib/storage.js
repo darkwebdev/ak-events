@@ -20,5 +20,3 @@ function fileExists(filepath) {
 }
 
 export { ensureDir, saveJson, saveText, fileExists };
-
-export default { ensureDir, saveJson, saveText, fileExists };

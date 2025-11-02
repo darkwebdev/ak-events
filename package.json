@@ -37,9 +37,8 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
+      "node ./scripts/lint-with-local-rules.cjs --fix",
+      "prettier --write"
     ],
     "**/*.{css,json,md}": [
       "prettier --write",
@@ -54,8 +53,8 @@
   "scripts": {
     "prepare": "husky install",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "lint": "eslint \"src/**/*.{js,jsx}\" \"__tests__/**/*.{js,jsx}\"",
-    "lint:fix": "eslint \"src/**/*.{js,jsx}\" \"__tests__/**/*.{js,jsx}\" --fix",
+    "lint": "node ./scripts/lint-with-local-rules.cjs",
+    "lint:fix": "node ./scripts/lint-with-local-rules.cjs --fix",
     "scrape": "node src/server/scrape.js",
     "optimise-images": "node scripts/optimiseImages.js",
     "emulate-action": "yarn scrape && (git diff --quiet public/data/events.json || echo 'public/data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
@@ -74,5 +73,9 @@
     "transform": {
       "^.+\\.[tj]sx?$": "babel-jest"
     }
+  },
+  "engines": {
+    "yarn": "< 2",
+    "node": ">= 22"
   }
 }

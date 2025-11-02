@@ -13,7 +13,7 @@ function titleFromUrl(fetchUrl) {
   // If a full URL, strip the wiki base first
   if (cleaned.startsWith(wikiBase)) cleaned = cleaned.replace(wikiBase, '');
   // Remove any trailing Rerun variants: '/', '_', '-', space or URL-encoded space before 'Rerun'
-  cleaned = cleaned.replace(/(?:[\/_\-\s]|%20)?Rerun$/i, '');
+  cleaned = cleaned.replace(/(?:[/_\-\s]|%20)?Rerun$/i, '');
   // Ensure no leading slash remains
   if (cleaned.startsWith('/')) cleaned = cleaned.slice(1);
   return cleaned;
@@ -26,7 +26,7 @@ function isRerunLink(fetchUrl) {
     cleaned = decodeURIComponent(cleaned);
   } catch (e) {}
   // Only examine the tail of the path/title for 'Rerun' variants
-  return /(?:[\/_\-\s]|%20)?Rerun$/i.test(cleaned);
+  return /(?:[/_\-\s]|%20)?Rerun$/i.test(cleaned);
 }
 
 function applyRerunSuffix(parsedType, link) {
@@ -38,5 +38,3 @@ function applyRerunSuffix(parsedType, link) {
 }
 
 export { titleFromUrl, isRerunLink, applyRerunSuffix };
-
-export default { titleFromUrl, isRerunLink, applyRerunSuffix };

@@ -8,22 +8,23 @@
     "cnStart": "2025-05-01",
     "cnEnd": "2025-05-22",
     "type": "Side Story (Celebration)",
-    "image": "/data/images/1280px-EN_The_Masses%27_Travels_banner.png",
+    "image": "/images/thumb/EN_The_Masses%27_Travels_banner.png/1280px-EN_The_Masses%27_Travels_banner.png?58b930",
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels",
     "origPrime": 41,
     "hhPermits": 3
   },
   {
-    "name": "Duel Channel Green Grassville",
-    "start": "2025-10-14",
-    "end": "2025-10-30",
-    "globalStart": "2025-10-14",
-    "globalEnd": "2025-10-30",
-    "cnStart": "2025-04-26",
-    "cnEnd": "2025-05-12",
+    "name": "Vector Breakthrough Inorganic Matters",
+    "start": "2025-10-30",
+    "end": "2025-11-20",
+    "globalStart": "2025-10-30",
+    "globalEnd": "2025-11-20",
+    "cnStart": "2025-05-15",
+    "cnEnd": "2025-06-05",
     "type": null,
-    "image": "/data/images/1280px-EN_Duel_Channel_Green_Grassville_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Green_Grassville"
+    "image": "/images/thumb/EN_Vector_Breakthrough_Inorganic_Matters_banner.png/1280px-EN_Vector_Breakthrough_Inorganic_Matters_banner.png?faf91c",
+    "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Inorganic_Matters",
+    "hhPermits": 9
   },
   {
     "name": "Act or Die",
@@ -34,7 +35,7 @@
     "cnStart": "2025-06-05",
     "cnEnd": "2025-06-19",
     "type": "Side Story",
-    "image": "/data/images/1280px-CN_Act_or_Die_banner.png",
+    "image": "/images/thumb/CN_Act_or_Die_banner.png/1280px-CN_Act_or_Die_banner.png?eab616",
     "link": "https://arknights.wiki.gg/wiki/Act_or_Die",
     "origPrime": 28,
     "hhPermits": 3
@@ -48,7 +49,7 @@
     "cnStart": "2025-06-19",
     "cnEnd": "2025-06-29",
     "type": "Side Story (Rerun)",
-    "image": "/data/images/1280px-CN_Path_of_Life_Rerun_banner.png",
+    "image": "/images/thumb/CN_Path_of_Life_Rerun_banner.png/1280px-CN_Path_of_Life_Rerun_banner.png?e55de5",
     "link": "https://arknights.wiki.gg/wiki/Path_of_Life_Rerun",
     "origPrime": 29,
     "hhPermits": 3
@@ -62,7 +63,7 @@
     "cnStart": "2025-06-24",
     "cnEnd": "2025-07-08",
     "type": null,
-    "image": "/data/images/1280px-CN_Trials_for_Navigator_5_banner.png",
+    "image": "/images/thumb/CN_Trials_for_Navigator_5_banner.png/1280px-CN_Trials_for_Navigator_5_banner.png?a25da3",
     "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_5"
   },
   {
@@ -74,7 +75,7 @@
     "cnStart": "2025-07-08",
     "cnEnd": "2025-07-15",
     "type": "Story Collection",
-    "image": "/data/images/1280px-CN_Fantasy_in_The_Mirage_banner.png",
+    "image": "/images/thumb/CN_Fantasy_in_The_Mirage_banner.png/1280px-CN_Fantasy_in_The_Mirage_banner.png?548371",
     "link": "https://arknights.wiki.gg/wiki/Fantasy_in_The_Mirage",
     "origPrime": 18
   },
@@ -87,7 +88,7 @@
     "cnStart": "2025-07-22",
     "cnEnd": "2025-08-05",
     "type": "Crossover special event",
-    "image": "/data/images/1280px-CN_Gyoko_Kichion_banner.png",
+    "image": "/images/thumb/CN_Gyoko_Kichion_banner.png/1280px-CN_Gyoko_Kichion_banner.png?6d5027",
     "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
   },
   {
@@ -99,7 +100,7 @@
     "cnStart": "2025-08-02",
     "cnEnd": "2025-08-23",
     "type": "Side Story (Carnival)",
-    "image": "/data/images/1280px-CN_Ato_banner.png",
+    "image": "/images/thumb/CN_Ato_banner.png/1280px-CN_Ato_banner.png?76b18a",
     "link": "https://arknights.wiki.gg/wiki/Ato",
     "origPrime": 40,
     "hhPermits": 3
@@ -113,7 +114,7 @@
     "cnStart": "2025-08-14",
     "cnEnd": "2025-08-28",
     "type": null,
-    "image": "/data/images/1280px-CN_Contingency_Contract_Battleplan_Arclight_banner.png",
+    "image": "/images/thumb/CN_Contingency_Contract_Battleplan_Arclight_banner.png/1280px-CN_Contingency_Contract_Battleplan_Arclight_banner.png?58ee45",
     "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
@@ -125,7 +126,7 @@
     "cnStart": "2025-08-25",
     "cnEnd": "2025-09-03",
     "type": "Side Story (Carnival) (Rerun)",
-    "image": "/data/images/1280px-CN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png",
+    "image": "/images/thumb/CN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png/1280px-CN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png?136a3e",
     "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun/Rerun",
     "origPrime": 38,
     "hhPermits": 3
@@ -139,7 +140,7 @@
     "cnStart": "2025-08-28",
     "cnEnd": "2025-09-14",
     "type": null,
-    "image": "/data/images/1280px-CN_Duel_Channel_Honeydew_banner.png",
+    "image": "/images/thumb/CN_Duel_Channel_Honeydew_banner.png/1280px-CN_Duel_Channel_Honeydew_banner.png?465823",
     "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Honeydew"
   },
   {
@@ -151,7 +152,7 @@
     "cnStart": "2025-09-04",
     "cnEnd": "2025-09-18",
     "type": "Side Story (Crossover)",
-    "image": "/data/images/1280px-CN_Somniloquium_Serenum_banner.png",
+    "image": "/images/thumb/CN_Somniloquium_Serenum_banner.png/1280px-CN_Somniloquium_Serenum_banner.png?252b41",
     "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
     "origPrime": 26,
     "hhPermits": 3
@@ -165,7 +166,7 @@
     "cnStart": "2025-09-19",
     "cnEnd": "2025-09-29",
     "type": "Intermezzo (Rerun)",
-    "image": "/data/images/1280px-CN_Ending_a_Grand_Overture_Rerun_banner.png",
+    "image": "/images/thumb/CN_Ending_a_Grand_Overture_Rerun_banner.png/1280px-CN_Ending_a_Grand_Overture_Rerun_banner.png?c8533e",
     "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
     "origPrime": 30,
     "hhPermits": 3
@@ -179,7 +180,7 @@
     "cnStart": "2025-09-25",
     "cnEnd": "2025-10-16",
     "type": "Special event",
-    "image": "/data/images/1280px-CN_Rebuilding_Mandate_banner.png",
+    "image": "/images/thumb/CN_Rebuilding_Mandate_banner.png/1280px-CN_Rebuilding_Mandate_banner.png?326fe2",
     "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
   },
   {
@@ -191,7 +192,7 @@
     "cnStart": "2025-10-09",
     "cnEnd": "2025-10-23",
     "type": "Commemorative event",
-    "image": "/data/images/1280px-CN_Abnormal_Spectrum_banner.png",
+    "image": "/images/thumb/CN_Abnormal_Spectrum_banner.png/1280px-CN_Abnormal_Spectrum_banner.png?822af5",
     "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum",
     "hhPermits": 3
   },
@@ -204,7 +205,7 @@
     "cnStart": "2025-10-21",
     "cnEnd": "2025-11-11",
     "type": null,
-    "image": "/data/images/1280px-CN_Icebreaker_Games_2_banner.png",
+    "image": "/images/thumb/CN_Icebreaker_Games_2_banner.png/1280px-CN_Icebreaker_Games_2_banner.png?afacfa",
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
   },
   {
@@ -216,7 +217,7 @@
     "cnStart": "2025-10-21",
     "cnEnd": "2025-11-11",
     "type": "Crossover special event",
-    "image": "/data/images/1280px-CN_Tender_Moments_banner.png",
+    "image": "/images/thumb/CN_Tender_Moments_banner.png/1280px-CN_Tender_Moments_banner.png?4fa609",
     "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
   },
   {
@@ -228,7 +229,19 @@
     "cnStart": "2025-11-01",
     "cnEnd": "2025-11-22",
     "type": "Side Story (Celebration)",
-    "image": "/data/images/1280px-CN_Retracing_Our_Steps_1101_banner.png",
+    "image": "/images/thumb/CN_Retracing_Our_Steps_1101_banner.png/1280px-CN_Retracing_Our_Steps_1101_banner.png?b9ad3c",
     "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps_1101"
+  },
+  {
+    "name": "Stronghold Protocol Alliance",
+    "start": "2025-11-14",
+    "end": "2025-12-12",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2025-11-14",
+    "cnEnd": "2025-12-12",
+    "type": "Special event",
+    "image": "/images/thumb/CN_Stronghold_Protocol_Alliance_banner.png/1280px-CN_Stronghold_Protocol_Alliance_banner.png?effa5d",
+    "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
   }
 ]

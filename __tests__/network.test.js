@@ -1,6 +1,6 @@
-const https = require('https');
-const { fetchWikiApi } = require('../src/server/lib/network');
-const config = require('../src/server/config');
+import https from 'https';
+import { fetchWikiApi } from '../src/server/lib/network.js';
+import { wikiApiBase } from '../src/server/config.js';
 
 jest.mock('https');
 
@@ -19,7 +19,7 @@ describe('network helpers', () => {
     };
     https.get.mockImplementation((url, options, cb) => {
       // ensure url contains config.wikiApiBase
-      expect(url.startsWith(config.wikiApiBase)).toBe(true);
+      expect(url.startsWith(wikiApiBase)).toBe(true);
       cb(fakeResponse);
       return { on: jest.fn() };
     });

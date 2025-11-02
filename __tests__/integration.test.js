@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 function loadEvents() {
   const p = path.join(__dirname, '..', 'public', 'data', 'events.json');
@@ -19,7 +19,7 @@ describe('public/events.json integration', () => {
   });
 
   test('no event name contains the word Rerun', () => {
-    const bad = events.filter(e => typeof e.name === 'string' && /\bRerun\b/i.test(e.name));
+    const bad = events.filter((e) => typeof e.name === 'string' && /\bRerun\b/i.test(e.name));
     expect(bad).toEqual([]);
   });
 
@@ -31,7 +31,7 @@ describe('public/events.json integration', () => {
       // no raw spaces in the path
       expect(/\s/.test(ev.image)).toBe(false);
       // must start with an allowed prefix
-      const ok = allowedPrefixes.some(pref => ev.image.startsWith(pref));
+      const ok = allowedPrefixes.some((pref) => ev.image.startsWith(pref));
       expect(ok).toBe(true);
     }
   });

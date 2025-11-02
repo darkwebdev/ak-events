@@ -1,7 +1,15 @@
-const { normalizeEvent } = require('../src/server/lib/normalizeEvent');
+import { normalizeEvent } from '../src/server/lib/normalizeEvent.js';
 
 test('normalizes DD.MM.YYYY date string into start/end and slug', () => {
-  const raw = { name: 'Act or Die Event', dateStr: '05.06.2025', type: 'Event', image: 'https://cdn/events/act.png', link: 'https://arknights.wiki.gg/wiki/Act_or_Die', origPrime: '28', hhPermits: '3' };
+  const raw = {
+    name: 'Act or Die Event',
+    dateStr: '05.06.2025',
+    type: 'Event',
+    image: 'https://cdn/events/act.png',
+    link: 'https://arknights.wiki.gg/wiki/Act_or_Die',
+    origPrime: '28',
+    hhPermits: '3',
+  };
   const out = normalizeEvent(raw);
   expect(out.name).toBe('Act or Die Event');
   expect(out.start).toBe('2025-06-05');
@@ -12,7 +20,15 @@ test('normalizes DD.MM.YYYY date string into start/end and slug', () => {
 });
 
 test('strips rerun markers and handles missing dates and numbers', () => {
-  const raw = { name: 'Path of Life Rerun', dateStr: null, type: 'Rerun', image: null, link: null, origPrime: null, hhPermits: '∞' };
+  const raw = {
+    name: 'Path of Life Rerun',
+    dateStr: null,
+    type: 'Rerun',
+    image: null,
+    link: null,
+    origPrime: null,
+    hhPermits: '∞',
+  };
   const out = normalizeEvent(raw);
   expect(out.name).toBe('Path of Life');
   expect(out.start).toBe('TBD');

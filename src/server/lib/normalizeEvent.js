@@ -12,7 +12,7 @@ function normalizeEvent(raw) {
   // Normalize name: strip rerun markers and trailing qualifiers
   if (event.name) {
     // strip common rerun markers including '(Rerun)', ' Rerun', '/Rerun', '-Rerun', '_Rerun', and ': Re-run'
-    event.name = event.name.replace(/(?:\s*\(Rerun\)|[\/_\-\s]+Rerun|\s*:\s*Re-run)/gi, '').trim();
+    event.name = event.name.replace(/(?:\s*\(Rerun\)|[/_\-\s]+Rerun|\s*:\s*Re-run)/gi, '').trim();
   }
 
   // Normalize dates: scrape.js used DD.MM.YYYY in dateStr; convert to YYYY-MM-DD
@@ -60,5 +60,3 @@ function normalizeEvent(raw) {
 }
 
 export { normalizeEvent };
-
-export default { normalizeEvent };

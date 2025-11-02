@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const { extractOrigPrimeFromHtml, extractHhPermitsFromHtml } = require('../src/server/lib/parser');
+import fs from 'fs';
+import path from 'path';
+import { extractOrigPrimeFromHtml, extractHhPermitsFromHtml } from '../src/server/lib/parser.js';
 
 function loadApiHtml(slug) {
   const p = path.join(__dirname, 'debug_html', `${slug}_api.json`);

@@ -333,11 +333,3 @@ export {
   parseEventFromHtml,
   parseIndexHtml,
 };
-
-export default {
-  extractOrigPrimeFromHtml,
-  extractHhPermitsFromHtml,
-  extractEventTypeFromHtml,
-  parseEventFromHtml,
-  parseIndexHtml,
-};

@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const { parseIndexHtml } = require('../src/server/lib/parser');
+import fs from 'fs';
+import path from 'path';
+import { parseIndexHtml } from '../src/server/lib/parser.js';
 
 test('parseIndexHtml on saved Event page HTML returns non-empty event list', () => {
   const htmlPath = path.resolve(__dirname, 'debug_html', 'event_index.html');
@@ -13,10 +13,14 @@ test('parseIndexHtml on saved Event page HTML returns non-empty event list', () 
   const events = parseIndexHtml(html);
   expect(events.length).toBe(3);
 
-  expect(events[0].name).toBe('The Masses\' Travels');
+  expect(events[0].name).toBe("The Masses' Travels");
   expect(events[0].link).toBe('https://arknights.wiki.gg/wiki/The_Masses%27_Travels');
-  expect(events[0].image).toBe('/images/thumb/EN_The_Masses%27_Travels_banner.png/1280px-EN_The_Masses%27_Travels_banner.png?58b930');
-  expect(events[0].dateStr).toBe('Global: 2025/10/14–2025/11/04 (as the 2025 2nd Celebration event)');
+  expect(events[0].image).toBe(
+    '/images/thumb/EN_The_Masses%27_Travels_banner.png/1280px-EN_The_Masses%27_Travels_banner.png?58b930'
+  );
+  expect(events[0].dateStr).toBe(
+    'Global: 2025/10/14–2025/11/04 (as the 2025 2nd Celebration event)'
+  );
 });
 
 test('table-based Event parsing extracts name, link, image and date', () => {

@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   env: {
     browser: true,
     es2021: true,
@@ -16,9 +17,8 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'react/jsx-filename-extension': [1, { extensions: ['.jsx', '.js'] }],
-    // allow explicit file extensions in imports (the repo often imports .js/.jsx)
     'import/extensions': 'off',
-    // this project uses PropTypes in some places but not everywhere; keep warnings off for now
+    'import/no-commonjs': 'error',
     'react/prop-types': 'off',
     // allow older patterns like loops in server-side scripts
     'no-restricted-syntax': 'off',
@@ -51,5 +51,8 @@ module.exports = {
     'react/no-array-index-key': 'off',
     'react/destructuring-assignment': 'off',
     'prefer-const': 'warn',
+
+    // Enable the custom rule from the local rules directory
+    'no-duplicate-exports': 'error',
   },
 };

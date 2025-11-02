@@ -1,7 +1,12 @@
-const { applyRerunSuffix } = require('../src/server/lib/wiki');
+import { applyRerunSuffix } from '../src/server/lib/wiki.js';
 
 test('appends (Rerun) when link ends with /Rerun', () => {
-  expect(applyRerunSuffix('Side Story (Carnival)', '/wiki/Event/Adventure_That_Cannot_Wait_for_the_Sun/Rerun')).toBe('Side Story (Carnival) (Rerun)');
+  expect(
+    applyRerunSuffix(
+      'Side Story (Carnival)',
+      '/wiki/Event/Adventure_That_Cannot_Wait_for_the_Sun/Rerun'
+    )
+  ).toBe('Side Story (Carnival) (Rerun)');
 });
 
 test('is case-insensitive for link suffix', () => {
@@ -9,7 +14,9 @@ test('is case-insensitive for link suffix', () => {
 });
 
 test('does not double-append when type already contains (Rerun)', () => {
-  expect(applyRerunSuffix('Side Story (Carnival) (Rerun)', '/wiki/Event/Foo/Rerun')).toBe('Side Story (Carnival) (Rerun)');
+  expect(applyRerunSuffix('Side Story (Carnival) (Rerun)', '/wiki/Event/Foo/Rerun')).toBe(
+    'Side Story (Carnival) (Rerun)'
+  );
 });
 
 test('returns original type when link is not a rerun', () => {

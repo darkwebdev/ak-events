@@ -24,7 +24,7 @@ describe('public/events.json integration', () => {
   });
 
   test('image paths are safe and use an allowed prefix', () => {
-    const allowedPrefixes = ['/data/images/', '/images/thumb/', 'http://', 'https://'];
+    const allowedPrefixes = ['data/images/'];
     for (const ev of events) {
       if (!ev.image) continue;
       expect(typeof ev.image).toBe('string');

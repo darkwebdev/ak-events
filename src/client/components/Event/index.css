@@ -1,0 +1,48 @@
+.ak-event {
+  padding: 10px 0;
+}
+
+.ak-event-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ak-event-name {
+  flex: 1;
+}
+
+.ak-event-type {
+  color: #666;
+  font-size: 0.9em;
+  font-weight: 400;
+}
+
+.ak-event-image-wrap {
+  margin-bottom: 8px;
+}
+
+.ak-event-image {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.ak-event-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.ak-event-date {
+  color: #555;
+}
+
+.ak-event-orundum {
+  color: var(--ak-accent);
+  font-weight: 500;
+}

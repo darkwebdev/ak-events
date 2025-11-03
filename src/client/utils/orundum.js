@@ -9,7 +9,7 @@
 export function calcTotalOrundum(events, selectedEvents, dailyOrundum, ownedOrundum) {
   const totalEventsOrundum = events.reduce((sum, event) => {
     if (selectedEvents.has(event.name)) {
-      return sum + event.orundum;
+      return sum + calcEventOrundum(event);
     }
     return sum;
   }, 0);

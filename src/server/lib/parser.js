@@ -6,9 +6,115 @@ import { wikiBase } from '../config.js';
 function extractOrigPrimeFromHtml(html) {
   if (!html) return null;
   // strip tags and search text for typical phrasing
-  const text = html.replace(/<[^>]+>/g, ' ');
-  const m = text.match(/operations are worth\D*(\d+)/i) || text.match(/(\d+)\s*Originite Prime/i);
-  if (m) return parseInt(m[1]);
+  // First, try conservative text regexes for explicit phrasing like "All X operations are worth N Originite Prime"
+  // or "N Originite Prime" which commonly appears in the intro paragraph. These are more authoritative than
+  // incidental .quantity elements shown elsewhere on the page.
+  try {
+    const text = html.replace(/<[^>]+>/g, ' ');
+    const m =
+      text.match(/operations are worth\D*(\d{1,4})\b/i) ||
+      text.match(/\b(\d{1,4})\s*Originite Prime\b/i);
+    if (m) {
+      const [, numStr] = m;
+      return parseInt(numStr, 10);
+    }
+  } catch (e) {
+    // ignore and continue to DOM-based extraction
+  }
+
+  // Prefer a robust DOM-based extraction to avoid accidental matches in raw HTML (e.g. image sizes like '50px' or
+  // large numeric tokens with 'K' suffix). Only if DOM search fails do we try other conservative text regexes.
+  try {
+    const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
+    const dom = new JSDOM(clean);
+    const doc = dom.window.document;
+
+    const candidates = Array.from(doc.querySelectorAll('[data-name]')).filter((el) =>
+      /Originite Prime/i.test(el.getAttribute('data-name') || '')
+    );
+    for (const el of candidates) {
+      const td = el.closest('td');
+      const itemContainer = el.closest('.item') || el.parentElement || el.closest('div');
+
+      // detect if this td/tr/table looks like a paid store (contains Price or currency markers)
+      const enclosingTr = td ? td.closest('tr') : null;
+      const enclosingTable = td ? td.closest('table') : null;
+      const isPaidContainer =
+        (enclosingTr && /price|\$|US\$|USD|€|£/i.test(enclosingTr.textContent || '')) ||
+        (enclosingTable && /price|\$|US\$|USD|€|£/i.test(enclosingTable.textContent || ''));
+
+      // If this quantity is inside a paid pack/table, skip it — paid-store quantities are not authoritative for OP.
+      if (isPaidContainer) continue;
+
+      // 1) Prefer a .quantity element that follows the item container inside the same TD
+      if (td) {
+        const quantities = Array.from(td.querySelectorAll('.quantity'));
+        if (itemContainer && quantities.length) {
+          for (const q of quantities) {
+            try {
+              // DOCUMENT_POSITION_FOLLOWING = 4
+              // Use a narrow eslint-disable-next-line to allow the single bitwise check here.
+              // The check ensures q is following itemContainer in document order.
+              /* eslint-disable-next-line no-bitwise */
+              if (itemContainer.compareDocumentPosition(q) & 4) {
+                const raw = (q.textContent || '').trim();
+                const v = parseInt(raw, 10);
+                if (!Number.isNaN(v) && v > 0 && v <= 10000) return v;
+              }
+            } catch (e) {
+              // ignore and continue
+            }
+          }
+        }
+        // 2) fallback to first .quantity in td
+        if (quantities.length) {
+          const raw = (quantities[0].textContent || '').trim();
+          const v = parseInt(raw);
+          if (!Number.isNaN(v) && v > 0 && v <= 10000) return v;
+        }
+
+        // 3) if no .quantity, try to extract a small integer token from the TD text while ignoring tokens with 'K', 'px' or currency
+        const tdText = (td.textContent || '')
+          .replace(/\u00A0/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (tdText && !/price|\$|US\$|USD|€|£/i.test(tdText)) {
+          // find 1-4 digit tokens only (likely actual counts)
+          const nums = Array.from(tdText.matchAll(/\b(\d{1,4})\b/g)).map((m) => parseInt(m[1], 10));
+          for (const n of nums) {
+            if (Number.isNaN(n)) continue;
+            // ensure the token isn't part of a 'px' or 'K' suffix in the raw HTML nearby
+            const idx = html.indexOf(String(n));
+            const rawAfter = html.substr(idx, 6);
+            if (/\d+px/.test(rawAfter)) continue;
+            // skip tokens that are immediately followed by 'K' (e.g. '16700K') or preceded by 'K'
+            const afterChar = html.substr(idx + String(n).length, 1);
+            if (/K/i.test(afterChar)) continue;
+            if (n > 0 && n <= 10000) return n;
+          }
+        }
+      } else if (itemContainer) {
+        const q = itemContainer.querySelector('.quantity');
+        if (q) {
+          const v = parseInt((q.textContent || '').trim(), 10);
+          if (!Number.isNaN(v) && v > 0 && v <= 10000) return v;
+        }
+      }
+    }
+  } catch (e) {
+    // fallthrough to conservative text regex
+  }
+
+  // Conservative text-based fallback: look for explicit phrasing but avoid matching large tokens or 'K'/'px'/currency
+  try {
+    const text = html.replace(/<[^>]+>/g, ' ');
+    const m1 = text.match(/operations are worth\D*(\d{1,4})\b/i);
+    if (m1) return parseInt(m1[1], 10);
+    const m2 = text.match(/\b(\d{1,4})\s*Originite Prime\b/i);
+    if (m2) return parseInt(m2[1], 10);
+  } catch (e) {
+    // ignore
+  }
   return null;
 }
 
@@ -22,6 +128,22 @@ function extractHhPermitsFromHtml(html) {
 
     // 0) Prefer scanning Store tables: find a table with a 'Stock' header and return the Stock for the Headhunting Permit row.
     const allTables = Array.from(doc.querySelectorAll('table'));
+    // detect paid-store tables: tables that contain a header 'Price' or currency markers in headers
+    const paidTables = new Set();
+    for (const table of allTables) {
+      const headerText = Array.from(table.querySelectorAll('th'))
+        .map((th) => (th.textContent || '').trim())
+        .join(' | ');
+      const tableText = (table.textContent || '').trim();
+      // mark as paid if header mentions Price or the table body/text contains price/currency markers
+      if (
+        /price/i.test(headerText) ||
+        /price/i.test(tableText) ||
+        /\$|US\$|USD|€|£/.test(headerText) ||
+        /\$|US\$|USD|€|£/.test(tableText)
+      )
+        paidTables.add(table);
+    }
     for (const table of allTables) {
       const headers = Array.from(table.querySelectorAll('th')).map((th) =>
         (th.textContent || '').trim().toLowerCase()
@@ -37,7 +159,16 @@ function extractHhPermitsFromHtml(html) {
           if (itemEl && /Headhunting Permit/i.test(itemEl.getAttribute('data-name') || '')) {
             const stockTxt = tds[stockIdx].textContent || '';
             const m = stockTxt.match(/(\d{1,5})/);
-            if (m) return parseInt(m[1]);
+            if (m) {
+              // debug: found Stock column value
+              // eslint-disable-next-line no-console
+              const [, stockStr] = m;
+              console.debug('extractHhPermitsFromHtml: stock table value ->', stockStr);
+              // If this item is a Ten-roll permit, multiply by 10
+              const name = itemEl.getAttribute('data-name') || '';
+              const multiplier = /Ten-?roll/i.test(name) ? 10 : 1;
+              return parseInt(stockStr, 10) * multiplier;
+            }
             // if stock is infinity or non-numeric, skip
           }
         }
@@ -50,66 +181,114 @@ function extractHhPermitsFromHtml(html) {
     );
     let sum = 0;
     for (const tip of tips) {
-      // Look for a .quantity element inside the same item container
-      const itemContainer = tip.closest('.item') || tip.closest('div') || tip.parentElement;
+      // If the tip is inside a paid table, skip it
+      const tipTable = tip.closest('table');
+      if (tipTable && paidTables.has(tipTable)) continue;
+      // Find the closest enclosing <td> (if any) and prefer a .quantity that is adjacent to the item element
+      const td = tip.closest('td');
+      const itemContainer = tip.closest('.item') || tip.parentElement || tip.closest('div');
       let qEl = null;
-      if (itemContainer) qEl = itemContainer.querySelector('.quantity');
-      // If not found, try to find a quantity in the same table row (Stock column)
-      if (!qEl) {
-        const tr = tip.closest('tr');
-        if (tr) {
-          // try to find an element with class quantity inside the row
-          qEl = tr.querySelector('.quantity');
-          if (!qEl) {
-            // fallback: look for a td that is likely the Stock column (small integer, avoid px)
-            const tds = Array.from(tr.querySelectorAll('td'));
-            for (const td of tds) {
-              if (td.contains(tip)) continue;
-              const txt = td.textContent || '';
-              // find standalone numbers not part of 'px' or other words
-              const m = txt.match(/\b(\d{1,4})\b/);
-              if (m) {
-                const v = parseInt(m[1]);
-                // heuristics: stock values are small (<=100)
-                if (!Number.isNaN(v) && v > 0 && v <= 100) {
-                  sum += v;
-                  qEl = { _fake: true };
-                  break;
-                }
+      if (td) {
+        // prefer a .quantity that appears after the itemContainer in DOM order inside this td
+        const quantities = Array.from(td.querySelectorAll('.quantity'));
+        if (itemContainer) {
+          for (const q of quantities) {
+            try {
+              // DOCUMENT_POSITION_FOLLOWING = 4
+              /* eslint-disable-next-line no-bitwise */
+              if (itemContainer.compareDocumentPosition(q) & 4) {
+                qEl = q;
+                break;
               }
+            } catch (e) {
+              // fallback: ignore compare failures
+            }
+          }
+        }
+        // fallback to first quantity in the td
+        /* eslint-disable-next-line prefer-destructuring */
+        if (!qEl && quantities.length) qEl = quantities[0];
+      } else if (itemContainer) {
+        qEl = itemContainer.querySelector('.quantity');
+      }
+
+      // If we still don't have a .quantity, try to extract a small integer from the same td only
+      if (!qEl && td) {
+        const tdTxt = td.textContent || '';
+        // avoid extracting from tds that look like paid pack columns
+        if (!/price|\$|US\$|USD|€|£/i.test(tdTxt)) {
+          const m = tdTxt.match(/\b(\d{1,4})\b/);
+          if (m) {
+            const [, numStr] = m;
+            const v = parseInt(numStr, 10);
+            if (!Number.isNaN(v) && v > 0 && v <= 100) {
+              // mark as synthetic
+              qEl = { _fake: true, value: v };
             }
           }
         }
       }
-      if (qEl && !qEl._fake) {
-        const v = parseInt(qEl.textContent.trim());
-        if (!Number.isNaN(v) && v > 0) sum += v;
+
+      if (qEl) {
+        // multiplier: Ten-roll permits count as 10 each
+        const tipName = tip.getAttribute('data-name') || '';
+        const multiplier = /Ten-?roll/i.test(tipName) ? 10 : 1;
+        if (qEl._fake) {
+          sum += qEl.value * multiplier;
+        } else {
+          const v = parseInt(qEl.textContent.trim());
+          if (!Number.isNaN(v) && v > 0) sum += v * multiplier;
+        }
       }
     }
-    if (sum > 0) return sum;
+    if (sum > 0) {
+      // debug: summed explicit .quantity values
+      // eslint-disable-next-line no-console
+      console.debug('extractHhPermitsFromHtml: summed quantities ->', sum);
+      return sum;
+    }
 
     // If no explicit quantities found, collect candidate numbers but ignore px-suffixed numbers (image sizes like 50px)
     const candidates = [];
     for (const table of allTables) {
+      // skip entire paid tables from consideration
+      if (paidTables.has(table)) continue;
       const rows = Array.from(table.querySelectorAll('tr'));
       for (const row of rows) {
         if (!/Headhunting Permit/i.test(row.textContent)) continue;
-        const qEl = row.querySelector('.quantity');
+        // If this row belongs to a paid table, skip it
+        if (paidTables.has(table)) continue;
+        // restrict numeric scanning to the td that contains the permit mention to avoid nearby unrelated numbers
+        const td = Array.from(row.querySelectorAll('td')).find((t) =>
+          /Headhunting Permit/i.test(t.textContent || '')
+        );
+        if (!td) continue;
+        // skip td if it contains price markers (e.g., 'Price', '$', 'US$')
+        if (/price|\$|US\$|USD|€|£/.test(td.textContent || '')) continue;
+        const qEl = td.querySelector('.quantity');
         if (qEl) {
           const v = parseInt(qEl.textContent.trim());
-          if (!Number.isNaN(v)) candidates.push(v);
+          if (!Number.isNaN(v)) {
+            const itemEl = td.querySelector('[data-name]');
+            const multiplier =
+              itemEl && /Ten-?roll/i.test(itemEl.getAttribute('data-name') || '') ? 10 : 1;
+            candidates.push(v * multiplier);
+          }
         }
-        // collect numeric tokens but filter out tokens immediately followed or preceded by 'px'
-        const text = row.textContent || '';
-        const nums = Array.from(text.matchAll(/\b(\d{1,4})\b/g)).map((m) => parseInt(m[1]));
+        // collect numeric tokens inside this td but filter out tokens immediately followed or preceded by 'px'
+        const text = td.textContent || '';
+        const nums = Array.from(text.matchAll(/\b(\d{1,4})\b/g)).map((m) => parseInt(m[1], 10));
         for (const n of nums) {
           if (Number.isNaN(n)) continue;
-          // ensure the number isn't part of a 'px' token in the raw HTML
+          // ensure the number isn't part of a 'px' token in the raw HTML nearby
           const rawIndex = html.indexOf(String(n));
-          // If the substring 'px' appears immediately after the number in the html, skip it
           const after = html.substr(rawIndex, 5);
           if (/\d+px/.test(after)) continue;
-          candidates.push(n);
+          // apply Ten-roll multiplier if the td contains a Ten-roll permit
+          const itemEl = td.querySelector('[data-name]');
+          const multiplier =
+            itemEl && /Ten-?roll/i.test(itemEl.getAttribute('data-name') || '') ? 10 : 1;
+          candidates.push(n * multiplier);
         }
       }
     }
@@ -119,13 +298,20 @@ function extractHhPermitsFromHtml(html) {
       html.matchAll(/Headhunting Permit[\s\S]{0,200}?(?:>(\d+)<|\b(\d+)\b)/gi)
     );
     for (const mm of hhMatchAll) {
-      const n = parseInt(mm[1] || mm[2]);
+      const [, g1, g2] = mm;
+      const n = parseInt(g1 || g2, 10);
       if (!Number.isNaN(n)) {
+        const matchStr = mm[0] || '';
+        // ignore currency/price matches like 'US$25.99' or decimal numbers '25.99'
+        if (/\$|US\$|USD|€|£/.test(matchStr)) continue;
+        if (/\d+\.\d+/.test(matchStr)) continue;
         // make sure this numeric occurrence isn't immediately followed by 'px' in the raw html
         const idx = html.indexOf(String(n));
         const after = html.substr(idx, 5);
         if (/\d+px/.test(after)) continue;
-        candidates.push(n);
+        // if the matchStr contains Ten-roll, multiply
+        const multiplier = /Ten-?roll/i.test(matchStr) ? 10 : 1;
+        candidates.push(n * multiplier);
       }
     }
 
@@ -143,10 +329,25 @@ function extractHhPermitsFromHtml(html) {
             bestCount = freq[k];
           }
         }
-        if (best != null) return best;
+        if (best != null) {
+          // debug: most frequent small candidate
+          // eslint-disable-next-line no-console
+          console.debug(
+            'extractHhPermitsFromHtml: most frequent candidate ->',
+            best,
+            'counts:',
+            bestCount
+          );
+          return best;
+        }
       }
       const positive = candidates.filter((n) => n > 0);
-      if (positive.length) return Math.min(...positive);
+      if (positive.length) {
+        // debug: no small frequent candidate, returning min positive
+        // eslint-disable-next-line no-console
+        console.debug('extractHhPermitsFromHtml: min positive candidate ->', Math.min(...positive));
+        return Math.min(...positive);
+      }
     }
   } catch (e) {
     // ignore errors and fallback to regex
@@ -156,7 +357,20 @@ function extractHhPermitsFromHtml(html) {
   const hhMatch = html.match(
     /Headhunting Permit[\s\S]{0,200}?(?:Stock[\s\S]{0,50})?(?:>(\d+)<|\b(\d+)\b)/i
   );
-  if (hhMatch) return parseInt(hhMatch[1] || hhMatch[2]);
+  if (hhMatch) {
+    // debug: final regex fallback
+    // eslint-disable-next-line no-console
+    const matchedStr = hhMatch[0] || '';
+    // avoid currency/price matches like 'US$25.99' or decimal numbers
+    if (/\$|US\$|USD|€|£/.test(matchedStr)) return null;
+    if (/\d+\.\d+/.test(matchedStr)) return null;
+    // avoid px-based numeric tokens (image widths like '50px')
+    if (/\d+px/.test(matchedStr)) return null;
+    // debug: final regex fallback
+    // eslint-disable-next-line no-console
+    console.debug('extractHhPermitsFromHtml: regex fallback ->', hhMatch[1] || hhMatch[2]);
+    return parseInt(hhMatch[1] || hhMatch[2]);
+  }
   return null;
 }
 

@@ -1,19 +1,5 @@
 [
   {
-    "name": "The Masses' Travels",
-    "start": "2025-10-14",
-    "end": "2025-11-04",
-    "globalStart": "2025-10-14",
-    "globalEnd": "2025-11-04",
-    "cnStart": "2025-05-01",
-    "cnEnd": "2025-05-22",
-    "type": "Side Story (Celebration)",
-    "image": "data/images/1280px-EN_The_Masses%27_Travels_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels",
-    "origPrime": 41,
-    "hhPermits": 3
-  },
-  {
     "name": "Vector Breakthrough Inorganic Matters",
     "start": "2025-10-30",
     "end": "2025-11-20",
@@ -229,7 +215,8 @@
     "cnEnd": "2025-11-22",
     "type": "Side Story (Celebration)",
     "image": "data/images/1280px-CN_Retracing_Our_Steps_1101_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps_1101"
+    "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps_1101",
+    "hhPermits": 3
   },
   {
     "name": "Stronghold Protocol Alliance",

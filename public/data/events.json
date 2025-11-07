@@ -12,6 +12,18 @@
     "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Inorganic_Matters"
   },
   {
+    "name": "Paddles Up Login Event",
+    "start": "2025-11-06",
+    "end": "2025-11-16",
+    "globalStart": "2025-11-06",
+    "globalEnd": "2025-11-16",
+    "cnStart": "2025-05-29",
+    "cnEnd": "2025-06-08",
+    "type": "Login event",
+    "image": "data/images/1280px-EN_Paddles_Up_Login_Event_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Paddles_Up_Login_Event"
+  },
+  {
     "name": "Act or Die",
     "start": "2025-11-13",
     "end": "2025-11-27",
@@ -164,7 +176,7 @@
     "globalEnd": null,
     "cnStart": "2025-09-25",
     "cnEnd": "2025-10-16",
-    "type": "Special event",
+    "type": "Limited-time game mode",
     "image": "data/images/1280px-CN_Rebuilding_Mandate_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
   },
@@ -226,7 +238,7 @@
     "globalEnd": null,
     "cnStart": "2025-11-14",
     "cnEnd": "2025-12-12",
-    "type": "Special event",
+    "type": null,
     "image": "data/images/1280px-CN_Stronghold_Protocol_Alliance_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
   }

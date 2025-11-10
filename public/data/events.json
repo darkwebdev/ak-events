@@ -24,20 +24,6 @@
     "link": "https://arknights.wiki.gg/wiki/Paddles_Up_Login_Event"
   },
   {
-    "name": "Act or Die",
-    "start": "2025-11-13",
-    "end": "2025-11-27",
-    "globalStart": "2025-11-13",
-    "globalEnd": "2025-11-27",
-    "cnStart": "2025-06-05",
-    "cnEnd": "2025-06-19",
-    "type": "Side Story",
-    "image": "data/images/1280px-CN_Act_or_Die_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Act_or_Die",
-    "origPrime": 28,
-    "hhPermits": 3
-  },
-  {
     "name": "Path of Life",
     "start": "2025-11-27",
     "end": "2025-12-07",

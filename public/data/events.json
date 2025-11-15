@@ -24,6 +24,18 @@
     "link": "https://arknights.wiki.gg/wiki/Paddles_Up_Login_Event"
   },
   {
+    "name": "Trials for Navigator 5",
+    "start": "2025-11-20",
+    "end": "2025-12-04",
+    "globalStart": "2025-11-20",
+    "globalEnd": "2025-12-04",
+    "cnStart": "2025-06-24",
+    "cnEnd": "2025-07-08",
+    "type": null,
+    "image": "data/images/1280px-CN_Trials_for_Navigator_5_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_5"
+  },
+  {
     "name": "Path of Life",
     "start": "2025-11-27",
     "end": "2025-12-07",
@@ -38,23 +50,11 @@
     "hhPermits": 3
   },
   {
-    "name": "Trials for Navigator 5",
-    "start": "2025-06-24",
-    "end": "2025-07-08",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-06-24",
-    "cnEnd": "2025-07-08",
-    "type": null,
-    "image": "data/images/1280px-CN_Trials_for_Navigator_5_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_5"
-  },
-  {
     "name": "Fantasy in The Mirage",
-    "start": "2025-07-08",
-    "end": "2025-07-15",
-    "globalStart": null,
-    "globalEnd": null,
+    "start": "2025-12-11",
+    "end": "2025-12-18",
+    "globalStart": "2025-12-11",
+    "globalEnd": "2025-12-18",
     "cnStart": "2025-07-08",
     "cnEnd": "2025-07-15",
     "type": "Story Collection",

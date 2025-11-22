@@ -14,16 +14,16 @@
     "hhPermits": 3
   },
   {
-    "name": "Vector Breakthrough Inorganic Matters",
-    "start": "2025-10-30",
-    "end": "2025-11-20",
-    "globalStart": "2025-10-30",
-    "globalEnd": "2025-11-20",
-    "cnStart": "2025-05-15",
-    "cnEnd": "2025-06-05",
+    "name": "Trials for Navigator 5",
+    "start": "2025-11-20",
+    "end": "2025-12-04",
+    "globalStart": "2025-11-20",
+    "globalEnd": "2025-12-04",
+    "cnStart": "2025-06-24",
+    "cnEnd": "2025-07-08",
     "type": null,
-    "image": "data/images/1024px-EN_Vector_Breakthrough_Inorganic_Matters_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Inorganic_Matters"
+    "image": "data/images/1024px-EN_Trials_for_Navigator_5_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_5"
   },
   {
     "name": "Path of Life",
@@ -217,5 +217,53 @@
     "type": null,
     "image": "data/images/1024px-CN_Stronghold_Protocol_Alliance_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
+  },
+  {
+    "name": "The Unpromised Land (page does not exist)",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/The_Unpromised_Land?action=edit&redlink=1"
+  },
+  {
+    "name": "Exodus from the Pale Sea (page does not exist)",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun?action=edit&redlink=1"
+  },
+  {
+    "name": "Wishes from Stars (page does not exist)",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars?action=edit&redlink=1"
+  },
+  {
+    "name": "Trials for Navigator 6",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_6"
   }
 ]

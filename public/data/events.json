@@ -219,31 +219,47 @@
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
   },
   {
-    "name": "The Unpromised Land (page does not exist)",
-    "start": null,
-    "end": null,
+    "name": "I Portatori dei Velluti",
+    "start": "2025-11-25",
+    "end": "2025-12-05",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
-    "type": null,
-    "image": null,
-    "link": "https://arknights.wiki.gg/wiki/The_Unpromised_Land?action=edit&redlink=1"
+    "cnStart": "2025-11-25",
+    "cnEnd": "2025-12-05",
+    "type": "Side Story (Rerun)",
+    "image": "data/images/1024px-CN_I_Portatori_Dei_Velluti_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/I_Portatori_dei_Velluti/Rerun",
+    "origPrime": 1,
+    "hhPermits": 3
   },
   {
-    "name": "Exodus from the Pale Sea (page does not exist)",
+    "name": "The Unpromised Land",
     "start": null,
     "end": null,
     "globalStart": null,
     "globalEnd": null,
     "cnStart": null,
     "cnEnd": null,
-    "type": null,
+    "type": "Side Story",
     "image": null,
-    "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun?action=edit&redlink=1"
+    "link": "https://arknights.wiki.gg/wiki/The_Unpromised_Land"
   },
   {
-    "name": "Wishes from Stars (page does not exist)",
+    "name": "Exodus from the Pale Sea",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": "Side Story (Rerun)",
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun",
+    "origPrime": 28,
+    "hhPermits": 3
+  },
+  {
+    "name": "Wishes from Stars",
     "start": null,
     "end": null,
     "globalStart": null,
@@ -252,7 +268,7 @@
     "cnEnd": null,
     "type": null,
     "image": null,
-    "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars?action=edit&redlink=1"
+    "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars"
   },
   {
     "name": "Trials for Navigator 6",

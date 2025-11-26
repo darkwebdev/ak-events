@@ -26,20 +26,6 @@
     "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_5"
   },
   {
-    "name": "Path of Life",
-    "start": "2025-11-27",
-    "end": "2025-12-07",
-    "globalStart": "2025-11-27",
-    "globalEnd": "2025-12-07",
-    "cnStart": "2025-06-19",
-    "cnEnd": "2025-06-29",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/1024px-CN_Path_of_Life_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Path_of_Life_Rerun",
-    "origPrime": 29,
-    "hhPermits": 3
-  },
-  {
     "name": "Fantasy in The Mirage",
     "start": "2025-12-11",
     "end": "2025-12-18",

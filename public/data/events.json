@@ -219,16 +219,16 @@
     "hhPermits": 3
   },
   {
-    "name": "The Unpromised Land",
-    "start": null,
-    "end": null,
+    "name": "Unrealized Realities",
+    "start": "2025-12-05",
+    "end": "2025-12-19",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
+    "cnStart": "2025-12-05",
+    "cnEnd": "2025-12-19",
     "type": "Side Story",
-    "image": null,
-    "link": "https://arknights.wiki.gg/wiki/The_Unpromised_Land"
+    "image": "data/images/1024px-CN_Unrealized_Realities_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Unrealized_Realities"
   },
   {
     "name": "Exodus from the Pale Sea",

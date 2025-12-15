@@ -13,18 +13,6 @@
     "origPrime": 18
   },
   {
-    "name": "Gyoko Kichion",
-    "start": "2025-12-18",
-    "end": "2026-01-01",
-    "globalStart": "2025-12-18",
-    "globalEnd": "2026-01-01",
-    "cnStart": "2025-07-22",
-    "cnEnd": "2025-08-05",
-    "type": "Crossover event",
-    "image": "data/images/1024px-CN_Gyoko_Kichion_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
-  },
-  {
     "name": "Adventure That Cannot Wait for the Sun",
     "start": "2026-01-06",
     "end": "2026-01-16",

@@ -1,16 +1,15 @@
 [
   {
-    "name": "Fantasy in the Mirage",
-    "start": "2025-12-11",
-    "end": "2025-12-18",
-    "globalStart": "2025-12-11",
-    "globalEnd": "2025-12-18",
-    "cnStart": "2025-07-08",
-    "cnEnd": "2025-07-15",
-    "type": "Story Collection",
-    "image": "data/images/1024px-EN_Fantasy_in_the_Mirage_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Fantasy_in_the_Mirage",
-    "origPrime": 18
+    "name": "Gyoko Kichion",
+    "start": "2025-12-18",
+    "end": "2026-01-01",
+    "globalStart": "2025-12-18",
+    "globalEnd": "2026-01-01",
+    "cnStart": "2025-07-22",
+    "cnEnd": "2025-08-05",
+    "type": "Crossover event",
+    "image": "data/images/1024px-EN_Gyoko_Kichion_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
   },
   {
     "name": "Adventure That Cannot Wait for the Sun",

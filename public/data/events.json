@@ -12,6 +12,18 @@
     "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
   },
   {
+    "name": "Wishes from Stars",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": "data/images/1024px-EN_Wishes_from_Stars_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars"
+  },
+  {
     "name": "Adventure That Cannot Wait for the Sun",
     "start": "2026-01-06",
     "end": "2026-01-16",
@@ -205,18 +217,6 @@
     "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun",
     "origPrime": 28,
     "hhPermits": 3
-  },
-  {
-    "name": "Wishes from Stars",
-    "start": null,
-    "end": null,
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
-    "type": null,
-    "image": null,
-    "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars"
   },
   {
     "name": "Trials for Navigator 6",

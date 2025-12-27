@@ -8,7 +8,7 @@
     "cnStart": "2025-07-22",
     "cnEnd": "2025-08-05",
     "type": "Crossover event",
-    "image": "data/images/1024px-EN_Gyoko_Kichion_banner.png",
+    "image": "data/images/EN_Gyoko_Kichion_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
   },
   {
@@ -20,7 +20,7 @@
     "cnStart": null,
     "cnEnd": null,
     "type": null,
-    "image": "data/images/1024px-EN_Wishes_from_Stars_banner.png",
+    "image": "data/images/EN_Wishes_from_Stars_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars"
   },
   {
@@ -32,7 +32,7 @@
     "cnStart": "2025-08-25",
     "cnEnd": "2025-09-03",
     "type": "Side Story (Rerun)",
-    "image": "data/images/1024px-CN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png",
+    "image": "data/images/CN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun/Rerun",
     "origPrime": 38,
     "hhPermits": 3
@@ -46,22 +46,10 @@
     "cnStart": "2025-08-02",
     "cnEnd": "2025-08-23",
     "type": "Side Story",
-    "image": "data/images/1024px-CN_Ato_banner.png",
+    "image": "data/images/CN_Ato_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Ato",
     "origPrime": 40,
     "hhPermits": 3
-  },
-  {
-    "name": "Contingency Contract Arclight",
-    "start": "2026-01-23",
-    "end": "2026-02-06",
-    "globalStart": "2026-01-23",
-    "globalEnd": "2026-02-06",
-    "cnStart": "2025-08-14",
-    "cnEnd": "2025-08-28",
-    "type": null,
-    "image": "data/images/1024px-CN_Contingency_Contract_Battleplan_Arclight_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
     "name": "Duel Channel Honeydew",
@@ -72,7 +60,7 @@
     "cnStart": "2025-08-28",
     "cnEnd": "2025-09-14",
     "type": null,
-    "image": "data/images/1024px-CN_Duel_Channel_Honeydew_banner.png",
+    "image": "data/images/CN_Duel_Channel_Honeydew_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Honeydew"
   },
   {
@@ -84,7 +72,7 @@
     "cnStart": "2025-09-04",
     "cnEnd": "2025-09-18",
     "type": "Side Story (Crossover)",
-    "image": "data/images/1024px-CN_Somniloquium_Serenum_banner.png",
+    "image": "data/images/CN_Somniloquium_Serenum_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
     "origPrime": 26,
     "hhPermits": 3
@@ -98,7 +86,7 @@
     "cnStart": "2025-09-19",
     "cnEnd": "2025-09-29",
     "type": "Intermezzo (Rerun)",
-    "image": "data/images/1024px-CN_Ending_a_Grand_Overture_Rerun_banner.png",
+    "image": "data/images/CN_Ending_a_Grand_Overture_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
     "origPrime": 30,
     "hhPermits": 3
@@ -112,7 +100,7 @@
     "cnStart": "2025-09-25",
     "cnEnd": "2025-10-16",
     "type": "Limited-time game mode",
-    "image": "data/images/1024px-CN_Rebuilding_Mandate_banner.png",
+    "image": "data/images/CN_Rebuilding_Mandate_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
   },
   {
@@ -124,7 +112,7 @@
     "cnStart": "2025-10-09",
     "cnEnd": "2025-10-23",
     "type": "Main Theme (episode release)",
-    "image": "data/images/1024px-CN_Abnormal_Spectrum_banner.png",
+    "image": "data/images/CN_Abnormal_Spectrum_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum",
     "hhPermits": 23
   },
@@ -137,7 +125,7 @@
     "cnStart": "2025-10-21",
     "cnEnd": "2025-11-11",
     "type": null,
-    "image": "data/images/1024px-CN_Icebreaker_Games_2_banner.png",
+    "image": "data/images/CN_Icebreaker_Games_2_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
   },
   {
@@ -149,7 +137,7 @@
     "cnStart": "2025-10-21",
     "cnEnd": "2025-11-11",
     "type": "Crossover event",
-    "image": "data/images/1024px-CN_Tender_Moments_banner.png",
+    "image": "data/images/CN_Tender_Moments_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
   },
   {
@@ -161,7 +149,7 @@
     "cnStart": "2025-11-01",
     "cnEnd": "2025-11-22",
     "type": "Side Story",
-    "image": "data/images/1024px-CN_Retracing_Our_Steps_1101_banner.png",
+    "image": "data/images/CN_Retracing_Our_Steps_1101_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps_1101",
     "hhPermits": 3
   },
@@ -174,7 +162,7 @@
     "cnStart": "2025-11-14",
     "cnEnd": "2025-12-12",
     "type": null,
-    "image": "data/images/1024px-CN_Stronghold_Protocol_Alliance_banner.png",
+    "image": "data/images/CN_Stronghold_Protocol_Alliance_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
   },
   {
@@ -186,7 +174,7 @@
     "cnStart": "2025-11-25",
     "cnEnd": "2025-12-05",
     "type": "Side Story (Rerun)",
-    "image": "data/images/1024px-CN_I_Portatori_Dei_Velluti_Rerun_banner.png",
+    "image": "data/images/CN_I_Portatori_Dei_Velluti_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/I_Portatori_dei_Velluti/Rerun",
     "origPrime": 1,
     "hhPermits": 3
@@ -200,7 +188,7 @@
     "cnStart": "2025-12-05",
     "cnEnd": "2025-12-19",
     "type": "Side Story",
-    "image": "data/images/1024px-CN_Unrealized_Realities_banner.png",
+    "image": "data/images/CN_Unrealized_Realities_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Unrealized_Realities",
     "hhPermits": 3
   },
@@ -213,13 +201,37 @@
     "cnStart": "2025-12-19",
     "cnEnd": "2025-12-29",
     "type": "Side Story (Rerun)",
-    "image": "data/images/1024px-CN_Exodus_from_the_Pale_Sea_Rerun_banner.png",
+    "image": "data/images/CN_Exodus_from_the_Pale_Sea_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun",
     "origPrime": 28,
     "hhPermits": 3
   },
   {
     "name": "Trials for Navigator 6",
+    "start": "2025-12-26",
+    "end": "2026-01-09",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2025-12-26",
+    "cnEnd": "2026-01-09",
+    "type": null,
+    "image": "data/images/CN_Trials_for_Navigator_6_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_6"
+  },
+  {
+    "name": "Athenius's Revenge",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": "Side Story",
+    "image": "data/images/CN_Athenius%27s_Revenge_teaser.png",
+    "link": "https://arknights.wiki.gg/wiki/Athenius%27s_Revenge"
+  },
+  {
+    "name": "[Crossover] Arknights x Rilakkuma",
     "start": null,
     "end": null,
     "globalStart": null,
@@ -227,7 +239,21 @@
     "cnStart": null,
     "cnEnd": null,
     "type": null,
-    "image": null,
-    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_6"
+    "image": "data/images/CN_Arknights_x_Rilakkuma_teaser.png",
+    "link": null
+  },
+  {
+    "name": "Such is the Joy of Our Reunion",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": "Side Story (Rerun)",
+    "image": "data/images/CN_Such_is_the_Joy_of_Our_Reunion_Rerun_teaser.png",
+    "link": "https://arknights.wiki.gg/wiki/Such_is_the_Joy_of_Our_Reunion/Rerun",
+    "origPrime": 38,
+    "hhPermits": 3
   }
 ]

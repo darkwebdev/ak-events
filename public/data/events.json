@@ -1,27 +1,15 @@
 [
   {
-    "name": "Gyoko Kichion",
-    "start": "2025-12-18",
-    "end": "2026-01-01",
-    "globalStart": "2025-12-18",
-    "globalEnd": "2026-01-01",
-    "cnStart": "2025-07-22",
-    "cnEnd": "2025-08-05",
-    "type": "Crossover event",
-    "image": "data/images/EN_Gyoko_Kichion_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Gyoko_Kichion"
-  },
-  {
-    "name": "Wishes from Stars",
-    "start": null,
-    "end": null,
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
+    "name": "Contingency Contract Arclight",
+    "start": "2026-01-23",
+    "end": "2026-02-06",
+    "globalStart": "2026-01-23",
+    "globalEnd": "2026-02-06",
+    "cnStart": "2025-08-14",
+    "cnEnd": "2025-08-28",
     "type": null,
-    "image": "data/images/EN_Wishes_from_Stars_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Wishes_from_Stars"
+    "image": "data/images/CN_Contingency_Contract_Battleplan_Arclight_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
     "name": "Adventure That Cannot Wait for the Sun",
@@ -219,16 +207,16 @@
     "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_6"
   },
   {
-    "name": "Athenius's Revenge",
-    "start": null,
-    "end": null,
+    "name": "Medjehtiqedti Bound",
+    "start": "2026-01-09",
+    "end": "2026-01-23",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
+    "cnStart": "2026-01-09",
+    "cnEnd": "2026-01-23",
     "type": "Side Story",
-    "image": "data/images/CN_Athenius%27s_Revenge_teaser.png",
-    "link": "https://arknights.wiki.gg/wiki/Athenius%27s_Revenge"
+    "image": "data/images/CN_Medjehtiqedti_Bound_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Medjehtiqedti_Bound"
   },
   {
     "name": "[Crossover] Arknights x Rilakkuma",

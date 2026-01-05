@@ -1,17 +1,5 @@
 [
   {
-    "name": "Contingency Contract Arclight",
-    "start": "2026-01-23",
-    "end": "2026-02-06",
-    "globalStart": "2026-01-23",
-    "globalEnd": "2026-02-06",
-    "cnStart": "2025-08-14",
-    "cnEnd": "2025-08-28",
-    "type": null,
-    "image": "data/images/CN_Contingency_Contract_Battleplan_Arclight_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
-  },
-  {
     "name": "Adventure That Cannot Wait for the Sun",
     "start": "2026-01-06",
     "end": "2026-01-16",
@@ -20,8 +8,8 @@
     "cnStart": "2025-08-25",
     "cnEnd": "2025-09-03",
     "type": "Side Story (Rerun)",
-    "image": "data/images/CN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun/Rerun",
+    "image": "data/images/EN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun_Rerun",
     "origPrime": 38,
     "hhPermits": 3
   },
@@ -38,6 +26,18 @@
     "link": "https://arknights.wiki.gg/wiki/Ato",
     "origPrime": 40,
     "hhPermits": 3
+  },
+  {
+    "name": "Contingency Contract Arclight",
+    "start": "2026-01-23",
+    "end": "2026-02-06",
+    "globalStart": "2026-01-23",
+    "globalEnd": "2026-02-06",
+    "cnStart": "2025-08-14",
+    "cnEnd": "2025-08-28",
+    "type": null,
+    "image": "data/images/CN_Contingency_Contract_Battleplan_Arclight_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
     "name": "Duel Channel Honeydew",

@@ -14,32 +14,6 @@
     "hhPermits": 3
   },
   {
-    "name": "Ato",
-    "start": "2026-01-16",
-    "end": "2026-02-06",
-    "globalStart": "2026-01-16",
-    "globalEnd": "2026-02-06",
-    "cnStart": "2025-08-02",
-    "cnEnd": "2025-08-23",
-    "type": "Side Story",
-    "image": "data/images/CN_Ato_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Ato",
-    "origPrime": 40,
-    "hhPermits": 3
-  },
-  {
-    "name": "Contingency Contract Arclight",
-    "start": "2026-01-23",
-    "end": "2026-02-06",
-    "globalStart": "2026-01-23",
-    "globalEnd": "2026-02-06",
-    "cnStart": "2025-08-14",
-    "cnEnd": "2025-08-28",
-    "type": null,
-    "image": "data/images/CN_Contingency_Contract_Battleplan_Arclight_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
-  },
-  {
     "name": "Duel Channel Honeydew",
     "start": "2025-08-28",
     "end": "2025-09-14",

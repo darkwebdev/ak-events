@@ -26,20 +26,6 @@
     "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Honeydew"
   },
   {
-    "name": "Somniloquium Serenum",
-    "start": "2025-09-04",
-    "end": "2025-09-18",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-09-04",
-    "cnEnd": "2025-09-18",
-    "type": "Side Story (Crossover)",
-    "image": "data/images/CN_Somniloquium_Serenum_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
-    "origPrime": 26,
-    "hhPermits": 3
-  },
-  {
     "name": "Ending a Grand Overture",
     "start": "2025-09-19",
     "end": "2025-09-29",

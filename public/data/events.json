@@ -179,16 +179,16 @@
     "link": "https://arknights.wiki.gg/wiki/Medjehtiqedti_Bound"
   },
   {
-    "name": "[Crossover] Arknights x Rilakkuma",
-    "start": null,
-    "end": null,
+    "name": "Languid Sentiment",
+    "start": "2026-01-16",
+    "end": "2026-02-06",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
-    "type": null,
-    "image": "data/images/CN_Arknights_x_Rilakkuma_teaser.png",
-    "link": null
+    "cnStart": "2026-01-16",
+    "cnEnd": "2026-02-06",
+    "type": "Crossover event",
+    "image": "data/images/CN_Languid_Sentiment_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Languid_Sentiment"
   },
   {
     "name": "Such is the Joy of Our Reunion",

@@ -176,7 +176,8 @@
     "cnEnd": "2026-01-23",
     "type": "Side Story",
     "image": "data/images/CN_Medjehtiqedti_Bound_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Medjehtiqedti_Bound"
+    "link": "https://arknights.wiki.gg/wiki/Medjehtiqedti_Bound",
+    "hhPermits": 3
   },
   {
     "name": "Languid Sentiment",

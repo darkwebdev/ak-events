@@ -1,16 +1,16 @@
 [
   {
-    "name": "Adventure That Cannot Wait for the Sun",
-    "start": "2026-01-06",
-    "end": "2026-01-16",
-    "globalStart": "2026-01-06",
-    "globalEnd": "2026-01-16",
-    "cnStart": "2025-08-25",
-    "cnEnd": "2025-09-03",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/EN_Adventure_That_Cannot_Wait_for_the_Sun_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Adventure_That_Cannot_Wait_for_the_Sun_Rerun",
-    "origPrime": 38,
+    "name": "Ato",
+    "start": "2026-01-16",
+    "end": "2026-02-06",
+    "globalStart": "2026-01-16",
+    "globalEnd": "2026-02-06",
+    "cnStart": "2025-08-02",
+    "cnEnd": "2025-08-23",
+    "type": "Side Story",
+    "image": "data/images/EN_Ato_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Ato",
+    "origPrime": 40,
     "hhPermits": 3
   },
   {

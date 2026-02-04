@@ -26,6 +26,18 @@
     "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
   },
   {
+    "name": "Duel Channel Honeydew",
+    "start": "2026-02-03",
+    "end": "2026-02-17",
+    "globalStart": "2026-02-03",
+    "globalEnd": "2026-02-17",
+    "cnStart": "2025-08-28",
+    "cnEnd": "2025-09-14",
+    "type": null,
+    "image": "data/images/EN_Duel_Channel_Honeydew_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Honeydew"
+  },
+  {
     "name": "Ending a Grand Overture",
     "start": "2025-09-19",
     "end": "2025-09-29",

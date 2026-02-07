@@ -1,31 +1,5 @@
 [
   {
-    "name": "Ato",
-    "start": "2026-01-16",
-    "end": "2026-02-06",
-    "globalStart": "2026-01-16",
-    "globalEnd": "2026-02-06",
-    "cnStart": "2025-08-02",
-    "cnEnd": "2025-08-23",
-    "type": "Side Story",
-    "image": "data/images/EN_Ato_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Ato",
-    "origPrime": 40,
-    "hhPermits": 3
-  },
-  {
-    "name": "Contingency Contract Arclight",
-    "start": "2026-01-23",
-    "end": "2026-02-06",
-    "globalStart": "2026-01-23",
-    "globalEnd": "2026-02-06",
-    "cnStart": "2025-08-14",
-    "cnEnd": "2025-08-28",
-    "type": null,
-    "image": "data/images/EN_Contingency_Contract_Arclight_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Arclight"
-  },
-  {
     "name": "Duel Channel Honeydew",
     "start": "2026-02-03",
     "end": "2026-02-17",
@@ -218,15 +192,16 @@
     "hhPermits": 3
   },
   {
-    "name": "[Side Story – Festival] Unnamed Through the Ages event",
-    "start": null,
-    "end": null,
+    "name": "First of A Thousand Autumns",
+    "start": "2026-02-10",
+    "end": "2026-03-03",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
-    "type": null,
-    "image": "data/images/CN_2026_Spring_Festival_Event_teaser.png",
-    "link": null
+    "cnStart": "2026-02-10",
+    "cnEnd": "2026-03-03",
+    "type": "Side Story",
+    "image": "data/images/CN_First_of_A_Thousand_Autumns_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/First_of_A_Thousand_Autumns",
+    "hhPermits": 39
   }
 ]

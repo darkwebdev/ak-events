@@ -1,5 +1,19 @@
 [
   {
+    "name": "Somniloquium Serenum",
+    "start": "2026-02-10",
+    "end": "2026-02-24",
+    "globalStart": "2026-02-10",
+    "globalEnd": "2026-02-24",
+    "cnStart": "2025-09-04",
+    "cnEnd": "2025-09-18",
+    "type": "Crossover (Side Story)",
+    "image": "data/images/EN_Somniloquium_Serenum_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
+    "origPrime": 26,
+    "hhPermits": 3
+  },
+  {
     "name": "Duel Channel Honeydew",
     "start": "2026-02-03",
     "end": "2026-02-17",

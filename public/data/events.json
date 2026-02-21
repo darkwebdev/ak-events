@@ -14,20 +14,6 @@
     "hhPermits": 3
   },
   {
-    "name": "Ending a Grand Overture",
-    "start": "2026-02-24",
-    "end": "2026-03-06",
-    "globalStart": "2026-02-24",
-    "globalEnd": "2026-03-06",
-    "cnStart": "2025-09-19",
-    "cnEnd": "2025-09-29",
-    "type": "Intermezzo (Rerun)",
-    "image": "data/images/CN_Ending_a_Grand_Overture_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
-    "origPrime": 30,
-    "hhPermits": 3
-  },
-  {
     "name": "Rebuilding Mandate",
     "start": "2026-03-06",
     "end": "2026-03-27",

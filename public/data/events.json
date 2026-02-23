@@ -191,5 +191,17 @@
     "image": "data/images/CN_First_of_A_Thousand_Autumns_banner.png",
     "link": "https://arknights.wiki.gg/wiki/First_of_A_Thousand_Autumns",
     "hhPermits": 3
+  },
+  {
+    "name": "Vector Breakthrough Night of Witchcraft",
+    "start": "2026-02-24",
+    "end": "2026-03-17",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-02-24",
+    "cnEnd": "2026-03-17",
+    "type": null,
+    "image": "data/images/CN_Vector_Breakthrough_Night_of_Witchcraft_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Night_of_Witchcraft"
   }
 ]

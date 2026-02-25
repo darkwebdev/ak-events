@@ -1,16 +1,16 @@
 [
   {
-    "name": "Somniloquium Serenum",
-    "start": "2026-02-10",
-    "end": "2026-02-24",
-    "globalStart": "2026-02-10",
-    "globalEnd": "2026-02-24",
-    "cnStart": "2025-09-04",
-    "cnEnd": "2025-09-18",
-    "type": "Crossover (Side Story)",
-    "image": "data/images/EN_Somniloquium_Serenum_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Somniloquium_Serenum",
-    "origPrime": 26,
+    "name": "Ending a Grand Overture",
+    "start": "2026-02-24",
+    "end": "2026-03-06",
+    "globalStart": "2026-02-24",
+    "globalEnd": "2026-03-06",
+    "cnStart": "2025-09-19",
+    "cnEnd": "2025-09-29",
+    "type": "Intermezzo (Rerun)",
+    "image": "data/images/EN_Ending_a_Grand_Overture_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
+    "origPrime": 30,
     "hhPermits": 3
   },
   {
@@ -203,5 +203,41 @@
     "type": null,
     "image": "data/images/CN_Vector_Breakthrough_Night_of_Witchcraft_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Night_of_Witchcraft"
+  },
+  {
+    "name": "Crossing",
+    "start": "2026-03-10",
+    "end": "2026-03-17",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-03-10",
+    "cnEnd": "2026-03-17",
+    "type": "Story Collection",
+    "image": "data/images/CN_Crossing_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Crossing"
+  },
+  {
+    "name": "Stronghold Protocol Alliance #2",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": null
+  },
+  {
+    "name": "[Rerun] When Elegies Are Ashes",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": null
   }
 ]

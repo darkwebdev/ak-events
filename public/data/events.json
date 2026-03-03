@@ -14,18 +14,6 @@
     "hhPermits": 3
   },
   {
-    "name": "Rebuilding Mandate",
-    "start": "2026-03-06",
-    "end": "2026-03-27",
-    "globalStart": "2026-03-06",
-    "globalEnd": "2026-03-27",
-    "cnStart": "2025-09-25",
-    "cnEnd": "2025-10-16",
-    "type": "Limited-time game mode",
-    "image": "data/images/CN_Rebuilding_Mandate_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
-  },
-  {
     "name": "Abnormal Spectrum",
     "start": "2026-03-19",
     "end": "2026-04-02",

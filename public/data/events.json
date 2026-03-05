@@ -39,18 +39,6 @@
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
   },
   {
-    "name": "Tender Moments",
-    "start": "2025-10-21",
-    "end": "2025-11-11",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-10-21",
-    "cnEnd": "2025-11-11",
-    "type": "Crossover event",
-    "image": "data/images/CN_Tender_Moments_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
-  },
-  {
     "name": "Retracing Our Steps 1101",
     "start": "2025-11-01",
     "end": "2025-11-22",

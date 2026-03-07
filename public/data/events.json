@@ -1,17 +1,27 @@
 [
   {
-    "name": "Ending a Grand Overture",
-    "start": "2026-02-24",
-    "end": "2026-03-06",
-    "globalStart": "2026-02-24",
-    "globalEnd": "2026-03-06",
-    "cnStart": "2025-09-19",
-    "cnEnd": "2025-09-29",
-    "type": "Intermezzo (Rerun)",
-    "image": "data/images/EN_Ending_a_Grand_Overture_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Ending_a_Grand_Overture/Rerun",
-    "origPrime": 30,
-    "hhPermits": 3
+    "name": "Rebuilding Mandate",
+    "start": "2026-03-06",
+    "end": "2026-03-27",
+    "globalStart": "2026-03-06",
+    "globalEnd": "2026-03-27",
+    "cnStart": "2025-09-25",
+    "cnEnd": "2025-10-16",
+    "type": "Limited-time game mode",
+    "image": "data/images/EN_Rebuilding_Mandate_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
+  },
+  {
+    "name": "Tender Moments",
+    "start": "2026-03-06",
+    "end": "2026-03-27",
+    "globalStart": "2026-03-06",
+    "globalEnd": "2026-03-27",
+    "cnStart": "2025-10-21",
+    "cnEnd": "2025-11-11",
+    "type": "Crossover event",
+    "image": "data/images/EN_Tender_Moments_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
   },
   {
     "name": "Abnormal Spectrum",

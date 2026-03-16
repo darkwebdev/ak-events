@@ -24,19 +24,6 @@
     "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
   },
   {
-    "name": "Abnormal Spectrum",
-    "start": "2026-03-19",
-    "end": "2026-04-02",
-    "globalStart": "2026-03-19",
-    "globalEnd": "2026-04-02",
-    "cnStart": "2025-10-09",
-    "cnEnd": "2025-10-23",
-    "type": "Main Theme (episode release)",
-    "image": "data/images/CN_Abnormal_Spectrum_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum",
-    "hhPermits": 23
-  },
-  {
     "name": "Icebreaker Games 2",
     "start": "2025-10-21",
     "end": "2025-11-11",

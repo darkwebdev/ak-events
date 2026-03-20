@@ -1,5 +1,18 @@
 [
   {
+    "name": "Abnormal Spectrum",
+    "start": "2026-03-19",
+    "end": "2026-04-02",
+    "globalStart": "2026-03-19",
+    "globalEnd": "2026-04-02",
+    "cnStart": "2025-10-09",
+    "cnEnd": "2025-10-23",
+    "type": "Main Theme (episode release)",
+    "image": "data/images/EN_Abnormal_Spectrum_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum",
+    "hhPermits": 39
+  },
+  {
     "name": "Rebuilding Mandate",
     "start": "2026-03-06",
     "end": "2026-03-27",
@@ -190,16 +203,16 @@
     "link": "https://arknights.wiki.gg/wiki/Crossing"
   },
   {
-    "name": "Stronghold Protocol Alliance #2",
+    "name": "Stronghold Protocol Alliance 2",
     "start": "2026-03-14",
-    "end": null,
+    "end": "2025-04-25",
     "globalStart": null,
     "globalEnd": null,
     "cnStart": "2026-03-14",
-    "cnEnd": null,
+    "cnEnd": "2025-04-25",
     "type": null,
-    "image": null,
-    "link": null
+    "image": "data/images/CN_Stronghold_Protocol_Alliance_2_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_2"
   },
   {
     "name": "[Rerun] When Elegies Are Ashes",

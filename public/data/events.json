@@ -215,15 +215,15 @@
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_2"
   },
   {
-    "name": "[Rerun] When Elegies Are Ashes",
-    "start": null,
-    "end": null,
+    "name": "When Elegies Are Ashes (page does not exist)",
+    "start": "2026-03-27",
+    "end": "2026-04-06",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
+    "cnStart": "2026-03-27",
+    "cnEnd": "2026-04-06",
     "type": null,
-    "image": null,
-    "link": null
+    "image": "data/images/CN_When_Elegies_Are_Ashes_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun?action=edit&redlink=1"
   }
 ]

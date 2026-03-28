@@ -13,30 +13,6 @@
     "hhPermits": 39
   },
   {
-    "name": "Rebuilding Mandate",
-    "start": "2026-03-06",
-    "end": "2026-03-27",
-    "globalStart": "2026-03-06",
-    "globalEnd": "2026-03-27",
-    "cnStart": "2025-09-25",
-    "cnEnd": "2025-10-16",
-    "type": "Limited-time game mode",
-    "image": "data/images/EN_Rebuilding_Mandate_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Rebuilding_Mandate"
-  },
-  {
-    "name": "Tender Moments",
-    "start": "2026-03-06",
-    "end": "2026-03-27",
-    "globalStart": "2026-03-06",
-    "globalEnd": "2026-03-27",
-    "cnStart": "2025-10-21",
-    "cnEnd": "2025-11-11",
-    "type": "Crossover event",
-    "image": "data/images/EN_Tender_Moments_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Tender_Moments"
-  },
-  {
     "name": "Icebreaker Games 2",
     "start": "2025-10-21",
     "end": "2025-11-11",

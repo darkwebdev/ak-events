@@ -186,11 +186,9 @@
     "globalEnd": null,
     "cnStart": "2026-03-27",
     "cnEnd": "2026-04-06",
-    "type": "Side Story (Rerun)",
+    "type": null,
     "image": "data/images/CN_When_Elegies_Are_Ashes_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun",
-    "origPrime": 28,
-    "hhPermits": 3
+    "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun"
   },
   {
     "name": "We Are Together",
@@ -200,7 +198,7 @@
     "globalEnd": null,
     "cnStart": null,
     "cnEnd": null,
-    "type": "Side Story",
+    "type": null,
     "image": "data/images/CN_We_Are_Together_teaser.png",
     "link": "https://arknights.wiki.gg/wiki/We_Are_Together"
   }

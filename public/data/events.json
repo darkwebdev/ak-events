@@ -13,6 +13,18 @@
     "hhPermits": 39
   },
   {
+    "name": "Icebreaker Games 2",
+    "start": "2026-04-01",
+    "end": "2026-04-22",
+    "globalStart": "2026-04-01",
+    "globalEnd": "2026-04-22",
+    "cnStart": "2025-10-21",
+    "cnEnd": "2025-11-11",
+    "type": null,
+    "image": "data/images/EN_Icebreaker_Games_2_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
+  },
+  {
     "name": "Retracing Our Steps 1101",
     "start": "2025-11-01",
     "end": "2025-11-22",
@@ -186,9 +198,11 @@
     "globalEnd": null,
     "cnStart": "2026-03-27",
     "cnEnd": "2026-04-06",
-    "type": null,
+    "type": "Side Story (Rerun)",
     "image": "data/images/CN_When_Elegies_Are_Ashes_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun"
+    "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun",
+    "origPrime": 28,
+    "hhPermits": 3
   },
   {
     "name": "We Are Together",
@@ -198,7 +212,7 @@
     "globalEnd": null,
     "cnStart": null,
     "cnEnd": null,
-    "type": null,
+    "type": "Side Story",
     "image": "data/images/CN_We_Are_Together_teaser.png",
     "link": "https://arknights.wiki.gg/wiki/We_Are_Together"
   }

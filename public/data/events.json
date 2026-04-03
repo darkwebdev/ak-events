@@ -1,18 +1,5 @@
 [
   {
-    "name": "Abnormal Spectrum",
-    "start": "2026-03-19",
-    "end": "2026-04-02",
-    "globalStart": "2026-03-19",
-    "globalEnd": "2026-04-02",
-    "cnStart": "2025-10-09",
-    "cnEnd": "2025-10-23",
-    "type": "Main Theme (episode release)",
-    "image": "data/images/EN_Abnormal_Spectrum_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Abnormal_Spectrum",
-    "hhPermits": 39
-  },
-  {
     "name": "Icebreaker Games 2",
     "start": "2026-04-01",
     "end": "2026-04-22",
@@ -205,15 +192,15 @@
     "hhPermits": 3
   },
   {
-    "name": "We Are Together",
-    "start": null,
-    "end": null,
+    "name": "People, A People",
+    "start": "2026-04-07",
+    "end": "2026-04-21",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
+    "cnStart": "2026-04-07",
+    "cnEnd": "2026-04-21",
     "type": "Side Story",
-    "image": "data/images/CN_We_Are_Together_teaser.png",
-    "link": "https://arknights.wiki.gg/wiki/We_Are_Together"
+    "image": "data/images/CN_People%2C_A_People_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/People,_A_People"
   }
 ]

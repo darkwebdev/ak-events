@@ -163,7 +163,8 @@
     "cnEnd": "2026-03-17",
     "type": "Story Collection",
     "image": "data/images/CN_Crossing_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Crossing"
+    "link": "https://arknights.wiki.gg/wiki/Crossing",
+    "origPrime": 18
   },
   {
     "name": "Stronghold Protocol Alliance 2",

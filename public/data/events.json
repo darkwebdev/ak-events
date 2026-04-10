@@ -12,19 +12,6 @@
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
   },
   {
-    "name": "Retracing Our Steps 1101",
-    "start": "2025-11-01",
-    "end": "2025-11-22",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-11-01",
-    "cnEnd": "2025-11-22",
-    "type": "Side Story",
-    "image": "data/images/CN_Retracing_Our_Steps_1101_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps_1101",
-    "hhPermits": 3
-  },
-  {
     "name": "Stronghold Protocol Alliance",
     "start": "2025-11-14",
     "end": "2025-12-12",

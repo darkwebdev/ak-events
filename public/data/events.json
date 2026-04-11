@@ -12,18 +12,6 @@
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
   },
   {
-    "name": "Stronghold Protocol Alliance",
-    "start": "2025-11-14",
-    "end": "2025-12-12",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-11-14",
-    "cnEnd": "2025-12-12",
-    "type": null,
-    "image": "data/images/CN_Stronghold_Protocol_Alliance_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
-  },
-  {
     "name": "I Portatori dei Velluti",
     "start": "2025-11-25",
     "end": "2025-12-05",

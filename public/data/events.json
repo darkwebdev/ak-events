@@ -1,5 +1,19 @@
 [
   {
+    "name": "Retracing Our Steps",
+    "start": "2026-04-14",
+    "end": "2026-05-05",
+    "globalStart": "2026-04-14",
+    "globalEnd": "2026-05-05",
+    "cnStart": "2025-11-01",
+    "cnEnd": "2025-11-22",
+    "type": "Side Story",
+    "image": "data/images/EN_Retracing_Our_Steps_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps",
+    "origPrime": 1,
+    "hhPermits": 3
+  },
+  {
     "name": "Icebreaker Games 2",
     "start": "2026-04-01",
     "end": "2026-04-22",
@@ -10,47 +24,6 @@
     "type": null,
     "image": "data/images/EN_Icebreaker_Games_2_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Icebreaker_Games_2"
-  },
-  {
-    "name": "I Portatori dei Velluti",
-    "start": "2025-11-25",
-    "end": "2025-12-05",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-11-25",
-    "cnEnd": "2025-12-05",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/CN_I_Portatori_Dei_Velluti_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/I_Portatori_dei_Velluti/Rerun",
-    "origPrime": 1,
-    "hhPermits": 3
-  },
-  {
-    "name": "Unrealized Realities",
-    "start": "2025-12-05",
-    "end": "2025-12-19",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-12-05",
-    "cnEnd": "2025-12-19",
-    "type": "Side Story",
-    "image": "data/images/CN_Unrealized_Realities_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Unrealized_Realities",
-    "hhPermits": 3
-  },
-  {
-    "name": "Exodus from the Pale Sea",
-    "start": "2025-12-19",
-    "end": "2025-12-29",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2025-12-19",
-    "cnEnd": "2025-12-29",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/CN_Exodus_from_the_Pale_Sea_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun",
-    "origPrime": 28,
-    "hhPermits": 3
   },
   {
     "name": "Trials for Navigator 6",

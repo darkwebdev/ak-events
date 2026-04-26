@@ -140,5 +140,29 @@
     "image": "data/images/CN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
     "hhPermits": 3
+  },
+  {
+    "name": "Duel Channel Ivy Vine",
+    "start": "2026-04-25",
+    "end": "2026-05-09",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-04-25",
+    "cnEnd": "2026-05-09",
+    "type": null,
+    "image": "data/images/CN_Duel_Channel_Ivy_Vine_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Ivy_Vine"
+  },
+  {
+    "name": "Critical Phase Transition",
+    "start": "2026-05-01",
+    "end": "2026-05-15",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-05-01",
+    "cnEnd": "2026-05-15",
+    "type": "Main Theme (episode release)",
+    "image": "data/images/CN_Critical_Phase_Transition_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition"
   }
 ]

@@ -165,5 +165,17 @@
     "image": "data/images/CN_Critical_Phase_Transition_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
     "hhPermits": 39
+  },
+  {
+    "name": "Relaunch Anchor",
+    "start": "2026-05-15",
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-05-15",
+    "cnEnd": null,
+    "type": null,
+    "image": "data/images/CN_Relaunch_Anchor_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Relaunch_Anchor"
   }
 ]

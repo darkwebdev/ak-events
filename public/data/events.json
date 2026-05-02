@@ -14,6 +14,18 @@
     "hhPermits": 3
   },
   {
+    "name": "Stronghold Protocol Alliance",
+    "start": "2026-04-28",
+    "end": "2026-05-26",
+    "globalStart": "2026-04-28",
+    "globalEnd": "2026-05-26",
+    "cnStart": "2025-11-14",
+    "cnEnd": "2025-12-12",
+    "type": null,
+    "image": "data/images/EN_Stronghold_Protocol_Alliance_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance"
+  },
+  {
     "name": "Trials for Navigator 6",
     "start": "2025-12-26",
     "end": "2026-01-09",
@@ -165,17 +177,5 @@
     "image": "data/images/CN_Critical_Phase_Transition_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
     "hhPermits": 39
-  },
-  {
-    "name": "Relaunch Anchor",
-    "start": "2026-05-15",
-    "end": null,
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2026-05-15",
-    "cnEnd": null,
-    "type": null,
-    "image": "data/images/CN_Relaunch_Anchor_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Relaunch_Anchor"
   }
 ]

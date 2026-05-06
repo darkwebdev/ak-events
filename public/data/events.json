@@ -1,19 +1,5 @@
 [
   {
-    "name": "Retracing Our Steps",
-    "start": "2026-04-14",
-    "end": "2026-05-05",
-    "globalStart": "2026-04-14",
-    "globalEnd": "2026-05-05",
-    "cnStart": "2025-11-01",
-    "cnEnd": "2025-11-22",
-    "type": "Side Story",
-    "image": "data/images/EN_Retracing_Our_Steps_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps",
-    "origPrime": 1,
-    "hhPermits": 3
-  },
-  {
     "name": "Stronghold Protocol Alliance",
     "start": "2026-04-28",
     "end": "2026-05-26",

@@ -1,5 +1,19 @@
 [
   {
+    "name": "I Portatori dei Velluti",
+    "start": "2026-05-07",
+    "end": "2026-05-17",
+    "globalStart": "2026-05-07",
+    "globalEnd": "2026-05-17",
+    "cnStart": "2025-11-25",
+    "cnEnd": "2025-12-05",
+    "type": "Side Story (Rerun)",
+    "image": "data/images/EN_I_Portatori_dei_Velluti_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/I_Portatori_dei_Velluti/Rerun",
+    "origPrime": 1,
+    "hhPermits": 3
+  },
+  {
     "name": "Stronghold Protocol Alliance",
     "start": "2026-04-28",
     "end": "2026-05-26",

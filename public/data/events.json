@@ -1,19 +1,5 @@
 [
   {
-    "name": "I Portatori dei Velluti",
-    "start": "2026-05-07",
-    "end": "2026-05-17",
-    "globalStart": "2026-05-07",
-    "globalEnd": "2026-05-17",
-    "cnStart": "2025-11-25",
-    "cnEnd": "2025-12-05",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/EN_I_Portatori_dei_Velluti_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/I_Portatori_dei_Velluti/Rerun",
-    "origPrime": 1,
-    "hhPermits": 3
-  },
-  {
     "name": "Stronghold Protocol Alliance",
     "start": "2026-04-28",
     "end": "2026-05-26",
@@ -179,15 +165,39 @@
     "hhPermits": 39
   },
   {
-    "name": "Relaunch Anchor",
-    "start": "2026-05-15",
+    "name": "[Side Story – Crossover] Unnamed 2nd Monster Hunter crossover",
+    "start": null,
     "end": null,
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": "2026-05-15",
+    "cnStart": null,
     "cnEnd": null,
     "type": null,
-    "image": "data/images/CN_Relaunch_Anchor_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Relaunch_Anchor"
+    "image": null,
+    "link": null
+  },
+  {
+    "name": "A Flurry to the Flame (page does not exist)",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun?action=edit&redlink=1"
+  },
+  {
+    "name": "Contingency Contract Obliteration (page does not exist)",
+    "start": null,
+    "end": null,
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": null,
+    "cnEnd": null,
+    "type": null,
+    "image": null,
+    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Obliteration?action=edit&redlink=1"
   }
 ]

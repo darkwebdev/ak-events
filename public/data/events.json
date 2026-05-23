@@ -178,6 +178,18 @@
     "hhPermits": 39
   },
   {
+    "name": "The Masses' Travels (page does not exist)",
+    "start": "2026-05-22",
+    "end": "2026-06-01",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-05-22",
+    "cnEnd": "2026-06-01",
+    "type": null,
+    "image": "data/images/CN_The_Masses%27_Travels_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun?action=edit&redlink=1"
+  },
+  {
     "name": "[Side Story – Crossover] Unnamed 2nd Monster Hunter crossover",
     "start": null,
     "end": null,

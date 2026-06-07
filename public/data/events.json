@@ -182,18 +182,16 @@
     "hhPermits": 120
   },
   {
-    "name": "A Flurry to the Flame",
+    "name": "A Flurry to the Flame (page does not exist)",
     "start": null,
     "end": null,
     "globalStart": null,
     "globalEnd": null,
     "cnStart": null,
     "cnEnd": null,
-    "type": "Crossover (Side Story) (Rerun)",
+    "type": null,
     "image": null,
-    "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
-    "origPrime": 31,
-    "hhPermits": 10
+    "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun?action=edit&redlink=1"
   },
   {
     "name": "Contingency Contract Obliteration (page does not exist)",

@@ -182,6 +182,18 @@
     "hhPermits": 120
   },
   {
+    "name": "Positional Football Championship",
+    "start": "2026-06-08",
+    "end": "2026-06-22",
+    "globalStart": null,
+    "globalEnd": null,
+    "cnStart": "2026-06-08",
+    "cnEnd": "2026-06-22",
+    "type": null,
+    "image": "data/images/CN_Positional_Football_Championship_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Positional_Football_Championship"
+  },
+  {
     "name": "A Flurry to the Flame (page does not exist)",
     "start": null,
     "end": null,

@@ -14,6 +14,19 @@
     "hhPermits": 3
   },
   {
+    "name": "Trials for Navigator 6",
+    "start": "2026-06-11",
+    "end": "2026-06-25",
+    "globalStart": "2026-06-11",
+    "globalEnd": "2026-06-25",
+    "cnStart": "2025-12-26",
+    "cnEnd": "2026-01-09",
+    "type": null,
+    "image": "data/images/EN_Trials_for_Navigator_6_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_6",
+    "hhPermits": 1
+  },
+  {
     "name": "Medjehtiqedti Bound",
     "start": "2026-01-09",
     "end": "2026-01-23",

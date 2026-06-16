@@ -1,19 +1,5 @@
 [
   {
-    "name": "Exodus from the Pale Sea",
-    "start": "2026-06-05",
-    "end": "2026-06-15",
-    "globalStart": "2026-06-05",
-    "globalEnd": "2026-06-15",
-    "cnStart": "2025-12-19",
-    "cnEnd": "2025-12-29",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/EN_Exodus_from_the_Pale_Sea_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Exodus_from_the_Pale_Sea/Rerun",
-    "origPrime": 28,
-    "hhPermits": 3
-  },
-  {
     "name": "Trials for Navigator 6",
     "start": "2026-06-11",
     "end": "2026-06-25",
@@ -25,19 +11,6 @@
     "image": "data/images/EN_Trials_for_Navigator_6_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Trials_for_Navigator_6",
     "hhPermits": 1
-  },
-  {
-    "name": "Medjehtiqedti Bound",
-    "start": "2026-01-09",
-    "end": "2026-01-23",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2026-01-09",
-    "cnEnd": "2026-01-23",
-    "type": "Side Story",
-    "image": "data/images/CN_Medjehtiqedti_Bound_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Medjehtiqedti_Bound",
-    "hhPermits": 3
   },
   {
     "name": "Languid Sentiment",
@@ -207,16 +180,18 @@
     "link": "https://arknights.wiki.gg/wiki/Positional_Football_Championship"
   },
   {
-    "name": "A Flurry to the Flame (page does not exist)",
-    "start": null,
-    "end": null,
+    "name": "A Flurry to the Flame",
+    "start": "2026-06-15",
+    "end": "2026-06-25",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
-    "type": null,
-    "image": null,
-    "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun?action=edit&redlink=1"
+    "cnStart": "2026-06-15",
+    "cnEnd": "2026-06-25",
+    "type": "Crossover (Side Story) (Rerun)",
+    "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
+    "origPrime": 31,
+    "hhPermits": 10
   },
   {
     "name": "Contingency Contract Obliteration (page does not exist)",

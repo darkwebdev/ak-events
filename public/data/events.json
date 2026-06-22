@@ -194,15 +194,15 @@
     "hhPermits": 10
   },
   {
-    "name": "Contingency Contract Obliteration (page does not exist)",
-    "start": null,
-    "end": null,
+    "name": "Contingency Contract Obliteration",
+    "start": "2026-06-26",
+    "end": "2026-07-10",
     "globalStart": null,
     "globalEnd": null,
-    "cnStart": null,
-    "cnEnd": null,
+    "cnStart": "2026-06-26",
+    "cnEnd": "2026-07-10",
     "type": null,
-    "image": null,
-    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Obliteration?action=edit&redlink=1"
+    "image": "data/images/CN_Contingency_Contract_Obliteration_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Obliteration"
   }
 ]

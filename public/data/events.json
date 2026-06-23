@@ -1,5 +1,18 @@
 [
   {
+    "name": "Medjehtiqedti Bound",
+    "start": "2026-06-22",
+    "end": "2026-07-06",
+    "globalStart": "2026-06-22",
+    "globalEnd": "2026-07-06",
+    "cnStart": "2026-01-09",
+    "cnEnd": "2026-01-23",
+    "type": "Side Story",
+    "image": "data/images/EN_Medjehtiqedti_Bound_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Medjehtiqedti_Bound",
+    "hhPermits": 3
+  },
+  {
     "name": "Trials for Navigator 6",
     "start": "2026-06-11",
     "end": "2026-06-25",
@@ -23,45 +36,6 @@
     "type": "Crossover event",
     "image": "data/images/CN_Languid_Sentiment_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Languid_Sentiment"
-  },
-  {
-    "name": "Such is the Joy of Our Reunion",
-    "start": "2026-01-27",
-    "end": "2026-02-06",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2026-01-27",
-    "cnEnd": "2026-02-06",
-    "type": "Side Story (Rerun)",
-    "image": "data/images/CN_Such_is_the_Joy_of_Our_Reunion_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Such_is_the_Joy_of_Our_Reunion/Rerun",
-    "origPrime": 38,
-    "hhPermits": 3
-  },
-  {
-    "name": "First of A Thousand Autumns",
-    "start": "2026-02-10",
-    "end": "2026-03-03",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2026-02-10",
-    "cnEnd": "2026-03-03",
-    "type": "Side Story",
-    "image": "data/images/CN_First_of_A_Thousand_Autumns_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/First_of_A_Thousand_Autumns",
-    "hhPermits": 3
-  },
-  {
-    "name": "Vector Breakthrough Night of Witchcraft",
-    "start": "2026-02-24",
-    "end": "2026-03-17",
-    "globalStart": null,
-    "globalEnd": null,
-    "cnStart": "2026-02-24",
-    "cnEnd": "2026-03-17",
-    "type": null,
-    "image": "data/images/CN_Vector_Breakthrough_Night_of_Witchcraft_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Night_of_Witchcraft"
   },
   {
     "name": "Crossing",

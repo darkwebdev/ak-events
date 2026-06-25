@@ -51,7 +51,7 @@
     "origPrime": 18
   },
   {
-    "name": "Stronghold Protocol Alliance 2",
+    "name": "Stronghold Protocol Alliance 2nd Half",
     "start": "2026-03-14",
     "end": "2025-04-25",
     "globalStart": null,
@@ -59,8 +59,8 @@
     "cnStart": "2026-03-14",
     "cnEnd": "2025-04-25",
     "type": null,
-    "image": "data/images/CN_Stronghold_Protocol_Alliance_2_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_2"
+    "image": "data/images/CN_Stronghold_Protocol_Alliance_2nd_Half_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_2nd_Half"
   },
   {
     "name": "When Elegies Are Ashes",

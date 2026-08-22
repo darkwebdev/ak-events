@@ -1,8 +1,8 @@
 .ak-total-section {
-  background: #f8f9fa;
+  background: var(--ak-surface);
   padding: 16px;
   border-radius: 8px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--ak-border);
   display: flex;
   flex-direction: column;
   gap: 12px;

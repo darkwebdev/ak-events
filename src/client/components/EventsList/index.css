@@ -14,13 +14,13 @@
 .ak-events-list-item {
   margin: 0;
   padding: 0;
-  background: #fff;
-  border-bottom: 1px solid #eee;
+  background: var(--ak-bg);
+  border-bottom: 1px solid var(--ak-border);
   transition: background-color 0.15s;
 }
 
 .ak-events-list-item.selected {
-  background-color: color-mix(in srgb, var(--ak-accent) 10%, #fff 90%);
+  background-color: color-mix(in srgb, var(--ak-accent) 14%, var(--ak-bg) 86%);
 }
 
 .ak-events-list-item[role='button'] {
@@ -28,13 +28,13 @@
 }
 
 .ak-events-list-item[role='button']:hover:not(.selected) {
-  background: color-mix(in srgb, var(--ak-accent) 6%, #fff 94%);
+  background: var(--ak-surface-hover);
 }
 
 .ak-empty-row {
   text-align: center;
   padding: 1rem;
-  color: #666;
+  color: var(--ak-text-muted);
 }
 
 /* Footer */
@@ -44,8 +44,8 @@
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-top: 1px solid #ddd;
-  background: #fff;
+  border-top: 1px solid var(--ak-border-strong);
+  background: var(--ak-bg);
   position: sticky;
   bottom: 0;
   z-index: 2;

@@ -14,8 +14,8 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <span className="ak-aside-name">Orundum</span>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="ak-number-input"
               min="0"
               step="1"
@@ -27,8 +27,8 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <span className="ak-aside-name">Originite Prime</span>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="ak-number-input"
               min="0"
               step="1"
@@ -40,8 +40,8 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <span className="ak-aside-name">Headhunting Permits</span>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="ak-number-input"
               min="0"
               step="1"
@@ -56,14 +56,16 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
           <div className="ak-aside-label">
             <span className="ak-aside-name">
               <InfoButton title="Breakdown" label="Total Orundum">
-                <Breakdown 
-                  items={["Orundum", "OP", "Permits"]}
-                  calcs={["-", `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
+                <Breakdown
+                  items={['Orundum', 'OP', 'Permits']}
+                  calcs={['-', `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
                   totals={[owned.orundum, owned.op * 180, owned.hhPermits * 600]}
                 />
               </InfoButton>
             </span>
-            <span className="ak-aside-value"><Orundum withPulls>{totalOwned}</Orundum></span>
+            <span className="ak-aside-value">
+              <Orundum withPulls>{totalOwned}</Orundum>
+            </span>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@
 .ak-breakdown-total {
   display: table-cell;
   padding: 8px 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--ak-border);
   text-align: left;
 }
 
@@ -26,8 +26,8 @@
 }
 
 .ak-breakdown-calc {
-  color: #666;
-  font-size: 14px;  
+  color: var(--ak-text-muted);
+  font-size: 14px;
 }
 
 .ak-breakdown-total {

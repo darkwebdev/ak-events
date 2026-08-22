@@ -15,7 +15,7 @@
 }
 
 .ak-event-type {
-  color: #666;
+  color: var(--ak-text-muted);
   font-size: 0.9em;
   font-weight: 400;
 }
@@ -39,7 +39,7 @@
 }
 
 .ak-event-date {
-  color: #555;
+  color: var(--ak-text-muted);
 }
 
 .ak-event-orundum {
@@ -50,7 +50,7 @@
 .ak-event-banner {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--ak-border);
 }
 
 .ak-event-banner-header {
@@ -64,11 +64,11 @@
 
 .ak-event-banner-name {
   font-weight: 600;
-  color: #333;
+  color: var(--ak-text);
 }
 
 .ak-event-banner-spark {
-  color: #b06d00;
+  color: var(--ak-spark);
   white-space: nowrap;
 }
 

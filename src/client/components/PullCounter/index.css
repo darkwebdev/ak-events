@@ -1,5 +1,5 @@
 number-flow-react::part(number) {
-    font-size: 2em;
-    font-weight: bold;
-    color: var(--ak-accent);
+  font-size: 2em;
+  font-weight: bold;
+  color: var(--ak-accent);
 }

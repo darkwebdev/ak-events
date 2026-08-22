@@ -14,6 +14,6 @@ export default defineConfig({
   publicDir: resolve(__dirname, '..', '..', 'public'),
   build: {
     // output the production build to the repository root `dist/` directory
-    outDir: resolve(__dirname, '..', '..', 'dist')
-  }
+    outDir: resolve(__dirname, '..', '..', 'dist'),
+  },
 });

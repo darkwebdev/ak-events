@@ -19,28 +19,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e9ecef;
-  color: #666;
+  background: var(--ak-surface-hover);
+  color: var(--ak-text-muted);
   font-size: 14px;
   font-weight: 600;
 }
 
 .ak-operator-badge.limited .ak-operator-icon,
 .ak-operator-badge.limited .ak-operator-icon-fallback {
-  box-shadow: 0 0 0 2px #ffab00;
+  box-shadow: 0 0 0 2px var(--ak-limited);
 }
 
 .ak-operator-limited-tag {
   position: absolute;
   left: 50%;
-  bottom: -6px;
+  bottom: -7px;
   transform: translateX(-50%);
-  background: #ffab00;
-  color: #1a1a1a;
+  background: var(--ak-limited);
+  color: var(--ak-limited-text);
   font-size: 8px;
   font-weight: 700;
   line-height: 1;
-  padding: 2px 4px;
+  padding: 3px 6px;
   border-radius: 3px;
   white-space: nowrap;
 }

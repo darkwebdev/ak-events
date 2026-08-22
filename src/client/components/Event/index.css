@@ -1,5 +1,5 @@
 .ak-event {
-  padding: 10px 0;
+  padding: 14px 16px;
 }
 
 .ak-event-title {
@@ -29,6 +29,7 @@
   max-height: 160px;
   object-fit: cover;
   display: block;
+  border-radius: 6px;
 }
 
 .ak-event-meta {

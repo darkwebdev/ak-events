@@ -9,18 +9,22 @@
   margin: 0;
   padding: 0;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .ak-events-list-item {
   margin: 0;
-  padding: 0;
-  background: var(--ak-bg);
-  border-bottom: 1px solid var(--ak-border);
-  transition: background-color 0.15s;
+  background: var(--ak-surface);
+  border: 1px solid var(--ak-border);
+  border-radius: 8px;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
 .ak-events-list-item.selected {
-  background-color: color-mix(in srgb, var(--ak-accent) 14%, var(--ak-bg) 86%);
+  background-color: color-mix(in srgb, var(--ak-accent) 14%, var(--ak-surface) 86%);
+  border-color: var(--ak-accent);
 }
 
 .ak-events-list-item[role='button'] {
@@ -29,6 +33,7 @@
 
 .ak-events-list-item[role='button']:hover:not(.selected) {
   background: var(--ak-surface-hover);
+  border-color: var(--ak-border-strong);
 }
 
 .ak-empty-row {
@@ -43,6 +48,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-top: 12px;
   padding: 10px 12px;
   border-top: 1px solid var(--ak-border-strong);
   background: var(--ak-bg);

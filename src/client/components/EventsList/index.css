@@ -23,11 +23,13 @@
 }
 
 .ak-events-list-item.selected {
-  background-color: color-mix(in srgb, var(--ak-accent) 14%, var(--ak-surface) 86%);
+  background-color: color-mix(in srgb, var(--ak-accent) 20%, var(--ak-surface) 80%);
   border-color: var(--ak-accent);
   /* Stack on top of the existing 1px border via box-shadow (rather than widening the
-     border itself) so the highlight reads as a bold 2px ring with no layout shift. */
-  box-shadow: 0 0 0 1px var(--ak-accent);
+     border itself) so the highlight reads as a bold ring with no layout shift: a solid
+     3px-equivalent ring plus a soft glow halo around it. */
+  box-shadow: 0 0 0 2px var(--ak-accent),
+    0 0 12px 1px color-mix(in srgb, var(--ak-accent) 55%, transparent);
 }
 
 .ak-events-list-item[role='button'] {

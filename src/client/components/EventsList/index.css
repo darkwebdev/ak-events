@@ -25,6 +25,9 @@
 .ak-events-list-item.selected {
   background-color: color-mix(in srgb, var(--ak-accent) 14%, var(--ak-surface) 86%);
   border-color: var(--ak-accent);
+  /* Stack on top of the existing 1px border via box-shadow (rather than widening the
+     border itself) so the highlight reads as a bold 2px ring with no layout shift. */
+  box-shadow: 0 0 0 1px var(--ak-accent);
 }
 
 .ak-events-list-item[role='button'] {

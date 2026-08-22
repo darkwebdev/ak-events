@@ -41,6 +41,13 @@
   }
 }
 
+/* Explicit overrides: usable on :root (a future manual toggle) or on any nested
+   element (e.g. forcing a theme for a preview panel regardless of the page's own
+   theme, as the Storybook palette story does). These must be listed as their own
+   rules, not just the :not([data-theme="light"]) guard above — that guard only stops
+   :root's own dark override from applying when :root itself carries data-theme="light";
+   it does nothing for a *descendant* element carrying the attribute, which would
+   otherwise just inherit whatever :root resolved to. */
 [data-theme='dark'] {
   --ak-bg: #201e28;
   --ak-surface: #2c2837;
@@ -54,6 +61,30 @@
   --ak-limited-text: #2b2004;
   --ak-spark: #e0b25c;
   --ak-shadow: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme='light'] {
+  --ak-bg: #faf9fc;
+  --ak-surface: #f0ecf9;
+  --ak-surface-hover: #e6dff2;
+  --ak-border: #a89bc9;
+  --ak-border-strong: #8a78b8;
+  --ak-text: #2e2b3a;
+  --ak-text-muted: #655d75;
+  --ak-accent: #564fd1;
+  --ak-limited: #d99a1f;
+  --ak-limited-text: #3d2b06;
+  --ak-spark: #9c630f;
+  --ak-shadow: rgba(46, 43, 58, 0.14);
+}
+
+/* A forced-theme element that isn't :root itself (e.g. a Storybook preview panel)
+   should actually look like a standalone panel in that theme, not just carry the
+   tokens for its children to use. */
+[data-theme='light']:not(:root),
+[data-theme='dark']:not(:root) {
+  background: var(--ak-bg);
+  color: var(--ak-text);
 }
 
 body {

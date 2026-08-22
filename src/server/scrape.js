@@ -100,9 +100,13 @@ async function scrapeEvents() {
     // ignore
   }
   if (!events || !events.length) {
-    console.log(
-      'No events found in index (index fetch may have been blocked or page structure changed).'
+    // The wiki fetch was blocked, failed, or the page structure changed. Bail out
+    // WITHOUT touching public/data/events.json or events_index.json, so a bad/blocked
+    // scrape run can never clobber the last known-good data with an empty file.
+    console.error(
+      'No events found in index (index fetch may have been blocked or page structure changed). Aborting without writing output.'
     );
+    process.exit(1);
   }
 
   // save initial index snapshot to public so the client can fetch /data/events_index.json

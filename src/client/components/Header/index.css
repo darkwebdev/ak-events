@@ -2,7 +2,11 @@
   position: fixed;
   padding: 1.5em 2em 2em;
   width: 100%;
-  background: linear-gradient(to bottom, var(--ak-bg) 60%, transparent);
+  /* Fully opaque: this is a fixed header, so anything scrolled underneath it (an
+     event card, for instance) needs to be completely hidden, not fading through a
+     transparent bottom edge — that read as the header's own bottom spacing
+     "disappearing" once a card scrolled into that see-through region. */
+  background: var(--ak-bg);
   z-index: 1;
 }
 

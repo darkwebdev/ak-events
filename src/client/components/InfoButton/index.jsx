@@ -10,6 +10,7 @@ import {
   useHover,
   useClick,
   useInteractions,
+  useTransitionStyles,
 } from '@floating-ui/react';
 import './index.css';
 
@@ -34,17 +35,24 @@ export function InfoButton({ children, title, label }) {
   const hover = useHover(context, { delay: { open: 50, close: 100 } });
   const click = useClick(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([hover, click]);
+  // Keeps the popover mounted for the duration of the closing animation, instead of
+  // being removed from the DOM the instant `open` flips false (which would skip the
+  // exit transition entirely).
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
+    duration: 150,
+    initial: { opacity: 0, transform: 'scale(0.96)' },
+  });
 
   return (
     <span className="info-button-wrapper">
       <span className="info-button" ref={refs.setReference} {...getReferenceProps()}>
         {label}
       </span>
-      {open && (
+      {isMounted && (
         <div
           className="info-popover"
           ref={refs.setFloating}
-          style={floatingStyles}
+          style={{ ...floatingStyles, ...transitionStyles }}
           {...getFloatingProps()}
         >
           {title && <h3>{title}</h3>}

@@ -2,11 +2,11 @@
   position: fixed;
   padding: 1.5em 2em 2em;
   width: 100%;
-  /* Fully opaque: this is a fixed header, so anything scrolled underneath it (an
-     event card, for instance) needs to be completely hidden, not fading through a
-     transparent bottom edge — that read as the header's own bottom spacing
-     "disappearing" once a card scrolled into that see-through region. */
-  background: var(--ak-bg);
+  /* Opaque through the title itself, fading out only in a thin band at the very
+     bottom edge — a soft edge for content scrolling underneath, rather than either
+     a hard cutoff or (the earlier bug) a fade tall enough to make a scrolled-up card
+     fully legible through the "empty" space under the title. */
+  background: linear-gradient(to bottom, var(--ak-bg) 85%, transparent);
   z-index: 1;
 }
 

@@ -2,7 +2,7 @@ import https from 'https';
 import { fetchWikiApi, fetchOperatorCategories } from '../src/server/lib/network.js';
 import { wikiApiBase } from '../src/server/config.js';
 
-jest.mock('https');
+vi.mock('https');
 
 describe('network helpers', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('network helpers', () => {
   test('fetchWikiApi constructs URL using config.wikiApiBase', async () => {
     const fakeResponse = {
       statusCode: 200,
-      on: jest.fn((ev, cb) => {
+      on: vi.fn((ev, cb) => {
         if (ev === 'data') cb(JSON.stringify({ test: true }));
         if (ev === 'end') cb();
       }),
@@ -21,7 +21,7 @@ describe('network helpers', () => {
       // ensure url contains config.wikiApiBase
       expect(url.startsWith(wikiApiBase)).toBe(true);
       cb(fakeResponse);
-      return { on: jest.fn() };
+      return { on: vi.fn() };
     });
     const res = await fetchWikiApi('Some_Page');
     expect(res.statusCode).toBe(200);
@@ -31,7 +31,7 @@ describe('network helpers', () => {
   test('fetchOperatorCategories returns the category names on a successful response', async () => {
     const fakeResponse = {
       statusCode: 200,
-      on: jest.fn((ev, cb) => {
+      on: vi.fn((ev, cb) => {
         if (ev === 'data')
           cb(JSON.stringify({ parse: { categories: [{ '*': 'Operator' }, { '*': '6-star' }] } }));
         if (ev === 'end') cb();
@@ -39,7 +39,7 @@ describe('network helpers', () => {
     };
     https.get.mockImplementation((url, options, cb) => {
       cb(fakeResponse);
-      return { on: jest.fn() };
+      return { on: vi.fn() };
     });
 
     const categories = await fetchOperatorCategories('Pepe');
@@ -52,14 +52,14 @@ describe('network helpers', () => {
   test('fetchOperatorCategories returns null (not []) on a non-200 response', async () => {
     const fakeResponse = {
       statusCode: 429,
-      on: jest.fn((ev, cb) => {
+      on: vi.fn((ev, cb) => {
         if (ev === 'data') cb('rate limited');
         if (ev === 'end') cb();
       }),
     };
     https.get.mockImplementation((url, options, cb) => {
       cb(fakeResponse);
-      return { on: jest.fn() };
+      return { on: vi.fn() };
     });
 
     const categories = await fetchOperatorCategories('Pepe');
@@ -70,14 +70,14 @@ describe('network helpers', () => {
   test('fetchOperatorCategories returns null on unparseable JSON', async () => {
     const fakeResponse = {
       statusCode: 200,
-      on: jest.fn((ev, cb) => {
+      on: vi.fn((ev, cb) => {
         if (ev === 'data') cb('not json');
         if (ev === 'end') cb();
       }),
     };
     https.get.mockImplementation((url, options, cb) => {
       cb(fakeResponse);
-      return { on: jest.fn() };
+      return { on: vi.fn() };
     });
 
     const categories = await fetchOperatorCategories('Pepe');

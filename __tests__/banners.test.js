@@ -183,7 +183,7 @@ describe('indexBannersByDate', () => {
       globalStart: '2026-06-01',
       operators: [{ name: 'Fully Resolved Operator' }],
     };
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const { byGlobalStart } = indexBannersByDate([fromUpcoming, fromYearArchive]);
 
@@ -201,7 +201,7 @@ describe('indexBannersByDate', () => {
       { name: 'Standard Pool #1', type: 'Standard', globalStart: '2026-06-01', cnStart: null },
       { name: 'Real Limited Banner', type: 'Limited', globalStart: '2026-06-01', cnStart: null },
     ];
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const { byGlobalStart } = indexBannersByDate(banners);
 
@@ -216,7 +216,7 @@ describe('indexBannersByDate', () => {
       { name: 'First Limited', type: 'Limited', globalStart: '2026-06-01', cnStart: null },
       { name: 'Second Limited', type: 'Limited', globalStart: '2026-06-01', cnStart: null },
     ];
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const { byGlobalStart } = indexBannersByDate(banners);
 

@@ -28,7 +28,7 @@ yarn start    # Preview built app
 ### Testing & Quality
 
 ```bash
-yarn test           # Jest tests with debug fixtures in __tests__/debug_html/
+yarn test           # Vitest tests with debug fixtures in __tests__/debug_html/
 yarn lint           # Custom ESLint with local rules (no-duplicate-exports)
 yarn storybook      # Component development with Storybook
 ```

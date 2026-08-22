@@ -1,13 +1,13 @@
 import { scrapeEvents } from '../src/server/scrape.js';
 
-const mockFetchEventsViaApi = jest.fn();
-const mockFetchUpcomingViaApi = jest.fn();
-const mockFetchEventDetailsViaApi = jest.fn();
-const mockDownloadImage = jest.fn();
-const mockFetchBannersPageHtml = jest.fn();
-const mockFetchOperatorCategories = jest.fn();
+const mockFetchEventsViaApi = vi.fn();
+const mockFetchUpcomingViaApi = vi.fn();
+const mockFetchEventDetailsViaApi = vi.fn();
+const mockDownloadImage = vi.fn();
+const mockFetchBannersPageHtml = vi.fn();
+const mockFetchOperatorCategories = vi.fn();
 
-jest.mock('../src/server/lib/network.js', () => ({
+vi.mock('../src/server/lib/network.js', () => ({
   fetchEventsViaApi: (...args) => mockFetchEventsViaApi(...args),
   fetchUpcomingViaApi: (...args) => mockFetchUpcomingViaApi(...args),
   fetchEventDetailsViaApi: (...args) => mockFetchEventDetailsViaApi(...args),
@@ -16,12 +16,12 @@ jest.mock('../src/server/lib/network.js', () => ({
   fetchOperatorCategories: (...args) => mockFetchOperatorCategories(...args),
 }));
 
-const mockSaveJson = jest.fn();
-const mockEnsureDir = jest.fn();
-const mockFileExists = jest.fn();
-const mockLoadJson = jest.fn();
+const mockSaveJson = vi.fn();
+const mockEnsureDir = vi.fn();
+const mockFileExists = vi.fn();
+const mockLoadJson = vi.fn();
 
-jest.mock('../src/server/lib/storage.js', () => ({
+vi.mock('../src/server/lib/storage.js', () => ({
   saveJson: (...args) => mockSaveJson(...args),
   ensureDir: (...args) => mockEnsureDir(...args),
   fileExists: (...args) => mockFileExists(...args),
@@ -63,22 +63,22 @@ describe('scrapeEvents', () => {
   let exitSpy;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFetchUpcomingViaApi.mockResolvedValue(null);
     mockFileExists.mockReturnValue(false);
     mockLoadJson.mockReturnValue({});
     mockFetchBannersPageHtml.mockResolvedValue(null);
     mockFetchOperatorCategories.mockResolvedValue([]);
     mockDownloadImage.mockResolvedValue(undefined);
-    exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
       throw new Error(`process.exit:${code}`);
     });
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // Regression test for the bug where a blocked/failed wiki fetch caused the

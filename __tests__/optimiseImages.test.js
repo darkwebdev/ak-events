@@ -1,15 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { PNG } from 'pngjs';
+import { main } from '../src/server/optimiseImages.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('optimiseImages script', () => {
-  // allow longer for image processing in CI environments
-  jest.setTimeout(20000);
   const tmpDir = path.join(__dirname, 'tmp-images');
   beforeAll(async () => {
     if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
     // create a tiny valid PNG using pngjs to ensure it's readable by pngjs
-    // eslint-disable-next-line global-require
-    const { PNG } = require('pngjs');
     const png = new PNG({ width: 1, height: 1 });
     // RGBA: red pixel
     png.data[0] = 255; // R
@@ -18,7 +19,7 @@ describe('optimiseImages script', () => {
     png.data[3] = 255; // A
     const outPath = path.join(tmpDir, 'test.png');
     const buffer = PNG.sync.write(png);
-    require('fs').writeFileSync(outPath, buffer);
+    fs.writeFileSync(outPath, buffer);
   });
 
   afterAll(() => {
@@ -37,11 +38,8 @@ describe('optimiseImages script', () => {
     }
   }
 
+  // Extended timeout (default 5000ms) to allow longer for image processing in CI environments.
   test('creates jpg from png', async () => {
-    // Import the module at test-time; the module is import-safe and will not
-    // execute work on import.
-    // eslint-disable-next-line global-require
-    const { main } = require('../src/server/optimiseImages.js');
     const converted = await main(tmpDir);
     expect(typeof converted).toBe('number');
     expect(converted).toBeGreaterThan(0);
@@ -50,5 +48,5 @@ describe('optimiseImages script', () => {
     expect(fs.existsSync(jpgPath)).toBe(true);
     const stat = fs.statSync(jpgPath);
     expect(stat.size).toBeGreaterThan(0);
-  });
+  }, 20000);
 });

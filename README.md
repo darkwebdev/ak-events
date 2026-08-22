@@ -51,7 +51,7 @@ View the component library / design tokens at: [https://darkwebdev.github.io/ak-
    yarn start
    ```
 
-   Run the project's test suite (Jest):
+   Run the project's test suite (Vitest):
 
    ```bash
    yarn test
@@ -95,7 +95,7 @@ Notes:
 - `scripts/`: standalone maintenance scripts (`optimiseImages.js`, `lint-with-local-rules.cjs`, `stop-server.js`, `register-eslint-rules.cjs`)
 - `public/data/events.json`: JSON file containing the scraped events (served at `/data/events.json`)
 - `public/data/images/`: downloaded/optimised event images
-- `__tests__/`: Jest test suite
+- `__tests__/`: Vitest test suite
 - `.github/workflows/scrape.yml`: GitHub Actions workflow for daily scraping (runs `yarn scrape` + `yarn optimise-images`, commits changes)
 - `.github/workflows/deploy-pages.yml`: GitHub Actions workflow that builds `src/client` and deploys `dist/` to GitHub Pages on push to `main`
 

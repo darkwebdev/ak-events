@@ -4,7 +4,20 @@ module.exports = {
     browser: true,
     es2021: true,
     node: true,
-    jest: true,
+  },
+  // Vitest's `test.globals: true` (see vitest.config.js) injects these ambiently,
+  // matching Jest's old env:{jest:true} globals plus Vitest's own `vi`. There's no
+  // built-in ESLint env for Vitest, so they're listed explicitly.
+  globals: {
+    describe: 'readonly',
+    test: 'readonly',
+    it: 'readonly',
+    expect: 'readonly',
+    beforeEach: 'readonly',
+    afterEach: 'readonly',
+    beforeAll: 'readonly',
+    afterAll: 'readonly',
+    vi: 'readonly',
   },
   extends: ['airbnb', 'plugin:react/recommended', 'plugin:react-hooks/recommended', 'prettier'],
   parserOptions: {

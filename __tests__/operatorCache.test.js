@@ -3,9 +3,9 @@ import {
   resolveOperatorLimited,
 } from '../src/server/lib/operatorCache.js';
 
-const mockFetchOperatorCategories = jest.fn();
+const mockFetchOperatorCategories = vi.fn();
 
-jest.mock('../src/server/lib/network.js', () => ({
+vi.mock('../src/server/lib/network.js', () => ({
   fetchOperatorCategories: (...args) => mockFetchOperatorCategories(...args),
 }));
 
@@ -73,13 +73,13 @@ describe('resolveOperatorLimited', () => {
   test('does not cache a failed fetch (fetchOperatorCategories returns null)', async () => {
     mockFetchOperatorCategories.mockResolvedValue(null);
     const cache = {};
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const limited = await resolveOperatorLimited('Flaky Operator', cache);
 
     expect(limited).toBe(false);
     expect(cache).not.toHaveProperty('Flaky Operator');
 
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 });

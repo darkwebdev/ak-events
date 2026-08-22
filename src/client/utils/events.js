@@ -4,8 +4,8 @@
  * @param {Date} today - Today's date
  * @returns {Object[]} Filtered events
  */
-// Import getEffectiveEnd from dates.js
-import { getEffectiveEnd } from './dates.js';
+// Import getEffectiveEnd/getEffectiveStart from dates.js
+import { getEffectiveEnd, getEffectiveStart } from './dates.js';
 
 export function filterUpcomingEvents(events, today) {
   const endOfToday = new Date(today);
@@ -25,13 +25,7 @@ export function filterUpcomingEvents(events, today) {
  */
 export function calculateSelectedEventData(filteredEvents, selectedEvents) {
   const selectedList = filteredEvents.filter((ev) => selectedEvents.has(ev.name));
-  const selectedEventStarts = selectedList
-    .map((event) => {
-      const start =
-        event.globalStart || event.cnStart ? new Date(event.globalStart || event.cnStart) : null;
-      return start;
-    })
-    .filter(Boolean);
+  const selectedEventStarts = selectedList.map((event) => getEffectiveStart(event)).filter(Boolean);
   const latestStart =
     selectedEventStarts.length > 0
       ? new Date(Math.max(...selectedEventStarts.map((s) => s.getTime())))
@@ -50,13 +44,7 @@ export function calculateSelectedEventData(filteredEvents, selectedEvents) {
  * @returns {Date|null} Latest start date
  */
 export function calculateLatestEventStart(selectedList) {
-  const eventStarts = selectedList
-    .map((event) => {
-      const start =
-        event.globalStart || event.cnStart ? new Date(event.globalStart || event.cnStart) : null;
-      return start;
-    })
-    .filter(Boolean);
+  const eventStarts = selectedList.map((event) => getEffectiveStart(event)).filter(Boolean);
   return eventStarts.length > 0
     ? new Date(Math.max(...eventStarts.map((start) => start.getTime())))
     : null;

@@ -57,6 +57,12 @@ View the component library / design tokens at: [https://darkwebdev.github.io/ak-
    yarn test
    ```
 
+   Or in watch mode while developing:
+
+   ```bash
+   yarn test:watch
+   ```
+
    Start the Storybook component explorer:
 
    ```bash
@@ -82,22 +88,39 @@ Notes:
 ## Project Structure
 
 - `src/client/`: React (Vite) frontend
-  - `index.html`, `main.jsx`, `App.jsx`, `App.css`: app entry point
-  - `components/`: UI components (`Header`, `EventsList`, `Event`, `CurrentlyOwned`, `DailyOrundum`, `TotalOrundum`, `Breakdown`, `Orundum`, `Pulls`, `PullCounter`, `InfoButton`), each with Storybook stories
+  - `index.html`, `main.jsx`, `App.jsx`, `App.css`: app entry point; `App.css` also defines the
+    light/dark theme tokens (`--ak-bg`, `--ak-text`, `--ak-accent`, etc.), applied automatically via
+    `prefers-color-scheme` and forceable per-element via `data-theme="light"|"dark"`
+  - `components/`: UI components (`Header`, `EventsList`, `Event`, `OperatorBadge`, `CurrentlyOwned`,
+    `DailyOrundum`, `TotalOrundum`, `Breakdown`, `Orundum`, `Pulls`, `PullCounter`, `InfoButton`,
+    `Palette`, `Typography`), each with Storybook stories — `Palette`/`Typography` document the design
+    tokens themselves rather than an app feature
   - `hooks/useStorage.js`: localStorage-backed state hook
   - `utils/`: `orundum.js`, `events.js`, `dates.js`, `images.js` — Orundum/pull calculations and event helpers
   - `settings.json`, `playerStatus.json`: default recurring-income settings and player-owned resources
   - `vite.config.js`: builds to repo-root `dist/`, serves repo-root `public/` as static assets
 - `src/server/`: Node.js scraper
-  - `scrape.js`: scrapes events from the Arknights wiki (`arknights.wiki.gg`) via its MediaWiki API and writes `public/data/events.json` plus event images
+  - `scrape.js`: scrapes events from the Arknights wiki (`arknights.wiki.gg`) via its MediaWiki API,
+    matches each event to its headhunting banner by start-date overlap, and writes
+    `public/data/events.json`/`events_index.json`/`operators.json` plus event and operator images
   - `config.js`: wiki API endpoints
-  - `lib/`: `network.js`, `parser.js`, `wiki.js`, `normalizeEvent.js`, `storage.js` — scraper internals
-- `scripts/`: standalone maintenance scripts (`optimiseImages.js`, `lint-with-local-rules.cjs`, `stop-server.js`, `register-eslint-rules.cjs`)
-- `public/data/events.json`: JSON file containing the scraped events (served at `/data/events.json`)
-- `public/data/images/`: downloaded/optimised event images
+  - `lib/`: `network.js`, `parser.js`, `banners.js`, `operatorCache.js`, `dateRange.js`, `wiki.js`,
+    `normalizeEvent.js`, `storage.js` — scraper internals (banner parsing, the Limited-operator cache,
+    and shared date-range parsing are their own modules)
+- `scripts/`: `scrape.js`/`optimiseImages.js` CLI entry points plus maintenance scripts
+  (`lint-with-local-rules.cjs`, `stop-server.js`, `register-eslint-rules.cjs`)
+- `public/data/events.json`: scraped events, including each one's matched `banner` (rate-up operators,
+  Limited flags, spark eligibility) when applicable — served at `/data/events.json`
+- `public/data/operators.json`: cache of which operators are Limited, keyed by name, built up across scrape runs
+- `public/data/images/`: downloaded/optimised event and operator images
 - `__tests__/`: Vitest test suite
+- `vitest.config.js`: Vitest config (`globals: true`, Node environment)
+- `babel.config.cjs`: used only by Storybook's react-docgen plugin, not by tests
 - `.github/workflows/scrape.yml`: GitHub Actions workflow for daily scraping (runs `yarn scrape` + `yarn optimise-images`, commits changes)
-- `.github/workflows/deploy-pages.yml`: GitHub Actions workflow that builds `src/client` and deploys `dist/` to GitHub Pages on push to `main`
+- `.github/workflows/deploy-pages.yml`: builds `src/client` and deploys `dist/` to GitHub Pages on push to `main`
+- `.github/workflows/deploy-storybook.yml`: builds Storybook and deploys it to the same GitHub Pages
+  branch under `/storybook`, after `deploy-pages.yml` finishes (both set `keep_files: true` so neither
+  deploy wipes the other's output)
 
 ## License
 

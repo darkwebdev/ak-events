@@ -94,6 +94,14 @@ export function Palette({ label }) {
             <span className="ak-palette-sample-accent">accent link</span>.
           </p>
         </div>
+        <div className="ak-palette-sample ak-palette-sample-hover">
+          <div className="ak-palette-sample-title">On hover (e.g. a clickable event row)</div>
+          <p>
+            The quick <strong>Doctor</strong> commands Rhodes Island through{' '}
+            <span className="ak-palette-sample-muted">muted secondary text</span> and an{' '}
+            <span className="ak-palette-sample-accent">accent link</span>.
+          </p>
+        </div>
       </div>
     </div>
   );

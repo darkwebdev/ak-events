@@ -1,0 +1,41 @@
+name: Deploy Storybook to GitHub Pages
+
+on:
+  # Runs after the main site deploy finishes, rather than in parallel on the same
+  # push — both workflows publish to the gh-pages branch, and running them
+  # concurrently could race and clobber each other's commit.
+  workflow_run:
+    workflows: ['Deploy to GitHub Pages']
+    types: [completed]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy-storybook:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: |
+          yarn install --frozen-lockfile || npm ci
+
+      - name: Build Storybook
+        run: yarn build-storybook
+
+      - name: Deploy Storybook to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./storybook-static
+          publish_branch: gh-pages
+          # Publish into a subdirectory of the same branch the main app uses, and
+          # never wipe sibling content (the app's own files) when doing so.
+          destination_dir: storybook
+          keep_files: true

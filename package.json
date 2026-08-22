@@ -12,6 +12,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.24.0",
     "@storybook/react-vite": "^9.1.13",
     "babel-jest": "^29.6.0",
     "eslint": "^8.0.0",

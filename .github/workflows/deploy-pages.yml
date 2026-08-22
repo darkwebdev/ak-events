@@ -34,3 +34,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
+          # Storybook is published separately (see deploy-storybook.yml) into the
+          # /storybook subdirectory of this same branch; keep_files prevents this
+          # deploy from wiping it out on every app redeploy.
+          keep_files: true

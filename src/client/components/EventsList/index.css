@@ -7,7 +7,9 @@
 .ak-events-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  /* The selected card's box-shadow ring/glow extends past its own box; without this
+     padding, overflow: auto (needed for scrolling) clips it at the list's edges. */
+  padding: 6px 16px;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -54,7 +56,7 @@
   align-items: center;
   gap: 12px;
   margin-top: 12px;
-  padding: 10px 12px;
+  padding: 10px 16px;
   border-top: 1px solid var(--ak-border-strong);
   background: var(--ak-bg);
   position: sticky;

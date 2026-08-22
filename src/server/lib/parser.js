@@ -459,10 +459,18 @@ function parseIndexHtml(html) {
 
   const tables = Array.from(doc.querySelectorAll('table'));
   for (const table of tables) {
-    const th = table.querySelector('th');
-    const headerText = th ? (th.textContent || '').toLowerCase() : '';
-    if (!headerText.includes('event') || !table.textContent.toLowerCase().includes('release date'))
-      continue;
+    // The wiki has used both "Event"/"Release date" and (currently) "Event"/"Date" as
+    // column headers for this table, so match on the first column being "Event" and
+    // ANY header column mentioning "date" (a substring match covers both wordings),
+    // rather than requiring the literal phrase "release date" anywhere in the table.
+    // This also excludes unrelated tables on the same page, like the "Commemorates"/
+    // "CN event"/"Global event" seasonal-events tables, whose first column isn't "Event".
+    const headerCells = Array.from(table.querySelectorAll('th')).map((headerCell) =>
+      (headerCell.textContent || '').trim().toLowerCase()
+    );
+    const looksLikeEventsTable =
+      headerCells[0] === 'event' && headerCells.some((h) => h.includes('date'));
+    if (!looksLikeEventsTable) continue;
 
     const rows = Array.from(table.querySelectorAll('tr'));
     for (let i = 1; i < rows.length; i++) {

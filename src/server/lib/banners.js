@@ -20,6 +20,25 @@ function typeForElement(el, headings) {
   return best;
 }
 
+// On Headhunting/Banners/{year}, banners are grouped under Limited/Standard/Kernel/
+// Special h2 sections, and each banner's own [tag] prefix only names its subtype (e.g.
+// "[Carnival]") since the type is already conveyed by the section. On
+// Headhunting/Banners/Upcoming there are no such sections — every banner sits under one
+// flat "List" heading — so the wiki instead spells the type out in the tag itself (e.g.
+// "[Limited Headhunting ‐ Celebration]" or "[Standard Headhunting - Limited-Time]").
+// Try that first since it's authoritative when present, falling back to the section
+// heading for the year-archive pages where the tag alone doesn't name a type.
+function typeFromTag(rawName) {
+  const m = rawName.match(/^\[([^\]]+)\]/);
+  if (!m) return null;
+  const tag = m[1];
+  if (/Limited Headhunting/i.test(tag)) return 'Limited';
+  if (/Standard Headhunting/i.test(tag)) return 'Standard';
+  if (/Kernel Headhunting/i.test(tag)) return 'Kernel';
+  if (/Special Headhunting/i.test(tag)) return 'Special';
+  return null;
+}
+
 // Parse a "Headhunting/Banners/{year}" or "Headhunting/Banners/Upcoming" wiki page
 // (API parse HTML) into an array of banner records:
 // { name, type, cnStart, cnEnd, globalStart, globalEnd, operators: [{ name, star, class, icon }] }
@@ -95,7 +114,7 @@ function parseBannersPage(html) {
 
     banners.push({
       name,
-      type: typeForElement(td, headings),
+      type: typeFromTag(rawName) || typeForElement(td, headings),
       cnStart: cnDates.start,
       cnEnd: cnDates.end,
       globalStart: globalDates.start,

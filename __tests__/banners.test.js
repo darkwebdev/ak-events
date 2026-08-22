@@ -92,6 +92,39 @@ describe('parseBannersPage', () => {
   });
 });
 
+describe('parseBannersPage on Headhunting/Banners/Upcoming', () => {
+  let banners;
+
+  beforeAll(() => {
+    // Real capture: unlike the year-archive pages, Upcoming has no Limited/Standard/
+    // Kernel/Special h2 sections at all — every banner sits under one flat "List"
+    // heading, so type must come from the banner's own [tag] prefix instead.
+    banners = parseBannersPage(loadFixture('headhunting_banners_upcoming.html'));
+  });
+
+  test('parses every banner row in the fixture', () => {
+    expect(banners.length).toBe(11);
+  });
+
+  // Regression test: typeForElement (section-heading lookup) returns null for every
+  // banner on this page since there are no type sections to find, which meant every
+  // Upcoming-page banner silently got type: null and sparkEligible: false — including
+  // genuine Limited banners with Limited operators on them.
+  test('resolves type from the [tag] prefix rather than a (nonexistent) section heading', () => {
+    const byName = Object.fromEntries(banners.map((b) => [b.name, b.type]));
+    expect(byName['Sealed With Time']).toBe('Limited');
+    expect(byName['Hunters of the Umbral Wilds']).toBe('Limited');
+    expect(byName['Returned From A Pyre Rerun']).toBe('Standard');
+    expect(byName['Orienteering #7']).toBe('Standard');
+  });
+
+  test('still strips the [tag] prefix from the displayed name', () => {
+    const names = banners.map((b) => b.name);
+    expect(names).toContain('Sealed With Time');
+    expect(names.some((n) => n.startsWith('['))).toBe(false);
+  });
+});
+
 describe('dedupeBannersByName', () => {
   test('keeps only the last banner for a repeated name', () => {
     const older = { name: 'Same Banner', type: 'Limited', globalStart: '2026-06-01' };

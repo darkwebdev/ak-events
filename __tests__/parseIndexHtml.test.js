@@ -23,6 +23,31 @@ test('parseIndexHtml on saved Event page HTML returns non-empty event list', () 
   );
 });
 
+// Regression test: the wiki changed the events table's column header from
+// "Release date" to plain "Date" at some point, which silently broke the table
+// detection heuristic (it required the literal phrase "release date" somewhere in
+// the table) — every scrape from then on returned zero events for the live "Event"
+// page. This fixture is a real, current capture of that table.
+test('parseIndexHtml handles the current "Event"/"Date" header wording (not just "Release date")', () => {
+  const htmlPath = path.resolve(__dirname, 'debug_html', 'event_index_2026.html');
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const events = parseIndexHtml(html);
+
+  expect(events.length).toBe(4);
+  expect(events.map((e) => e.name)).toContain('Critical Phase Transition');
+  expect(events[0].link).toBe('https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_Part_2');
+});
+
+test('does not mistake the "Commemorates"/seasonal-events tables for the events table', () => {
+  const html = `
+    <table>
+      <tr><th>Commemorates</th><th>CN event</th><th>Global event</th></tr>
+      <tr><td>Summer</td><td>Some CN Event</td><td>Some Global Event</td></tr>
+    </table>
+  `;
+  expect(parseIndexHtml(html)).toEqual([]);
+});
+
 test('table-based Event parsing extracts name, link, image and date', () => {
   const html = `
     <table>

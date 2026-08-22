@@ -4,11 +4,52 @@ import {
   fetchEventDetailsViaApi,
   fetchEventsViaApi,
   fetchUpcomingViaApi,
+  fetchBannersPageHtml,
 } from './lib/network.js';
 import { ensureDir, saveJson, fileExists } from './lib/storage.js';
 import { applyRerunSuffix } from './lib/wiki.js';
+import { parseDateRange } from './lib/dateRange.js';
+import { parseBannersPage, indexBannersByDate } from './lib/banners.js';
+import {
+  loadOperatorCache,
+  saveOperatorCache,
+  resolveOperatorLimited,
+} from './lib/operatorCache.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
+
+function localFilenameFor(url) {
+  const rawFilename = (url || '').split('/').pop() || '';
+  return rawFilename.split('?')[0];
+}
+
+// Download `url` to `filepath` unless it's already there. Returns whether the file
+// exists at `filepath` afterward (true on success or if it was already cached).
+async function downloadIfMissing(url, filepath, label, name) {
+  if (fileExists(filepath)) return true;
+  try {
+    await downloadImage(url, filepath);
+    console.log(`Downloaded ${label} for`, name);
+  } catch (err) {
+    console.error(`Error downloading ${label} for`, name, err.message);
+  }
+  return fileExists(filepath);
+}
+
+// Run `fn` over `items` in concurrency-limited batches (rather than one at a time or
+// all at once), returning all results in the original order. Used for the operator
+// resolution and icon-download stages below; the event-fetch stage further down has
+// its own hand-rolled version of this loop because it also needs to persist interim
+// progress after each batch, which this generic version intentionally doesn't do.
+async function runBatched(items, concurrency, fn) {
+  const results = [];
+  for (let i = 0; i < items.length; i += concurrency) {
+    const batch = items.slice(i, i + concurrency);
+    // eslint-disable-next-line no-await-in-loop
+    results.push(...(await Promise.all(batch.map(fn))));
+  }
+  return results;
+}
 
 export async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
@@ -130,35 +171,6 @@ export async function scrapeEvents() {
 
   // Process events
   const processed = events.map((event) => {
-    // Helper function to parse date strings like "2025/10/14–2025/11/04"
-    const parseDateRange = (dateStr) => {
-      if (!dateStr) return { start: null, end: null };
-
-      const m = dateStr.match(/(\d{4})[/-](\d{1,2})[/-](\d{1,2})/g);
-      if (m && m.length > 0) {
-        // first match is start
-        const s = m[0];
-        const parts = s.split(/\D/).filter(Boolean);
-        const yyyy = parts[0];
-        const mm = parts[1].padStart(2, '0');
-        const dd = parts[2].padStart(2, '0');
-        const start = `${yyyy}-${mm}-${dd}`;
-
-        let end = null;
-        if (m.length > 1) {
-          const s2 = m[1];
-          const parts2 = s2.split(/\D/).filter(Boolean);
-          const yyyy2 = parts2[0];
-          const mm2 = parts2[1].padStart(2, '0');
-          const dd2 = parts2[2].padStart(2, '0');
-          end = `${yyyy2}-${mm2}-${dd2}`;
-        }
-
-        return { start, end };
-      }
-      return { start: null, end: null };
-    };
-
     // Parse global dates
     const globalDates = parseDateRange(event.globalDateStr);
     const globalStart = globalDates.start;
@@ -198,43 +210,106 @@ export async function scrapeEvents() {
   console.log(`Processed ${processed.length} events`);
 
   ensureDir('public/data/images');
+  ensureDir('public/data/images/operators');
   saveJson('public/data/events.json', processed);
   console.log('Saved all events to public/data/events.json');
 
-  for (const event of processed) {
-    if (event.image) {
-      // If the event.image already looks like a public URL (/data/images/...),
-      // derive the disk path and skip if present
-      if (event.image.startsWith('/data/images/') || event.image.startsWith('data/images/')) {
-        const filename = event.image.split('/').pop();
-        const diskPath = `public/data/images/${filename}`;
-        if (fileExists(diskPath)) {
-          console.log('Image for', event.name, 'already local:', diskPath);
-          // store project-relative path (no leading slash) so client prefixes base
-          event.image = `data/images/${filename}`;
-          continue;
-        }
-      }
+  // Fetch the current banner rosters once per run (not per event) and index them by
+  // start date, so each event's banner can be matched by "does a banner start on the
+  // same day this event does" rather than by fragile prose text on the event page.
+  const currentYear = new Date().getFullYear();
+  const [upcomingBannersHtml, yearBannersHtml] = await Promise.all([
+    fetchBannersPageHtml('Headhunting/Banners/Upcoming'),
+    fetchBannersPageHtml(`Headhunting/Banners/${currentYear}`),
+  ]);
+  const banners = [...parseBannersPage(upcomingBannersHtml), ...parseBannersPage(yearBannersHtml)];
+  const { byGlobalStart: bannerByGlobalStart, byCnStart: bannerByCnStart } =
+    indexBannersByDate(banners);
+  console.log(`Fetched ${banners.length} banner entries for matching`);
 
-      // Remove any query string from the image URL so the saved filename is clean
-      const rawFilename = event.image.split('/').pop() || '';
-      const filename = rawFilename.split('?')[0];
-      const filepath = `public/data/images/${filename}`;
-      // skip download if file exists already
-      if (fileExists(filepath)) {
-        console.log('Skipping download; local image exists for', event.name, filepath);
-        event.image = `data/images/${filename}`;
-        continue;
-      }
-      try {
-        await downloadImage(event.image, filepath);
-        event.image = `data/images/${filename}`;
-        console.log('Downloaded image for', event.name);
-      } catch (err) {
-        console.error('Error downloading image for', event.name, err.message);
-        event.image = null;
-      }
+  // Match each event to its banner (if any) up front, so the operator-resolution and
+  // icon-download work below can be planned across the whole run instead of per event.
+  const eventBannerMatches = processed.map((event) => ({
+    event,
+    matchedBanner:
+      (event.globalStart && bannerByGlobalStart[event.globalStart]) ||
+      (event.cnStart && bannerByCnStart[event.cnStart]) ||
+      null,
+  }));
+  const matchedOperators = eventBannerMatches
+    .filter((m) => m.matchedBanner)
+    .flatMap((m) => m.matchedBanner.operators)
+    .filter((op) => op.name);
+
+  // Resolve each unique operator's Limited status, batched with the same concurrency
+  // limiter used for event fetching above (rather than one await at a time).
+  const operatorCache = loadOperatorCache();
+  const uniqueOperatorNames = [...new Set(matchedOperators.map((op) => op.name))];
+  await runBatched(uniqueOperatorNames, concurrency, (opName) =>
+    resolveOperatorLimited(opName, operatorCache)
+  );
+  saveOperatorCache(operatorCache);
+  console.log('Updated public/data/operators.json');
+
+  // Download each unique operator icon (dedup by filename, keeping the operator's
+  // name alongside its URL so download logs identify the operator, not the filename).
+  const uniqueIcons = [
+    ...new Map(
+      matchedOperators.filter((op) => op.icon).map((op) => [localFilenameFor(op.icon), op])
+    ),
+  ].map(([filename, op]) => ({ filename, url: op.icon, name: op.name }));
+  await runBatched(uniqueIcons, concurrency, ({ filename, url, name }) =>
+    downloadIfMissing(url, `public/data/images/operators/${filename}`, 'operator icon', name)
+  );
+
+  // Now assemble event.banner from the (already-resolved) cache and (already-downloaded) icons.
+  for (const { event, matchedBanner } of eventBannerMatches) {
+    if (!matchedBanner) {
+      event.banner = null;
+      continue;
     }
+    const operators = matchedBanner.operators
+      .filter((op) => op.name)
+      .map((op) => {
+        const filename = op.icon ? localFilenameFor(op.icon) : null;
+        const icon =
+          filename && fileExists(`public/data/images/operators/${filename}`)
+            ? `data/images/operators/${filename}`
+            : null;
+        return {
+          name: op.name,
+          star: op.star,
+          class: op.class,
+          limited: operatorCache[op.name] ?? false,
+          icon,
+        };
+      });
+    event.banner = {
+      name: matchedBanner.name,
+      type: matchedBanner.type,
+      sparkEligible: matchedBanner.type === 'Limited',
+      sparkCost: matchedBanner.type === 'Limited' ? 300 : null,
+      operators,
+    };
+  }
+
+  for (const event of processed) {
+    if (!event.image) continue;
+    // If event.image already looks like a local public URL (from a prior run's saved
+    // events.json), derive the disk path directly instead of treating it as a fresh
+    // remote wiki URL to download.
+    const isAlreadyLocal =
+      event.image.startsWith('/data/images/') || event.image.startsWith('data/images/');
+    const filename = localFilenameFor(event.image);
+    const filepath = `public/data/images/${filename}`;
+    if (isAlreadyLocal && fileExists(filepath)) {
+      console.log('Image for', event.name, 'already local:', filepath);
+      event.image = `data/images/${filename}`;
+      continue;
+    }
+    // eslint-disable-next-line no-await-in-loop
+    const ok = await downloadIfMissing(event.image, filepath, 'image', event.name);
+    event.image = ok ? `data/images/${filename}` : null;
   }
 
   // Save updated public/data/events.json with public image paths

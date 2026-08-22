@@ -5,10 +5,11 @@ import { calcEventOrundum, orundumFromOP, orundumFromHH } from '../../utils/orun
 import { Orundum } from '../Orundum';
 import { InfoButton } from '../InfoButton';
 import { Breakdown } from '../Breakdown';
+import { OperatorBadge } from '../OperatorBadge';
 import './index.css';
 
 export function Event({ event, selectedEvents, onEventToggle }) {
-  const { name, type, image, origPrime, hhPermits, link } = event;
+  const { name, type, image, origPrime, hhPermits, link, banner } = event;
   const start = getEffectiveStart(event);
   const end = getEffectiveEnd(event);
   const startStr = start ? start.toLocaleDateString() : 'Unknown';
@@ -73,6 +74,23 @@ export function Event({ event, selectedEvents, onEventToggle }) {
             )}
           </div>
         </div>
+        {banner && (
+          <div className="ak-event-banner">
+            <div className="ak-event-banner-header">
+              <span className="ak-event-banner-name">{banner.name}</span>
+              {banner.sparkEligible && (
+                <span className="ak-event-banner-spark">
+                  Spark at {banner.sparkCost} pulls (<Orundum>{banner.sparkCost * 600}</Orundum>)
+                </span>
+              )}
+            </div>
+            <div className="ak-event-banner-operators">
+              {banner.operators.map((op) => (
+                <OperatorBadge key={op.name} operator={op} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </li>
   );

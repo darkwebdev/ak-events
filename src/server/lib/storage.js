@@ -19,4 +19,14 @@ function fileExists(filepath) {
   return fs.existsSync(filepath);
 }
 
-export { ensureDir, saveJson, saveText, fileExists };
+// Load JSON from filepath, returning `fallback` if the file doesn't exist or fails to parse.
+function loadJson(filepath, fallback) {
+  if (!fs.existsSync(filepath)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(filepath, 'utf8'));
+  } catch (e) {
+    return fallback;
+  }
+}
+
+export { ensureDir, saveJson, saveText, fileExists, loadJson };

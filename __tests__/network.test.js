@@ -1,5 +1,5 @@
 import https from 'https';
-import { fetchWikiApi } from '../src/server/lib/network.js';
+import { fetchWikiApi, fetchOperatorCategories } from '../src/server/lib/network.js';
 import { wikiApiBase } from '../src/server/config.js';
 
 jest.mock('https');
@@ -26,5 +26,74 @@ describe('network helpers', () => {
     const res = await fetchWikiApi('Some_Page');
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ test: true });
+  });
+
+  test('fetchOperatorCategories returns the category names on a successful response', async () => {
+    const fakeResponse = {
+      statusCode: 200,
+      on: jest.fn((ev, cb) => {
+        if (ev === 'data')
+          cb(JSON.stringify({ parse: { categories: [{ '*': 'Operator' }, { '*': '6-star' }] } }));
+        if (ev === 'end') cb();
+      }),
+    };
+    https.get.mockImplementation((url, options, cb) => {
+      cb(fakeResponse);
+      return { on: jest.fn() };
+    });
+
+    const categories = await fetchOperatorCategories('Pepe');
+
+    expect(categories).toEqual(['Operator', '6-star']);
+  });
+
+  // Regression test: a non-200 response must resolve null, not [], so a transient
+  // failure is never mistaken for "this operator genuinely has no categories".
+  test('fetchOperatorCategories returns null (not []) on a non-200 response', async () => {
+    const fakeResponse = {
+      statusCode: 429,
+      on: jest.fn((ev, cb) => {
+        if (ev === 'data') cb('rate limited');
+        if (ev === 'end') cb();
+      }),
+    };
+    https.get.mockImplementation((url, options, cb) => {
+      cb(fakeResponse);
+      return { on: jest.fn() };
+    });
+
+    const categories = await fetchOperatorCategories('Pepe');
+
+    expect(categories).toBeNull();
+  });
+
+  test('fetchOperatorCategories returns null on unparseable JSON', async () => {
+    const fakeResponse = {
+      statusCode: 200,
+      on: jest.fn((ev, cb) => {
+        if (ev === 'data') cb('not json');
+        if (ev === 'end') cb();
+      }),
+    };
+    https.get.mockImplementation((url, options, cb) => {
+      cb(fakeResponse);
+      return { on: jest.fn() };
+    });
+
+    const categories = await fetchOperatorCategories('Pepe');
+
+    expect(categories).toBeNull();
+  });
+
+  test('fetchOperatorCategories returns null on a request error', async () => {
+    https.get.mockImplementation(() => ({
+      on: (ev, cb) => {
+        if (ev === 'error') cb(new Error('network down'));
+      },
+    }));
+
+    const categories = await fetchOperatorCategories('Pepe');
+
+    expect(categories).toBeNull();
   });
 });

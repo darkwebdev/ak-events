@@ -1,0 +1,46 @@
+.ak-operator-badge {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.ak-operator-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
+}
+
+.ak-operator-icon-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ak-operator-badge.limited .ak-operator-icon,
+.ak-operator-badge.limited .ak-operator-icon-fallback {
+  box-shadow: 0 0 0 2px #ffab00;
+}
+
+.ak-operator-limited-tag {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  background: #ffab00;
+  color: #1a1a1a;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}

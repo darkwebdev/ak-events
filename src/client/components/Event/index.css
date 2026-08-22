@@ -46,3 +46,34 @@
   color: var(--ak-accent);
   font-weight: 500;
 }
+
+.ak-event-banner {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.ak-event-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.ak-event-banner-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.ak-event-banner-spark {
+  color: #b06d00;
+  white-space: nowrap;
+}
+
+.ak-event-banner-operators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 8px;
+}

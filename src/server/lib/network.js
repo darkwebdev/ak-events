@@ -123,6 +123,75 @@ async function fetchEventsViaApi() {
   return null;
 }
 
+// Fetch a "Headhunting/Banners/{year}" or "Headhunting/Banners/Upcoming" page's raw
+// parse HTML via the wiki API. Returns the HTML string, or null on error/blocked.
+async function fetchBannersPageHtml(pageTitle) {
+  try {
+    const api = await fetchWikiApi(pageTitle);
+    if (api) {
+      if (api.blocked) return null;
+      if (
+        api.statusCode === 200 &&
+        api.body &&
+        api.body.parse &&
+        api.body.parse.text &&
+        api.body.parse.text['*']
+      ) {
+        return api.body.parse.text['*'];
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  return null;
+}
+
+// Fetch an operator's MediaWiki categories (a lightweight query, no page HTML) to
+// determine whether they're a Limited operator: a Limited operator is not tagged
+// with any of the "obtainable through X" categories (Standard/Kernel Headhunting,
+// Recruitment) that every non-exclusive operator carries.
+// Returns an array of category names on success (which may legitimately be empty —
+// that's exactly what marks a Limited operator), or null if the fetch/parse failed.
+// Callers must NOT treat null the same as an empty array: a failed fetch is not
+// evidence of anything, and caching `null` as "no categories" would permanently
+// mislabel an operator based on a transient network error.
+async function fetchOperatorCategories(name) {
+  return new Promise((resolve) => {
+    const encoded = encodeURIComponent(name);
+    const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&prop=categories&format=json`;
+    const options = {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        Accept: 'application/json',
+      },
+    };
+    https
+      .get(apiUrl, options, (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          if (res.statusCode !== 200) {
+            resolve(null);
+            return;
+          }
+          try {
+            const json = JSON.parse(data);
+            if (!json || json.error || !json.parse) {
+              resolve(null);
+              return;
+            }
+            const categories = (json.parse.categories || []).map((c) => c['*']);
+            resolve(categories);
+          } catch (e) {
+            resolve(null);
+          }
+        });
+      })
+      .on('error', () => resolve(null));
+  });
+}
+
 // Fetch the Upcoming events page (CN upcoming list) via the wiki API and parse it
 async function fetchUpcomingViaApi() {
   try {
@@ -153,4 +222,6 @@ export {
   fetchEventDetailsViaApi,
   fetchEventsViaApi,
   fetchUpcomingViaApi,
+  fetchBannersPageHtml,
+  fetchOperatorCategories,
 };

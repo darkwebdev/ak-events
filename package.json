@@ -55,7 +55,7 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "lint": "node ./scripts/lint-with-local-rules.cjs",
     "lint:fix": "node ./scripts/lint-with-local-rules.cjs --fix",
-    "scrape": "node src/server/scrape.js",
+    "scrape": "node scripts/scrape.js",
     "optimise-images": "node scripts/optimiseImages.js",
     "emulate-action": "yarn scrape && (git diff --quiet public/data/events.json || echo 'public/data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
     "dev": "cd src/client && vite",

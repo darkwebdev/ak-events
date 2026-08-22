@@ -10,7 +10,7 @@ import { applyRerunSuffix } from './lib/wiki.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
 
-async function scrapeEvents() {
+export async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
   const fetchAndParseEvent = async (event) => {
@@ -241,8 +241,3 @@ async function scrapeEvents() {
   saveJson('public/data/events.json', processed);
   console.log('Updated public/data/events.json with public image paths');
 }
-
-scrapeEvents().catch((err) => {
-  console.error('Scraping failed:', err);
-  process.exit(1);
-});

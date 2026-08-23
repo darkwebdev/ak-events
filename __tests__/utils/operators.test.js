@@ -28,6 +28,24 @@ describe('groupOperatorsByStar', () => {
     expect(groupOperatorsByStar([])).toEqual([]);
     expect(groupOperatorsByStar(undefined)).toEqual([]);
   });
+
+  test('within a star rank, puts rate-up-only (not yet sparkable) operators before sparkable ones', () => {
+    const operators = [
+      { name: 'Sparkable One', star: 6, sparkCost: 300 },
+      { name: 'Debuting One', star: 6, sparkCost: null },
+      { name: 'Sparkable Two', star: 6, sparkCost: 300 },
+      { name: 'Debuting Two', star: 6, sparkCost: null },
+    ];
+
+    const [[, ops]] = groupOperatorsByStar(operators);
+
+    expect(ops.map((op) => op.name)).toEqual([
+      'Debuting One',
+      'Debuting Two',
+      'Sparkable One',
+      'Sparkable Two',
+    ]);
+  });
 });
 
 describe('splitOperatorColumns', () => {

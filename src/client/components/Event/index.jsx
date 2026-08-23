@@ -99,7 +99,7 @@ export function Event({ event, selectedEvents, onEventToggle }) {
         {banner && (
           <div className="ak-event-banner">
             <div className="ak-event-banner-header">
-              <span className="ak-event-banner-name">{banner.name}</span>
+              <span className="ak-event-banner-name">Banner: {banner.name}</span>
             </div>
             <div className="ak-event-banner-columns">
               <OperatorColumn groups={sixStarGroups} />

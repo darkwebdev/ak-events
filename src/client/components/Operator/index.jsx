@@ -31,7 +31,7 @@ export function Operator({ operator }) {
           {sparkCost}
         </span>
       )}
-      {sparkCost == null && limited && <span className="ak-operator-tag">LIMIT</span>}
+      {sparkCost == null && limited && <span className="ak-operator-tag">LIMITED</span>}
     </div>
   );
 }

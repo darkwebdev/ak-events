@@ -31,7 +31,7 @@ export default {
     limited: {
       control: 'boolean',
       description:
-        'Whether this is a Limited (exclusive) operator — adds the gold ring + LIMIT tag',
+        'Whether this is a Limited (exclusive) operator — adds the gold ring + LIMITED tag. Every sparkable operator is also Limited, so a sparkCost with limited:false is not a real combination.',
     },
     sparkCost: {
       control: 'select',
@@ -52,16 +52,6 @@ export const Limited = {
 };
 
 export const Sparkable = {
-  args: {
-    name: "Ch'en the Dawnstreak",
-    star: 6,
-    opClass: 'Guard',
-    limited: false,
-    sparkCost: '300',
-  },
-};
-
-export const LimitedAndSparkable = {
   args: {
     name: 'Exusiai the New Covenant',
     star: 6,

@@ -3,6 +3,7 @@ import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
 import { Breakdown } from '../Breakdown';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
+import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
 
 /**
  * Component for managing currently owned orundum and resources
@@ -14,7 +15,9 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
       <div className="ak-aside-list">
         <div className="ak-aside-item">
           <label className="ak-aside-label">
-            <span className="ak-aside-name">Orundum</span>
+            <span className="ak-aside-name">
+              <OrundumIcon />
+            </span>
             <input
               type="number"
               className="ak-number-input"
@@ -60,6 +63,12 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
             <span className="ak-aside-name">
               <InfoButton title="Breakdown" label="Total Orundum">
                 <Breakdown
+                  // The "Orundum" row isn't converted from anything (calc is just
+                  // "-"), so its own total cell already carries the Orundum icon via
+                  // <Orundum> — repeating it as the item label too would be a
+                  // same-row duplicate, unlike the OP/Permits rows below it (each of
+                  // those pairs a *different* source icon with the resulting
+                  // Orundum-icon total, which is meaningful, not repetitive).
                   items={['Orundum', <OriginitePrimeIcon key="op" />, 'Permits']}
                   calcs={['-', `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
                   totals={[owned.orundum, owned.op * 180, owned.hhPermits * 600]}

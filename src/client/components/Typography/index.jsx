@@ -1,5 +1,6 @@
 import React from 'react';
 import { SparkIcon } from '../Operator/SparkIcon.jsx';
+import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
 import './index.css';
 
 // Each entry renders with the *real* app styling (either the actual global h1 rule,
@@ -37,7 +38,9 @@ const SCALE = [
     meta: '14px label, 16px value / 600',
     render: () => (
       <div className="ak-aside-label" style={{ cursor: 'default' }}>
-        <span className="ak-aside-name">Orundum</span>
+        <span className="ak-aside-name">
+          <OrundumIcon />
+        </span>
         <span className="ak-aside-value">12,345</span>
       </div>
     ),

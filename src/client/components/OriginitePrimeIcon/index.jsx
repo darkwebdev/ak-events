@@ -6,7 +6,7 @@ export function OriginitePrimeIcon() {
   return (
     <img
       className="ak-op-icon"
-      src={normalizeImageSrc('/images/icon-diamond-black.svg')}
+      src={normalizeImageSrc('/images/icon-diamond-yellow.svg')}
       alt="Originite Prime"
       title="Originite Prime"
     />

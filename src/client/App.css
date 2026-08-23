@@ -18,6 +18,18 @@
   --ak-spark: #9c630f;
   --ak-shadow: rgba(46, 43, 58, 0.14);
 
+  /* Fixed resource-brand colors, matching the in-game icon colors — unlike the
+     tokens above, these don't change between light/dark theme (a real Orundum gem
+     doesn't turn a different color because the UI around it does), so they're only
+     defined once here rather than repeated in every theme block.
+     Reference only, not consumed directly: OrundumIcon/OriginitePrimeIcon both load
+     an external SVG file (public/images/icon-orundum-red.svg,
+     icon-diamond-yellow.svg) whose own fill is baked to these same values, since an
+     <img>-loaded SVG can't read the page's CSS custom properties — keep both in sync
+     by hand if either ever changes. */
+  --ak-orundum-color: #e8442e;
+  --ak-op-color: #f0b429;
+
   --ak-font-family: Arial, sans-serif;
   --ak-font-size: 16px;
 }

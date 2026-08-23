@@ -1,6 +1,8 @@
 import React from 'react';
 import { Pulls } from '../Pulls';
 import { pullsFromOrundum } from '../../utils/orundum';
+import { OrundumIcon } from './OrundumIcon.jsx';
+import './index.css';
 
 /**
  * Format orundum amount with pull count in parentheses
@@ -10,12 +12,16 @@ import { pullsFromOrundum } from '../../utils/orundum';
 export function Orundum({ children = 0, withPulls = false, pullsPrecision = 0 }) {
   const orundum = parseInt(children, 10);
   const pulls = pullsFromOrundum(orundum, pullsPrecision);
-  if (!withPulls || pulls === 0) {
-    return orundum;
-  }
+  const showPulls = withPulls && pulls !== 0;
   return (
     <>
-      {orundum}&nbsp;(<Pulls>{pulls}</Pulls>)
+      <OrundumIcon />
+      {orundum}
+      {showPulls && (
+        <>
+          &nbsp;(<Pulls>{pulls}</Pulls>)
+        </>
+      )}
     </>
   );
 }

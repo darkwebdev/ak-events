@@ -71,6 +71,10 @@ export function Event({ event, selectedEvents, onEventToggle }) {
             <div>
               {(origPrime || hhPermits) && (
                 <>
+                  {/* Text, not the icon, on purpose: the value right after this
+                      trigger already carries its own Orundum icon via <Orundum>,
+                      so repeating the icon here would just look like a duplicate
+                      rather than a label. */}
                   <InfoButton label="Orundum">
                     <Breakdown
                       items={[

@@ -1,0 +1,109 @@
+.ak-arknights-account {
+  display: flex;
+  flex-direction: column;
+}
+
+.ak-ark-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ak-text-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--ak-border);
+  border-radius: 4px;
+  font-size: 14px;
+  background: var(--ak-bg);
+  color: var(--ak-text);
+  box-sizing: border-box;
+}
+
+.ak-text-input:focus {
+  outline: none;
+  border-color: var(--ak-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ak-accent) 25%, transparent);
+}
+
+.ak-text-input:disabled {
+  opacity: 0.6;
+}
+
+.ak-ark-account-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ak-button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: var(--ak-accent);
+  color: var(--ak-bg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ak-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ak-button:not(:disabled):hover {
+  background: color-mix(in srgb, var(--ak-accent) 85%, black);
+}
+
+.ak-button-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ak-text-muted);
+  font-size: 14px;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  cursor: pointer;
+}
+
+.ak-button-link:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ak-button-link:not(:disabled):hover {
+  color: var(--ak-text);
+}
+
+.ak-ark-account-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--ak-text-muted);
+}
+
+.ak-ark-account-connected {
+  display: flex;
+  flex-direction: column;
+}
+
+.ak-ark-account-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ak-ark-account-warning {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ak-limited-text);
+  background: color-mix(in srgb, var(--ak-limited) 35%, transparent);
+  padding: 8px 10px;
+  border-radius: 4px;
+}
+
+.ak-ark-account-error {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--ak-orundum-color);
+}

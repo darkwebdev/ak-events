@@ -7,6 +7,7 @@ import {
   calculateLatestEventStart,
 } from './utils/events.js';
 
+import { ArknightsAccount } from './components/ArknightsAccount';
 import { CurrentlyOwned } from './components/CurrentlyOwned';
 import { DailyOrundum } from './components/DailyOrundum';
 import { EventsList } from './components/EventsList';
@@ -25,6 +26,7 @@ export default function App() {
     'ak-events-player-status',
     defaultPlayerStatus
   );
+  const [arkAuth, setArkAuth] = useStorage('ak-events-arknights-auth', null);
 
   const updateSetting = (key, property, value) => {
     setSettings((prev) => ({
@@ -41,6 +43,12 @@ export default function App() {
 
   const updatePlayerStatus = (key, value) => {
     setPlayerStatus((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleAccountFetched = (data) => {
+    updatePlayerStatus('orundum', data.orundum);
+    updatePlayerStatus('op', data.originitePrime);
+    updatePlayerStatus('hhPermits', data.headhuntingPermits);
   };
 
   useEffect(() => {
@@ -107,6 +115,12 @@ export default function App() {
         />
 
         <div className="ak-aside-column">
+          <ArknightsAccount
+            authState={arkAuth}
+            setAuthState={setArkAuth}
+            onFetched={handleAccountFetched}
+          />
+
           <CurrentlyOwned
             owned={playerStatus}
             updateOwned={updatePlayerStatus}

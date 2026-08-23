@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
 import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
@@ -7,12 +7,33 @@ import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { orundumFromOP, orundumFromHH } from '../../utils/orundum.js';
 import './index.css';
 
-export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
+export function DailyOrundum({ settings, updateSetting, setAllSettingsEnabled, settingsTotal }) {
+  const enabledFlags = Object.values(settings).map((s) => s.enabled);
+  const allEnabled = enabledFlags.every(Boolean);
+  const noneEnabled = enabledFlags.every((enabled) => !enabled);
+  // HTML checkboxes don't support an `indeterminate` JSX prop — it's a DOM-only
+  // property, not a reflected attribute, so it has to be set imperatively.
+  const allCheckboxRef = useRef(null);
+  useEffect(() => {
+    if (allCheckboxRef.current) allCheckboxRef.current.indeterminate = !allEnabled && !noneEnabled;
+  }, [allEnabled, noneEnabled]);
+
   return (
     <div className="ak-aside ak-daily-orundum">
       <h3 className="ak-aside-title">
         Daily <OrundumIcon /> Equivalent
       </h3>
+      <div className="ak-aside-item">
+        <label className="ak-aside-label">
+          <input
+            ref={allCheckboxRef}
+            type="checkbox"
+            checked={allEnabled}
+            onChange={(e) => setAllSettingsEnabled(e.target.checked)}
+          />
+          <span className="ak-aside-name">All</span>
+        </label>
+      </div>
       <div className="ak-aside-list">
         <div className="ak-aside-item">
           <label className="ak-aside-label">

@@ -24,6 +24,7 @@ export function Default() {
     <DailyOrundum
       settings={mockSettings}
       updateSetting={() => {}}
+      setAllSettingsEnabled={() => {}}
       settingsTotal={mockSettingsTotal}
     />
   );
@@ -45,6 +46,7 @@ export function AllEnabled() {
     <DailyOrundum
       settings={allEnabledSettings}
       updateSetting={() => {}}
+      setAllSettingsEnabled={() => {}}
       settingsTotal={allEnabledTotal}
     />
   );
@@ -61,5 +63,12 @@ const noneEnabledSettings = {
 };
 
 export function NoneEnabled() {
-  return <DailyOrundum settings={noneEnabledSettings} updateSetting={() => {}} settingsTotal={0} />;
+  return (
+    <DailyOrundum
+      settings={noneEnabledSettings}
+      updateSetting={() => {}}
+      setAllSettingsEnabled={() => {}}
+      settingsTotal={0}
+    />
+  );
 }

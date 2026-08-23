@@ -33,6 +33,12 @@ export default function App() {
     }));
   };
 
+  const setAllSettingsEnabled = (enabled) => {
+    setSettings((prev) =>
+      Object.fromEntries(Object.entries(prev).map(([key, s]) => [key, { ...s, enabled }]))
+    );
+  };
+
   const updatePlayerStatus = (key, value) => {
     setPlayerStatus((prev) => ({ ...prev, [key]: value }));
   };
@@ -110,6 +116,7 @@ export default function App() {
           <DailyOrundum
             settings={settings}
             updateSetting={updateSetting}
+            setAllSettingsEnabled={setAllSettingsEnabled}
             settingsTotal={dailyOrundum}
           />
 

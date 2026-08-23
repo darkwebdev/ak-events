@@ -416,6 +416,33 @@ function extractEventTypeFromHtml(html) {
   return null;
 }
 
+// Event pages carry a standard sentence naming whichever operator currently has a
+// reduced Headhunting Data Contract (spark) cost, e.g. "The amount of Headhunting Data
+// Contracts needed to buy Ch'en the Holungday in the Headhunting Data Contract Store is
+// reduced to 200." This is a single global fact (not per-event/per-banner), so callers
+// should look for it across scraped event pages and apply it wherever that operator
+// appears in a banner's operator list.
+function extractReducedSparkOperator(html) {
+  if (!html) return null;
+  try {
+    const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
+    const dom = new JSDOM(clean);
+    const doc = dom.window.document;
+    for (const el of doc.querySelectorAll('li, p')) {
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      const m = text.match(
+        /Headhunting Data Contracts needed to buy (.+?) in the Headhunting Data Contract Store is reduced to (\d+)/i
+      );
+      if (m) {
+        return { name: m[1].trim(), cost: parseInt(m[2], 10) };
+      }
+    }
+  } catch (e) {
+    // ignore, fall through
+  }
+  return null;
+}
+
 // High level parse: given an HTML string (API parse HTML), return best guesses
 function parseEventFromHtml(html) {
   const result = { origPrime: null, hhPermits: null, type: null, debug: null };
@@ -552,6 +579,7 @@ export {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractEventTypeFromHtml,
+  extractReducedSparkOperator,
   parseEventFromHtml,
   parseIndexHtml,
 };

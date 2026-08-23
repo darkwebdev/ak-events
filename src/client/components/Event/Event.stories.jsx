@@ -37,7 +37,6 @@ export function LimitedBanner() {
     name: 'Ashes to Ashes, Ages on Ages',
     type: 'Limited',
     sparkEligible: true,
-    sparkCost: 300,
     operators: [
       {
         name: "Ch'en the Dawnstreak",
@@ -45,10 +44,18 @@ export function LimitedBanner() {
         class: 'Guard',
         limited: false,
         icon: null,
+        sparkCost: 300,
       },
-      { name: 'Chongyue', star: 6, class: 'Guard', limited: true, icon: null },
-      { name: 'Shu', star: 6, class: 'Defender', limited: true, icon: null },
-      { name: 'Taraxacum', star: 5, class: 'Medic', limited: false, icon: null },
+      {
+        name: 'Chongyue',
+        star: 6,
+        class: 'Guard',
+        limited: true,
+        icon: null,
+        sparkCost: 200,
+      },
+      { name: 'Shu', star: 6, class: 'Defender', limited: true, icon: null, sparkCost: 300 },
+      { name: 'Taraxacum', star: 5, class: 'Medic', limited: false, icon: null, sparkCost: 75 },
     ],
   };
   return (
@@ -63,10 +70,9 @@ export function StandardBanner() {
     name: 'Joint Operation #21',
     type: 'Standard',
     sparkEligible: false,
-    sparkCost: null,
     operators: [
-      { name: 'Mudrock', star: 6, class: 'Defender', limited: false, icon: null },
-      { name: 'Whisperain', star: 5, class: 'Medic', limited: false, icon: null },
+      { name: 'Mudrock', star: 6, class: 'Defender', limited: false, icon: null, sparkCost: null },
+      { name: 'Whisperain', star: 5, class: 'Medic', limited: false, icon: null, sparkCost: null },
     ],
   };
   return (
@@ -81,8 +87,9 @@ export function Selected() {
     name: 'Ashes to Ashes, Ages on Ages',
     type: 'Limited',
     sparkEligible: true,
-    sparkCost: 300,
-    operators: [{ name: 'Chongyue', star: 6, class: 'Guard', limited: true, icon: null }],
+    operators: [
+      { name: 'Chongyue', star: 6, class: 'Guard', limited: true, icon: null, sparkCost: 300 },
+    ],
   };
   return (
     <ul className="ak-events-list">

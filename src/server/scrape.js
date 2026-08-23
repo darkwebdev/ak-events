@@ -1,4 +1,4 @@
-import { parseEventFromHtml } from './lib/parser.js';
+import { parseEventFromHtml, extractReducedSparkOperator } from './lib/parser.js';
 import {
   downloadImage,
   fetchEventDetailsViaApi,
@@ -54,6 +54,13 @@ async function runBatched(items, concurrency, fn) {
 export async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
+  // The wiki names the operator with a currently-reduced (200 instead of 300) spark
+  // cost on a standard sentence on event pages. It's a single global fact, not tied to
+  // any one event, so it's captured here (from whichever event page happens to mention
+  // it, at zero extra network cost since these pages are already being fetched below)
+  // and applied per-operator when banners are assembled further down.
+  let reducedSparkOperator = null;
+
   const fetchAndParseEvent = async (event) => {
     // Skip fetching the wiki page if we already have both values
     if (event.origPrime != null && event.hhPermits != null) return event;
@@ -73,6 +80,10 @@ export async function scrapeEvents() {
       if (apiJson) jsonStatus = 'ok';
       const apiHtml = apiJson?.parse?.text?.['*'] || '';
       const parsed = parseEventFromHtml(apiHtml);
+
+      if (!reducedSparkOperator) {
+        reducedSparkOperator = extractReducedSparkOperator(apiHtml);
+      }
 
       if (parsed.origPrime != null) {
         event.origPrime = parsed.origPrime;
@@ -262,12 +273,22 @@ export async function scrapeEvents() {
     downloadIfMissing(url, `public/data/images/operators/${filename}`, 'operator icon', name)
   );
 
+  // Frozen into a const before use below: by this point in the run, the event-fetch
+  // phase above has finished and nothing mutates `reducedSparkOperator` further.
+  const currentReducedSparkOperator = reducedSparkOperator;
+  if (currentReducedSparkOperator) {
+    console.log(
+      `Reduced spark cost: ${currentReducedSparkOperator.name} is ${currentReducedSparkOperator.cost} contracts`
+    );
+  }
+
   // Now assemble event.banner from the (already-resolved) cache and (already-downloaded) icons.
   for (const { event, matchedBanner } of eventBannerMatches) {
     if (!matchedBanner) {
       event.banner = null;
       continue;
     }
+    const sparkEligible = matchedBanner.type === 'Limited';
     const operators = matchedBanner.operators
       .filter((op) => op.name)
       .map((op) => {
@@ -276,19 +297,33 @@ export async function scrapeEvents() {
           filename && fileExists(`public/data/images/operators/${filename}`)
             ? `data/images/operators/${filename}`
             : null;
+        // Spark (guaranteed pick) cost in Headhunting Data Contracts: 75 for 5★, 300
+        // for 6★, except the one 6★ operator currently named on the wiki as having a
+        // reduced cost of 200.
+        let sparkCost = null;
+        if (sparkEligible) {
+          if (op.star === 6) {
+            sparkCost =
+              currentReducedSparkOperator?.name === op.name
+                ? currentReducedSparkOperator.cost
+                : 300;
+          } else if (op.star === 5) {
+            sparkCost = 75;
+          }
+        }
         return {
           name: op.name,
           star: op.star,
           class: op.class,
           limited: operatorCache[op.name] ?? false,
           icon,
+          sparkCost,
         };
       });
     event.banner = {
       name: matchedBanner.name,
       type: matchedBanner.type,
-      sparkEligible: matchedBanner.type === 'Limited',
-      sparkCost: matchedBanner.type === 'Limited' ? 300 : null,
+      sparkEligible,
       operators,
     };
   }

@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { extractOrigPrimeFromHtml, extractHhPermitsFromHtml } from '../src/server/lib/parser.js';
+import {
+  extractOrigPrimeFromHtml,
+  extractHhPermitsFromHtml,
+  extractReducedSparkOperator,
+} from '../src/server/lib/parser.js';
 
 function loadApiHtml(slug) {
   const p = path.join(__dirname, 'debug_html', `${slug}_api.json`);
@@ -31,4 +35,17 @@ test('Inudi Harek Horakhet: extracts OP and hhPermits from API HTML', () => {
   const html = loadApiHtml('inudi_harek_horakhet');
   expect(extractOrigPrimeFromHtml(html)).toBe(38);
   expect(extractHhPermitsFromHtml(html)).toBe(3);
+});
+
+test('Ato: extracts the operator with a reduced 200-contract spark cost from event page HTML', () => {
+  const html = fs.readFileSync(
+    path.join(__dirname, 'debug_html', 'ato_reduced_spark_api.html'),
+    'utf8'
+  );
+  expect(extractReducedSparkOperator(html)).toEqual({ name: "Ch'en the Holungday", cost: 200 });
+});
+
+test('extractReducedSparkOperator: returns null when no reduced-cost sentence is present', () => {
+  expect(extractReducedSparkOperator('<div><p>Nothing relevant here.</p></div>')).toBeNull();
+  expect(extractReducedSparkOperator(null)).toBeNull();
 });

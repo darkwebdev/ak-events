@@ -79,9 +79,7 @@ export function Event({ event, selectedEvents, onEventToggle }) {
             <div className="ak-event-banner-header">
               <span className="ak-event-banner-name">{banner.name}</span>
               {banner.sparkEligible && (
-                <span className="ak-event-banner-spark">
-                  Spark at {banner.sparkCost} pulls (<Orundum>{banner.sparkCost * 600}</Orundum>)
-                </span>
+                <span className="ak-event-banner-spark">Spark Eligible</span>
               )}
             </div>
             <div className="ak-event-banner-operators">

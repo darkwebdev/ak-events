@@ -165,7 +165,6 @@ describe('scrapeEvents', () => {
       name: 'Test Banner',
       type: 'Limited',
       sparkEligible: true,
-      sparkCost: 300,
       operators: [
         {
           name: 'Test Operator',
@@ -173,8 +172,47 @@ describe('scrapeEvents', () => {
           class: 'Guard',
           limited: true,
           icon: 'data/images/operators/test_icon.png',
+          sparkCost: 300,
         },
       ],
+    });
+  });
+
+  test("reduces a 6★ operator's spark cost to 200 when the wiki names it as currently discounted", async () => {
+    const downloadedPaths = new Set();
+    mockFileExists.mockImplementation((p) => downloadedPaths.has(p));
+    mockDownloadImage.mockImplementation(async (url, filepath) => {
+      downloadedPaths.add(filepath);
+    });
+    mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: 'https://example.com/wiki/Story_Event',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': `<div class="mw-content-ltr mw-parser-output"><ul><li>The amount of
+            Headhunting Data Contracts needed to buy Test Operator in the Headhunting
+            Data Contract Store is reduced to 200.</li></ul></div>`,
+        },
+      },
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents[0].banner.operators[0]).toMatchObject({
+      name: 'Test Operator',
+      sparkCost: 200,
     });
   });
 

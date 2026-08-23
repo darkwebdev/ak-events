@@ -44,3 +44,18 @@
   border-radius: 3px;
   white-space: nowrap;
 }
+
+.ak-operator-spark-tag {
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  transform: translateX(-50%);
+  background: var(--ak-spark);
+  color: var(--ak-limited-text);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}

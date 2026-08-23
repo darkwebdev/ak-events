@@ -2,6 +2,7 @@ import React from 'react';
 import { jpgifyLocal } from '../../utils/images.js';
 import { getEffectiveStart, getEffectiveEnd } from '../../utils/dates.js';
 import { calcEventOrundum, orundumFromOP, orundumFromHH } from '../../utils/orundum.js';
+import { groupOperatorsByStar } from '../../utils/operators.js';
 import { Orundum } from '../Orundum';
 import { InfoButton } from '../InfoButton';
 import { Breakdown } from '../Breakdown';
@@ -83,8 +84,15 @@ export function Event({ event, selectedEvents, onEventToggle }) {
               )}
             </div>
             <div className="ak-event-banner-operators">
-              {banner.operators.map((op) => (
-                <OperatorBadge key={op.name} operator={op} />
+              {groupOperatorsByStar(banner.operators).map(([star, ops]) => (
+                <div className="ak-operator-group" key={star}>
+                  {star > 0 && <span className="ak-operator-group-label">{star}★</span>}
+                  <div className="ak-operator-group-badges">
+                    {ops.map((op) => (
+                      <OperatorBadge key={op.name} operator={op} />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>

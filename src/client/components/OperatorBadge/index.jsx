@@ -24,7 +24,11 @@ export function OperatorBadge({ operator }) {
       ) : (
         <span className="ak-operator-icon ak-operator-icon-fallback">{name?.[0]}</span>
       )}
-      {reducedSpark && <span className="ak-operator-spark-tag">SPARK {sparkCost}</span>}
+      {sparkCost != null && (
+        <span className={`ak-operator-spark-tag${reducedSpark ? ' reduced' : ''}`}>
+          {sparkCost}
+        </span>
+      )}
       {limited && <span className="ak-operator-limited-tag">LIMITED</span>}
     </div>
   );

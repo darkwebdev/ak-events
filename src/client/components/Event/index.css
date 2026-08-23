@@ -75,6 +75,26 @@
 
 .ak-event-banner-operators {
   display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ak-operator-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ak-operator-group-label {
+  flex-shrink: 0;
+  min-width: 1.6em;
+  color: var(--ak-text-muted);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.ak-operator-group-badges {
+  display: flex;
   flex-wrap: wrap;
   gap: 10px 8px;
 }

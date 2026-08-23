@@ -16,11 +16,12 @@
      floatingStyles) always wins over this class regardless of what's declared here or in
      what order, so setting it in this stylesheet is misleading dead weight — it was
      previously declared twice (fixed, then relative) and neither one did anything.
-     (A FloatingPortal / strategy: 'fixed' would be the textbook way to also escape a
-     scrollable ancestor's clipping, but both left this popover stuck at 0,0 in this
-     floating-ui version for reasons that didn't turn up in extensive live debugging —
-     see EventsList/index.css instead, where the actual clipping ancestor's now-unused
-     `overflow: auto` was simply removed.) */
+     (Clipping by a scrollable ancestor was fixed separately — see EventsList/index.css,
+     where the actual clipping ancestor's unused `overflow: auto` was removed. A stuck-
+     at-0,0 position bug was a different issue: floating-ui positions this element via
+     `transform: translate(...)`, and combining that with useTransitionStyles' own
+     `transform: scale(...)` on the same element made one silently clobber the other —
+     see index.jsx, where the transition now lives on a separate inner wrapper div.) */
   min-width: 260px;
   max-width: 420px;
   background: var(--ak-surface);

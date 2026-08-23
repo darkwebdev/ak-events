@@ -1,0 +1,1 @@
+import{R as r}from"./iframe-C4T7z7Ij.js";import{n as o}from"./images-BVwpUHA0.js";function e({className:a}){return r.createElement("img",{className:`ak-spark-icon${a?` ${a}`:""}`,src:o("/images/icon-spark-token.svg"),alt:"Spark"})}e.__docgenInfo={description:"",methods:[],displayName:"SparkIcon"};export{e as S};

@@ -85,7 +85,7 @@ export function Event({ event, selectedEvents, onEventToggle }) {
                       origPrime && <OriginitePrimeIcon key="op" />,
                       // A Headhunting Permit is redeemable as one pull, so it's
                       // labeled with the pull icon rather than its own text.
-                      hhPermits && <PullIcon key="hh" className="ak-pulls-icon" />,
+                      hhPermits && <PullIcon key="hh" />,
                     ].filter(Boolean)}
                     calcs={[
                       origPrime && `${origPrime} × 180`,

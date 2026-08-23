@@ -2,11 +2,14 @@ import React from 'react';
 import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
 import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
+import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
+import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { orundumFromOP, orundumFromHH } from '../../utils/orundum.js';
+import './index.css';
 
 export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
   return (
-    <div className="ak-aside">
+    <div className="ak-aside ak-daily-orundum">
       <h3 className="ak-aside-title">
         Daily <OrundumIcon /> Equivalent
       </h3>
@@ -20,7 +23,7 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Annihilation">
-                {settings.Annihilation.weeklyOrundum} weekly Orundum
+                {settings.Annihilation.weeklyOrundum} weekly <OrundumIcon />
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -37,9 +40,12 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Rotating Bi-Monthly Annihilation">
-                <div>{settings['New Annihilation'].biMonthlyOrundum} Orundum every 2 months</div>
                 <div>
-                  + {settings['New Annihilation'].weeklyOrundum} increased weekly Orundum cap
+                  {settings['New Annihilation'].biMonthlyOrundum} <OrundumIcon /> every 2 months
+                </div>
+                <div>
+                  + {settings['New Annihilation'].weeklyOrundum} increased weekly <OrundumIcon />{' '}
+                  cap
                 </div>
               </InfoButton>
             </span>
@@ -61,7 +67,7 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Daily & Weekly Missions">
-                {settings.Missions.weeklyOrundum} weekly Orundum
+                {settings.Missions.weeklyOrundum} weekly <OrundumIcon />
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -79,8 +85,12 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Commendations Store 1">
-                <div>{settings['Green Cert T1'].monthlyOrundum} monthly Orundum</div>
-                <div>+ {settings['Green Cert T1'].monthlyHH} monthly HH Permits</div>
+                <div>
+                  {settings['Green Cert T1'].monthlyOrundum} monthly <OrundumIcon />
+                </div>
+                <div>
+                  + {settings['Green Cert T1'].monthlyHH} monthly <PullIcon />
+                </div>
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -100,7 +110,7 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Commendations Store 2">
-                {settings['Green Cert T2'].monthlyHH} monthly HH Permits
+                {settings['Green Cert T2'].monthlyHH} monthly <PullIcon />
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -118,8 +128,12 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Monthly Card">
-                <div>{settings['Monthly Card'].dailyOrundum} daily Orundum</div>
-                <div>+ {settings['Monthly Card'].monthlyOP} monthly OP</div>
+                <div>
+                  {settings['Monthly Card'].dailyOrundum} daily <OrundumIcon />
+                </div>
+                <div>
+                  + {settings['Monthly Card'].monthlyOP} monthly <OriginitePrimeIcon />
+                </div>
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -140,7 +154,9 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Daily Sign-in">
-                <div>{settings['Monthly Login'].monthlyHH} monthly HH Permit</div>
+                <div>
+                  {settings['Monthly Login'].monthlyHH} monthly <PullIcon />
+                </div>
               </InfoButton>
             </span>
             <span className="ak-aside-value">

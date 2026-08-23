@@ -117,9 +117,13 @@ export default function App() {
             latestEventStart={calculateLatestEventStart(selectedList)}
             totalOrundum={totalOrundum}
             totalEventsOrundum={calcTotalOrundum(futureEvents, selectedEvents, 0, 0)}
-            eventsOrundumCalc={`from ${selectedList.length} event(s)`}
+            eventsOrundumCalc={`from ${selectedList.length} event${
+              selectedList.length === 1 ? '' : 's'
+            }`}
             totalDailyOrundum={totalDailyOrundum}
-            dailyOrundumCalc={`${Math.floor(dailyOrundum)} × ${daysUntilLastEvent} days`}
+            dailyOrundumCalc={`${Math.floor(dailyOrundum)} × ${daysUntilLastEvent} day${
+              daysUntilLastEvent === 1 ? '' : 's'
+            }`}
             playerOrundumTotal={playerOrundumTotal}
           />
         </div>

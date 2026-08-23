@@ -9,13 +9,14 @@ import './index.css';
 export function Header({ totalPulls }) {
   return (
     <header className="ak-header">
-      <h1>Arknights Pull Prophecy</h1>
-      &nbsp;
-      <span className="ak-header-pulls">
-        <PullIcon className="ak-header-pulls-icon" />
-        <span className="ak-header-pulls-x">×</span>
-        <PullCounter value={totalPulls} />
-      </span>
+      <div className="ak-header-title">
+        <h1>Arknights Pull Prophecy</h1>
+        <span className="ak-header-pulls">
+          <PullIcon className="ak-header-pulls-icon" />
+          <span className="ak-header-pulls-x">×</span>
+          <PullCounter value={totalPulls} />
+        </span>
+      </div>
     </header>
   );
 }

@@ -39,7 +39,10 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  width: 36px;
+  /* Matches the 36px icon plus the 2px-on-each-side box-shadow "border" ring
+     (.ak-operator-badge.limited .ak-operator-icon above) — narrower than that would
+     look inset from, rather than a continuation of, the ring. */
+  width: 40px;
   box-sizing: border-box;
   background: color-mix(in srgb, var(--ak-limited) 80%, transparent);
   color: var(--ak-limited-text);

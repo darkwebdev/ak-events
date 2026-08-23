@@ -5,13 +5,14 @@ import { Breakdown } from '../Breakdown';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
+import './index.css';
 
 /**
  * Component for managing currently owned orundum and resources
  */
 export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
   return (
-    <div className="ak-aside">
+    <div className="ak-aside ak-currently-owned">
       <h3 className="ak-aside-title">Currently owned</h3>
       <div className="ak-aside-list">
         <div className="ak-aside-item">
@@ -49,7 +50,7 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <span className="ak-aside-name">
-              <PullIcon className="ak-pulls-icon" />
+              <PullIcon />
               Headhunting Permits
             </span>
             <input
@@ -72,7 +73,7 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
                   items={[
                     <OrundumIcon key="orundum" />,
                     <OriginitePrimeIcon key="op" />,
-                    <PullIcon key="permits" className="ak-pulls-icon" />,
+                    <PullIcon key="permits" />,
                   ]}
                   calcs={['-', `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
                   totals={[owned.orundum, owned.op * 180, owned.hhPermits * 600]}

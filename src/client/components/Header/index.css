@@ -10,6 +10,12 @@
   z-index: 1;
 }
 
+.ak-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
 h1 {
   display: inline-block;
   margin: 0;
@@ -20,12 +26,15 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 0.2em;
-  vertical-align: middle;
 }
 
-.ak-header-pulls-icon {
+/* Two-class selector so this reliably wins over PullIcon's own single-class
+   `.ak-pulls-icon` default sizing, regardless of stylesheet import order. */
+.ak-pulls-icon.ak-header-pulls-icon {
   height: 1.3em;
   width: auto;
+  margin-right: 0;
+  vertical-align: 0;
 }
 
 .ak-header-pulls-x {

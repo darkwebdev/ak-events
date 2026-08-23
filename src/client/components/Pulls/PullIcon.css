@@ -5,4 +5,5 @@
   width: auto;
   vertical-align: -0.2em;
   margin-right: 0.15em;
+  flex-shrink: 0;
 }

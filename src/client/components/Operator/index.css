@@ -1,9 +1,12 @@
 .ak-operator-badge {
-  position: relative;
+  /* Column flow, not an absolutely-positioned tag hanging off a fixed-height box: the
+     tag is a normal child directly below the icon, so it just contributes to the
+     badge's own height like anything else — no manual top offset, no width-matching
+     the icon by hand, and a wrapped grid of badges naturally gets enough row spacing
+     for it without a compensating gap hack. */
+  display: flex;
+  flex-direction: column;
   width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  overflow: visible;
   flex-shrink: 0;
 }
 
@@ -34,37 +37,26 @@
 
 .ak-operator-badge.limited .ak-operator-icon,
 .ak-operator-badge.limited .ak-operator-icon-fallback {
-  /* `border` (not box-shadow) so the bottom edge can be dropped — the flush
-     .ak-operator-tag sits directly below and is the visual "bottom edge" instead,
-     so a ring/border on that side would double up and throw off the tag's vertical
-     alignment. box-sizing:border-box keeps the overall 36x36 box size unchanged. */
+  /* `border` (not box-shadow) so the bottom edge can be dropped — the tag sits
+     directly below with no gap and is the visual "bottom edge" instead, so a
+     ring/border on that side would just double up as an unwanted divider line.
+     box-sizing:border-box keeps the overall 36x36 box size unchanged. */
   box-sizing: border-box;
   border: 2px solid var(--ak-limited);
   border-bottom: none;
   box-shadow: none;
-  /* Square off where the flush .ak-operator-tag sits directly below (a rounded
-     corner there would look disconnected from it) — only when the tag is actually
-     showing, i.e. limited (every sparkable operator is also limited, so this covers
-     both the spark-cost and plain LIMITED tag). */
+  /* Square off where the tag sits directly below (a rounded corner there would look
+     disconnected from it) — only when the tag is actually showing, i.e. limited
+     (every sparkable operator is also limited, so this covers both the spark-cost
+     and plain LIMITED tag). */
   border-radius: 6px 6px 0 0;
 }
 
 .ak-operator-tag {
-  position: absolute;
-  left: 50%;
-  /* Flush against the icon's own (bottom-less) border above — see
-     .ak-operator-badge.limited .ak-operator-icon. */
-  top: 36px;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  /* Matches the icon's own 36px width exactly — box-sizing:border-box on
-     .ak-operator-badge.limited .ak-operator-icon means its border is drawn inside
-     that 36px box, not extending past it, so this is no longer 40px to clear a wider
-     ring the way it used to. */
-  width: 36px;
   /* Fixed rather than content-driven: the spark icon is taller than the plain text
      label's line box, and letting height follow content made the tag visibly taller
      whenever a spark cost (with its icon) was shown vs. a plain LIMITED/spark text
@@ -78,7 +70,7 @@
   letter-spacing: -0.2px;
   font-weight: 700;
   line-height: 1;
-  /* Square top corners — a continuation of the ring above, not a separate floating
+  /* Square top corners — a continuation of the border above, not a separate floating
      pill — only the bottom corners round off. */
   border-radius: 0 0 3px 3px;
   white-space: nowrap;

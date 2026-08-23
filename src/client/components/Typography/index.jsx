@@ -1,4 +1,5 @@
 import React from 'react';
+import { SparkIcon } from '../OperatorBadge/SparkIcon.jsx';
 import './index.css';
 
 // Each entry renders with the *real* app styling (either the actual global h1 rule,
@@ -53,7 +54,8 @@ const SCALE = [
     meta: '8px / 700 / uppercase',
     render: () => (
       <span className="ak-operator-tag" style={{ position: 'static' }}>
-        SPARK 200
+        <SparkIcon className="ak-operator-tag-icon" />
+        200
       </span>
     ),
   },

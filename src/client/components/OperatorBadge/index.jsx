@@ -1,5 +1,6 @@
 import React from 'react';
 import { normalizeImageSrc } from '../../utils/images.js';
+import { SparkIcon } from './SparkIcon.jsx';
 import './index.css';
 
 export function OperatorBadge({ operator }) {
@@ -17,13 +18,6 @@ export function OperatorBadge({ operator }) {
     .filter(Boolean)
     .join(' · ');
 
-  let tagWord = null;
-  if (sparkCost != null) tagWord = 'SPARK';
-  else if (limited) tagWord = 'LIMIT';
-  const tagText = [tagWord, sparkCost != null ? sparkCost : null]
-    .filter((v) => v !== null && v !== undefined)
-    .join(' ');
-
   return (
     <div className={`ak-operator-badge${limited ? ' limited' : ''}`} title={title}>
       {src ? (
@@ -31,9 +25,13 @@ export function OperatorBadge({ operator }) {
       ) : (
         <span className="ak-operator-icon ak-operator-icon-fallback">{name?.[0]}</span>
       )}
-      {tagText && (
-        <span className={`ak-operator-tag${reducedSpark ? ' reduced' : ''}`}>{tagText}</span>
+      {sparkCost != null && (
+        <span className={`ak-operator-tag${reducedSpark ? ' reduced' : ''}`}>
+          <SparkIcon className="ak-operator-tag-icon" />
+          {sparkCost}
+        </span>
       )}
+      {sparkCost == null && limited && <span className="ak-operator-tag">LIMIT</span>}
     </div>
   );
 }

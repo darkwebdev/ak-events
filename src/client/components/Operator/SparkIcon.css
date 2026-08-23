@@ -1,5 +1,6 @@
 .ak-spark-icon {
-  width: 10px;
-  height: 10px;
+  /* Matches every other icon's fixed height (OriginitePrimeIcon is the reference). */
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }

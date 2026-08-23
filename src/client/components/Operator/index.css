@@ -13,6 +13,9 @@
   border-radius: 6px;
   object-fit: cover;
   display: block;
+  /* A faint outline on every portrait, not just limited ones — box-shadow rather
+     than `border` so it doesn't add to the element's box size. */
+  box-shadow: 0 0 0 1px var(--ak-border);
 }
 
 .ak-operator-icon-fallback {
@@ -23,17 +26,27 @@
   color: var(--ak-text-muted);
   font-size: 14px;
   font-weight: 600;
+  box-shadow: 0 0 0 1px var(--ak-border);
 }
 
 .ak-operator-badge.limited .ak-operator-icon,
 .ak-operator-badge.limited .ak-operator-icon-fallback {
   box-shadow: 0 0 0 2px var(--ak-limited);
+  /* Square off where the flush .ak-operator-tag sits directly below (a rounded
+     corner there would look disconnected from it) — only when the tag is actually
+     showing, i.e. limited (every sparkable operator is also limited, so this covers
+     both the spark-cost and plain LIMITED tag). */
+  border-radius: 6px 6px 0 0;
 }
 
 .ak-operator-tag {
   position: absolute;
   left: 50%;
-  bottom: -10px;
+  /* Flush against the icon's own box-shadow "border" ring (2px spread, see
+     .ak-operator-badge.limited .ak-operator-icon above): top edge sits exactly at
+     the ring's bottom edge (36px icon + 2px ring) instead of overlapping into the
+     icon or floating below it with a gap. */
+  top: 38px;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
@@ -50,22 +63,26 @@
      icon to butt right up against the top/bottom edges with no breathing room. */
   height: 12px;
   box-sizing: border-box;
-  background: color-mix(in srgb, var(--ak-limited) 80%, transparent);
+  background: var(--ak-limited);
   color: var(--ak-limited-text);
   font-size: 5.5px;
   letter-spacing: -0.3px;
   font-weight: 700;
   line-height: 1;
-  border-radius: 3px;
+  /* Square top corners — a continuation of the ring above, not a separate floating
+     pill — only the bottom corners round off. */
+  border-radius: 0 0 3px 3px;
   white-space: nowrap;
 }
 
-.ak-operator-tag-icon {
+/* Two-class selector so this reliably wins over SparkIcon's own single-class
+   `.ak-spark-icon` default sizing, regardless of stylesheet import order. */
+.ak-spark-icon.ak-operator-tag-icon {
   width: 10px;
   height: 10px;
   flex-shrink: 0;
 }
 
 .ak-operator-tag.reduced {
-  background: color-mix(in srgb, var(--ak-spark) 80%, transparent);
+  background: var(--ak-spark);
 }

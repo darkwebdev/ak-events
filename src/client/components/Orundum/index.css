@@ -1,6 +1,9 @@
 .ak-orundum-icon {
-  width: 0.85em;
-  height: 0.85em;
-  vertical-align: -0.05em;
-  margin-right: 0.2em;
+  /* Fixed px, matching every other icon's height (OriginitePrimeIcon is the
+     reference) — em-based sizing here made icons visibly different sizes depending
+     on which font-size context they were used in. */
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  margin-right: 3px;
 }

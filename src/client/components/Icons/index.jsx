@@ -32,6 +32,11 @@ const ICONS = [
     name: 'Spark',
     usage: 'SparkIcon',
     file: 'icon-spark-token.svg',
+    // The icon's dark-brown fill is baked in for its one real usage — inside the gold
+    // .ak-operator-tag background — and is illegible on the neutral swatch background
+    // every other icon here previews fine against, so this preview stands in for the
+    // real tag background instead.
+    previewBackground: 'color-mix(in srgb, var(--ak-limited) 80%, transparent)',
     render: () => <SparkIcon />,
   },
 ];
@@ -43,7 +48,12 @@ export function Icons({ label }) {
       <div className="ak-icons-grid">
         {ICONS.map((icon) => (
           <div key={icon.name} className="ak-icons-swatch">
-            <div className="ak-icons-swatch-preview">{icon.render()}</div>
+            <div
+              className="ak-icons-swatch-preview"
+              style={icon.previewBackground ? { background: icon.previewBackground } : undefined}
+            >
+              {icon.render()}
+            </div>
             <div className="ak-icons-swatch-name">{icon.name}</div>
             <div className="ak-icons-swatch-usage">{icon.usage}</div>
             <div className="ak-icons-swatch-file">public/images/{icon.file}</div>

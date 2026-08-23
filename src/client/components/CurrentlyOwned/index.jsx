@@ -51,7 +51,7 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
           <label className="ak-aside-label">
             <span className="ak-aside-name">
               <PullIcon />
-              Headhunting Permits
+              Pulls
             </span>
             <input
               type="number"

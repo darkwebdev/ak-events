@@ -23,7 +23,8 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Annihilation">
-                {settings.Annihilation.weeklyOrundum} weekly <OrundumIcon />
+                <OrundumIcon />
+                {settings.Annihilation.weeklyOrundum} weekly
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -41,11 +42,12 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             <span className="ak-aside-name">
               <InfoButton label="Rotating Bi-Monthly Annihilation">
                 <div>
-                  {settings['New Annihilation'].biMonthlyOrundum} <OrundumIcon /> every 2 months
+                  <OrundumIcon />
+                  {settings['New Annihilation'].biMonthlyOrundum} every 2 months
                 </div>
                 <div>
-                  + {settings['New Annihilation'].weeklyOrundum} increased weekly <OrundumIcon />{' '}
-                  cap
+                  + <OrundumIcon />
+                  {settings['New Annihilation'].weeklyOrundum} increased weekly cap
                 </div>
               </InfoButton>
             </span>
@@ -67,7 +69,8 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Daily & Weekly Missions">
-                {settings.Missions.weeklyOrundum} weekly <OrundumIcon />
+                <OrundumIcon />
+                {settings.Missions.weeklyOrundum} weekly
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -86,10 +89,12 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             <span className="ak-aside-name">
               <InfoButton label="Commendations Store 1">
                 <div>
-                  {settings['Green Cert T1'].monthlyOrundum} monthly <OrundumIcon />
+                  <OrundumIcon />
+                  {settings['Green Cert T1'].monthlyOrundum} monthly
                 </div>
                 <div>
-                  + {settings['Green Cert T1'].monthlyHH} monthly <PullIcon />
+                  + <PullIcon />
+                  {settings['Green Cert T1'].monthlyHH} monthly
                 </div>
               </InfoButton>
             </span>
@@ -110,7 +115,8 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             />
             <span className="ak-aside-name">
               <InfoButton label="Commendations Store 2">
-                {settings['Green Cert T2'].monthlyHH} monthly <PullIcon />
+                <PullIcon />
+                {settings['Green Cert T2'].monthlyHH} monthly
               </InfoButton>
             </span>
             <span className="ak-aside-value">
@@ -129,10 +135,12 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             <span className="ak-aside-name">
               <InfoButton label="Monthly Card">
                 <div>
-                  {settings['Monthly Card'].dailyOrundum} daily <OrundumIcon />
+                  <OrundumIcon />
+                  {settings['Monthly Card'].dailyOrundum} daily
                 </div>
                 <div>
-                  + {settings['Monthly Card'].monthlyOP} monthly <OriginitePrimeIcon />
+                  + <OriginitePrimeIcon />
+                  {settings['Monthly Card'].monthlyOP} monthly
                 </div>
               </InfoButton>
             </span>
@@ -155,7 +163,8 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
             <span className="ak-aside-name">
               <InfoButton label="Daily Sign-in">
                 <div>
-                  {settings['Monthly Login'].monthlyHH} monthly <PullIcon />
+                  <PullIcon />
+                  {settings['Monthly Login'].monthlyHH} monthly
                 </div>
               </InfoButton>
             </span>

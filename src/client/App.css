@@ -117,7 +117,7 @@ body {
   display: flex;
   gap: 20px;
   align-items: flex-start;
-  margin-top: 6.5em;
+  margin-top: 5.5em;
 }
 
 .ak-aside-column {
@@ -125,7 +125,7 @@ body {
      position takes it out of flow entirely, so nothing reserved room for it and the
      events column was free to grow wide enough to run underneath it. */
   position: sticky;
-  top: 6.5em;
+  top: 5.5em;
   /* A fixed width, not `flex: 0 0 auto` sized to content: the aside's own text
      changes length as state changes (e.g. "Total" becomes "Total by 27/08/2026"
      once an event is selected), and with flex-shrink:0 that content-driven width
@@ -207,6 +207,7 @@ body {
   min-width: 40px;
   text-align: right;
   align-self: last baseline;
+  white-space: nowrap;
   /* Pushes flush right even with no `.ak-aside-name` sibling (e.g. the "Total
      Orundum" row, where the value is now the InfoButton's whole label rather than
      one of two space-between'd children) — harmless when a flex:1 name sibling is

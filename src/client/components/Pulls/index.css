@@ -1,6 +1,8 @@
 .ak-pulls-icon {
-  width: 1.1em;
+  /* icon-pull.svg is a 160x100 ticket shape (1.6:1), not square — fix the height and
+     let width follow, instead of the width/height pair distorting it into a square. */
   height: 1.1em;
+  width: auto;
   vertical-align: -0.2em;
   margin-right: 0.15em;
 }

@@ -24,8 +24,20 @@ export function Operator({ operator }) {
     .filter(Boolean)
     .join(' · ');
 
+  const badgeClassName = [
+    'ak-operator-badge',
+    limited && 'limited',
+    // Lets the icon's own border color match the tag's color below it (see
+    // .ak-operator-badge.spark-200/.spark-75 in index.css) — without this, a
+    // reduced-cost operator's border stayed the plain LIMITED yellow while its tag
+    // was orange, looking disconnected.
+    tagVariant,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className={`ak-operator-badge${limited ? ' limited' : ''}`} title={title}>
+    <div className={badgeClassName} title={title}>
       {src ? (
         <img className="ak-operator-icon" src={src} alt={name} />
       ) : (

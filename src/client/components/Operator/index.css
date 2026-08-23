@@ -60,10 +60,11 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  /* Matches the 36px icon plus its 2px-on-each-side border (.ak-operator-badge.limited
-     .ak-operator-icon above) — narrower than that would look inset from, rather than
-     a continuation of, the border. */
-  width: 40px;
+  /* Matches the icon's own 36px width exactly — box-sizing:border-box on
+     .ak-operator-badge.limited .ak-operator-icon means its border is drawn inside
+     that 36px box, not extending past it, so this is no longer 40px to clear a wider
+     ring the way it used to. */
+  width: 36px;
   /* Fixed rather than content-driven: the spark icon is taller than the plain text
      label's line box, and letting height follow content made the tag visibly taller
      whenever a spark cost (with its icon) was shown vs. a plain LIMITED/spark text
@@ -100,4 +101,17 @@
    6★ reduced tier so the two tiers stay visually distinct. */
 .ak-operator-tag.spark-75 {
   background: #b85c1a;
+}
+
+/* Match the icon's own border color to its tag's color (see .ak-operator-badge.limited
+   .ak-operator-icon above for the base yellow) — otherwise a reduced/5★ operator's
+   border stayed the plain LIMITED yellow while its tag below was orange. */
+.ak-operator-badge.spark-200 .ak-operator-icon,
+.ak-operator-badge.spark-200 .ak-operator-icon-fallback {
+  border-color: #e8842e;
+}
+
+.ak-operator-badge.spark-75 .ak-operator-icon,
+.ak-operator-badge.spark-75 .ak-operator-icon-fallback {
+  border-color: #b85c1a;
 }

@@ -219,6 +219,71 @@ describe('scrapeEvents', () => {
     });
   });
 
+  test('applies each of several reduced-cost operators named on the same page to their own banner entry', async () => {
+    const downloadedPaths = new Set();
+    mockFileExists.mockImplementation((p) => downloadedPaths.has(p));
+    mockDownloadImage.mockImplementation(async (url, filepath) => {
+      downloadedPaths.add(filepath);
+    });
+    const twoOperatorBannerHtml = `
+      <div class="mw-content-ltr mw-parser-output">
+        <h2><span class="mw-headline" id="Limited_Headhunting">Limited Headhunting</span></h2>
+        <table>
+          <tbody>
+            <tr>
+              <td><div class="banner"><b>[Celebration] Test Banner</b></div>
+                <div>CN date: 2026/01/01 – 2026/01/15</div>
+                <div>Global date: 2026/06/01 – 2026/06/15</div>
+              </td>
+              <td>
+                <div class="character-tooltip" data-star="6" data-class="Guard" data-name="First Operator">
+                  <img src="/images/first_icon.png" />
+                </div>
+                <div class="character-tooltip" data-star="6" data-class="Sniper" data-name="Second Operator">
+                  <img src="/images/second_icon.png" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+    mockFetchBannersPageHtml.mockResolvedValue(twoOperatorBannerHtml);
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: 'https://example.com/wiki/Story_Event',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': `<div class="mw-content-ltr mw-parser-output">
+            <ul>
+              <li>The amount of Headhunting Data Contracts needed to buy First Operator
+                in the Headhunting Data Contract Store is reduced to 200.</li>
+              <li>The amount of Headhunting Data Contracts needed to buy Second Operator
+                in the Headhunting Data Contract Store is reduced to 250.</li>
+            </ul>
+          </div>`,
+        },
+      },
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    const { operators } = savedEvents[0].banner;
+    expect(operators.find((op) => op.name === 'First Operator').sparkCost).toBe(200);
+    expect(operators.find((op) => op.name === 'Second Operator').sparkCost).toBe(250);
+  });
+
   test('gives no spark cost to an operator debuting on this event, even though they render as rate-up', async () => {
     const downloadedPaths = new Set();
     mockFileExists.mockImplementation((p) => downloadedPaths.has(p));

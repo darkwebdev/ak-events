@@ -13,7 +13,10 @@
   --ak-text: #2e2b3a;
   --ak-text-muted: #655d75;
   --ak-accent: #564fd1;
-  --ak-limited: #d99a1f;
+  /* Matches icon-pull.svg's ticket yellow — fixed rather than theme-varying (repeated
+     the same in every theme block below) since it represents the in-game LIMITED
+     color, not a UI surface tone. */
+  --ak-limited: #f8d651;
   --ak-limited-text: #3d2b06;
   --ak-spark: #9c630f;
   --ak-shadow: rgba(46, 43, 58, 0.14);
@@ -46,7 +49,7 @@
     --ak-text: #eae7f2;
     --ak-text-muted: #aca2c2;
     --ak-accent: #a9a0ff;
-    --ak-limited: #e8c876;
+    --ak-limited: #f8d651;
     --ak-limited-text: #2b2004;
     --ak-spark: #e0b25c;
     --ak-shadow: rgba(0, 0, 0, 0.45);
@@ -69,7 +72,7 @@
   --ak-text: #eae7f2;
   --ak-text-muted: #aca2c2;
   --ak-accent: #a9a0ff;
-  --ak-limited: #e8c876;
+  --ak-limited: #f8d651;
   --ak-limited-text: #2b2004;
   --ak-spark: #e0b25c;
   --ak-shadow: rgba(0, 0, 0, 0.45);
@@ -84,7 +87,7 @@
   --ak-text: #2e2b3a;
   --ak-text-muted: #655d75;
   --ak-accent: #564fd1;
-  --ak-limited: #d99a1f;
+  --ak-limited: #f8d651;
   --ak-limited-text: #3d2b06;
   --ak-spark: #9c630f;
   --ak-shadow: rgba(46, 43, 58, 0.14);

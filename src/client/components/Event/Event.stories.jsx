@@ -30,13 +30,19 @@ const discountableOperatorNames = limitedOperators
   .filter((op) => op.star === 6)
   .map((op) => op.name);
 
-function sparkCostFor(op, discountedOperator) {
-  if (op.star === 6) return op.name === discountedOperator ? 200 : 300;
+function sparkCostFor(op, discountedOperators) {
+  // Spark redemption is a limited-exclusive perk — a non-limited operator (a
+  // standard/guest op featured on an otherwise-limited banner) never has a spark cost.
+  if (!op.limited) return null;
+  // The wiki names a growing list of discounted 6★ operators, not just one — more get
+  // added every year — so this checks membership in a list, not equality with a
+  // single name.
+  if (op.star === 6) return discountedOperators.includes(op.name) ? 200 : 300;
   if (op.star === 5) return 75;
   return null;
 }
 
-function buildBanner(bannerType, discountedOperator) {
+function buildBanner(bannerType, discountedOperators) {
   if (bannerType === 'Standard') {
     return {
       name: 'Joint Operation #21',
@@ -52,15 +58,15 @@ function buildBanner(bannerType, discountedOperator) {
       sparkEligible: true,
       operators: limitedOperators.map((op) => ({
         ...op,
-        sparkCost: sparkCostFor(op, discountedOperator),
+        sparkCost: sparkCostFor(op, discountedOperators),
       })),
     };
   }
   return null;
 }
 
-function renderEvent({ bannerType, selected, discountedOperator }) {
-  const banner = buildBanner(bannerType, discountedOperator);
+function renderEvent({ bannerType, selected, discountedOperators }) {
+  const banner = buildBanner(bannerType, discountedOperators);
   return (
     <ul className="ak-events-list">
       <Event
@@ -85,30 +91,35 @@ export default {
       control: 'boolean',
       description: 'Whether the event card is shown selected',
     },
-    discountedOperator: {
-      control: 'select',
-      options: ['None', ...discountableOperatorNames],
+    discountedOperators: {
+      control: 'multi-select',
+      options: discountableOperatorNames,
       description:
-        'Which 6★ operator (if any) currently has a reduced 200-contract spark cost. Only applies to Limited banners.',
+        // The wiki accumulates more of these every year, not just one at a time.
+        '6★ operators that currently have a reduced 200-contract spark cost. Only applies to Limited banners.',
     },
   },
   render: renderEvent,
 };
 
 export const NoBanner = {
-  args: { bannerType: 'None', selected: false, discountedOperator: 'None' },
+  args: { bannerType: 'None', selected: false, discountedOperators: [] },
 };
 
 export const LimitedBanner = {
-  args: { bannerType: 'Limited', selected: false, discountedOperator: 'Chongyue' },
+  args: { bannerType: 'Limited', selected: false, discountedOperators: ['Chongyue'] },
 };
 
 export const StandardBanner = {
-  args: { bannerType: 'Standard', selected: false, discountedOperator: 'None' },
+  args: { bannerType: 'Standard', selected: false, discountedOperators: [] },
 };
 
 export const Selected = {
-  args: { bannerType: 'Limited', selected: true, discountedOperator: 'None' },
+  args: { bannerType: 'Limited', selected: true, discountedOperators: [] },
+};
+
+export const MultipleDiscountedOperators = {
+  args: { bannerType: 'Limited', selected: false, discountedOperators: ['Chongyue', 'Shu'] },
 };
 
 const RESPONSIVE_WIDTHS = [

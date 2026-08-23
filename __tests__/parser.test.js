@@ -3,7 +3,7 @@ import path from 'path';
 import {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
-  extractReducedSparkOperator,
+  extractReducedSparkOperators,
   extractOperatorDebutEvent,
 } from '../src/server/lib/parser.js';
 
@@ -43,12 +43,25 @@ test('Ato: extracts the operator with a reduced 200-contract spark cost from eve
     path.join(__dirname, 'debug_html', 'ato_reduced_spark_api.html'),
     'utf8'
   );
-  expect(extractReducedSparkOperator(html)).toEqual({ name: "Ch'en the Holungday", cost: 200 });
+  expect(extractReducedSparkOperators(html)).toEqual([{ name: "Ch'en the Holungday", cost: 200 }]);
 });
 
-test('extractReducedSparkOperator: returns null when no reduced-cost sentence is present', () => {
-  expect(extractReducedSparkOperator('<div><p>Nothing relevant here.</p></div>')).toBeNull();
-  expect(extractReducedSparkOperator(null)).toBeNull();
+test('extractReducedSparkOperators: collects every reduced-cost sentence on the page, not just the first', () => {
+  const html = `<div>
+    <p>The amount of Headhunting Data Contracts needed to buy Ch'en the Holungday in the
+    Headhunting Data Contract Store is reduced to 200.</p>
+    <p>The amount of Headhunting Data Contracts needed to buy Eyjafjalla in the
+    Headhunting Data Contract Store is reduced to 200.</p>
+  </div>`;
+  expect(extractReducedSparkOperators(html)).toEqual([
+    { name: "Ch'en the Holungday", cost: 200 },
+    { name: 'Eyjafjalla', cost: 200 },
+  ]);
+});
+
+test('extractReducedSparkOperators: returns an empty array when no reduced-cost sentence is present', () => {
+  expect(extractReducedSparkOperators('<div><p>Nothing relevant here.</p></div>')).toEqual([]);
+  expect(extractReducedSparkOperators(null)).toEqual([]);
 });
 
 test("Kal'tsit - Esperanta: debuts on the event whose changelog says Introduced", () => {

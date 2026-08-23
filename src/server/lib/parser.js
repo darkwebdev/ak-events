@@ -417,13 +417,16 @@ function extractEventTypeFromHtml(html) {
 }
 
 // Event pages carry a standard sentence naming whichever operator currently has a
-// reduced Headhunting Data Contract (spark) cost, e.g. "The amount of Headhunting Data
-// Contracts needed to buy Ch'en the Holungday in the Headhunting Data Contract Store is
-// reduced to 200." This is a single global fact (not per-event/per-banner), so callers
-// should look for it across scraped event pages and apply it wherever that operator
-// appears in a banner's operator list.
-function extractReducedSparkOperator(html) {
-  if (!html) return null;
+// reduced Headhunting Data Contract (spark) cost, one sentence per operator, e.g. "The
+// amount of Headhunting Data Contracts needed to buy Ch'en the Holungday in the
+// Headhunting Data Contract Store is reduced to 200." The wiki accumulates more of
+// these every year as more 6★ operators get discounted, so this collects every match
+// on the page rather than stopping at the first — it's a global fact list (not
+// per-event/per-banner), so callers should look for it across scraped event pages and
+// apply each entry wherever that operator appears in a banner's operator list.
+function extractReducedSparkOperators(html) {
+  if (!html) return [];
+  const results = [];
   try {
     const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
     const dom = new JSDOM(clean);
@@ -434,13 +437,13 @@ function extractReducedSparkOperator(html) {
         /Headhunting Data Contracts needed to buy (.+?) in the Headhunting Data Contract Store is reduced to (\d+)/i
       );
       if (m) {
-        return { name: m[1].trim(), cost: parseInt(m[2], 10) };
+        results.push({ name: m[1].trim(), cost: parseInt(m[2], 10) });
       }
     }
   } catch (e) {
     // ignore, fall through
   }
-  return null;
+  return results;
 }
 
 // An operator's own wiki page has a "Changelog" section listing every event they've
@@ -619,7 +622,7 @@ export {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractEventTypeFromHtml,
-  extractReducedSparkOperator,
+  extractReducedSparkOperators,
   extractOperatorDebutEvent,
   parseEventFromHtml,
   parseIndexHtml,

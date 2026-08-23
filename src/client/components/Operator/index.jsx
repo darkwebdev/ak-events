@@ -6,12 +6,15 @@ import './index.css';
 export function Operator({ operator }) {
   const { name, star, class: opClass, limited, icon, sparkCost } = operator;
   const src = icon ? normalizeImageSrc(icon) : null;
-  // A 6★ operator normally costs 300 Headhunting Data Contracts to spark; 200 marks
-  // one currently discounted by the wiki's rotating reduced-cost promotion. 5★
-  // operators don't have a "reduced" tier — they're always at their (much lower)
-  // spark price — but get the same accent color as a reduced 6★, since both are
-  // "a better-than-default spark deal" as distinct from a plain LIMITED/full-price tag.
-  const sparkAccent = sparkCost != null && (star === 5 || sparkCost < 300);
+  // A 6★ operator normally costs 300 Headhunting Data Contracts to spark (the plain
+  // LIMITED yellow); 200 marks one currently discounted by the wiki's rotating
+  // reduced-cost promotion (orange). 5★ operators don't have a "reduced" tier —
+  // they're always at their own (much lower) spark price (dark orange).
+  let tagVariant = null;
+  if (sparkCost != null) {
+    if (star === 5) tagVariant = 'spark-75';
+    else if (sparkCost < 300) tagVariant = 'spark-200';
+  }
   const title = [
     name,
     star ? `${star}★` : null,
@@ -29,7 +32,7 @@ export function Operator({ operator }) {
         <span className="ak-operator-icon ak-operator-icon-fallback">{name?.[0]}</span>
       )}
       {sparkCost != null && (
-        <span className={`ak-operator-tag${sparkAccent ? ' reduced' : ''}`}>
+        <span className={`ak-operator-tag${tagVariant ? ` ${tagVariant}` : ''}`}>
           <SparkIcon className="ak-operator-tag-icon" />
           {sparkCost}
         </span>

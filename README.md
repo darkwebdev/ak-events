@@ -104,14 +104,20 @@ Notes:
     matches each event to its headhunting banner by start-date overlap, and writes
     `public/data/events.json`/`events_index.json`/`operators.json` plus event and operator images
   - `config.js`: wiki API endpoints
-  - `lib/`: `network.js`, `parser.js`, `banners.js`, `operatorCache.js`, `dateRange.js`, `wiki.js`,
-    `normalizeEvent.js`, `storage.js` — scraper internals (banner parsing, the Limited-operator cache,
-    and shared date-range parsing are their own modules)
+  - `lib/`: `network.js`, `parser.js`, `banners.js`, `operatorCache.js`, `operatorDebuts.js`,
+    `dateRange.js`, `wiki.js`, `normalizeEvent.js`, `storage.js` — scraper internals (banner parsing,
+    the Limited-operator cache, the operator-debut-event cache, and shared date-range parsing are
+    their own modules)
 - `scripts/`: `scrape.js`/`optimiseImages.js` CLI entry points plus maintenance scripts
   (`lint-with-local-rules.cjs`, `stop-server.js`, `register-eslint-rules.cjs`)
 - `public/data/events.json`: scraped events, including each one's matched `banner` (rate-up operators,
-  Limited flags, spark eligibility) when applicable — served at `/data/events.json`
+  Limited flags, per-operator spark cost) when applicable — served at `/data/events.json`. A rate-up
+  operator only gets a spark cost once they've debuted on an earlier banner (see `operator_debuts.json`
+  below) — they're not sparkable yet on the banner where they're first released.
 - `public/data/operators.json`: cache of which operators are Limited, keyed by name, built up across scrape runs
+- `public/data/operator_debuts.json`: cache of which event each operator first debuted on (read from
+  their own wiki page's Changelog section), keyed by name, built up across scrape runs — used to tell
+  "rate-up" and "sparkable" apart
 - `public/data/images/`: downloaded/optimised event and operator images
 - `__tests__/`: Vitest test suite
 - `vitest.config.js`: Vitest config (`globals: true`, Node environment)

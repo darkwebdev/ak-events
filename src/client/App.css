@@ -134,8 +134,18 @@ body {
      once an event is selected), and with flex-shrink:0 that content-driven width
      would grow the aside and squeeze .ak-events narrower on every such change —
      the whole events column visibly resizing just from picking an event. A fixed
-     width keeps the split stable regardless of what the aside's text says. */
-  flex: 0 0 300px;
+     width keeps the split stable regardless of what the aside's text says.
+     360px specifically: measured (via a live 1,000,000-Orundum stress test) as
+     enough for the widest realistic row — "Total by DD/MM/YYYY" next to a
+     million-Orundum total with its four-digit pull count — without truncating it,
+     the way the previous 300px did. */
+  flex: 0 0 360px;
+  /* Flex items default to min-width:auto, not 0 — without this, the fixed basis
+     above is only a suggestion: a row of unbreakable (white-space:nowrap) content
+     wider than the basis, like the long label+value row above, would still force
+     this box wider still, which is the same content-driven resize the fixed basis
+     was meant to prevent. */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 20px;

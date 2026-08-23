@@ -126,7 +126,13 @@ body {
      events column was free to grow wide enough to run underneath it. */
   position: sticky;
   top: 6.5em;
-  flex: 0 0 auto;
+  /* A fixed width, not `flex: 0 0 auto` sized to content: the aside's own text
+     changes length as state changes (e.g. "Total" becomes "Total by 27/08/2026"
+     once an event is selected), and with flex-shrink:0 that content-driven width
+     would grow the aside and squeeze .ak-events narrower on every such change —
+     the whole events column visibly resizing just from picking an event. A fixed
+     width keeps the split stable regardless of what the aside's text says. */
+  flex: 0 0 300px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -146,6 +152,9 @@ body {
 
   .ak-aside-column {
     position: static;
+    /* .ak-main-content is column-direction here, so the fixed-width flex-basis from
+       the base rule would apply to height instead — reset it. */
+    flex-basis: auto;
     width: auto;
     margin: 0 1em;
   }

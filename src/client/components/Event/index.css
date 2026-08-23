@@ -120,7 +120,11 @@
 .ak-operator-group-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 8px;
+  /* Row gap is bigger than the column gap: .ak-operator-tag is absolutely positioned
+     (so it doesn't add to the badge's own flex-layout height) and sits flush below
+     the icon — without extra clearance here, one row's tag would touch the icons in
+     the row below whenever badges wrap to multiple rows. */
+  gap: 16px 8px;
 }
 
 /* Three columns (event, banner, aside stats) only really fit side by side on a wide

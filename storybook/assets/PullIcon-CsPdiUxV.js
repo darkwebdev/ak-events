@@ -1,0 +1,1 @@
+import{R as e}from"./iframe-B1T1Yk4l.js";import{n as l}from"./images-BVwpUHA0.js";function n({className:o}){return e.createElement("img",{className:`ak-pulls-icon${o?` ${o}`:""}`,src:l("/images/icon-pull.svg"),alt:"Pull"})}n.__docgenInfo={description:"",methods:[],displayName:"PullIcon"};export{n as P};

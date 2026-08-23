@@ -15,3 +15,21 @@ h1 {
   margin: 0;
   color: var(--ak-text);
 }
+
+.ak-header-pulls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  vertical-align: middle;
+}
+
+.ak-header-pulls-icon {
+  height: 1.3em;
+  width: auto;
+}
+
+.ak-header-pulls-x {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: var(--ak-accent);
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { PullCounter } from '../PullCounter';
-// image normalization not needed in Header
+import { PullIcon } from '../Pulls/PullIcon.jsx';
 import './index.css';
 
 /**
@@ -11,7 +11,11 @@ export function Header({ totalPulls }) {
     <header className="ak-header">
       <h1>Arknights Pull Prophecy</h1>
       &nbsp;
-      <PullCounter value={totalPulls} />
+      <span className="ak-header-pulls">
+        <PullIcon className="ak-header-pulls-icon" />
+        <span className="ak-header-pulls-x">×</span>
+        <PullCounter value={totalPulls} />
+      </span>
     </header>
   );
 }

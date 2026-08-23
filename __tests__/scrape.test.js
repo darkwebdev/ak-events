@@ -66,7 +66,10 @@ describe('scrapeEvents', () => {
     vi.clearAllMocks();
     mockFetchUpcomingViaApi.mockResolvedValue(null);
     mockFileExists.mockReturnValue(false);
-    mockLoadJson.mockReturnValue({});
+    // A fresh object per call, not a single shared reference — loadJson backs several
+    // independent caches (operator Limited flags, operator debut events, ...), and a
+    // single shared `{}` would make writes to one accidentally pollute the others.
+    mockLoadJson.mockImplementation(() => ({}));
     mockFetchBannersPageHtml.mockResolvedValue(null);
     mockFetchOperatorCategories.mockResolvedValue([]);
     mockDownloadImage.mockResolvedValue(undefined);
@@ -214,6 +217,87 @@ describe('scrapeEvents', () => {
       name: 'Test Operator',
       sparkCost: 200,
     });
+  });
+
+  test('gives no spark cost to an operator debuting on this event, even though they render as rate-up', async () => {
+    const downloadedPaths = new Set();
+    mockFileExists.mockImplementation((p) => downloadedPaths.has(p));
+    mockDownloadImage.mockImplementation(async (url, filepath) => {
+      downloadedPaths.add(filepath);
+    });
+    const twoOperatorBannerHtml = `
+      <div class="mw-content-ltr mw-parser-output">
+        <h2><span class="mw-headline" id="Limited_Headhunting">Limited Headhunting</span></h2>
+        <table>
+          <tbody>
+            <tr>
+              <td><div class="banner"><b>[Celebration] Test Banner</b></div>
+                <div>CN date: 2026/01/01 – 2026/01/15</div>
+                <div>Global date: 2026/06/01 – 2026/06/15</div>
+              </td>
+              <td>
+                <div class="character-tooltip" data-star="6" data-class="Guard" data-name="Debuting Operator">
+                  <img src="/images/debuting_icon.png" />
+                </div>
+                <div class="character-tooltip" data-star="6" data-class="Sniper" data-name="Carried Over Operator">
+                  <img src="/images/carried_icon.png" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+    mockFetchBannersPageHtml.mockResolvedValue(twoOperatorBannerHtml);
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+      },
+    ]);
+    // fetchEventDetailsViaApi is reused for both the event page (skipped here since
+    // link is null) and each operator's own page during debut resolution — key the
+    // response on which operator is being asked about.
+    mockFetchEventDetailsViaApi.mockImplementation(async (nameOrUrl) => {
+      if (nameOrUrl === 'Debuting Operator') {
+        return {
+          parse: {
+            text: {
+              '*': `<div><h2><span class="mw-headline" id="Changelog">Changelog</span></h2>
+                <ul><li><b><a href="/wiki/Story_Event" title="Story Event">Story Event</a></b> <i>Introduced.</i></li></ul>
+              </div>`,
+            },
+          },
+        };
+      }
+      if (nameOrUrl === 'Carried Over Operator') {
+        return {
+          parse: {
+            text: {
+              '*': `<div><h2><span class="mw-headline" id="Changelog">Changelog</span></h2>
+                <ul><li><b><a href="/wiki/Story_Event" title="Story Event">Story Event</a></b>
+                  <ul><li>Added into the Celebration limited headhunting banners.</li></ul></li>
+                <li><b><a href="/wiki/Earlier_Event" title="Earlier Event">Earlier Event</a></b> <i>Introduced.</i></li></ul>
+              </div>`,
+            },
+          },
+        };
+      }
+      return null;
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    const { operators } = savedEvents[0].banner;
+    expect(operators.find((op) => op.name === 'Debuting Operator').sparkCost).toBeNull();
+    expect(operators.find((op) => op.name === 'Carried Over Operator').sparkCost).toBe(300);
   });
 
   test('leaves banner null when no banner starts on the same date as the event', async () => {

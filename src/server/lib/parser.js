@@ -443,6 +443,46 @@ function extractReducedSparkOperator(html) {
   return null;
 }
 
+// An operator's own wiki page has a "Changelog" section listing every event they've
+// been touched by, newest first, as a list of top-level <li> entries (each with a
+// nested <ul> for that event's specific changes, e.g. an outfit release or being
+// rotated into a rate-up pool). The LAST top-level entry is chronologically the
+// earliest — the operator's real debut — and its direct text (excluding the nested
+// list) reads "Introduced." when that's genuinely when they were released, e.g.:
+//   <li><b><a href="/wiki/X" title="X">X</a></b> <i>Introduced.</i></li>
+// This is what determines spark eligibility: a Limited operator is rate-up but NOT
+// sparkable on the banner where they debut — only once carried over to a later one.
+function extractOperatorDebutEvent(html) {
+  if (!html) return null;
+  try {
+    const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
+    const dom = new JSDOM(clean);
+    const doc = dom.window.document;
+    const heading = [...doc.querySelectorAll('span.mw-headline')].find(
+      (el) => el.id === 'Changelog'
+    );
+    if (!heading) return null;
+    const changelogUl = [...doc.querySelectorAll('ul')].find(
+      // eslint-disable-next-line no-bitwise
+      (ul) => heading.compareDocumentPosition(ul) & 4
+    );
+    if (!changelogUl) return null;
+    const topLevelEntries = [...changelogUl.children].filter((c) => c.tagName === 'LI');
+    if (!topLevelEntries.length) return null;
+    const debutEntry = topLevelEntries[topLevelEntries.length - 1];
+    const link = debutEntry.querySelector('a');
+    if (!link) return null;
+    const withoutNestedList = debutEntry.cloneNode(true);
+    const nestedUl = withoutNestedList.querySelector('ul');
+    if (nestedUl) nestedUl.remove();
+    const directText = (withoutNestedList.textContent || '').replace(/\s+/g, ' ').trim();
+    return { event: link.textContent.trim(), introduced: /introduced/i.test(directText) };
+  } catch (e) {
+    // ignore, fall through
+  }
+  return null;
+}
+
 // High level parse: given an HTML string (API parse HTML), return best guesses
 function parseEventFromHtml(html) {
   const result = { origPrime: null, hhPermits: null, type: null, debug: null };
@@ -580,6 +620,7 @@ export {
   extractHhPermitsFromHtml,
   extractEventTypeFromHtml,
   extractReducedSparkOperator,
+  extractOperatorDebutEvent,
   parseEventFromHtml,
   parseIndexHtml,
 };

@@ -4,6 +4,7 @@ import {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractReducedSparkOperator,
+  extractOperatorDebutEvent,
 } from '../src/server/lib/parser.js';
 
 function loadApiHtml(slug) {
@@ -48,4 +49,31 @@ test('Ato: extracts the operator with a reduced 200-contract spark cost from eve
 test('extractReducedSparkOperator: returns null when no reduced-cost sentence is present', () => {
   expect(extractReducedSparkOperator('<div><p>Nothing relevant here.</p></div>')).toBeNull();
   expect(extractReducedSparkOperator(null)).toBeNull();
+});
+
+test("Kal'tsit - Esperanta: debuts on the event whose changelog says Introduced", () => {
+  const html = fs.readFileSync(
+    path.join(__dirname, 'debug_html', 'kaltsit_esperanta_debut_api.html'),
+    'utf8'
+  );
+  expect(extractOperatorDebutEvent(html)).toEqual({
+    event: 'Critical Phase Transition',
+    introduced: true,
+  });
+});
+
+test('Exusiai the New Covenant: debut event is her real first release, not a later rate-up-pool entry', () => {
+  const html = fs.readFileSync(
+    path.join(__dirname, 'debug_html', 'exusiai_new_covenant_debut_api.html'),
+    'utf8'
+  );
+  expect(extractOperatorDebutEvent(html)).toEqual({
+    event: "The Masses' Travels",
+    introduced: true,
+  });
+});
+
+test('extractOperatorDebutEvent: returns null when there is no Changelog section', () => {
+  expect(extractOperatorDebutEvent('<div><p>Nothing relevant here.</p></div>')).toBeNull();
+  expect(extractOperatorDebutEvent(null)).toBeNull();
 });

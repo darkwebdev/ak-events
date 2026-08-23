@@ -15,6 +15,11 @@ import {
   saveOperatorCache,
   resolveOperatorLimited,
 } from './lib/operatorCache.js';
+import {
+  loadOperatorDebutCache,
+  saveOperatorDebutCache,
+  resolveOperatorDebutEvent,
+} from './lib/operatorDebuts.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
 
@@ -262,6 +267,27 @@ export async function scrapeEvents() {
   saveOperatorCache(operatorCache);
   console.log('Updated public/data/operators.json');
 
+  // Resolve debut events for operators that could actually need a spark cost (5★/6★
+  // on a Limited banner) — a rate-up operator is not sparkable on the banner where
+  // they debut, only once carried over to a later one, so this is what tells the two
+  // apart. Scoped to Limited banners' 5★/6★ operators only, since nothing else ever
+  // gets a sparkCost regardless of debut status.
+  const operatorDebutCache = loadOperatorDebutCache();
+  const sparkRelevantOperatorNames = [
+    ...new Set(
+      eventBannerMatches
+        .filter((m) => m.matchedBanner && m.matchedBanner.type === 'Limited')
+        .flatMap((m) => m.matchedBanner.operators)
+        .filter((op) => op.name && (op.star === 5 || op.star === 6))
+        .map((op) => op.name)
+    ),
+  ];
+  await runBatched(sparkRelevantOperatorNames, concurrency, (opName) =>
+    resolveOperatorDebutEvent(opName, operatorDebutCache)
+  );
+  saveOperatorDebutCache(operatorDebutCache);
+  console.log('Updated public/data/operator_debuts.json');
+
   // Download each unique operator icon (dedup by filename, keeping the operator's
   // name alongside its URL so download logs identify the operator, not the filename).
   const uniqueIcons = [
@@ -299,9 +325,15 @@ export async function scrapeEvents() {
             : null;
         // Spark (guaranteed pick) cost in Headhunting Data Contracts: 75 for 5★, 300
         // for 6★, except the one 6★ operator currently named on the wiki as having a
-        // reduced cost of 200.
+        // reduced cost of 200. Rate-up and sparkable are different things: an operator
+        // debuting on THIS banner's own event is not yet redeemable via the contract
+        // store, even though they're shown here as rate-up — only once carried over
+        // to a later banner. `event` here is the banner's matched event (from the
+        // outer loop), and `operatorDebutCache[op.name]` is that operator's debut
+        // event name, so a match means this is their first-ever appearance.
+        const isDebutingOnThisEvent = operatorDebutCache[op.name] === event.name;
         let sparkCost = null;
-        if (sparkEligible) {
+        if (sparkEligible && !isDebutingOnThisEvent) {
           if (op.star === 6) {
             sparkCost =
               currentReducedSparkOperator?.name === op.name

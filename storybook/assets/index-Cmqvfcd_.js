@@ -1,0 +1,1 @@
+import{R as i}from"./iframe-D97QSkDD.js";import{n as e}from"./images-BVwpUHA0.js";function r(){return i.createElement("img",{className:"ak-op-icon",src:e("/images/icon-diamond-yellow.svg"),alt:"Originite Prime",title:"Originite Prime"})}r.__docgenInfo={description:"",methods:[],displayName:"OriginitePrimeIcon"};export{r as O};

@@ -192,6 +192,53 @@ async function fetchOperatorCategories(name) {
   });
 }
 
+// Fetch and JSON-parse an arbitrary URL — used for the raw ArknightsGameData tables
+// (see lib/sparkCost.js). Resolves to null on any error rather than throwing/rejecting,
+// since this data is used to compute a "nice to have" spark-cost display and should
+// never be able to abort a whole scrape run the way a thrown error could.
+function fetchJsonUrl(url) {
+  return new Promise((resolve) => {
+    https
+      .get(url, { headers: { 'User-Agent': 'ak-events-scraper' } }, (res) => {
+        if (res.statusCode !== 200) {
+          resolve(null);
+          return;
+        }
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            resolve(null);
+          }
+        });
+      })
+      .on('error', () => resolve(null));
+  });
+}
+
+const gachaTableUrl =
+  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/gacha_table.json';
+const characterTableUrl =
+  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/character_table.json';
+
+// Fetch the game's own gacha pool data — this is what tells us exactly when each
+// Limited 6★ operator debuted (an authoritative alternative to the wiki, which
+// doesn't state debut dates directly): every LIMITED-type pool's `limitParam` names
+// the one operator it debuted, alongside an exact `openTime` timestamp. See
+// lib/sparkCost.js for what this is used for.
+function fetchGachaTable() {
+  return fetchJsonUrl(gachaTableUrl);
+}
+
+// Fetch the game's own character data — used only to map the gacha table's numeric
+// character ids (e.g. "char_2023_ling") back to the operator names our own scraped
+// banner data uses (e.g. "Ling").
+function fetchCharacterTable() {
+  return fetchJsonUrl(characterTableUrl);
+}
+
 // Fetch the Upcoming events page (CN upcoming list) via the wiki API and parse it
 async function fetchUpcomingViaApi() {
   try {
@@ -224,4 +271,6 @@ export {
   fetchUpcomingViaApi,
   fetchBannersPageHtml,
   fetchOperatorCategories,
+  fetchGachaTable,
+  fetchCharacterTable,
 };

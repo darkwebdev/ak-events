@@ -3,7 +3,7 @@ import path from 'path';
 import {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
-  extractReducedSparkOperators,
+  extractObtainMethod,
   extractOperatorDebutEvent,
 } from '../src/server/lib/parser.js';
 
@@ -38,30 +38,21 @@ test('Inudi Harek Horakhet: extracts OP and hhPermits from API HTML', () => {
   expect(extractHhPermitsFromHtml(html)).toBe(3);
 });
 
-test('Ato: extracts the operator with a reduced 200-contract spark cost from event page HTML', () => {
-  const html = fs.readFileSync(
-    path.join(__dirname, 'debug_html', 'ato_reduced_spark_api.html'),
-    'utf8'
-  );
-  expect(extractReducedSparkOperators(html)).toEqual([{ name: "Ch'en the Holungday", cost: 200 }]);
+// Matches the real markup shape of an operator page's infobox "How to obtain" row,
+// as actually returned by the wiki API (verified against Ling's live page, which
+// reads "Limited Headhunting - Festival").
+test('extractObtainMethod: reads the "How to obtain" infobox value', () => {
+  const html = `<table><tbody><tr style="vertical-align:middle; font-size:12px;">
+    <td><b>How to obtain</b>
+    </td>
+    <td><div><span class="" title="" style="display:inline-block; position:relative; margin:2px 0; padding:0 5px; border-radius:5px; width:auto; background:#FF0000; color:#FFF; font-size:; text-align:center;">Limited Headhunting - Festival</span></div><div></div><div></div>
+    </td></tr></tbody></table>`;
+  expect(extractObtainMethod(html)).toBe('Limited Headhunting - Festival');
 });
 
-test('extractReducedSparkOperators: collects every reduced-cost sentence on the page, not just the first', () => {
-  const html = `<div>
-    <p>The amount of Headhunting Data Contracts needed to buy Ch'en the Holungday in the
-    Headhunting Data Contract Store is reduced to 200.</p>
-    <p>The amount of Headhunting Data Contracts needed to buy Eyjafjalla in the
-    Headhunting Data Contract Store is reduced to 200.</p>
-  </div>`;
-  expect(extractReducedSparkOperators(html)).toEqual([
-    { name: "Ch'en the Holungday", cost: 200 },
-    { name: 'Eyjafjalla', cost: 200 },
-  ]);
-});
-
-test('extractReducedSparkOperators: returns an empty array when no reduced-cost sentence is present', () => {
-  expect(extractReducedSparkOperators('<div><p>Nothing relevant here.</p></div>')).toEqual([]);
-  expect(extractReducedSparkOperators(null)).toEqual([]);
+test('extractObtainMethod: returns null when the page has no "How to obtain" row', () => {
+  expect(extractObtainMethod('<div><p>Nothing relevant here.</p></div>')).toBeNull();
+  expect(extractObtainMethod(null)).toBeNull();
 });
 
 test("Kal'tsit - Esperanta: debuts on the event whose changelog says Introduced", () => {

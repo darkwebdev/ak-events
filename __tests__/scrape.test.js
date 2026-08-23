@@ -6,6 +6,8 @@ const mockFetchEventDetailsViaApi = vi.fn();
 const mockDownloadImage = vi.fn();
 const mockFetchBannersPageHtml = vi.fn();
 const mockFetchOperatorCategories = vi.fn();
+const mockFetchGachaTable = vi.fn();
+const mockFetchCharacterTable = vi.fn();
 
 vi.mock('../src/server/lib/network.js', () => ({
   fetchEventsViaApi: (...args) => mockFetchEventsViaApi(...args),
@@ -14,6 +16,8 @@ vi.mock('../src/server/lib/network.js', () => ({
   downloadImage: (...args) => mockDownloadImage(...args),
   fetchBannersPageHtml: (...args) => mockFetchBannersPageHtml(...args),
   fetchOperatorCategories: (...args) => mockFetchOperatorCategories(...args),
+  fetchGachaTable: (...args) => mockFetchGachaTable(...args),
+  fetchCharacterTable: (...args) => mockFetchCharacterTable(...args),
 }));
 
 const mockSaveJson = vi.fn();
@@ -73,6 +77,11 @@ describe('scrapeEvents', () => {
     mockFetchBannersPageHtml.mockResolvedValue(null);
     mockFetchOperatorCategories.mockResolvedValue([]);
     mockDownloadImage.mockResolvedValue(undefined);
+    // Default: no game data available, so every 6★ spark cost falls back to 300 —
+    // individual tests override these to give a specific operator an old-enough
+    // debut date to exercise the 200-cost reduction.
+    mockFetchGachaTable.mockResolvedValue(null);
+    mockFetchCharacterTable.mockResolvedValue(null);
     exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
       throw new Error(`process.exit:${code}`);
     });
@@ -181,7 +190,7 @@ describe('scrapeEvents', () => {
     });
   });
 
-  test("reduces a 6★ operator's spark cost to 200 when the wiki names it as currently discounted", async () => {
+  test("reduces a 6★ operator's spark cost to 200 once game data shows them 4+ years past their debut", async () => {
     const downloadedPaths = new Set();
     mockFileExists.mockImplementation((p) => downloadedPaths.has(p));
     mockDownloadImage.mockImplementation(async (url, filepath) => {
@@ -197,15 +206,17 @@ describe('scrapeEvents', () => {
         cnDateStr: null,
       },
     ]);
-    mockFetchEventDetailsViaApi.mockResolvedValue({
-      parse: {
-        text: {
-          '*': `<div class="mw-content-ltr mw-parser-output"><ul><li>The amount of
-            Headhunting Data Contracts needed to buy Test Operator in the Headhunting
-            Data Contract Store is reduced to 200.</li></ul></div>`,
+    mockFetchEventDetailsViaApi.mockResolvedValue({ parse: { text: { '*': '<div></div>' } } });
+    mockFetchGachaTable.mockResolvedValue({
+      gachaPoolClient: [
+        {
+          gachaRuleType: 'LIMITED',
+          openTime: Math.floor(new Date('2000-01-01').getTime() / 1000), // long past 4 years old
+          limitParam: { limitedCharId: 'char_test_op' },
         },
-      },
+      ],
     });
+    mockFetchCharacterTable.mockResolvedValue({ char_test_op: { name: 'Test Operator' } });
 
     await scrapeEvents();
 
@@ -219,7 +230,7 @@ describe('scrapeEvents', () => {
     });
   });
 
-  test('applies each of several reduced-cost operators named on the same page to their own banner entry', async () => {
+  test("computes each operator's spark cost independently from their own debut date", async () => {
     const downloadedPaths = new Set();
     mockFileExists.mockImplementation((p) => downloadedPaths.has(p));
     mockDownloadImage.mockImplementation(async (url, filepath) => {
@@ -258,19 +269,24 @@ describe('scrapeEvents', () => {
         cnDateStr: null,
       },
     ]);
-    mockFetchEventDetailsViaApi.mockResolvedValue({
-      parse: {
-        text: {
-          '*': `<div class="mw-content-ltr mw-parser-output">
-            <ul>
-              <li>The amount of Headhunting Data Contracts needed to buy First Operator
-                in the Headhunting Data Contract Store is reduced to 200.</li>
-              <li>The amount of Headhunting Data Contracts needed to buy Second Operator
-                in the Headhunting Data Contract Store is reduced to 250.</li>
-            </ul>
-          </div>`,
+    mockFetchEventDetailsViaApi.mockResolvedValue({ parse: { text: { '*': '<div></div>' } } });
+    mockFetchGachaTable.mockResolvedValue({
+      gachaPoolClient: [
+        {
+          gachaRuleType: 'LIMITED',
+          openTime: Math.floor(new Date('2000-01-01').getTime() / 1000), // long past 4 years old
+          limitParam: { limitedCharId: 'char_first' },
         },
-      },
+        {
+          gachaRuleType: 'LIMITED',
+          openTime: Math.floor(Date.now() / 1000) - 60, // debuted moments ago
+          limitParam: { limitedCharId: 'char_second' },
+        },
+      ],
+    });
+    mockFetchCharacterTable.mockResolvedValue({
+      char_first: { name: 'First Operator' },
+      char_second: { name: 'Second Operator' },
     });
 
     await scrapeEvents();
@@ -281,7 +297,7 @@ describe('scrapeEvents', () => {
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
     const { operators } = savedEvents[0].banner;
     expect(operators.find((op) => op.name === 'First Operator').sparkCost).toBe(200);
-    expect(operators.find((op) => op.name === 'Second Operator').sparkCost).toBe(250);
+    expect(operators.find((op) => op.name === 'Second Operator').sparkCost).toBe(300);
   });
 
   test('gives no spark cost to an operator debuting on this event, even though they render as rate-up', async () => {

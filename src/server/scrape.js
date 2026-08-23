@@ -1,4 +1,4 @@
-import { parseEventFromHtml, extractReducedSparkOperators } from './lib/parser.js';
+import { parseEventFromHtml } from './lib/parser.js';
 import {
   downloadImage,
   fetchEventDetailsViaApi,
@@ -20,6 +20,7 @@ import {
   saveOperatorDebutCache,
   resolveOperatorDebutEvent,
 } from './lib/operatorDebuts.js';
+import { fetchLimitedDebutDates, calcSparkCost } from './lib/sparkCost.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
 
@@ -59,14 +60,6 @@ async function runBatched(items, concurrency, fn) {
 export async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
-  // The wiki names every operator with a currently-reduced (200 instead of 300) spark
-  // cost on standard sentences on event pages — a growing list, not just one, since
-  // more operators get discounted every year. It's a global fact list, not tied to any
-  // one event, so it's captured here (from whichever event page happens to mention
-  // them, at zero extra network cost since these pages are already being fetched
-  // below) and applied per-operator when banners are assembled further down.
-  let reducedSparkOperators = [];
-
   const fetchAndParseEvent = async (event) => {
     // Skip fetching the wiki page if we already have both values
     if (event.origPrime != null && event.hhPermits != null) return event;
@@ -86,10 +79,6 @@ export async function scrapeEvents() {
       if (apiJson) jsonStatus = 'ok';
       const apiHtml = apiJson?.parse?.text?.['*'] || '';
       const parsed = parseEventFromHtml(apiHtml);
-
-      if (reducedSparkOperators.length === 0) {
-        reducedSparkOperators = extractReducedSparkOperators(apiHtml);
-      }
 
       if (parsed.origPrime != null) {
         event.origPrime = parsed.origPrime;
@@ -300,15 +289,16 @@ export async function scrapeEvents() {
     downloadIfMissing(url, `public/data/images/operators/${filename}`, 'operator icon', name)
   );
 
-  // Frozen into a const before use below: by this point in the run, the event-fetch
-  // phase above has finished and nothing mutates `reducedSparkOperators` further.
-  // Keyed by name for the per-operator lookup in the assembly loop below.
-  const currentReducedSparkOperators = reducedSparkOperators;
-  const reducedSparkCostByName = new Map(
-    currentReducedSparkOperators.map(({ name, cost }) => [name, cost])
-  );
-  for (const { name, cost } of currentReducedSparkOperators) {
-    console.log(`Reduced spark cost: ${name} is ${cost} contracts`);
+  // Every Limited 6★ operator's debut date, computed from the game's own gacha pool
+  // data rather than scraped from the wiki (which doesn't state it directly) — see
+  // lib/sparkCost.js for what this is used for and why. Falls back to an empty map
+  // (every operator's sparkCost defaults to 300) if the game-data fetch failed, since
+  // this is nice-to-have and shouldn't be able to abort a whole scrape run.
+  const limitedDebutDates = (await fetchLimitedDebutDates()) ?? new Map();
+  if (limitedDebutDates.size === 0) {
+    console.error(
+      'Could not fetch operator debut dates from game data — spark costs will default to 300'
+    );
   }
 
   // Now assemble event.banner from the (already-resolved) cache and (already-downloaded) icons.
@@ -327,15 +317,16 @@ export async function scrapeEvents() {
             ? `data/images/operators/${filename}`
             : null;
         // Spark (guaranteed pick) cost in Headhunting Data Contracts: 75 for 5★, 300
-        // for 6★, except any 6★ operator currently named on the wiki as having a
-        // reduced cost (a growing list, not just one). Rate-up and sparkable are
-        // different things: an operator
-        // debuting on THIS banner's own event is not yet redeemable via the contract
-        // store, even though they're shown here as rate-up — only once carried over
-        // to a later banner. `event` here is the banner's matched event (from the
-        // outer loop), and `operatorDebutCache[op.name]` is that operator's debut
-        // event name, so a match means this is their first-ever appearance.
-        const isDebutingOnThisEvent = operatorDebutCache[op.name] === event.name;
+        // for 6★ unless they're 4+ years past their debut (5+ for a Festival Limited
+        // operator), per the wiki's Headhunting Data Contract Store page, in which
+        // case it's reduced to 200 — see lib/sparkCost.js. Rate-up and sparkable are
+        // different things: an operator debuting on THIS banner's own event is not
+        // yet redeemable via the contract store, even though they're shown here as
+        // rate-up — only once carried over to a later banner. `event` here is the
+        // banner's matched event (from the outer loop), and
+        // `operatorDebutCache[op.name]` is that operator's resolved debut info, so a
+        // match means this is their first-ever appearance.
+        const isDebutingOnThisEvent = operatorDebutCache[op.name]?.event === event.name;
         const limited = operatorCache[op.name] ?? false;
         // Spark redemption is a limited-exclusive perk — a standard/guest operator
         // featured on an otherwise-Limited banner never has a spark cost, regardless
@@ -343,7 +334,10 @@ export async function scrapeEvents() {
         let sparkCost = null;
         if (limited && sparkEligible && !isDebutingOnThisEvent) {
           if (op.star === 6) {
-            sparkCost = reducedSparkCostByName.get(op.name) ?? 300;
+            sparkCost = calcSparkCost({
+              debutDate: limitedDebutDates.get(op.name),
+              isFestival: operatorDebutCache[op.name]?.isFestival ?? false,
+            });
           } else if (op.star === 5) {
             sparkCost = 75;
           }

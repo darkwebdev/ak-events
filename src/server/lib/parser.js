@@ -416,34 +416,18 @@ function extractEventTypeFromHtml(html) {
   return null;
 }
 
-// Event pages carry a standard sentence naming whichever operator currently has a
-// reduced Headhunting Data Contract (spark) cost, one sentence per operator, e.g. "The
-// amount of Headhunting Data Contracts needed to buy Ch'en the Holungday in the
-// Headhunting Data Contract Store is reduced to 200." The wiki accumulates more of
-// these every year as more 6★ operators get discounted, so this collects every match
-// on the page rather than stopping at the first — it's a global fact list (not
-// per-event/per-banner), so callers should look for it across scraped event pages and
-// apply each entry wherever that operator appears in a banner's operator list.
-function extractReducedSparkOperators(html) {
-  if (!html) return [];
-  const results = [];
-  try {
-    const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
-    const dom = new JSDOM(clean);
-    const doc = dom.window.document;
-    for (const el of doc.querySelectorAll('li, p')) {
-      const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-      const m = text.match(
-        /Headhunting Data Contracts needed to buy (.+?) in the Headhunting Data Contract Store is reduced to (\d+)/i
-      );
-      if (m) {
-        results.push({ name: m[1].trim(), cost: parseInt(m[2], 10) });
-      }
-    }
-  } catch (e) {
-    // ignore, fall through
-  }
-  return results;
+// An operator's own wiki page has a "How to obtain" infobox row whose value names the
+// specific limited-banner category they came from, e.g. "Limited Headhunting -
+// Festival", "- Carnival", "- Celebration". This is what distinguishes a Festival
+// Limited operator (5-year spark-cost-reduction threshold, see lib/sparkCost.js) from
+// every other Limited operator (4-year threshold) — the wiki doesn't expose a
+// separate category tag for "Festival Limited", only this infobox text.
+function extractObtainMethod(html) {
+  if (!html) return null;
+  const m = html.match(
+    /How to obtain<\/b>\s*<\/td>\s*<td>[\s\S]{0,300}?<span[^>]*>([^<]+)<\/span>/i
+  );
+  return m ? m[1].trim() : null;
 }
 
 // An operator's own wiki page has a "Changelog" section listing every event they've
@@ -622,7 +606,7 @@ export {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractEventTypeFromHtml,
-  extractReducedSparkOperators,
+  extractObtainMethod,
   extractOperatorDebutEvent,
   parseEventFromHtml,
   parseIndexHtml,

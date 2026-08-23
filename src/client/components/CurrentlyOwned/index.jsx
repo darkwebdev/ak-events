@@ -66,32 +66,22 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
       <div className="ak-aside-total">
         <div className="ak-aside-item">
           <div className="ak-aside-label">
-            {/* The value itself is the hover/click trigger — no separate "Total
-                Orundum" label needed, and no duplicate icon either. */}
-            <InfoButton
-              title="Breakdown"
-              label={
-                <span className="ak-aside-value">
-                  <Orundum withPulls>{totalOwned}</Orundum>
-                </span>
-              }
-            >
-              <Breakdown
-                // The "Orundum" row isn't converted from anything (calc is just
-                // "-"), so its own total cell already carries the Orundum icon via
-                // <Orundum> — repeating it as the item label too would be a
-                // same-row duplicate, unlike the OP/Permits rows below it (each of
-                // those pairs a *different* source icon with the resulting
-                // Orundum-icon total, which is meaningful, not repetitive).
-                items={[
-                  'Orundum',
-                  <OriginitePrimeIcon key="op" />,
-                  <PullIcon key="permits" className="ak-pulls-icon" />,
-                ]}
-                calcs={['-', `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
-                totals={[owned.orundum, owned.op * 180, owned.hhPermits * 600]}
-              />
-            </InfoButton>
+            <span className="ak-aside-name">
+              <InfoButton title="Breakdown" label="Total">
+                <Breakdown
+                  items={[
+                    <OrundumIcon key="orundum" />,
+                    <OriginitePrimeIcon key="op" />,
+                    <PullIcon key="permits" className="ak-pulls-icon" />,
+                  ]}
+                  calcs={['-', `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
+                  totals={[owned.orundum, owned.op * 180, owned.hhPermits * 600]}
+                />
+              </InfoButton>
+            </span>
+            <span className="ak-aside-value">
+              <Orundum withPulls>{totalOwned}</Orundum>
+            </span>
           </div>
         </div>
       </div>

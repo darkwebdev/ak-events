@@ -33,17 +33,21 @@
 .ak-operator-tag {
   position: absolute;
   left: 50%;
-  bottom: -7px;
+  bottom: -10px;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2px;
+  width: 36px;
+  box-sizing: border-box;
   background: color-mix(in srgb, var(--ak-limited) 80%, transparent);
   color: var(--ak-limited-text);
-  font-size: 7px;
+  font-size: 5.5px;
+  letter-spacing: -0.3px;
   font-weight: 700;
   line-height: 1;
-  padding: 3px 6px;
+  padding: 3px 0;
   border-radius: 3px;
   white-space: nowrap;
 }

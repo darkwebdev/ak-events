@@ -29,7 +29,9 @@ export function TotalOrundum({
             />
           </InfoButton>
         </strong>
-        <Orundum withPulls>{totalOrundum}</Orundum>
+        <span className="ak-total-value">
+          <Orundum withPulls>{totalOrundum}</Orundum>
+        </span>
       </div>
     </div>
   );

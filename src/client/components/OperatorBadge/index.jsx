@@ -17,6 +17,13 @@ export function OperatorBadge({ operator }) {
     .filter(Boolean)
     .join(' · ');
 
+  let tagWord = null;
+  if (sparkCost != null) tagWord = 'SPARK';
+  else if (limited) tagWord = 'LIMIT';
+  const tagText = [tagWord, sparkCost != null ? sparkCost : null]
+    .filter((v) => v !== null && v !== undefined)
+    .join(' ');
+
   return (
     <div className={`ak-operator-badge${limited ? ' limited' : ''}`} title={title}>
       {src ? (
@@ -24,12 +31,9 @@ export function OperatorBadge({ operator }) {
       ) : (
         <span className="ak-operator-icon ak-operator-icon-fallback">{name?.[0]}</span>
       )}
-      {sparkCost != null && (
-        <span className={`ak-operator-spark-tag${reducedSpark ? ' reduced' : ''}`}>
-          {sparkCost}
-        </span>
+      {tagText && (
+        <span className={`ak-operator-tag${reducedSpark ? ' reduced' : ''}`}>{tagText}</span>
       )}
-      {limited && <span className="ak-operator-limited-tag">LIMITED</span>}
     </div>
   );
 }

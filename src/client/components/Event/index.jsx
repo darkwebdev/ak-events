@@ -100,9 +100,6 @@ export function Event({ event, selectedEvents, onEventToggle }) {
           <div className="ak-event-banner">
             <div className="ak-event-banner-header">
               <span className="ak-event-banner-name">{banner.name}</span>
-              {banner.sparkEligible && (
-                <span className="ak-event-banner-spark">Spark Eligible</span>
-              )}
             </div>
             <div className="ak-event-banner-columns">
               <OperatorColumn groups={sixStarGroups} />

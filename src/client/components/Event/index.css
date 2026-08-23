@@ -79,13 +79,6 @@
   color: var(--ak-text);
 }
 
-.ak-event-banner-spark {
-  color: var(--ak-spark);
-  font-size: 0.85em;
-  font-weight: 400;
-  white-space: nowrap;
-}
-
 .ak-event-banner-columns {
   display: grid;
   /* auto-fit + minmax instead of a hardcoded `1fr 1fr`: the banner column's own width

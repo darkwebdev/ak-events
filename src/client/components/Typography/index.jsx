@@ -49,11 +49,11 @@ const SCALE = [
   },
   {
     label: 'Micro badge',
-    usage: '.ak-operator-limited-tag',
+    usage: '.ak-operator-tag',
     meta: '8px / 700 / uppercase',
     render: () => (
-      <span className="ak-operator-limited-tag" style={{ position: 'static' }}>
-        LIMITED
+      <span className="ak-operator-tag" style={{ position: 'static' }}>
+        SPARK 200
       </span>
     ),
   },

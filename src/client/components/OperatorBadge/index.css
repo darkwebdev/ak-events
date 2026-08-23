@@ -30,7 +30,7 @@
   box-shadow: 0 0 0 2px var(--ak-limited);
 }
 
-.ak-operator-limited-tag {
+.ak-operator-tag {
   position: absolute;
   left: 50%;
   bottom: -7px;
@@ -45,24 +45,6 @@
   white-space: nowrap;
 }
 
-.ak-operator-spark-tag {
-  position: absolute;
-  left: 50%;
-  top: -7px;
-  transform: translateX(-50%);
-  background: var(--ak-surface-hover);
-  color: var(--ak-text-muted);
-  font-size: 8px;
-  font-weight: 700;
-  line-height: 1;
-  padding: 3px 6px;
-  border-radius: 3px;
-  white-space: nowrap;
-  border: 1px solid var(--ak-border);
-}
-
-.ak-operator-spark-tag.reduced {
+.ak-operator-tag.reduced {
   background: var(--ak-spark);
-  color: var(--ak-limited-text);
-  border-color: transparent;
 }

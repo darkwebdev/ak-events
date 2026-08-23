@@ -210,7 +210,7 @@
           "class": "Vanguard",
           "limited": true,
           "icon": "data/images/operators/60px-Closure_icon.png",
-          "sparkCost": 300
+          "sparkCost": null
         },
         {
           "name": "Crackborne",
@@ -218,7 +218,7 @@
           "class": "Defender",
           "limited": true,
           "icon": "data/images/operators/60px-Crackborne_icon.png",
-          "sparkCost": 75
+          "sparkCost": null
         },
         {
           "name": "Exusiai the New Covenant",
@@ -234,7 +234,7 @@
           "class": "Medic",
           "limited": true,
           "icon": "data/images/operators/60px-Kal%27tsit_-_Esperanta_icon.png",
-          "sparkCost": 300
+          "sparkCost": null
         },
         {
           "name": "Lappland the Decadenza",

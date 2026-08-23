@@ -1,0 +1,1 @@
+import{R as e}from"./iframe-D8e0XZAN.js";import{P as n}from"./PullIcon-BwtZy7xu.js";function o({children:l}){const t=parseFloat(l);return e.createElement(e.Fragment,null,e.createElement(n,null),"×",t)}o.__docgenInfo={description:"",methods:[],displayName:"Pulls"};export{o as P};

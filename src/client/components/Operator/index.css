@@ -14,8 +14,11 @@
   object-fit: cover;
   display: block;
   /* A faint outline on every portrait, not just limited ones — box-shadow rather
-     than `border` so it doesn't add to the element's box size. */
-  box-shadow: 0 0 0 1px var(--ak-border);
+     than `border` so it doesn't add to the element's box size. Darkened from the
+     reduced-spark-cost tag's own accent color (.ak-operator-tag.reduced below) —
+     the raw color was too light/prominent for a "barely visible" outline, especially
+     in dark mode where --ak-spark is a pale tan. */
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ak-spark) 65%, black);
 }
 
 .ak-operator-icon-fallback {
@@ -26,7 +29,7 @@
   color: var(--ak-text-muted);
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 0 0 1px var(--ak-border);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ak-spark) 65%, black);
 }
 
 .ak-operator-badge.limited .ak-operator-icon,
@@ -56,17 +59,17 @@
      (.ak-operator-badge.limited .ak-operator-icon above) — narrower than that would
      look inset from, rather than a continuation of, the ring. */
   width: 40px;
-  /* Fixed rather than content-driven: the spark icon (10px) is taller than the plain
-     text label's line box, and letting height follow content made the tag visibly
-     taller whenever a spark cost (with its icon) was shown vs. a plain LIMITED/spark
-     text label. Padding is vertical-only here (0 horizontal), so it's fine for the
-     icon to butt right up against the top/bottom edges with no breathing room. */
-  height: 12px;
+  /* Fixed rather than content-driven: the spark icon is taller than the plain text
+     label's line box, and letting height follow content made the tag visibly taller
+     whenever a spark cost (with its icon) was shown vs. a plain LIMITED/spark text
+     label. Sized to fit the icon (10px) plus equal padding on every side. */
+  height: 14px;
   box-sizing: border-box;
+  padding: 2px;
   background: var(--ak-limited);
   color: var(--ak-limited-text);
-  font-size: 5.5px;
-  letter-spacing: -0.3px;
+  font-size: 7px;
+  letter-spacing: -0.2px;
   font-weight: 700;
   line-height: 1;
   /* Square top corners — a continuation of the ring above, not a separate floating

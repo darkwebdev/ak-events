@@ -88,7 +88,13 @@
 
 .ak-event-banner-columns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* auto-fit + minmax instead of a hardcoded `1fr 1fr`: the banner column's own width
+     already varies a lot (side-by-side with the event on wide screens, full card width
+     once it drops below the event, squeezed further if the card itself is narrow) — this
+     lets the two star columns sit side by side whenever there's room for both without
+     squishing, and collapse to a single column on their own once there isn't, instead of
+     needing a hand-picked breakpoint tied to viewport width specifically. */
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 8px 12px;
 }
 
@@ -124,10 +130,13 @@
   gap: 10px 8px;
 }
 
-/* No room for a side-by-side banner column on narrow screens — stack it under the
-   event instead, matching how it used to render everywhere before the desktop
-   side-by-side layout was introduced. */
-@media (max-width: 600px) {
+/* Three columns (event, banner, aside stats) only really fit side by side on a wide
+   desktop viewport. They collapse in two independent stages as the viewport narrows,
+   each at the point where its own row of content would otherwise get squeezed too
+   narrow to read comfortably — banner-under-event first (this rule), aside-under-
+   everything second (a separate, narrower breakpoint in App.css), rather than both
+   collapsing at once. */
+@media (max-width: 900px) {
   .ak-event-row {
     flex-direction: column;
   }
@@ -136,5 +145,72 @@
     border-left: none;
     border-top: 1px solid var(--ak-border);
     min-width: 0;
+  }
+}
+
+/* True mobile: use the event image as a full-bleed card background with the title/date
+   overlaid on it, instead of a separate image block above plain text. Scoped with
+   :has() to events that actually have an image — an image-less event keeps the normal
+   in-flow layout instead of inheriting light-on-nothing text. */
+@media (max-width: 480px) {
+  .ak-event:has(.ak-event-image-wrap) {
+    position: relative;
+    min-height: 220px;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-image-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    margin: 0;
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-image {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  /* Darkening scrim so the overlaid text stays readable regardless of how bright the
+     underlying image is — stronger toward the bottom (where the date/Orundum line
+     sits) than the top, since a title sitting right at the card's top edge has less
+     margin for a busy image behind it and needs the extra contrast most. */
+  .ak-event:has(.ak-event-image-wrap) .ak-event-image-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(8, 6, 16, 0.55) 0%, rgba(8, 6, 16, 0.85) 100%);
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-title {
+    position: relative;
+    z-index: 1;
+    padding: 14px 16px 0;
+    margin-bottom: 0;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-meta {
+    position: relative;
+    z-index: 1;
+    padding: 10px 16px 14px;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-type,
+  .ak-event:has(.ak-event-image-wrap) .ak-event-date {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-orundum {
+    color: #fff;
   }
 }

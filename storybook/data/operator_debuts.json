@@ -1,8 +1,26 @@
 {
-  "Crackborne": "Critical Phase Transition",
-  "Closure": "Critical Phase Transition",
-  "Exusiai the New Covenant": "The Masses' Travels",
-  "Wiš'adel": "Absolved Will Be the Seekers",
-  "Kal'tsit - Esperanta": "Critical Phase Transition",
-  "Lappland the Decadenza": "I Portatori dei Velluti"
+  "Crackborne": {
+    "event": "Critical Phase Transition",
+    "isFestival": false
+  },
+  "Closure": {
+    "event": "Critical Phase Transition",
+    "isFestival": false
+  },
+  "Exusiai the New Covenant": {
+    "event": "The Masses' Travels",
+    "isFestival": false
+  },
+  "Wiš'adel": {
+    "event": "Absolved Will Be the Seekers",
+    "isFestival": false
+  },
+  "Kal'tsit - Esperanta": {
+    "event": "Critical Phase Transition",
+    "isFestival": false
+  },
+  "Lappland the Decadenza": {
+    "event": "I Portatori dei Velluti",
+    "isFestival": false
+  }
 }

@@ -43,6 +43,12 @@
      (.ak-operator-badge.limited .ak-operator-icon above) — narrower than that would
      look inset from, rather than a continuation of, the ring. */
   width: 40px;
+  /* Fixed rather than content-driven: the spark icon (10px) is taller than the plain
+     text label's line box, and letting height follow content made the tag visibly
+     taller whenever a spark cost (with its icon) was shown vs. a plain LIMITED/spark
+     text label. Padding is vertical-only here (0 horizontal), so it's fine for the
+     icon to butt right up against the top/bottom edges with no breathing room. */
+  height: 12px;
   box-sizing: border-box;
   background: color-mix(in srgb, var(--ak-limited) 80%, transparent);
   color: var(--ak-limited-text);
@@ -50,7 +56,6 @@
   letter-spacing: -0.3px;
   font-weight: 700;
   line-height: 1;
-  padding: 3px 0;
   border-radius: 3px;
   white-space: nowrap;
 }

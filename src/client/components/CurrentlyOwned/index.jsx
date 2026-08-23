@@ -2,6 +2,7 @@ import React from 'react';
 import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
 import { Breakdown } from '../Breakdown';
+import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 
 /**
  * Component for managing currently owned orundum and resources
@@ -26,7 +27,9 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
         </div>
         <div className="ak-aside-item">
           <label className="ak-aside-label">
-            <span className="ak-aside-name">Originite Prime</span>
+            <span className="ak-aside-name">
+              <OriginitePrimeIcon />
+            </span>
             <input
               type="number"
               className="ak-number-input"
@@ -57,7 +60,7 @@ export function CurrentlyOwned({ owned, updateOwned, totalOwned }) {
             <span className="ak-aside-name">
               <InfoButton title="Breakdown" label="Total Orundum">
                 <Breakdown
-                  items={['Orundum', 'OP', 'Permits']}
+                  items={['Orundum', <OriginitePrimeIcon key="op" />, 'Permits']}
                   calcs={['-', `${owned.op} × 180`, `${owned.hhPermits} × 600`]}
                   totals={[owned.orundum, owned.op * 180, owned.hhPermits * 600]}
                 />

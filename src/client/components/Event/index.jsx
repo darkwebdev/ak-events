@@ -7,6 +7,7 @@ import { Orundum } from '../Orundum';
 import { InfoButton } from '../InfoButton';
 import { Breakdown } from '../Breakdown';
 import { Operator } from '../Operator';
+import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import './index.css';
 
 function OperatorColumn({ groups }) {
@@ -72,7 +73,10 @@ export function Event({ event, selectedEvents, onEventToggle }) {
                 <>
                   <InfoButton label="Orundum">
                     <Breakdown
-                      items={[origPrime && 'OP', hhPermits && 'HH Permits'].filter(Boolean)}
+                      items={[
+                        origPrime && <OriginitePrimeIcon key="op" />,
+                        hhPermits && 'HH Permits',
+                      ].filter(Boolean)}
                       calcs={[
                         origPrime && `${origPrime} × 180`,
                         hhPermits && `${hhPermits} × 600`,

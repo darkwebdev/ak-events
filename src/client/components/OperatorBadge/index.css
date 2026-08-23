@@ -35,7 +35,7 @@
   left: 50%;
   bottom: -7px;
   transform: translateX(-50%);
-  background: var(--ak-limited);
+  background: color-mix(in srgb, var(--ak-limited) 80%, transparent);
   color: var(--ak-limited-text);
   font-size: 8px;
   font-weight: 700;
@@ -46,5 +46,5 @@
 }
 
 .ak-operator-tag.reduced {
-  background: var(--ak-spark);
+  background: color-mix(in srgb, var(--ak-spark) 80%, transparent);
 }

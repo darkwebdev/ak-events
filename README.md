@@ -91,7 +91,7 @@ Notes:
   - `index.html`, `main.jsx`, `App.jsx`, `App.css`: app entry point; `App.css` also defines the
     light/dark theme tokens (`--ak-bg`, `--ak-text`, `--ak-accent`, etc.), applied automatically via
     `prefers-color-scheme` and forceable per-element via `data-theme="light"|"dark"`
-  - `components/`: UI components (`Header`, `EventsList`, `Event`, `OperatorBadge`, `CurrentlyOwned`,
+  - `components/`: UI components (`Header`, `EventsList`, `Event`, `Operator`, `CurrentlyOwned`,
     `DailyOrundum`, `TotalOrundum`, `Breakdown`, `Orundum`, `Pulls`, `PullCounter`, `InfoButton`,
     `Palette`, `Typography`), each with Storybook stories — `Palette`/`Typography` document the design
     tokens themselves rather than an app feature

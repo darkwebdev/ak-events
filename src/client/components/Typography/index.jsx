@@ -1,5 +1,5 @@
 import React from 'react';
-import { SparkIcon } from '../OperatorBadge/SparkIcon.jsx';
+import { SparkIcon } from '../Operator/SparkIcon.jsx';
 import './index.css';
 
 // Each entry renders with the *real* app styling (either the actual global h1 rule,

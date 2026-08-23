@@ -6,7 +6,7 @@ import { splitOperatorColumns } from '../../utils/operators.js';
 import { Orundum } from '../Orundum';
 import { InfoButton } from '../InfoButton';
 import { Breakdown } from '../Breakdown';
-import { OperatorBadge } from '../OperatorBadge';
+import { Operator } from '../Operator';
 import './index.css';
 
 function OperatorColumn({ groups }) {
@@ -18,7 +18,7 @@ function OperatorColumn({ groups }) {
           {star > 0 && <span className="ak-operator-group-label">{star}★</span>}
           <div className="ak-operator-group-badges">
             {ops.map((op) => (
-              <OperatorBadge key={op.name} operator={op} />
+              <Operator key={op.name} operator={op} />
             ))}
           </div>
         </div>

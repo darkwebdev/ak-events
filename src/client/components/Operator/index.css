@@ -68,10 +68,10 @@
   /* Fixed rather than content-driven: the spark icon is taller than the plain text
      label's line box, and letting height follow content made the tag visibly taller
      whenever a spark cost (with its icon) was shown vs. a plain LIMITED/spark text
-     label. Sized to fit the icon (10px) plus equal padding on every side. */
-  height: 14px;
+     label. Sized to fit the icon (8px) plus equal padding on every side. */
+  height: 10px;
   box-sizing: border-box;
-  padding: 2px;
+  padding: 1px;
   background: var(--ak-limited);
   color: var(--ak-limited-text);
   font-size: 7px;
@@ -87,8 +87,8 @@
 /* Two-class selector so this reliably wins over SparkIcon's own single-class
    `.ak-spark-icon` default sizing, regardless of stylesheet import order. */
 .ak-spark-icon.ak-operator-tag-icon {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   flex-shrink: 0;
 }
 

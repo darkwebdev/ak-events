@@ -7,10 +7,13 @@
 .ak-events-list {
   list-style: none;
   margin: 0;
-  /* The selected card's box-shadow ring/glow extends past its own box; without this
-     padding, overflow: auto (needed for scrolling) clips it at the list's edges. */
+  /* Padding gives the selected card's box-shadow ring/glow room to render without
+     touching the list's edges. No max-height/height is set on this list anywhere (the
+     page itself scrolls), so `overflow` is left at its default `visible` — `auto` here
+     had no scrolling benefit (never height-constrained enough to trigger a scrollbar)
+     but did clip any content that overflows a card's box, like an open InfoButton
+     popover positioned near a card's edge. */
   padding: 6px 16px;
-  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;

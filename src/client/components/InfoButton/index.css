@@ -12,9 +12,15 @@
 }
 
 .info-popover {
-  position: fixed;
-  top: auto;
-  left: auto;
+  /* No `position` here on purpose: floating-ui's inline `style` (position/top/left from
+     floatingStyles) always wins over this class regardless of what's declared here or in
+     what order, so setting it in this stylesheet is misleading dead weight — it was
+     previously declared twice (fixed, then relative) and neither one did anything.
+     (A FloatingPortal / strategy: 'fixed' would be the textbook way to also escape a
+     scrollable ancestor's clipping, but both left this popover stuck at 0,0 in this
+     floating-ui version for reasons that didn't turn up in extensive live debugging —
+     see EventsList/index.css instead, where the actual clipping ancestor's now-unused
+     `overflow: auto` was simply removed.) */
   min-width: 260px;
   max-width: 420px;
   background: var(--ak-surface);
@@ -30,9 +36,7 @@
   word-break: break-word;
   white-space: normal;
   box-sizing: border-box;
-  right: auto;
   pointer-events: auto;
-  position: relative;
 
   h3 {
     margin: 0 0 8px;

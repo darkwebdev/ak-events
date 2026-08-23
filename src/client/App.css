@@ -109,11 +109,29 @@ body {
 }
 
 .ak-aside-column {
-  position: fixed;
-  right: 1em;
+  /* Sticky (not fixed) so it reserves its own width as a normal flex item — a fixed
+     position takes it out of flow entirely, so nothing reserved room for it and the
+     events column was free to grow wide enough to run underneath it. */
+  position: sticky;
+  top: 6.5em;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+/* Below this width there isn't room for the events column and the aside stats side by
+   side without squeezing event cards down to nothing — stack the aside under the
+   events list instead, same as the event/banner split does at this breakpoint. */
+@media (max-width: 600px) {
+  .ak-main-content {
+    flex-direction: column;
+  }
+
+  .ak-aside-column {
+    position: static;
+    width: 100%;
+  }
 }
 
 .ak-aside {

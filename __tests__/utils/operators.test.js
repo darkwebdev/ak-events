@@ -1,4 +1,4 @@
-import { groupOperatorsByStar } from '../../src/client/utils/operators.js';
+import { groupOperatorsByStar, splitOperatorColumns } from '../../src/client/utils/operators.js';
 
 describe('groupOperatorsByStar', () => {
   test('groups operators by star rank, highest first', () => {
@@ -27,5 +27,29 @@ describe('groupOperatorsByStar', () => {
   test('returns an empty array for no operators', () => {
     expect(groupOperatorsByStar([])).toEqual([]);
     expect(groupOperatorsByStar(undefined)).toEqual([]);
+  });
+});
+
+describe('splitOperatorColumns', () => {
+  test('puts 6★ operators in the first column and every other rarity in the second', () => {
+    const operators = [
+      { name: 'Taraxacum', star: 5 },
+      { name: 'Chongyue', star: 6 },
+      { name: 'Popukar', star: 4 },
+      { name: 'Shu', star: 6 },
+    ];
+
+    const [sixStarColumn, otherColumn] = splitOperatorColumns(operators);
+
+    expect(sixStarColumn.map(([star]) => star)).toEqual([6]);
+    expect(sixStarColumn[0][1].map((op) => op.name)).toEqual(['Chongyue', 'Shu']);
+    expect(otherColumn.map(([star]) => star)).toEqual([5, 4]);
+  });
+
+  test('leaves a column empty (not missing) when no operator of that kind is present', () => {
+    const [sixStarColumn, otherColumn] = splitOperatorColumns([{ name: 'Mudrock', star: 6 }]);
+
+    expect(sixStarColumn).toHaveLength(1);
+    expect(otherColumn).toEqual([]);
   });
 });

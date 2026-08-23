@@ -1,6 +1,8 @@
 .ak-events {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0 1em;
 }
 

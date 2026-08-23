@@ -1,5 +1,12 @@
+.ak-event-row {
+  display: flex;
+  align-items: stretch;
+}
+
 .ak-event {
   padding: 14px 16px;
+  flex: 1 1 60%;
+  min-width: 0;
 }
 
 .ak-event-title {
@@ -48,46 +55,64 @@
   font-weight: 500;
 }
 
+/* Banner is a sibling column next to the event, not a sub-section below it — it just
+   roughly coincides in time with the event, it doesn't necessarily belong to it, so its
+   header is styled at the same level as the event's own title rather than subordinate
+   to it. */
 .ak-event-banner {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--ak-border);
+  flex: 1 1 40%;
+  min-width: 200px;
+  padding: 14px 16px;
+  border-left: 1px solid var(--ak-border);
 }
 
 .ak-event-banner-header {
+  font-weight: 600;
+  margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
-  font-size: 0.9em;
 }
 
 .ak-event-banner-name {
-  font-weight: 600;
   color: var(--ak-text);
 }
 
 .ak-event-banner-spark {
   color: var(--ak-spark);
+  font-size: 0.85em;
+  font-weight: 400;
   white-space: nowrap;
 }
 
-.ak-event-banner-operators {
+.ak-event-banner-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.ak-operator-column {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
 }
 
 .ak-operator-group {
   display: flex;
-  align-items: center;
+  /* flex-start, not center: when a column is too narrow to fit more than one badge
+     per row, the badges wrap into several rows and a vertically-centered label drifts
+     away from the top, reading like it belongs to some row in the middle instead of
+     heading the group. */
+  align-items: flex-start;
   gap: 8px;
 }
 
 .ak-operator-group-label {
   flex-shrink: 0;
   min-width: 1.6em;
+  padding-top: 2px;
   color: var(--ak-text-muted);
   font-size: 0.85em;
   font-weight: 600;
@@ -97,4 +122,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px 8px;
+}
+
+/* No room for a side-by-side banner column on narrow screens — stack it under the
+   event instead, matching how it used to render everywhere before the desktop
+   side-by-side layout was introduced. */
+@media (max-width: 600px) {
+  .ak-event-row {
+    flex-direction: column;
+  }
+
+  .ak-event-banner {
+    border-left: none;
+    border-top: 1px solid var(--ak-border);
+    min-width: 0;
+  }
 }

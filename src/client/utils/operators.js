@@ -9,3 +9,11 @@ export function groupOperatorsByStar(operators) {
   }
   return [...groups.entries()].sort(([a], [b]) => b - a);
 }
+
+// Splits a banner's star-grouped operators into two display columns: 6★ operators
+// (the ones worth sparking for) get their own column, and every lower rarity (5★, 4★,
+// ...) shares the other one — each still labeled by its own star rank within it.
+export function splitOperatorColumns(operators) {
+  const groups = groupOperatorsByStar(operators);
+  return [groups.filter(([star]) => star === 6), groups.filter(([star]) => star !== 6)];
+}

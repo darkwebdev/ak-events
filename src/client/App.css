@@ -207,6 +207,13 @@ body {
 
 .ak-aside-label input[type='checkbox'] {
   margin: 0;
+  /* Overrides the row's own align-items:first-baseline just for the checkbox — a
+     checkbox's baseline (usually its own bottom edge) doesn't line up with the
+     adjacent text's baseline the way two text elements would, so baseline-aligning it
+     left it sitting visibly higher than its label. Centering it against the label
+     text's line height looks correct without changing how the name/value text itself
+     aligns when it wraps to multiple lines. */
+  align-self: center;
 }
 
 .ak-aside-name {

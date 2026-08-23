@@ -23,18 +23,18 @@ export function DailyOrundum({ settings, updateSetting, setAllSettingsEnabled, s
       <h3 className="ak-aside-title">
         Daily <OrundumIcon /> Equivalent
       </h3>
-      <div className="ak-aside-item">
-        <label className="ak-aside-label">
-          <input
-            ref={allCheckboxRef}
-            type="checkbox"
-            checked={allEnabled}
-            onChange={(e) => setAllSettingsEnabled(e.target.checked)}
-          />
-          <span className="ak-aside-name">All</span>
-        </label>
-      </div>
       <div className="ak-aside-list">
+        <div className="ak-aside-item">
+          <label className="ak-aside-label">
+            <input
+              ref={allCheckboxRef}
+              type="checkbox"
+              checked={allEnabled}
+              onChange={(e) => setAllSettingsEnabled(e.target.checked)}
+            />
+            <span className="ak-aside-name">All</span>
+          </label>
+        </div>
         <div className="ak-aside-item">
           <label className="ak-aside-label">
             <input

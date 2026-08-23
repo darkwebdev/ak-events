@@ -1,0 +1,1 @@
+import{R as e}from"./iframe-BoycfbmX.js";import{P as a}from"./PullIcon-BUDEDpWj.js";function o({children:l}){const t=parseFloat(l);return e.createElement(e.Fragment,null,e.createElement(a,{className:"ak-pulls-icon"}),"×",t)}o.__docgenInfo={description:"",methods:[],displayName:"Pulls"};export{o as P};

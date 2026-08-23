@@ -1,0 +1,1 @@
+import{R as o}from"./iframe-BoycfbmX.js";import{n as l}from"./images-BVwpUHA0.js";function n({className:e}){return o.createElement("img",{className:e,src:l("/images/icon-pull.svg"),alt:"Pull"})}n.__docgenInfo={description:"",methods:[],displayName:"PullIcon"};export{n as P};

@@ -110,3 +110,43 @@ export const StandardBanner = {
 export const Selected = {
   args: { bannerType: 'Limited', selected: true, discountedOperator: 'None' },
 };
+
+const RESPONSIVE_WIDTHS = [
+  { width: 1400, height: 340, label: '1400px — wide desktop: banner sits beside the event' },
+  {
+    width: 700,
+    height: 700,
+    label:
+      '700px — banner drops below the event (\u2264900px), image stays a normal block (>480px)',
+  },
+  {
+    width: 420,
+    height: 820,
+    label: '420px \u2014 image becomes a full-bleed card background (\u2264480px)',
+  },
+];
+
+// Renders the LimitedBanner story inside real <iframe>s of different widths, so the
+// responsive breakpoints in Event/index.css (banner-under-event at 900px, image-as-
+// background at 480px) can be inspected directly in Storybook without resizing the
+// browser window. A styled <div> wouldn't work here \u2014 @media queries evaluate the
+// actual browser viewport, not a container's CSS width, so only a real nested browsing
+// context (an iframe) can be narrower than the page around it.
+export function ResponsiveSizes() {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'flex-start' }}>
+      {RESPONSIVE_WIDTHS.map(({ width, height, label }) => (
+        <div key={width}>
+          <p style={{ font: '12px monospace', marginBottom: '8px', maxWidth: `${width}px` }}>
+            {label}
+          </p>
+          <iframe
+            title={`Event at ${width}px`}
+            src="iframe.html?id=components-event--limited-banner&viewMode=story"
+            style={{ width: `${width}px`, height: `${height}px`, border: '1px dashed #999' }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}

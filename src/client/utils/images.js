@@ -53,7 +53,11 @@ function getBase() {
       } catch (e) {
         // ignore
       }
-      if (!BASE.endsWith('/')) BASE += '/';
+      // A pathname pointing at a file (e.g. Storybook's iframe.html, or any nested
+      // *.html) isn't itself a usable base — take its containing directory instead of
+      // just appending a trailing slash, which would otherwise treat the file name as
+      // a path segment (turning "/iframe.html" into "/iframe.html/" instead of "/").
+      if (!BASE.endsWith('/')) BASE = BASE.replace(/[^/]*$/, '');
     }
   } catch (e) {}
   if (

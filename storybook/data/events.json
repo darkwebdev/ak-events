@@ -14,77 +14,86 @@
       "name": "Joint Operation #21",
       "type": "Standard",
       "sparkEligible": false,
-      "sparkCost": null,
       "operators": [
         {
           "name": "Mantra",
           "star": 6,
           "class": "Caster",
           "limited": false,
-          "icon": "data/images/operators/60px-Mantra_icon.png"
+          "icon": "data/images/operators/60px-Mantra_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Ulpianus",
           "star": 6,
           "class": "Guard",
           "limited": false,
-          "icon": "data/images/operators/60px-Ulpianus_icon.png"
+          "icon": "data/images/operators/60px-Ulpianus_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Narantuya",
           "star": 6,
           "class": "Sniper",
           "limited": false,
-          "icon": "data/images/operators/60px-Narantuya_icon.png"
+          "icon": "data/images/operators/60px-Narantuya_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Reed the Flame Shadow",
           "star": 6,
           "class": "Medic",
           "limited": false,
-          "icon": "data/images/operators/60px-Reed_the_Flame_Shadow_icon.png"
+          "icon": "data/images/operators/60px-Reed_the_Flame_Shadow_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Grain Buds",
           "star": 5,
           "class": "Supporter",
           "limited": false,
-          "icon": "data/images/operators/60px-Grain_Buds_icon.png"
+          "icon": "data/images/operators/60px-Grain_Buds_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Harmonie",
           "star": 5,
           "class": "Caster",
           "limited": false,
-          "icon": "data/images/operators/60px-Harmonie_icon.png"
+          "icon": "data/images/operators/60px-Harmonie_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Tippi",
           "star": 5,
           "class": "Specialist",
           "limited": false,
-          "icon": "data/images/operators/60px-Tippi_icon.png"
+          "icon": "data/images/operators/60px-Tippi_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Cantabile",
           "star": 5,
           "class": "Vanguard",
           "limited": false,
-          "icon": "data/images/operators/60px-Cantabile_icon.png"
+          "icon": "data/images/operators/60px-Cantabile_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Figurino",
           "star": 5,
           "class": "Specialist",
           "limited": false,
-          "icon": "data/images/operators/60px-Figurino_icon.png"
+          "icon": "data/images/operators/60px-Figurino_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Cairn",
           "star": 5,
           "class": "Defender",
           "limited": false,
-          "icon": "data/images/operators/60px-Cairn_icon.png"
+          "icon": "data/images/operators/60px-Cairn_icon.png",
+          "sparkCost": null
         }
       ]
     }
@@ -106,28 +115,30 @@
       "name": "Returned From A Pyre Rerun",
       "type": "Standard",
       "sparkEligible": false,
-      "sparkCost": null,
       "operators": [
         {
           "name": "Necrass",
           "star": 6,
           "class": "Caster",
           "limited": false,
-          "icon": "data/images/operators/60px-Necrass_icon.png"
+          "icon": "data/images/operators/60px-Necrass_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Wulfenite",
           "star": 5,
           "class": "Specialist",
           "limited": false,
-          "icon": "data/images/operators/60px-Wulfenite_icon.png"
+          "icon": "data/images/operators/60px-Wulfenite_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Firewhistle",
           "star": 5,
           "class": "Defender",
           "limited": false,
-          "icon": "data/images/operators/60px-Firewhistle_icon.png"
+          "icon": "data/images/operators/60px-Firewhistle_icon.png",
+          "sparkCost": null
         }
       ]
     }
@@ -148,28 +159,30 @@
       "name": "Rage of The Many",
       "type": "Standard",
       "sparkEligible": false,
-      "sparkCost": null,
       "operators": [
         {
           "name": "Zima the Raging Tide",
           "star": 6,
           "class": "Guard",
           "limited": true,
-          "icon": "data/images/operators/60px-Zima_the_Raging_Tide_icon.png"
+          "icon": "data/images/operators/60px-Zima_the_Raging_Tide_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Ukusik",
           "star": 5,
           "class": "Medic",
           "limited": true,
-          "icon": "data/images/operators/60px-Ukusik_icon.png"
+          "icon": "data/images/operators/60px-Ukusik_icon.png",
+          "sparkCost": null
         },
         {
           "name": "Mitm",
           "star": 5,
           "class": "Vanguard",
           "limited": false,
-          "icon": "data/images/operators/60px-Mitm_icon.png"
+          "icon": "data/images/operators/60px-Mitm_icon.png",
+          "sparkCost": null
         }
       ]
     }
@@ -190,49 +203,54 @@
       "name": "Sealed With Time",
       "type": "Limited",
       "sparkEligible": true,
-      "sparkCost": 300,
       "operators": [
         {
           "name": "Closure",
           "star": 6,
           "class": "Vanguard",
           "limited": true,
-          "icon": "data/images/operators/60px-Closure_icon.png"
+          "icon": "data/images/operators/60px-Closure_icon.png",
+          "sparkCost": 300
         },
         {
           "name": "Crackborne",
           "star": 5,
           "class": "Defender",
           "limited": true,
-          "icon": "data/images/operators/60px-Crackborne_icon.png"
+          "icon": "data/images/operators/60px-Crackborne_icon.png",
+          "sparkCost": 75
         },
         {
           "name": "Exusiai the New Covenant",
           "star": 6,
           "class": "Specialist",
           "limited": true,
-          "icon": "data/images/operators/60px-Exusiai_the_New_Covenant_icon.png"
+          "icon": "data/images/operators/60px-Exusiai_the_New_Covenant_icon.png",
+          "sparkCost": 300
         },
         {
           "name": "Kal'tsit - Esperanta",
           "star": 6,
           "class": "Medic",
           "limited": true,
-          "icon": "data/images/operators/60px-Kal%27tsit_-_Esperanta_icon.png"
+          "icon": "data/images/operators/60px-Kal%27tsit_-_Esperanta_icon.png",
+          "sparkCost": 300
         },
         {
           "name": "Lappland the Decadenza",
           "star": 6,
           "class": "Caster",
           "limited": true,
-          "icon": "data/images/operators/60px-Lappland_the_Decadenza_icon.png"
+          "icon": "data/images/operators/60px-Lappland_the_Decadenza_icon.png",
+          "sparkCost": 300
         },
         {
           "name": "Wiš'adel",
           "star": 6,
           "class": "Sniper",
           "limited": true,
-          "icon": "data/images/operators/60px-Wi%C5%A1%27adel_icon.png"
+          "icon": "data/images/operators/60px-Wi%C5%A1%27adel_icon.png",
+          "sparkCost": 300
         }
       ]
     }

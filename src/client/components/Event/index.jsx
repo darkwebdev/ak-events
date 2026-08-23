@@ -8,6 +8,7 @@ import { InfoButton } from '../InfoButton';
 import { Breakdown } from '../Breakdown';
 import { Operator } from '../Operator';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
+import { PullIcon } from '../Pulls/PullIcon.jsx';
 import './index.css';
 
 function OperatorColumn({ groups }) {
@@ -70,36 +71,36 @@ export function Event({ event, selectedEvents, onEventToggle }) {
             </div>
             <div>
               {(origPrime || hhPermits) && (
-                <>
-                  {/* Text, not the icon, on purpose: the value right after this
-                      trigger already carries its own Orundum icon via <Orundum>,
-                      so repeating the icon here would just look like a duplicate
-                      rather than a label. */}
-                  <InfoButton label="Orundum">
-                    <Breakdown
-                      items={[
-                        origPrime && <OriginitePrimeIcon key="op" />,
-                        hhPermits && 'HH Permits',
-                      ].filter(Boolean)}
-                      calcs={[
-                        origPrime && `${origPrime} × 180`,
-                        hhPermits && `${hhPermits} × 600`,
-                      ].filter(Boolean)}
-                      totals={[
-                        origPrime && orundumFromOP(origPrime),
-                        hhPermits && orundumFromHH(hhPermits),
-                      ].filter(Boolean)}
-                    />
-                    Source:{' '}
-                    <a href={link} target="_blank" rel="noopener noreferrer">
-                      arknights.wiki.gg
-                    </a>
-                  </InfoButton>
-                  :&nbsp;
-                  <span className="ak-event-orundum">
-                    <Orundum withPulls>{calcEventOrundum(event)}</Orundum>
-                  </span>
-                </>
+                // The Orundum value itself is the hover/click trigger now — no
+                // separate "Orundum" label needed, and no duplicate icon either.
+                <InfoButton
+                  label={
+                    <span className="ak-event-orundum">
+                      <Orundum withPulls>{calcEventOrundum(event)}</Orundum>
+                    </span>
+                  }
+                >
+                  <Breakdown
+                    items={[
+                      origPrime && <OriginitePrimeIcon key="op" />,
+                      // A Headhunting Permit is redeemable as one pull, so it's
+                      // labeled with the pull icon rather than its own text.
+                      hhPermits && <PullIcon key="hh" className="ak-pulls-icon" />,
+                    ].filter(Boolean)}
+                    calcs={[
+                      origPrime && `${origPrime} × 180`,
+                      hhPermits && `${hhPermits} × 600`,
+                    ].filter(Boolean)}
+                    totals={[
+                      origPrime && orundumFromOP(origPrime),
+                      hhPermits && orundumFromHH(hhPermits),
+                    ].filter(Boolean)}
+                  />
+                  Source:{' '}
+                  <a href={link} target="_blank" rel="noopener noreferrer">
+                    arknights.wiki.gg
+                  </a>
+                </InfoButton>
               )}
             </div>
           </div>

@@ -1,12 +1,15 @@
 import React from 'react';
 import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
+import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
 import { orundumFromOP, orundumFromHH } from '../../utils/orundum.js';
 
 export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
   return (
     <div className="ak-aside">
-      <h3 className="ak-aside-title">Daily Orundum Equivalent</h3>
+      <h3 className="ak-aside-title">
+        Daily <OrundumIcon /> Equivalent
+      </h3>
       <div className="ak-aside-list">
         <div className="ak-aside-item">
           <label className="ak-aside-label">
@@ -149,7 +152,7 @@ export function DailyOrundum({ settings, updateSetting, settingsTotal }) {
       <div className="ak-aside-total">
         <div className="ak-aside-item">
           <div className="ak-aside-label">
-            <span className="ak-aside-name">Total Orundum</span>
+            <span className="ak-aside-name">Total</span>
             <span className="ak-aside-value">
               <Orundum withPulls pullsPrecision={1}>
                 {settingsTotal}

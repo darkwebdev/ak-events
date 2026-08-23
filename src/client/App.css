@@ -130,6 +130,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* Matches .ak-events' own `margin: 0 1em` on the opposite edge — without this the
+     aside sits flush against the browser's right edge instead of getting the same
+     breathing room the events column gets on the left. */
+  margin-right: 1em;
 }
 
 /* Below this width there isn't room for the events column and the aside stats side by
@@ -142,7 +146,8 @@ body {
 
   .ak-aside-column {
     position: static;
-    width: 100%;
+    width: auto;
+    margin: 0 1em;
   }
 }
 
@@ -193,6 +198,11 @@ body {
   min-width: 40px;
   text-align: right;
   align-self: last baseline;
+  /* Pushes flush right even with no `.ak-aside-name` sibling (e.g. the "Total
+     Orundum" row, where the value is now the InfoButton's whole label rather than
+     one of two space-between'd children) — harmless when a flex:1 name sibling is
+     also present, since that already produces the same right-aligned result. */
+  margin-left: auto;
 }
 input[type='checkbox']:checked {
   accent-color: var(--ak-accent);

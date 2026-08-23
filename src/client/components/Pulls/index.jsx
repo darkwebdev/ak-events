@@ -1,15 +1,14 @@
 import React from 'react';
-/**
- * Format pulls with correct singular/plural
- * @param {number} n
- * @returns {string}
- */
+import { PullIcon } from './PullIcon.jsx';
+import './index.css';
+
+// Shown as "[icon]×N", matching the in-game Headhunting pull-count badge, instead of
+// the "N pull(s)" text this used to render.
 export function Pulls({ children }) {
   const pulls = parseFloat(children);
-  const pullsStr = `pull${pulls === 1 ? '' : 's'}`;
   return (
     <>
-      {pulls}&nbsp;{pullsStr}
+      <PullIcon className="ak-pulls-icon" />×{pulls}
     </>
   );
 }

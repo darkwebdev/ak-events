@@ -18,9 +18,7 @@ export function TotalOrundum({
       <div className="ak-total-orundum">
         <strong>
           <InfoButton
-            label={`Total Orundum${
-              latestEventStart ? ` by ${latestEventStart.toLocaleDateString()}` : ''
-            }`}
+            label={`Total${latestEventStart ? ` by ${latestEventStart.toLocaleDateString()}` : ''}`}
           >
             <Breakdown
               items={['Events', 'Daily', 'Owned']}

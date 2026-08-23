@@ -57,7 +57,6 @@
 /* Footer */
 .ak-events-footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 12px;
   margin-top: 12px;
@@ -67,14 +66,4 @@
   position: sticky;
   bottom: 0;
   z-index: 2;
-}
-
-.ak-events-footer-left {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.ak-events-footer-right {
-  font-weight: 600;
 }

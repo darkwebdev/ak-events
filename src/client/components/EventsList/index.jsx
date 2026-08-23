@@ -25,12 +25,9 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle }) {
       )}
 
       <div className="ak-events-footer">
-        <div className="ak-events-footer-left">
-          <strong>Total Orundum from events</strong>
-        </div>
-        <div className="ak-events-footer-right">
-          <Orundum withPulls>{totalEventsOrundum}</Orundum>
-        </div>
+        <strong>
+          Total from events: <Orundum withPulls>{totalEventsOrundum}</Orundum>
+        </strong>
       </div>
     </div>
   );

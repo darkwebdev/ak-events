@@ -1,0 +1,1 @@
+import{R as a}from"./iframe-D0QKWdcA.js";import{n as e}from"./images-BVwpUHA0.js";function o({className:r}){return a.createElement("img",{className:r,src:e("/images/icon-spark-token.svg"),alt:"Spark"})}o.__docgenInfo={description:"",methods:[],displayName:"SparkIcon"};export{o as S};

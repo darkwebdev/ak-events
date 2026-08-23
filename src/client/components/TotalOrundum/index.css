@@ -14,3 +14,7 @@
   align-items: last baseline;
   gap: 12px;
 }
+
+.ak-total-orundum .info-button {
+  white-space: nowrap;
+}

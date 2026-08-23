@@ -1,0 +1,21 @@
+import{R as e}from"./iframe-DAU5o7iU.js";import{I as y}from"./index-BijfBQdL.js";import{O as P}from"./index-CmCNoR1B.js";import{B as v}from"./index-C_VXSvUM.js";import"./preload-helper-C1FmrZbK.js";import"./index-CvrBQoKC.js";import"./index-fGnOzny4.js";function t({owned:a,updateOwned:u,totalOwned:k}){return e.createElement("div",{className:"ak-aside"},e.createElement("h3",{className:"ak-aside-title"},"Currently owned"),e.createElement("div",{className:"ak-aside-list"},e.createElement("div",{className:"ak-aside-item"},e.createElement("label",{className:"ak-aside-label"},e.createElement("span",{className:"ak-aside-name"},"Orundum"),e.createElement("input",{type:"number",className:"ak-number-input",min:"0",step:"1",value:a.orundum,onChange:n=>u("orundum",parseInt(n.target.value)||0)}))),e.createElement("div",{className:"ak-aside-item"},e.createElement("label",{className:"ak-aside-label"},e.createElement("span",{className:"ak-aside-name"},"Originite Prime"),e.createElement("input",{type:"number",className:"ak-number-input",min:"0",step:"1",value:a.op,onChange:n=>u("op",parseInt(n.target.value)||0)}))),e.createElement("div",{className:"ak-aside-item"},e.createElement("label",{className:"ak-aside-label"},e.createElement("span",{className:"ak-aside-name"},"Headhunting Permits"),e.createElement("input",{type:"number",className:"ak-number-input",min:"0",step:"1",value:a.hhPermits,onChange:n=>u("hhPermits",parseInt(n.target.value)||0)})))),e.createElement("div",{className:"ak-aside-total"},e.createElement("div",{className:"ak-aside-item"},e.createElement("div",{className:"ak-aside-label"},e.createElement("span",{className:"ak-aside-name"},e.createElement(y,{title:"Breakdown",label:"Total Orundum"},e.createElement(v,{items:["Orundum","OP","Permits"],calcs:["-",`${a.op} × 180`,`${a.hhPermits} × 600`],totals:[a.orundum,a.op*180,a.hhPermits*600]}))),e.createElement("span",{className:"ak-aside-value"},e.createElement(P,{withPulls:!0},k))))))}t.__docgenInfo={description:"Component for managing currently owned orundum and resources",methods:[],displayName:"CurrentlyOwned"};const S={title:"Components/CurrentlyOwned",component:t},b={owned:{orundum:1e3,op:3,hhPermits:2},updateOwned:()=>{},totalOwned:1e3+3*180+2*600};function r(){return e.createElement(t,{...b})}function s(){return e.createElement(t,{owned:{orundum:0,op:0,hhPermits:0},updateOwned:()=>{},totalOwned:0})}function m(){return e.createElement(t,{owned:{orundum:1e4,op:50,hhPermits:20},updateOwned:()=>{},totalOwned:1e4+50*180+20*600})}function o(){return e.createElement(t,{owned:{orundum:5e3,op:0,hhPermits:0},updateOwned:()=>{},totalOwned:5e3})}r.__docgenInfo={description:"",methods:[],displayName:"Default"};s.__docgenInfo={description:"",methods:[],displayName:"ZeroOwned"};m.__docgenInfo={description:"",methods:[],displayName:"LargeAmounts"};o.__docgenInfo={description:"",methods:[],displayName:"OnlyOrundum"};var l,d,i;r.parameters={...r.parameters,docs:{...(l=r.parameters)==null?void 0:l.docs,source:{originalSource:`function Default() {
+  return <CurrentlyOwned {...defaultProps} />;
+}`,...(i=(d=r.parameters)==null?void 0:d.docs)==null?void 0:i.source}}};var c,p,O;s.parameters={...s.parameters,docs:{...(c=s.parameters)==null?void 0:c.docs,source:{originalSource:`function ZeroOwned() {
+  return <CurrentlyOwned owned={{
+    orundum: 0,
+    op: 0,
+    hhPermits: 0
+  }} updateOwned={() => {}} totalOwned={0} />;
+}`,...(O=(p=s.parameters)==null?void 0:p.docs)==null?void 0:O.source}}};var h,w,E;m.parameters={...m.parameters,docs:{...(h=m.parameters)==null?void 0:h.docs,source:{originalSource:`function LargeAmounts() {
+  return <CurrentlyOwned owned={{
+    orundum: 10000,
+    op: 50,
+    hhPermits: 20
+  }} updateOwned={() => {}} totalOwned={10000 + 50 * 180 + 20 * 600} />;
+}`,...(E=(w=m.parameters)==null?void 0:w.docs)==null?void 0:E.source}}};var f,N,g;o.parameters={...o.parameters,docs:{...(f=o.parameters)==null?void 0:f.docs,source:{originalSource:`function OnlyOrundum() {
+  return <CurrentlyOwned owned={{
+    orundum: 5000,
+    op: 0,
+    hhPermits: 0
+  }} updateOwned={() => {}} totalOwned={5000} />;
+}`,...(g=(N=o.parameters)==null?void 0:N.docs)==null?void 0:g.source}}};const Z=["Default","ZeroOwned","LargeAmounts","OnlyOrundum"];export{r as Default,m as LargeAmounts,o as OnlyOrundum,s as ZeroOwned,Z as __namedExportsOrder,S as default};

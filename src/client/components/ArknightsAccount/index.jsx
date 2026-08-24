@@ -42,12 +42,17 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     try {
       const result = await getAuthToken(email, code);
       if (result.success) {
-        setAuthState({
+        const auth = {
           channelUid: result.channelUid,
           yostarToken: result.yostarToken,
           server: result.server,
-        });
+        };
+        setAuthState(auth);
         setCode('');
+        // Fetch immediately on a successful login rather than waiting for a
+        // separate manual step — the user's already been warned about the
+        // game-logout side effect up front, on the email form.
+        await fetchAndApply(auth);
       } else {
         setError(result.error || 'Invalid or expired code.');
       }
@@ -64,21 +69,11 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setError(null);
   }
 
-  function handleDisconnect() {
-    // Only clears the auth token — whatever Orundum/OP/Permits values were last
-    // fetched into playerStatus stay put, same as any other manually-entered value.
-    setAuthState(null);
-    setPendingStep('email');
-    setEmail('');
-    setLinkedAccount(null);
-    setError(null);
-  }
-
-  async function handleRefresh() {
+  async function fetchAndApply(auth) {
     setError(null);
     setBusy(true);
     try {
-      const data = await fetchAccountData(authState);
+      const data = await fetchAccountData(auth);
       setLinkedAccount({ nickName: data.nickName, level: data.level });
       onFetched(data);
     } catch (err) {
@@ -158,16 +153,13 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
             </p>
           )}
           <div className="ak-ark-account-actions">
-            <button type="button" className="ak-button" onClick={handleRefresh} disabled={busy}>
-              {busy ? 'Fetching…' : 'Refresh data'}
-            </button>
             <button
               type="button"
-              className="ak-button-secondary"
-              onClick={handleDisconnect}
+              className="ak-button"
+              onClick={() => fetchAndApply(authState)}
               disabled={busy}
             >
-              Disconnect
+              {busy ? 'Fetching…' : 'Refresh data'}
             </button>
           </div>
         </div>

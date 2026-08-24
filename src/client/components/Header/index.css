@@ -2,6 +2,11 @@
   position: fixed;
   padding: 1.5em 2em 2em;
   width: 100%;
+  /* Without this, the padding above is added on top of the 100% width instead of
+     being carved out of it — the header box itself ends up wider than the
+     viewport (by 2x the horizontal padding) on every screen size, not just
+     content overflowing inside it. */
+  box-sizing: border-box;
   /* Opaque through the title itself, fading out only in a thin band at the very
      bottom edge — a soft edge for content scrolling underneath, rather than either
      a hard cutoff or (the earlier bug) a fade tall enough to make a scrolled-up card
@@ -41,4 +46,24 @@ h1 {
   font-size: 1.6em;
   font-weight: bold;
   color: var(--ak-accent);
+}
+
+/* Below this the title text plus pull counter, at their default sizes, are wider
+   than the viewport itself (measured: ~391px of content in as little as a 320-375px
+   window) — shrink the title and reclaim some of the header's side padding so
+   everything fits on one line; flex-wrap is kept as a fallback for anything
+   narrower still, so a very small device degrades to two lines instead of
+   overflowing the screen. */
+@media (max-width: 600px) {
+  .ak-header {
+    padding: 1em 1em 1.5em;
+  }
+
+  .ak-header-title {
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 1.3em;
+  }
 }

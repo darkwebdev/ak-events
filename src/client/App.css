@@ -161,6 +161,11 @@ body {
 @media (max-width: 600px) {
   .ak-main-content {
     flex-direction: column;
+    /* Slightly taller than the header actually needs at this width, so that even a
+       device narrow enough to wrap the header's title onto two lines (see
+       Header/index.css) still clears it instead of the first event card peeking out
+       from underneath. */
+    margin-top: 7em;
   }
 
   .ak-aside-column {

@@ -87,6 +87,9 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
       // Most likely an expired/invalidated token (each fetch logs the game session
       // out, so a stale token here is expected sooner or later) — clear it so the
       // user can just reconnect rather than getting stuck retrying a dead token.
+      // Logged (not just shown generically) since the real GraphQL error is useful
+      // for diagnosing anything that isn't plain token expiry.
+      console.error('[ArknightsAccount] fetchAccountData failed:', err);
       setError('Could not fetch account data — your session may have expired. Please reconnect.');
       setAuthState(null);
       setPendingStep('email');

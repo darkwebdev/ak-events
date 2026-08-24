@@ -56,24 +56,25 @@
   background: color-mix(in srgb, var(--ak-accent) 85%, black);
 }
 
-.ak-button-link {
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--ak-text-muted);
+.ak-button-secondary {
+  padding: 6px 14px;
+  border: 1px solid var(--ak-border);
+  border-radius: 4px;
+  background: var(--ak-surface);
+  color: var(--ak-text);
   font-size: 14px;
-  text-decoration: underline;
-  text-decoration-style: dashed;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.ak-button-link:disabled {
+.ak-button-secondary:disabled {
   opacity: 0.5;
   cursor: default;
 }
 
-.ak-button-link:not(:disabled):hover {
-  color: var(--ak-text);
+.ak-button-secondary:not(:disabled):hover {
+  background: var(--ak-surface-hover);
+  border-color: var(--ak-border-strong);
 }
 
 .ak-ark-account-hint {
@@ -85,12 +86,6 @@
 .ak-ark-account-connected {
   display: flex;
   flex-direction: column;
-}
-
-.ak-ark-account-confirm {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 .ak-ark-account-warning {

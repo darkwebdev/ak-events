@@ -14,7 +14,6 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [linkedAccount, setLinkedAccount] = useState(null); // { nickName, level } from the last successful fetch
-  const [confirmingRefresh, setConfirmingRefresh] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
@@ -75,8 +74,7 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setError(null);
   }
 
-  async function handleConfirmRefresh() {
-    setConfirmingRefresh(false);
+  async function handleRefresh() {
     setError(null);
     setBusy(true);
     try {
@@ -104,6 +102,10 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
 
       {!connected && pendingStep === 'email' && (
         <form className="ak-ark-account-form" onSubmit={handleSendCode}>
+          <p className="ak-ark-account-warning">
+            Fetching your data will log you out of Arknights on this device, every time you refresh
+            it.
+          </p>
           <input
             type="email"
             className="ak-text-input"
@@ -138,7 +140,7 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
             </button>
             <button
               type="button"
-              className="ak-button-link"
+              className="ak-button-secondary"
               onClick={handleCancelCode}
               disabled={busy}
             >
@@ -155,44 +157,19 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
               Linked: {linkedAccount.nickName} (Lv. {linkedAccount.level})
             </p>
           )}
-          {!confirmingRefresh ? (
-            <div className="ak-ark-account-actions">
-              <button
-                type="button"
-                className="ak-button"
-                onClick={() => setConfirmingRefresh(true)}
-                disabled={busy}
-              >
-                {busy ? 'Fetching…' : 'Refresh data'}
-              </button>
-              <button
-                type="button"
-                className="ak-button-link"
-                onClick={handleDisconnect}
-                disabled={busy}
-              >
-                Disconnect
-              </button>
-            </div>
-          ) : (
-            <div className="ak-ark-account-confirm">
-              <p className="ak-ark-account-warning">
-                Fetching your data will log you out of Arknights on this device — continue?
-              </p>
-              <div className="ak-ark-account-actions">
-                <button type="button" className="ak-button" onClick={handleConfirmRefresh}>
-                  Yes, fetch
-                </button>
-                <button
-                  type="button"
-                  className="ak-button-link"
-                  onClick={() => setConfirmingRefresh(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
+          <div className="ak-ark-account-actions">
+            <button type="button" className="ak-button" onClick={handleRefresh} disabled={busy}>
+              {busy ? 'Fetching…' : 'Refresh data'}
+            </button>
+            <button
+              type="button"
+              className="ak-button-secondary"
+              onClick={handleDisconnect}
+              disabled={busy}
+            >
+              Disconnect
+            </button>
+          </div>
         </div>
       )}
 

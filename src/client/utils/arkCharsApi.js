@@ -33,9 +33,11 @@ export async function sendAuthCode(email, server = 'en') {
 }
 
 // Exchanges the emailed one-time `code` for a Yostar session token. Returns
-// { success, channelUid, yostarToken, server, error }. Note: this token is a real
-// game session credential — using it (via fetchAccountData below) logs the player
-// out of the game itself, per Yostar's single-session behavior.
+// { success, channelUid, yostarToken, deviceId, server, error }. `deviceId` is an
+// opaque string — persist it as-is alongside the token and pass it back on every
+// authenticated call (fetchAccountData below); without it the server presents as a
+// fresh device on each call, which is what actually logs the player out of the game
+// (not the token itself). Treat it as a required part of the credential, not optional.
 export async function getAuthToken(email, code, server = 'en') {
   const data = await graphqlRequest(
     `mutation GetAuthToken($email: String!, $code: String!, $server: String!) {
@@ -43,6 +45,7 @@ export async function getAuthToken(email, code, server = 'en') {
         success
         channelUid
         yostarToken
+        deviceId
         server
         error
       }
@@ -73,22 +76,40 @@ async function fetchPlayerAvatarUrl(playerId, server) {
 
 // Fetches the linked account's nickname/level/uid (for display, confirming which
 // account is connected) and current Orundum / Originite Prime / Headhunting Permit
-// counts, using a previously obtained { channelUid, yostarToken, server }.
-export async function fetchAccountData({ channelUid, yostarToken, server }) {
+// counts, using a previously obtained { channelUid, yostarToken, deviceId, server }.
+// Passing the same deviceId back on every call (rather than leaving it out, which
+// falls back to a fresh random device per call server-side) is what's expected to
+// stop each fetch from kicking the player's live game session.
+export async function fetchAccountData({ channelUid, yostarToken, deviceId, server }) {
   const data = await graphqlRequest(
-    `query FetchAccountData($channelUid: String!, $yostarToken: String!, $server: String!) {
-      myStatus(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
+    `query FetchAccountData(
+      $channelUid: String!
+      $yostarToken: String!
+      $deviceId: String
+      $server: String!
+    ) {
+      myStatus(
+        channelUid: $channelUid
+        yostarToken: $yostarToken
+        deviceId: $deviceId
+        server: $server
+      ) {
         nickName
         level
         uid
       }
-      myInventory(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
+      myInventory(
+        channelUid: $channelUid
+        yostarToken: $yostarToken
+        deviceId: $deviceId
+        server: $server
+      ) {
         orundum
         originitePrime
         headhuntingPermits
       }
     }`,
-    { channelUid, yostarToken, server }
+    { channelUid, yostarToken, deviceId, server }
   );
   const uid = data.myStatus?.uid ?? null;
   const avatarUrl = uid ? await fetchPlayerAvatarUrl(uid, server) : null;

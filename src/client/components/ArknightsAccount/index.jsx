@@ -5,9 +5,9 @@ import './index.css';
 // Imports Orundum/Originite Prime/Headhunting Permit counts from a real Arknights
 // account via the user's own ak-chars-api (which wraps Yostar's email one-time-code
 // login — the same flow the official game client uses). `authState` is
-// `{ channelUid, yostarToken, server } | null`, persisted by the caller (via
-// useStorage) so a successful login survives a page reload; this component only
-// owns the transient email/code form state and in-flight/error UI.
+// `{ channelUid, yostarToken, deviceId, server } | null`, persisted by the caller
+// (via useStorage) so a successful login survives a page reload; this component
+// only owns the transient email/code form state and in-flight/error UI.
 export function ArknightsAccount({ authState, setAuthState, onFetched }) {
   const connected = !!authState;
   const [pendingStep, setPendingStep] = useState('email'); // 'email' | 'code' — only used while !connected
@@ -45,6 +45,7 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
         const auth = {
           channelUid: result.channelUid,
           yostarToken: result.yostarToken,
+          deviceId: result.deviceId,
           server: result.server,
         };
         setAuthState(auth);

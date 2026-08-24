@@ -52,7 +52,26 @@ export async function getAuthToken(email, code, server = 'en') {
   return data.getAuthToken;
 }
 
-// Fetches the linked account's nickname/level (for display, confirming which
+// Looks up the public avatar image URL for any player uid (not scoped to the
+// current session/token — same lookup the API uses for search/expand results).
+// Its resolution has known fallback gaps for some account shapes, so a failure
+// here is treated as "no avatar" rather than failing the whole account fetch.
+async function fetchPlayerAvatarUrl(playerId, server) {
+  try {
+    const data = await graphqlRequest(
+      `query GetPlayerAvatarUrl($playerId: String!, $server: String!) {
+        getPlayerAvatarUrl(playerId: $playerId, server: $server)
+      }`,
+      { playerId, server }
+    );
+    return data.getPlayerAvatarUrl ?? null;
+  } catch (err) {
+    console.error('[arkCharsApi] getPlayerAvatarUrl failed:', err);
+    return null;
+  }
+}
+
+// Fetches the linked account's nickname/level/uid (for display, confirming which
 // account is connected) and current Orundum / Originite Prime / Headhunting Permit
 // counts, using a previously obtained { channelUid, yostarToken, server }.
 export async function fetchAccountData({ channelUid, yostarToken, server }) {
@@ -61,6 +80,7 @@ export async function fetchAccountData({ channelUid, yostarToken, server }) {
       myStatus(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         nickName
         level
+        uid
       }
       myInventory(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         orundum
@@ -70,9 +90,12 @@ export async function fetchAccountData({ channelUid, yostarToken, server }) {
     }`,
     { channelUid, yostarToken, server }
   );
+  const uid = data.myStatus?.uid ?? null;
+  const avatarUrl = uid ? await fetchPlayerAvatarUrl(uid, server) : null;
   return {
     nickName: data.myStatus?.nickName ?? null,
     level: data.myStatus?.level ?? null,
+    avatarUrl,
     orundum: data.myInventory?.orundum ?? 0,
     originitePrime: data.myInventory?.originitePrime ?? 0,
     headhuntingPermits: data.myInventory?.headhuntingPermits ?? 0,

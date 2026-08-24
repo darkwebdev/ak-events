@@ -74,7 +74,7 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setBusy(true);
     try {
       const data = await fetchAccountData(auth);
-      setLinkedAccount({ nickName: data.nickName, level: data.level });
+      setLinkedAccount({ nickName: data.nickName, level: data.level, avatarUrl: data.avatarUrl });
       onFetched(data);
     } catch (err) {
       // Most likely an expired/invalidated token (each fetch logs the game session
@@ -148,7 +148,16 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
       {connected && (
         <div className="ak-ark-account-connected">
           {linkedAccount && (
-            <p className="ak-ark-account-hint">
+            <p className="ak-ark-account-hint ak-ark-account-linked">
+              {linkedAccount.avatarUrl && (
+                <img
+                  className="ak-ark-account-avatar"
+                  src={linkedAccount.avatarUrl}
+                  alt=""
+                  width={28}
+                  height={28}
+                />
+              )}
               Linked: {linkedAccount.nickName} (Lv. {linkedAccount.level})
             </p>
           )}

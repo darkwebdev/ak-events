@@ -83,6 +83,19 @@
   color: var(--ak-text-muted);
 }
 
+.ak-ark-account-linked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ak-ark-account-avatar {
+  border-radius: 4px;
+  border: 1px solid var(--ak-border);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .ak-ark-account-connected {
   display: flex;
   flex-direction: column;

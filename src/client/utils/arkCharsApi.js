@@ -3,6 +3,7 @@
 // hardcoded rather than an env var. (Formerly ak-chars-api.fly.dev — that
 // deployment is retired; this is its Cloud Run replacement, same schema/auth flow.)
 const API_URL = 'https://ak-account-api-705516204230.us-central1.run.app/graphql';
+const API_ORIGIN = new URL(API_URL).origin;
 
 async function graphqlRequest(query, variables) {
   const res = await fetch(API_URL, {
@@ -67,7 +68,10 @@ async function fetchPlayerAvatarUrl(playerId, server) {
       }`,
       { playerId, server }
     );
-    return data.getPlayerAvatarUrl ?? null;
+    // The field returns a path relative to the API host (e.g. "/avatars/123"), not
+    // a full URL — resolving it as-is would have the browser fetch it against the
+    // *page's* origin instead. `new URL` leaves an already-absolute URL untouched.
+    return data.getPlayerAvatarUrl ? new URL(data.getPlayerAvatarUrl, API_ORIGIN).toString() : null;
   } catch (err) {
     console.error('[arkCharsApi] getPlayerAvatarUrl failed:', err);
     return null;

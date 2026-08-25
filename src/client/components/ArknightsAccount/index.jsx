@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useStorage } from '../../hooks/useStorage.js';
 import { sendAuthCode, getAuthToken, fetchAccountData } from '../../utils/arkCharsApi.js';
 import './index.css';
 
@@ -13,7 +14,10 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
   const [pendingStep, setPendingStep] = useState('email'); // 'email' | 'code' — only used while !connected
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [linkedAccount, setLinkedAccount] = useState(null); // { nickName, level } from the last successful fetch
+  // { nickName, level, avatarUrl } from the last successful fetch — persisted so a
+  // page reload can keep showing it without needing another live fetch (which is
+  // what actually talks to Yostar) just to redisplay data we already have.
+  const [linkedAccount, setLinkedAccount] = useStorage('ak-events-arknights-linked-account', null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
@@ -69,18 +73,6 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setCode('');
     setError(null);
   }
-
-  useEffect(() => {
-    if (connected && !linkedAccount) {
-      fetchAndApply(authState);
-    }
-    // Deliberately mount-only: `authState` survives a page reload (persisted via
-    // useStorage) but `linkedAccount` doesn't, so a reload otherwise leaves the
-    // "connected" view with no name/level/avatar shown until a manual refresh. A
-    // fresh login already fetches inline in handleVerifyCode, and that doesn't
-    // remount this component — re-running on every authState/connected change here
-    // would instead race that inline fetch and double-hit the API on every login.
-  }, []);
 
   async function fetchAndApply(auth) {
     setError(null);

@@ -74,6 +74,17 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setError(null);
   }
 
+  function handleLogout() {
+    // Only clears the auth token/display cache — whatever Orundum/OP/Permits
+    // values were last fetched into playerStatus stay put, same as any other
+    // manually-entered value.
+    setAuthState(null);
+    setLinkedAccount(null);
+    setPendingStep('email');
+    setEmail('');
+    setError(null);
+  }
+
   async function fetchAndApply(auth) {
     setError(null);
     setBusy(true);
@@ -164,6 +175,24 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
                 />
               )}
               Linked: {linkedAccount.nickName} (Lv. {linkedAccount.level})
+              <button
+                type="button"
+                className="ak-ark-account-logout"
+                onClick={handleLogout}
+                disabled={busy}
+                aria-label="Log out of Arknights account"
+                title="Log out"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" strokeLinecap="round" />
+                  <polyline
+                    points="16 17 21 12 16 7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line x1="21" y1="12" x2="9" y2="12" strokeLinecap="round" />
+                </svg>
+              </button>
             </p>
           )}
           <div className="ak-ark-account-actions">

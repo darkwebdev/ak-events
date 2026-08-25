@@ -20,7 +20,7 @@ const GAP = 2;
 export function InfoButton({ children, title, label }) {
   const [open, setOpen] = useState(false);
   const arrowRef = useRef(null);
-  const { refs, context, floatingStyles } = useFloating({
+  const { refs, context, floatingStyles, isPositioned } = useFloating({
     open,
     onOpenChange: setOpen,
     middleware: [
@@ -56,7 +56,13 @@ export function InfoButton({ children, title, label }) {
         <div
           className="info-popover"
           ref={refs.setFloating}
-          style={floatingStyles}
+          // `floatingStyles` starts at an unpositioned default (effectively 0,0)
+          // until the arrow/flip/shift middleware actually resolve — without
+          // gating visibility on `isPositioned`, the popover (and its arrow, which
+          // depends on that same resolved position) briefly renders there first and
+          // visibly jumps to the real spot once positioning catches up a frame
+          // later. Hiding it until then means it only ever appears already correct.
+          style={{ ...floatingStyles, visibility: isPositioned ? 'visible' : 'hidden' }}
           {...getFloatingProps()}
         >
           <div style={transitionStyles}>

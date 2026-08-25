@@ -1,7 +1,7 @@
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { wikiApiBase, wikiBase, indexUrl } from '../config.js';
+import { wikiApiBase, wikiBase, indexUrl, gachaTableUrl, characterTableUrl } from '../config.js';
 import { parseIndexHtml } from './parser.js';
 
 function fetchWikiApi(title) {
@@ -217,11 +217,6 @@ function fetchJsonUrl(url) {
       .on('error', () => resolve(null));
   });
 }
-
-const gachaTableUrl =
-  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/gacha_table.json';
-const characterTableUrl =
-  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/character_table.json';
 
 // Fetch the game's own gacha pool data — this is what tells us exactly when each
 // Limited 6★ operator debuted (an authoritative alternative to the wiki, which

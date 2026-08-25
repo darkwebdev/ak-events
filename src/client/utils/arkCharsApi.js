@@ -1,8 +1,7 @@
-// Thin GraphQL client for ak-account-api, the user's own service that wraps
-// Arknights' Yostar email-OTP login flow. Public API endpoint, not a secret, so
-// hardcoded rather than an env var. (Formerly ak-chars-api.fly.dev — that
-// deployment is retired; this is its Cloud Run replacement, same schema/auth flow.)
-const API_URL = 'https://ak-account-api-705516204230.us-central1.run.app/graphql';
+// Thin GraphQL client for ak-account-api — see config.js for the endpoint itself.
+import { arkAccountApiUrl } from '../config.js';
+
+const API_URL = arkAccountApiUrl;
 const API_ORIGIN = new URL(API_URL).origin;
 
 async function graphqlRequest(query, variables) {

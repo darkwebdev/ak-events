@@ -6,12 +6,9 @@ import './index.css';
 // Imports Orundum/Originite Prime/Headhunting Permit counts from a real Arknights
 // account via the user's own ak-chars-api (which wraps Yostar's email one-time-code
 // login — the same flow the official game client uses). `authState` is
-// `{ channelUid, yostarToken, deviceId, session, server } | null`, persisted by the
-// caller (via useStorage) so a successful login survives a page reload; this
-// component only owns the transient email/code form state and in-flight/error UI.
-// `session` starts absent (there's nothing to resume before the first fetch) and
-// gets updated after every successful fetch — see fetchAccountData's own comment
-// for why it must always be the most recently returned value.
+// `{ channelUid, yostarToken, server } | null`, persisted by the caller (via
+// useStorage) so a successful login survives a page reload; this component only
+// owns the transient email/code form state and in-flight/error UI.
 export function ArknightsAccount({ authState, setAuthState, onFetched }) {
   const connected = !!authState;
   const [pendingStep, setPendingStep] = useState('email'); // 'email' | 'code' — only used while !connected
@@ -52,7 +49,6 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
         const auth = {
           channelUid: result.channelUid,
           yostarToken: result.yostarToken,
-          deviceId: result.deviceId,
           server: result.server,
         };
         setAuthState(auth);
@@ -93,11 +89,6 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setBusy(true);
     try {
       const data = await fetchAccountData(auth);
-      // Persist the updated session (resumed rather than re-logging-in next time)
-      // alongside the rest of the credential — merge onto `auth`, not the current
-      // `authState` prop, since a call kicked off before a re-render still closes
-      // over the `auth` it was passed even if authState itself has since changed.
-      setAuthState({ ...auth, session: data.session });
       setLinkedAccount({ nickName: data.nickName, level: data.level, avatarUrl: data.avatarUrl });
       onFetched(data);
     } catch (err) {

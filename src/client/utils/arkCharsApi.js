@@ -4,9 +4,6 @@ import { arkAccountApiUrl } from '../config.js';
 const API_URL = arkAccountApiUrl;
 const API_ORIGIN = new URL(API_URL).origin;
 
-// Returns both the parsed GraphQL data and the raw Response, since the session-
-// resumption mechanism used by fetchAccountData below rides on a response header
-// (X-Ak-Session) rather than anything in the GraphQL body.
 async function graphqlRequest(query, variables) {
   const res = await fetch(API_URL, {
     method: 'POST',
@@ -17,13 +14,13 @@ async function graphqlRequest(query, variables) {
   if (json.errors?.length) {
     throw new Error(json.errors[0].message || 'GraphQL request failed');
   }
-  return { data: json.data, response: res };
+  return json.data;
 }
 
 // Sends a one-time login code to `email` via Yostar (the same code the official
 // game client would send). Returns { success, message }.
 export async function sendAuthCode(email, server = 'en') {
-  const { data } = await graphqlRequest(
+  const data = await graphqlRequest(
     `mutation SendAuthCode($email: String!, $server: String!) {
       sendAuthCode(email: $email, server: $server) {
         success
@@ -36,19 +33,21 @@ export async function sendAuthCode(email, server = 'en') {
 }
 
 // Exchanges the emailed one-time `code` for a Yostar session token. Returns
-// { success, channelUid, yostarToken, deviceId, server, error }. `deviceId` is an
-// opaque string — persist it as-is alongside the token and pass it back on every
-// authenticated call (fetchAccountData below); without it the server presents as a
-// fresh device on each call, which is what actually logs the player out of the game
-// (not the token itself). Treat it as a required part of the credential, not optional.
+// { success, channelUid, yostarToken, server, error }. Note: this token is a real
+// game session credential — using it (via fetchAccountData below) logs the player
+// out of the game itself, per Yostar's single-session-per-account enforcement.
+// (Tried reusing a stable device identity and, separately, resuming rather than
+// re-running the login handshake — neither stopped the kick in testing against a
+// real account: Yostar ties one live connection to the account itself, and any
+// authenticated request, ours or the real game client's, claims that slot and
+// evicts whoever held it. Not something fixable from this side.)
 export async function getAuthToken(email, code, server = 'en') {
-  const { data } = await graphqlRequest(
+  const data = await graphqlRequest(
     `mutation GetAuthToken($email: String!, $code: String!, $server: String!) {
       getAuthToken(email: $email, code: $code, server: $server) {
         success
         channelUid
         yostarToken
-        deviceId
         server
         error
       }
@@ -64,7 +63,7 @@ export async function getAuthToken(email, code, server = 'en') {
 // here is treated as "no avatar" rather than failing the whole account fetch.
 async function fetchPlayerAvatarUrl(playerId, server) {
   try {
-    const { data } = await graphqlRequest(
+    const data = await graphqlRequest(
       `query GetPlayerAvatarUrl($playerId: String!, $server: String!) {
         getPlayerAvatarUrl(playerId: $playerId, server: $server)
       }`,
@@ -82,64 +81,29 @@ async function fetchPlayerAvatarUrl(playerId, server) {
 
 // Fetches the linked account's nickname/level/uid (for display, confirming which
 // account is connected) and current Orundum / Originite Prime / Headhunting Permit
-// counts, using a previously obtained
-// { channelUid, yostarToken, deviceId, session, server }.
-//
-// `session` resumes an already-authenticated Yostar session instead of re-running
-// the full login handshake (deviceId reuse alone wasn't enough to stop each fetch
-// from kicking the player's live game session — this is a genuinely different
-// mechanism: skip re-authenticating at all, rather than make re-authenticating look
-// consistent). Pass whatever was returned by the previous call (or omit it on the
-// very first authenticated call after login, when no session exists yet). The
-// server returns the *updated* session — it's a counter that advances on every
-// authenticated request, so a stale/previously-sent value won't work for the next
-// call — via the `X-Ak-Session` response header, not the GraphQL body; the caller
-// must persist `.session` from this function's return value for next time.
-export async function fetchAccountData({ channelUid, yostarToken, deviceId, session, server }) {
-  const { data, response } = await graphqlRequest(
-    `query FetchAccountData(
-      $channelUid: String!
-      $yostarToken: String!
-      $deviceId: String
-      $session: String
-      $server: String!
-    ) {
-      myStatus(
-        channelUid: $channelUid
-        yostarToken: $yostarToken
-        deviceId: $deviceId
-        session: $session
-        server: $server
-      ) {
+// counts, using a previously obtained { channelUid, yostarToken, server }.
+export async function fetchAccountData({ channelUid, yostarToken, server }) {
+  const data = await graphqlRequest(
+    `query FetchAccountData($channelUid: String!, $yostarToken: String!, $server: String!) {
+      myStatus(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         nickName
         level
         uid
       }
-      myInventory(
-        channelUid: $channelUid
-        yostarToken: $yostarToken
-        deviceId: $deviceId
-        session: $session
-        server: $server
-      ) {
+      myInventory(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         orundum
         originitePrime
         headhuntingPermits
       }
     }`,
-    { channelUid, yostarToken, deviceId, session, server }
+    { channelUid, yostarToken, server }
   );
   const uid = data.myStatus?.uid ?? null;
   const avatarUrl = uid ? await fetchPlayerAvatarUrl(uid, server) : null;
-  // Falls back to the session we sent in if the header is missing for some reason
-  // on an otherwise-successful response — never surface `null` here, since the
-  // caller persisting that would force the next call back into a full login.
-  const updatedSession = response.headers.get('X-Ak-Session') ?? session ?? null;
   return {
     nickName: data.myStatus?.nickName ?? null,
     level: data.myStatus?.level ?? null,
     avatarUrl,
-    session: updatedSession,
     orundum: data.myInventory?.orundum ?? 0,
     originitePrime: data.myInventory?.originitePrime ?? 0,
     headhuntingPermits: data.myInventory?.headhuntingPermits ?? 0,

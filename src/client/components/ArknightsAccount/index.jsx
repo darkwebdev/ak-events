@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { sendAuthCode, getAuthToken, fetchAccountData } from '../../utils/arkCharsApi.js';
 import './index.css';
 
@@ -69,6 +69,18 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
     setCode('');
     setError(null);
   }
+
+  useEffect(() => {
+    if (connected && !linkedAccount) {
+      fetchAndApply(authState);
+    }
+    // Deliberately mount-only: `authState` survives a page reload (persisted via
+    // useStorage) but `linkedAccount` doesn't, so a reload otherwise leaves the
+    // "connected" view with no name/level/avatar shown until a manual refresh. A
+    // fresh login already fetches inline in handleVerifyCode, and that doesn't
+    // remount this component — re-running on every authState/connected change here
+    // would instead race that inline fetch and double-hit the API on every login.
+  }, []);
 
   async function fetchAndApply(auth) {
     setError(null);

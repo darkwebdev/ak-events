@@ -5,7 +5,11 @@
 
 .ak-event {
   padding: 14px 16px;
-  flex: 2 1 0;
+  /* flex-grow: 0, not the usual 2:1-with-the-banner growth — when there's no banner
+     (.ak-event is the row's only child) a growing flex-basis would stretch this to
+     the row's full width instead of leaving the missing banner's space empty. A
+     fixed 2/3 basis looks identical to the two-column case either way. */
+  flex: 0 1 66.6667%;
   min-width: 0;
 }
 
@@ -67,7 +71,7 @@
    header is styled at the same level as the event's own title rather than subordinate
    to it. */
 .ak-event-banner {
-  flex: 1 1 0;
+  flex: 0 1 33.3333%;
   min-width: 200px;
   padding: 14px 16px;
   border-left: 1px solid var(--ak-border);

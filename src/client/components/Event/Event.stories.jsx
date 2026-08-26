@@ -122,6 +122,27 @@ export const MultipleDiscountedOperators = {
   args: { bannerType: 'Limited', selected: false, discountedOperators: ['Chongyue', 'Shu'] },
 };
 
+// A banner-less event's row keeps the same ~2/3 event-column width as a paired one
+// instead of stretching to fill the row — shown stacked against a bannered event so
+// the two widths (and the empty space next to the banner-less one) are directly
+// comparable, which a single NoBanner story rendered alone can't demonstrate.
+export function NoBannerWidthComparison() {
+  return (
+    <ul className="ak-events-list">
+      <Event
+        event={{ ...baseEvent, banner: buildBanner('Limited', ['Chongyue']) }}
+        selectedEvents={new Set()}
+        onEventToggle={() => {}}
+      />
+      <Event
+        event={{ ...baseEvent, name: 'A Different Event', banner: null }}
+        selectedEvents={new Set()}
+        onEventToggle={() => {}}
+      />
+    </ul>
+  );
+}
+
 const RESPONSIVE_WIDTHS = [
   { width: 1400, height: 340, label: '1400px — wide desktop: banner sits beside the event' },
   {

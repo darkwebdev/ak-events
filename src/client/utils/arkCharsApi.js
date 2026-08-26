@@ -2,7 +2,6 @@
 import { arkAccountApiUrl } from '../config.js';
 
 const API_URL = arkAccountApiUrl;
-const API_ORIGIN = new URL(API_URL).origin;
 
 async function graphqlRequest(query, variables) {
   const res = await fetch(API_URL, {
@@ -57,31 +56,13 @@ export async function getAuthToken(email, code, server = 'en') {
   return data.getAuthToken;
 }
 
-// Looks up the public avatar image URL for any player uid (not scoped to the
-// current session/token — same lookup the API uses for search/expand results).
-// Its resolution has known fallback gaps for some account shapes, so a failure
-// here is treated as "no avatar" rather than failing the whole account fetch.
-async function fetchPlayerAvatarUrl(playerId, server) {
-  try {
-    const data = await graphqlRequest(
-      `query GetPlayerAvatarUrl($playerId: String!, $server: String!) {
-        getPlayerAvatarUrl(playerId: $playerId, server: $server)
-      }`,
-      { playerId, server }
-    );
-    // The field returns a path relative to the API host (e.g. "/avatars/123"), not
-    // a full URL — resolving it as-is would have the browser fetch it against the
-    // *page's* origin instead. `new URL` leaves an already-absolute URL untouched.
-    return data.getPlayerAvatarUrl ? new URL(data.getPlayerAvatarUrl, API_ORIGIN).toString() : null;
-  } catch (err) {
-    console.error('[arkCharsApi] getPlayerAvatarUrl failed:', err);
-    return null;
-  }
-}
-
-// Fetches the linked account's nickname/level/uid (for display, confirming which
-// account is connected) and current Orundum / Originite Prime / Headhunting Permit
-// counts, using a previously obtained { channelUid, yostarToken, server }.
+// Fetches the linked account's nickname/level/uid/avatar (for display, confirming
+// which account is connected) and current Orundum / Originite Prime / Headhunting
+// Permit counts, using a previously obtained { channelUid, yostarToken, server }.
+// avatarUrl comes straight from myStatus as a ready-to-use image URL (resolved
+// server-side from the account's own chosen portrait — this only works for the
+// logged-in user's own avatar, not an arbitrary player id) and may be null if the
+// portrait couldn't be resolved.
 export async function fetchAccountData({ channelUid, yostarToken, server }) {
   const data = await graphqlRequest(
     `query FetchAccountData($channelUid: String!, $yostarToken: String!, $server: String!) {
@@ -89,6 +70,7 @@ export async function fetchAccountData({ channelUid, yostarToken, server }) {
         nickName
         level
         uid
+        avatarUrl
       }
       myInventory(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         orundum
@@ -98,12 +80,10 @@ export async function fetchAccountData({ channelUid, yostarToken, server }) {
     }`,
     { channelUid, yostarToken, server }
   );
-  const uid = data.myStatus?.uid ?? null;
-  const avatarUrl = uid ? await fetchPlayerAvatarUrl(uid, server) : null;
   return {
     nickName: data.myStatus?.nickName ?? null,
     level: data.myStatus?.level ?? null,
-    avatarUrl,
+    avatarUrl: data.myStatus?.avatarUrl ?? null,
     orundum: data.myInventory?.orundum ?? 0,
     originitePrime: data.myInventory?.originitePrime ?? 0,
     headhuntingPermits: data.myInventory?.headhuntingPermits ?? 0,

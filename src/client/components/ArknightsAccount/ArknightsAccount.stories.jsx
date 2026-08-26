@@ -13,9 +13,9 @@ const FAKE_AUTH = {
   server: 'en',
 };
 
-// Small self-contained placeholder (no network dependency, unlike the real avatar
-// endpoint) so this story renders identically offline and doesn't depend on
-// getPlayerAvatarUrl's own reliability.
+// Small self-contained placeholder (no network dependency, unlike the real
+// myStatus.avatarUrl fetch) so this story renders identically offline and doesn't
+// depend on that field's own reliability.
 const FAKE_AVATAR_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'>
   <rect width='28' height='28' rx='4' fill='%23564fd1'/>
   <text x='14' y='19' font-family='Arial' font-size='14' fill='white' text-anchor='middle'>D</text>

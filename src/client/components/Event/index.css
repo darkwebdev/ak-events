@@ -5,12 +5,30 @@
 
 .ak-event {
   padding: 14px 16px;
-  /* flex-grow: 0, not the usual 2:1-with-the-banner growth — when there's no banner
-     (.ak-event is the row's only child) a growing flex-basis would stretch this to
-     the row's full width instead of leaving the missing banner's space empty. A
-     fixed 2/3 basis looks identical to the two-column case either way. */
-  flex: 0 1 66.6667%;
+  /* Grows 2:1 against the banner column below. When there's no banner to grow
+     against, .ak-event is the row's only flex child and would otherwise grow to
+     fill the whole row — the card itself is narrowed instead (see the
+     .ak-events-list-item rule further down), so this still only fills that
+     already-narrowed width. */
+  flex: 2 1 0;
   min-width: 0;
+}
+
+/* .ak-events-list-item (the bordered card) is defined in EventsList/index.css, but
+   rendered by this component (see index.jsx) and its width is entirely a function
+   of this component's own event/banner layout — kept here, next to the rules it
+   depends on, rather than split across files by which component owns the class
+   name. On wide layouts, where event and banner sit side by side as a 2:1 split, a
+   banner-less event has no banner column to grow against and would otherwise
+   stretch its card to the full row width, leaving an empty bordered gap where the
+   banner would have been; narrowing the whole card to the event column's own width
+   reads better than that empty gap. Reset back to full width below the 900px
+   breakpoint further down, where event/banner always stack full-width regardless of
+   whether a banner is present. */
+@media (min-width: 901px) {
+  .ak-events-list-item:not(:has(.ak-event-banner)) {
+    width: 66.6667%;
+  }
 }
 
 .ak-event-title {
@@ -71,7 +89,7 @@
    header is styled at the same level as the event's own title rather than subordinate
    to it. */
 .ak-event-banner {
-  flex: 0 1 33.3333%;
+  flex: 1 1 0;
   min-width: 200px;
   padding: 14px 16px;
   border-left: 1px solid var(--ak-border);

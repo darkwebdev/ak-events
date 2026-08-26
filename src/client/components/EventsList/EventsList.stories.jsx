@@ -107,3 +107,39 @@ const allSelectedProps = {
 export function AllSelected() {
   return <EventsList {...allSelectedProps} />;
 }
+
+function makeBanner(name) {
+  return {
+    name,
+    type: 'Limited',
+    sparkEligible: true,
+    operators: [
+      { name: 'Chongyue', star: 6, class: 'Guard', limited: true, icon: null, sparkCost: 300 },
+      { name: 'Taraxacum', star: 5, class: 'Medic', limited: false, icon: null, sparkCost: null },
+    ],
+  };
+}
+
+// Real event lists are a mix — most events have a matching banner, some don't (an
+// event whose banner data hasn't been scraped/matched yet, or one with no gacha
+// banner at all). Alternates banner/no-banner across manyEvents so both the
+// side-by-side (banner present) and narrowed-card (banner absent) layouts from
+// Event/index.css are visible together, in the same list, rather than only in
+// Event.stories.jsx's isolated NoBannerWidthComparison.
+const mixedBannerEvents = manyEvents.map((e, i) => ({
+  ...e,
+  cnStart: e.globalStart,
+  banner: i % 2 === 0 ? makeBanner(`Banner: ${e.name}`) : null,
+}));
+
+const mixedBannersProps = {
+  filteredEvents: mixedBannerEvents,
+  selectedEvents: new Set(),
+  onEventToggle: () => {},
+  settingsTotal: 200,
+  playerOrundumTotal: 1000,
+};
+
+export function MixedBanners() {
+  return <EventsList {...mixedBannersProps} />;
+}

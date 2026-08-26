@@ -1,0 +1,1 @@
+import{R as r}from"./iframe-prUs4ROx.js";import{n as o}from"./images-BVwpUHA0.js";function m({className:n}){return r.createElement("img",{className:`ak-orundum-icon${n?` ${n}`:""}`,src:o("/images/icon-orundum-red.svg"),alt:"Orundum"})}m.__docgenInfo={description:"",methods:[],displayName:"OrundumIcon"};export{m as O};

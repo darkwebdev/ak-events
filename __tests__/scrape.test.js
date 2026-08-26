@@ -8,6 +8,10 @@ const mockFetchBannersPageHtml = vi.fn();
 const mockFetchOperatorCategories = vi.fn();
 const mockFetchGachaTable = vi.fn();
 const mockFetchCharacterTable = vi.fn();
+const mockFetchActivityTable = vi.fn();
+const mockFetchStageTable = vi.fn();
+const mockFetchArkpediaEventsHtml = vi.fn();
+const mockFetchArkpediaEventDetailHtml = vi.fn();
 
 vi.mock('../src/server/lib/network.js', () => ({
   fetchEventsViaApi: (...args) => mockFetchEventsViaApi(...args),
@@ -18,6 +22,10 @@ vi.mock('../src/server/lib/network.js', () => ({
   fetchOperatorCategories: (...args) => mockFetchOperatorCategories(...args),
   fetchGachaTable: (...args) => mockFetchGachaTable(...args),
   fetchCharacterTable: (...args) => mockFetchCharacterTable(...args),
+  fetchActivityTable: (...args) => mockFetchActivityTable(...args),
+  fetchStageTable: (...args) => mockFetchStageTable(...args),
+  fetchArkpediaEventsHtml: (...args) => mockFetchArkpediaEventsHtml(...args),
+  fetchArkpediaEventDetailHtml: (...args) => mockFetchArkpediaEventDetailHtml(...args),
 }));
 
 const mockSaveJson = vi.fn();
@@ -82,6 +90,13 @@ describe('scrapeEvents', () => {
     // debut date to exercise the 200-cost reduction.
     mockFetchGachaTable.mockResolvedValue(null);
     mockFetchCharacterTable.mockResolvedValue(null);
+    // Default: neither supplementary source has anything, so events keep whatever
+    // dates/rewards the wiki-based mocks above already gave them — individual tests
+    // override these to exercise the activityTable/arkpedia layering itself.
+    mockFetchActivityTable.mockResolvedValue(null);
+    mockFetchStageTable.mockResolvedValue(null);
+    mockFetchArkpediaEventsHtml.mockResolvedValue(null);
+    mockFetchArkpediaEventDetailHtml.mockResolvedValue(null);
     exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
       throw new Error(`process.exit:${code}`);
     });
@@ -455,5 +470,140 @@ describe('scrapeEvents', () => {
     );
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
     expect(savedEvents[0].banner).toBeNull();
+  });
+
+  test("activityTable's confirmed date overrides the wiki's own date, and Originite Prime is computed from stage data when the wiki didn't provide one", async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: null,
+        image: null,
+        // Deliberately a different (wrong) date than activityTable's below, proving
+        // activityTable wins when both are present.
+        globalDateStr: '2026/01/01–2026/01/15',
+        cnDateStr: null,
+      },
+    ]);
+    mockFetchActivityTable.mockResolvedValue({
+      basicInfo: {
+        act_test: {
+          id: 'act_test',
+          name: 'Story Event',
+          // Safely far in the future (not a real date this test cares about) so this
+          // never trips findActivity's "already ended" rejection as real time passes.
+          startTime: Date.UTC(2099, 7, 20) / 1000,
+          endTime: Date.UTC(2099, 9, 1) / 1000,
+        },
+      },
+    });
+    mockFetchStageTable.mockResolvedValue({
+      stages: {
+        act_test_01: { diamondOnceDrop: 5 },
+        act_test_02: { diamondOnceDrop: 3 },
+      },
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents[0]).toMatchObject({
+      globalStart: '2099-08-20',
+      datesPredicted: false,
+      origPrime: 8,
+    });
+  });
+
+  test("arkpedia's predicted date lets an otherwise dateless event survive the filter with no orundum or banner", async () => {
+    mockFetchEventsViaApi.mockResolvedValue([{ name: 'Future Event', link: null, image: null }]);
+    mockFetchArkpediaEventsHtml.mockResolvedValue('fake-html');
+    // parseArkpediaEventsList is the real (unmocked) implementation — mocking the raw
+    // network fetch and letting the real parser run is what actually exercises the
+    // wiring between them, not just the parser in isolation (already covered by
+    // arkpedia.test.js) or the mock in isolation.
+    vi.doMock('../src/server/lib/arkpedia.js', () => ({
+      parseArkpediaEventsList: () => [
+        { name: 'Future Event', dateStr: '2026/12/01–2026/12/15', isPredicted: true },
+      ],
+      parseArkpediaEventDetail: () => null,
+    }));
+    vi.resetModules();
+    const { scrapeEvents: scrapeEventsWithMockedArkpedia } = await import(
+      '../src/server/scrape.js'
+    );
+
+    await scrapeEventsWithMockedArkpedia();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents.map((e) => e.name)).toContain('Future Event');
+    const event = savedEvents.find((e) => e.name === 'Future Event');
+    expect(event.datesPredicted).toBe(true);
+    expect(event.globalStart).toBe('2026-12-01');
+
+    vi.doUnmock('../src/server/lib/arkpedia.js');
+  });
+
+  test('still drops a confirmed-dated event with no orundum and no banner (predicted dates are the only exception)', async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Confirmed But Worthless Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/09/01–2026/09/20',
+        cnDateStr: null,
+      },
+    ]);
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents.map((e) => e.name)).not.toContain('Confirmed But Worthless Event');
+  });
+
+  test("arkpedia's per-event Headhunting Permit data is used, skipping the wiki fetch when it's the only thing missing", async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: 'https://example.com/wiki/Story_Event',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        origPrime: 10, // already known, so only hhPermits is missing
+      },
+    ]);
+    mockFetchArkpediaEventDetailHtml.mockResolvedValue('fake-html');
+    vi.doMock('../src/server/lib/arkpedia.js', () => ({
+      parseArkpediaEventsList: () => [],
+      parseArkpediaEventDetail: () => ({
+        dateStr: null,
+        isPredicted: false,
+        bannerName: null,
+        featuredOperators: [],
+        headhuntingPermits: 7,
+      }),
+    }));
+    vi.resetModules();
+    const { scrapeEvents: scrapeEventsWithMockedArkpedia } = await import(
+      '../src/server/scrape.js'
+    );
+
+    await scrapeEventsWithMockedArkpedia();
+
+    expect(mockFetchEventDetailsViaApi).not.toHaveBeenCalled();
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents[0].hhPermits).toBe(7);
+
+    vi.doUnmock('../src/server/lib/arkpedia.js');
   });
 });

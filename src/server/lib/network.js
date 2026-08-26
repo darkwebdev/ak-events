@@ -1,7 +1,16 @@
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { wikiApiBase, wikiBase, indexUrl, gachaTableUrl, characterTableUrl } from '../config.js';
+import {
+  wikiApiBase,
+  wikiBase,
+  indexUrl,
+  gachaTableUrl,
+  characterTableUrl,
+  activityTableUrl,
+  stageTableUrl,
+  arkpediaBase,
+} from '../config.js';
 import { parseIndexHtml } from './parser.js';
 
 function fetchWikiApi(title) {
@@ -234,6 +243,72 @@ function fetchCharacterTable() {
   return fetchJsonUrl(characterTableUrl);
 }
 
+// Fetch an arbitrary URL's raw text body — used for arkpedia.net pages (see
+// lib/arkpedia.js), which embed their data as a `__NEXT_DATA__` JSON script tag
+// rather than exposing it at a stable API endpoint. Resolves to null on any error
+// rather than throwing, same as fetchJsonUrl above: a supplementary source should
+// never be able to abort a whole scrape run.
+function fetchTextUrl(url) {
+  return new Promise((resolve) => {
+    https
+      .get(
+        url,
+        {
+          headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          },
+        },
+        (res) => {
+          if (res.statusCode !== 200) {
+            resolve(null);
+            return;
+          }
+          let data = '';
+          res.on('data', (chunk) => (data += chunk));
+          res.on('end', () => resolve(data));
+        }
+      )
+      .on('error', () => resolve(null));
+  });
+}
+
+// Fetch the game's own activity data — the primary source for event dates now (see
+// lib/gameData.js). Only contains events already added to the EN client.
+function fetchActivityTable() {
+  return fetchJsonUrl(activityTableUrl);
+}
+
+// Fetch the game's own per-stage data — used to compute an event's total Originite
+// Prime reward from its stages' diamondOnceDrop fields (see lib/gameData.js). This
+// file is large (~20MB); only fetched once per scrape run.
+function fetchStageTable() {
+  return fetchJsonUrl(stageTableUrl);
+}
+
+// Fetch arkpedia.net's events listing page and return its raw HTML (for
+// lib/arkpedia.js to parse the embedded __NEXT_DATA__ JSON out of). Resolves to null
+// on any error — arkpedia is a supplementary source, never one that should be able to
+// abort a whole scrape run.
+async function fetchArkpediaEventsHtml() {
+  try {
+    return await fetchTextUrl(`${arkpediaBase}/events`);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Fetch a single arkpedia.net event's own detail page HTML by its exact page name
+// (as found in the events listing's own `name` field — arkpedia's event URLs are
+// literally /events/<name>, not a separate slug).
+async function fetchArkpediaEventDetailHtml(name) {
+  try {
+    return await fetchTextUrl(`${arkpediaBase}/events/${encodeURIComponent(name)}`);
+  } catch (e) {
+    return null;
+  }
+}
+
 // Fetch the Upcoming events page (CN upcoming list) via the wiki API and parse it
 async function fetchUpcomingViaApi() {
   try {
@@ -268,4 +343,8 @@ export {
   fetchOperatorCategories,
   fetchGachaTable,
   fetchCharacterTable,
+  fetchActivityTable,
+  fetchStageTable,
+  fetchArkpediaEventsHtml,
+  fetchArkpediaEventDetailHtml,
 };

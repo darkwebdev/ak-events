@@ -50,6 +50,13 @@
   color: var(--ak-text-muted);
 }
 
+.ak-event-date-predicted {
+  margin-left: 0.4em;
+  font-style: italic;
+  cursor: help;
+  text-decoration: underline dotted;
+}
+
 .ak-event-orundum {
   color: var(--ak-accent);
   font-weight: 500;

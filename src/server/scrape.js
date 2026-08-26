@@ -5,11 +5,22 @@ import {
   fetchEventsViaApi,
   fetchUpcomingViaApi,
   fetchBannersPageHtml,
+  fetchActivityTable,
+  fetchStageTable,
+  fetchArkpediaEventsHtml,
+  fetchArkpediaEventDetailHtml,
 } from './lib/network.js';
 import { ensureDir, saveJson, fileExists } from './lib/storage.js';
 import { applyRerunSuffix } from './lib/wiki.js';
 import { parseDateRange } from './lib/dateRange.js';
 import { parseBannersPage, indexBannersByDate } from './lib/banners.js';
+import {
+  normalizeEventName,
+  findActivity,
+  activityDateStr,
+  originitePrimeFromStages,
+} from './lib/gameData.js';
+import { parseArkpediaEventsList, parseArkpediaEventDetail } from './lib/arkpedia.js';
 import {
   loadOperatorCache,
   saveOperatorCache,
@@ -61,6 +72,23 @@ export async function scrapeEvents() {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
   const fetchAndParseEvent = async (event) => {
+    // arkpedia's reward-store data is the preferred Headhunting Permit source (see
+    // lib/arkpedia.js — verified to match the wiki's own extraction exactly, but
+    // structured rather than heuristic), tried before the wiki fetch below so a hit
+    // here can skip that fetch entirely.
+    if (event.hhPermits == null) {
+      try {
+        const html = await fetchArkpediaEventDetailHtml(event.name);
+        const detail = html ? parseArkpediaEventDetail(html) : null;
+        if (detail?.headhuntingPermits != null) {
+          event.hhPermits = detail.headhuntingPermits;
+          console.log('Found Headhunting Permits (arkpedia) for', event.name, ':', event.hhPermits);
+        }
+      } catch (e) {
+        // ignore; the wiki fetch below is still tried as a fallback
+      }
+    }
+
     // Skip fetching the wiki page if we already have both values
     if (event.origPrime != null && event.hhPermits != null) return event;
     if (!event.link) return event;
@@ -160,6 +188,47 @@ export async function scrapeEvents() {
   saveJson('public/data/events_index.json', events);
   console.log('Saved index snapshot to public/data/events_index.json');
 
+  // Fetch supplementary sources once per run (not per event). Each resolves to null
+  // on failure — these enrich/correct events already found above, never gate finding
+  // them, so a failure here just means less enrichment, never an aborted run.
+  const [activityTable, stageTable, arkpediaEventsHtml] = await Promise.all([
+    fetchActivityTable(),
+    fetchStageTable(),
+    fetchArkpediaEventsHtml(),
+  ]);
+  const arkpediaEvents = arkpediaEventsHtml ? parseArkpediaEventsList(arkpediaEventsHtml) : [];
+
+  // Layer in dates + Originite Prime from the most authoritative source available for
+  // each event, before the per-event wiki-detail-fetch loop below. Priority: the
+  // game's own official data (activityTable — exact, but only covers events already
+  // added to the EN client) first, then arkpedia's predicted CN→Global lag estimate
+  // (marked as such via datesPredicted) for events not yet on EN, then whatever the
+  // wiki index already gave us. This is what lets an event surface with an estimated
+  // date well before it's officially confirmed, and self-corrects to the confirmed
+  // date automatically once activityTable (or the wiki) catches up on a later run.
+  for (const event of events) {
+    const activity = findActivity(activityTable, event.name);
+    if (activity) {
+      const dateStr = activityDateStr(activity);
+      if (dateStr) {
+        event.globalDateStr = dateStr;
+        event.datesPredicted = false;
+      }
+      if (event.origPrime == null) {
+        const op = originitePrimeFromStages(activity.id, stageTable);
+        if (op != null) event.origPrime = op;
+      }
+    } else if (!event.globalDateStr && !event.cnDateStr) {
+      const arkEvent = arkpediaEvents.find(
+        (e) => normalizeEventName(e.name) === normalizeEventName(event.name)
+      );
+      if (arkEvent) {
+        event.globalDateStr = arkEvent.dateStr;
+        event.datesPredicted = arkEvent.isPredicted;
+      }
+    }
+  }
+
   // Concurrency limiter: process events in batches
   const concurrency = parseInt(process.env.AK_CONCURRENCY || '3');
   for (let i = 0; i < events.length; i += concurrency) {
@@ -205,6 +274,10 @@ export async function scrapeEvents() {
       globalEnd,
       cnStart,
       cnEnd,
+      // True when start/end come from arkpedia's CN→Global lag estimate rather than
+      // a confirmed source (activityTable or the wiki) — the client should show this
+      // distinctly rather than presenting an estimate as an official date.
+      datesPredicted: !!event.datesPredicted,
       type: event.type,
       image: event.image,
       link: event.link,
@@ -361,14 +434,16 @@ export async function scrapeEvents() {
 
   // Drop events that would be dead weight in the UI: no start date means nothing to
   // schedule around (the client already hides these — see filterUpcomingEvents — but
-  // there's no reason to ship them at all), and a dated event that gives no orundum
-  // *and* has no banner isn't something a user would select or aim their pulls at
-  // either. A banner alone is enough to keep an event even at 0 orundum, since users
-  // track events specifically to plan pulls toward a banner's operators.
+  // there's no reason to ship them at all), and a *confirmed*-dated event that gives
+  // no orundum and has no banner isn't something a user would select or aim their
+  // pulls at either. A banner alone is enough to keep an event even at 0 orundum,
+  // since users track events specifically to plan pulls toward a banner's operators.
+  // A predicted date is kept regardless of orundum/banner — an estimated heads-up is
+  // exactly the point of surfacing it this early, before either would even be knowable.
   const eventOrundumValue = (event) => (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600;
   const beforeFilterCount = processed.length;
   processed = processed.filter(
-    (event) => event.start && (eventOrundumValue(event) > 0 || event.banner)
+    (event) => event.start && (event.datesPredicted || eventOrundumValue(event) > 0 || event.banner)
   );
   if (processed.length !== beforeFilterCount) {
     console.log(

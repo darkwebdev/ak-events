@@ -30,7 +30,7 @@ function OperatorColumn({ groups }) {
 }
 
 export function Event({ event, selectedEvents, onEventToggle }) {
-  const { name, type, image, origPrime, hhPermits, link, banner } = event;
+  const { name, type, image, origPrime, hhPermits, link, banner, datesPredicted } = event;
   const start = getEffectiveStart(event);
   const end = getEffectiveEnd(event);
   const startStr = start ? start.toLocaleDateString() : 'Unknown';
@@ -68,6 +68,12 @@ export function Event({ event, selectedEvents, onEventToggle }) {
           <div className="ak-event-meta">
             <div className="ak-event-date">
               {startStr} - {endStr}
+              {datesPredicted && (
+                <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
+                  Not yet confirmed for Global — a prediction based on the usual delay after this
+                  event releases in China, and may shift.
+                </InfoButton>
+              )}
             </div>
             <div>
               {(origPrime || hhPermits) && (

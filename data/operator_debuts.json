@@ -22,5 +22,29 @@
   "Lappland the Decadenza": {
     "event": "I Portatori dei Velluti",
     "isFestival": false
+  },
+  "Haruka": {
+    "event": "Ato",
+    "isFestival": false
+  },
+  "Eyjafjalla the Hvít Aska": {
+    "event": "So Long, Adele",
+    "isFestival": false
+  },
+  "Gavial the Invincible": {
+    "event": "Ideal City",
+    "isFestival": false
+  },
+  "Kichisei": {
+    "event": "Ato",
+    "isFestival": false
+  },
+  "Hoshiguma the Breacher": {
+    "event": "Ato",
+    "isFestival": false
+  },
+  "Pepe": {
+    "event": "Adventure That Cannot Wait for the Sun",
+    "isFestival": false
   }
 }

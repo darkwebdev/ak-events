@@ -5,7 +5,7 @@
 
 .ak-event {
   padding: 14px 16px;
-  flex: 1 1 60%;
+  flex: 2 1 0;
   min-width: 0;
 }
 
@@ -67,7 +67,7 @@
    header is styled at the same level as the event's own title rather than subordinate
    to it. */
 .ak-event-banner {
-  flex: 1 1 40%;
+  flex: 1 1 0;
   min-width: 200px;
   padding: 14px 16px;
   border-left: 1px solid var(--ak-border);

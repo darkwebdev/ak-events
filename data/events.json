@@ -11,6 +11,8 @@
     "type": null,
     "image": "data/images/EN_Stronghold_Protocol_Alliance_Part_2_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_Part_2",
+    "origPrime": null,
+    "hhPermits": null,
     "banner": {
       "name": "Joint Operation #21",
       "type": "Standard",
@@ -157,6 +159,7 @@
     "type": "Side Story",
     "image": "data/images/CN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
+    "origPrime": null,
     "hhPermits": 3,
     "banner": {
       "name": "Rage of The Many",
@@ -202,6 +205,7 @@
     "type": "Main Theme (episode release)",
     "image": "data/images/CN_Critical_Phase_Transition_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
+    "origPrime": null,
     "hhPermits": 39,
     "banner": {
       "name": "Sealed With Time",
@@ -287,6 +291,7 @@
     "type": "Crossover (Side Story)",
     "image": "data/images/CN_Thunder_in_the_Azure_Dream_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
+    "origPrime": null,
     "hhPermits": 120,
     "banner": null
   },

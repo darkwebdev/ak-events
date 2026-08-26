@@ -122,16 +122,36 @@ describe('scrapeEvents', () => {
     await scrapeEvents();
 
     expect(exitSpy).not.toHaveBeenCalled();
+    // The merge itself worked (proven by the pre-filter index snapshot)...
+    const indexCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events_index.json'
+    );
+    const [, indexedEvents] = indexCalls[indexCalls.length - 1];
+    expect(indexedEvents.map((e) => e.name)).toContain('CN Upcoming Event');
+    // ...but a CN-upcoming entry has no resolvable start date by construction (see
+    // scrape.js's own comment on that merge), so the final, filtered events.json
+    // correctly drops it rather than shipping a dateless dead entry.
     const eventsJsonCalls = mockSaveJson.mock.calls.filter(
       ([path]) => path === 'public/data/events.json'
     );
     expect(eventsJsonCalls.length).toBeGreaterThan(0);
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
-    expect(savedEvents.map((e) => e.name)).toContain('CN Upcoming Event');
+    expect(savedEvents.map((e) => e.name)).not.toContain('CN Upcoming Event');
   });
 
   test('saves the scraped events when the index fetch succeeds normally', async () => {
-    mockFetchEventsViaApi.mockResolvedValue([{ name: 'Test Event', link: null, image: null }]);
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Test Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        // No banner match set up in this test, so the event needs its own orundum
+        // value to survive the no-date/no-value/no-banner filter below.
+        origPrime: 10,
+      },
+    ]);
 
     await scrapeEvents();
 
@@ -142,6 +162,38 @@ describe('scrapeEvents', () => {
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
     expect(savedEvents).toHaveLength(1);
     expect(savedEvents[0].name).toBe('Test Event');
+  });
+
+  test('drops events with no start date, no orundum value, and no banner', async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      { name: 'Dateless Event', link: null, image: null },
+      {
+        name: 'Dated But Worthless Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/09/01–2026/09/20',
+        cnDateStr: null,
+      },
+      {
+        name: 'Dated With Orundum Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/09/01–2026/09/20',
+        cnDateStr: null,
+        hhPermits: 3,
+      },
+    ]);
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    const names = savedEvents.map((e) => e.name);
+    expect(names).not.toContain('Dateless Event');
+    expect(names).not.toContain('Dated But Worthless Event');
+    expect(names).toContain('Dated With Orundum Event');
   });
 
   test("attaches banner + operator data when an event's start date matches a banner", async () => {
@@ -390,6 +442,9 @@ describe('scrapeEvents', () => {
         image: null,
         globalDateStr: '2026/09/01–2026/09/20',
         cnDateStr: null,
+        // Needs its own orundum value to survive the no-date/no-value/no-banner
+        // filter, since this event is deliberately unmatched to any banner.
+        hhPermits: 3,
       },
     ]);
 

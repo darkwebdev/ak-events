@@ -176,7 +176,7 @@ export async function scrapeEvents() {
   );
 
   // Process events
-  const processed = events.map((event) => {
+  let processed = events.map((event) => {
     // Parse global dates
     const globalDates = parseDateRange(event.globalDateStr);
     const globalStart = globalDates.start;
@@ -357,6 +357,25 @@ export async function scrapeEvents() {
       sparkEligible,
       operators,
     };
+  }
+
+  // Drop events that would be dead weight in the UI: no start date means nothing to
+  // schedule around (the client already hides these — see filterUpcomingEvents — but
+  // there's no reason to ship them at all), and a dated event that gives no orundum
+  // *and* has no banner isn't something a user would select or aim their pulls at
+  // either. A banner alone is enough to keep an event even at 0 orundum, since users
+  // track events specifically to plan pulls toward a banner's operators.
+  const eventOrundumValue = (event) => (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600;
+  const beforeFilterCount = processed.length;
+  processed = processed.filter(
+    (event) => event.start && (eventOrundumValue(event) > 0 || event.banner)
+  );
+  if (processed.length !== beforeFilterCount) {
+    console.log(
+      `Filtered out ${
+        beforeFilterCount - processed.length
+      } event(s) with no start date, no orundum value, and no banner`
+    );
   }
 
   for (const event of processed) {

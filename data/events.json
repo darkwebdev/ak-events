@@ -107,7 +107,7 @@
     "cnStart": "2026-03-27",
     "cnEnd": "2026-04-06",
     "type": "Side Story (Rerun)",
-    "image": "data/images/CN_When_Elegies_Are_Ashes_Rerun_banner.png",
+    "image": "data/images/EN_When_Elegies_Are_Ashes_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun",
     "origPrime": 28,
     "hhPermits": 3,
@@ -133,11 +133,11 @@
           "sparkCost": null
         },
         {
-          "name": "Firewhistle",
+          "name": "Warmy",
           "star": 5,
-          "class": "Defender",
+          "class": "Caster",
           "limited": false,
-          "icon": "data/images/operators/60px-Firewhistle_icon.png",
+          "icon": "data/images/operators/60px-Warmy_icon.png",
           "sparkCost": null
         }
       ]

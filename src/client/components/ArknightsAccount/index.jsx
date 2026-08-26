@@ -6,9 +6,9 @@ import './index.css';
 // Imports Orundum/Originite Prime/Headhunting Permit counts from a real Arknights
 // account via the user's own ak-chars-api (which wraps Yostar's email one-time-code
 // login — the same flow the official game client uses). `authState` is
-// `{ channelUid, yostarToken, deviceId, server } | null`, persisted by the caller
-// (via useStorage) so a successful login survives a page reload; this component
-// only owns the transient email/code form state and in-flight/error UI.
+// `{ channelUid, yostarToken, server } | null`, persisted by the caller (via
+// useStorage) so a successful login survives a page reload; this component only
+// owns the transient email/code form state and in-flight/error UI.
 export function ArknightsAccount({ authState, setAuthState, onFetched }) {
   const connected = !!authState;
   const [pendingStep, setPendingStep] = useState('email'); // 'email' | 'code' — only used while !connected
@@ -49,7 +49,6 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
         const auth = {
           channelUid: result.channelUid,
           yostarToken: result.yostarToken,
-          deviceId: result.deviceId,
           server: result.server,
         };
         setAuthState(auth);
@@ -71,6 +70,17 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
   function handleCancelCode() {
     setPendingStep('email');
     setCode('');
+    setError(null);
+  }
+
+  function handleLogout() {
+    // Only clears the auth token/display cache — whatever Orundum/OP/Permits
+    // values were last fetched into playerStatus stay put, same as any other
+    // manually-entered value.
+    setAuthState(null);
+    setLinkedAccount(null);
+    setPendingStep('email');
+    setEmail('');
     setError(null);
   }
 
@@ -164,6 +174,24 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }) {
                 />
               )}
               Linked: {linkedAccount.nickName} (Lv. {linkedAccount.level})
+              <button
+                type="button"
+                className="ak-ark-account-logout"
+                onClick={handleLogout}
+                disabled={busy}
+                aria-label="Log out of Arknights account"
+                title="Log out"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" strokeLinecap="round" />
+                  <polyline
+                    points="16 17 21 12 16 7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line x1="21" y1="12" x2="9" y2="12" strokeLinecap="round" />
+                </svg>
+              </button>
             </p>
           )}
           <div className="ak-ark-account-actions">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useStorage } from './hooks/useStorage.js';
+import { useFeatureFlag } from './utils/featureFlags.js';
 import { calcDailyOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
 import {
   filterUpcomingEvents,
@@ -27,6 +28,13 @@ export default function App() {
     defaultPlayerStatus
   );
   const [arkAuth, setArkAuth] = useStorage('ak-events-arknights-auth', null);
+  // Off by default in every environment, including staging — turn it on in a given
+  // browser via the ?ff_accountImport=1 URL param (sticks after that, see
+  // utils/featureFlags.js) or `localStorage.setItem('ak-events-flag-accountImport',
+  // 'true')` directly. Still logs the player out of their live game session on
+  // every fetch (see ArknightsAccount's own warning) with no fix, only an accepted
+  // limitation — that's the reason this stays gated rather than shipping wide open.
+  const [accountImportEnabled] = useFeatureFlag('accountImport', false);
 
   const updateSetting = (key, property, value) => {
     setSettings((prev) => ({
@@ -115,11 +123,13 @@ export default function App() {
         />
 
         <div className="ak-aside-column">
-          <ArknightsAccount
-            authState={arkAuth}
-            setAuthState={setArkAuth}
-            onFetched={handleAccountFetched}
-          />
+          {accountImportEnabled && (
+            <ArknightsAccount
+              authState={arkAuth}
+              setAuthState={setArkAuth}
+              onFetched={handleAccountFetched}
+            />
+          )}
 
           <CurrentlyOwned
             owned={playerStatus}

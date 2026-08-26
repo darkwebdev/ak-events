@@ -96,6 +96,34 @@
   flex-shrink: 0;
 }
 
+.ak-ark-account-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--ak-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ak-ark-account-logout svg {
+  width: 15px;
+  height: 15px;
+}
+
+.ak-ark-account-logout:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ak-ark-account-logout:not(:disabled):hover {
+  color: var(--ak-orundum-color);
+  background: var(--ak-surface-hover);
+}
+
 .ak-ark-account-connected {
   display: flex;
   flex-direction: column;

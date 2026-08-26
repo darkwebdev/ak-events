@@ -1,8 +1,8 @@
-// Thin GraphQL client for ak-account-api, the user's own service that wraps
-// Arknights' Yostar email-OTP login flow. Public API endpoint, not a secret, so
-// hardcoded rather than an env var. (Formerly ak-chars-api.fly.dev — that
-// deployment is retired; this is its Cloud Run replacement, same schema/auth flow.)
-const API_URL = 'https://ak-account-api-705516204230.us-central1.run.app/graphql';
+// Thin GraphQL client for ak-account-api — see config.js for the endpoint itself.
+import { arkAccountApiUrl } from '../config.js';
+
+const API_URL = arkAccountApiUrl;
+const API_ORIGIN = new URL(API_URL).origin;
 
 async function graphqlRequest(query, variables) {
   const res = await fetch(API_URL, {
@@ -33,11 +33,14 @@ export async function sendAuthCode(email, server = 'en') {
 }
 
 // Exchanges the emailed one-time `code` for a Yostar session token. Returns
-// { success, channelUid, yostarToken, deviceId, server, error }. `deviceId` is an
-// opaque string — persist it as-is alongside the token and pass it back on every
-// authenticated call (fetchAccountData below); without it the server presents as a
-// fresh device on each call, which is what actually logs the player out of the game
-// (not the token itself). Treat it as a required part of the credential, not optional.
+// { success, channelUid, yostarToken, server, error }. Note: this token is a real
+// game session credential — using it (via fetchAccountData below) logs the player
+// out of the game itself, per Yostar's single-session-per-account enforcement.
+// (Tried reusing a stable device identity and, separately, resuming rather than
+// re-running the login handshake — neither stopped the kick in testing against a
+// real account: Yostar ties one live connection to the account itself, and any
+// authenticated request, ours or the real game client's, claims that slot and
+// evicts whoever held it. Not something fixable from this side.)
 export async function getAuthToken(email, code, server = 'en') {
   const data = await graphqlRequest(
     `mutation GetAuthToken($email: String!, $code: String!, $server: String!) {
@@ -45,7 +48,6 @@ export async function getAuthToken(email, code, server = 'en') {
         success
         channelUid
         yostarToken
-        deviceId
         server
         error
       }
@@ -67,7 +69,10 @@ async function fetchPlayerAvatarUrl(playerId, server) {
       }`,
       { playerId, server }
     );
-    return data.getPlayerAvatarUrl ?? null;
+    // The field returns a path relative to the API host (e.g. "/avatars/123"), not
+    // a full URL — resolving it as-is would have the browser fetch it against the
+    // *page's* origin instead. `new URL` leaves an already-absolute URL untouched.
+    return data.getPlayerAvatarUrl ? new URL(data.getPlayerAvatarUrl, API_ORIGIN).toString() : null;
   } catch (err) {
     console.error('[arkCharsApi] getPlayerAvatarUrl failed:', err);
     return null;
@@ -76,40 +81,22 @@ async function fetchPlayerAvatarUrl(playerId, server) {
 
 // Fetches the linked account's nickname/level/uid (for display, confirming which
 // account is connected) and current Orundum / Originite Prime / Headhunting Permit
-// counts, using a previously obtained { channelUid, yostarToken, deviceId, server }.
-// Passing the same deviceId back on every call (rather than leaving it out, which
-// falls back to a fresh random device per call server-side) is what's expected to
-// stop each fetch from kicking the player's live game session.
-export async function fetchAccountData({ channelUid, yostarToken, deviceId, server }) {
+// counts, using a previously obtained { channelUid, yostarToken, server }.
+export async function fetchAccountData({ channelUid, yostarToken, server }) {
   const data = await graphqlRequest(
-    `query FetchAccountData(
-      $channelUid: String!
-      $yostarToken: String!
-      $deviceId: String
-      $server: String!
-    ) {
-      myStatus(
-        channelUid: $channelUid
-        yostarToken: $yostarToken
-        deviceId: $deviceId
-        server: $server
-      ) {
+    `query FetchAccountData($channelUid: String!, $yostarToken: String!, $server: String!) {
+      myStatus(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         nickName
         level
         uid
       }
-      myInventory(
-        channelUid: $channelUid
-        yostarToken: $yostarToken
-        deviceId: $deviceId
-        server: $server
-      ) {
+      myInventory(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         orundum
         originitePrime
         headhuntingPermits
       }
     }`,
-    { channelUid, yostarToken, deviceId, server }
+    { channelUid, yostarToken, server }
   );
   const uid = data.myStatus?.uid ?? null;
   const avatarUrl = uid ? await fetchPlayerAvatarUrl(uid, server) : null;

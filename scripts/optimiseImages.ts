@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S npx tsx
 import { main } from '../src/server/optimiseImages.js';
 
 main().catch((err) => {

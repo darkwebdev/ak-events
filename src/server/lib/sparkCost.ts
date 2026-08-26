@@ -7,11 +7,11 @@ const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
 // `limitParam.limitedCharId` names the one operator it debuted, alongside an exact
 // `openTime` timestamp) rather than scraped from the wiki, which doesn't state debut
 // dates directly. Returns null if either table failed to fetch.
-async function fetchLimitedDebutDates() {
+async function fetchLimitedDebutDates(): Promise<Map<string, Date> | null> {
   const [gacha, characters] = await Promise.all([fetchGachaTable(), fetchCharacterTable()]);
   if (!gacha || !characters) return null;
 
-  const debutTimeByCharId = new Map();
+  const debutTimeByCharId = new Map<string, number>();
   for (const pool of gacha.gachaPoolClient || []) {
     if (pool.gachaRuleType !== 'LIMITED') continue;
     const charId = pool.limitParam?.limitedCharId;
@@ -24,12 +24,18 @@ async function fetchLimitedDebutDates() {
     }
   }
 
-  const debutDateByName = new Map();
+  const debutDateByName = new Map<string, Date>();
   for (const [charId, openTime] of debutTimeByCharId) {
     const name = characters[charId]?.name;
     if (name) debutDateByName.set(name, new Date(openTime * 1000));
   }
   return debutDateByName;
+}
+
+interface CalcSparkCostArgs {
+  debutDate: Date | null | undefined;
+  isFestival: boolean;
+  now?: Date;
 }
 
 // The wiki's Headhunting Data Contract Store page states the actual rule: "From
@@ -40,9 +46,9 @@ async function fetchLimitedDebutDates() {
 // event pages (which this project's scraper used to look for a sentence about) —
 // that announcement sentence doesn't appear on current event pages anymore, which is
 // why relying on it had silently stopped finding any reduced-cost operator at all.
-function calcSparkCost({ debutDate, isFestival, now = new Date() }) {
+function calcSparkCost({ debutDate, isFestival, now = new Date() }: CalcSparkCostArgs): number {
   if (!debutDate) return 300;
-  const ageYears = (now - debutDate) / MS_PER_YEAR;
+  const ageYears = (now.getTime() - debutDate.getTime()) / MS_PER_YEAR;
   const threshold = isFestival ? 5 : 4;
   return ageYears >= threshold ? 200 : 300;
 }

@@ -32,6 +32,12 @@ module.exports = {
     'react/jsx-filename-extension': [1, { extensions: ['.jsx', '.js'] }],
     'import/extensions': 'off',
     'import/no-commonjs': 'error',
+    // The server writes `.js` import specifiers pointing at `.ts` source files (the
+    // standard TS-ESM convention — Vite/Vitest/tsx all resolve this correctly at
+    // runtime), which eslint-plugin-import's resolver doesn't understand and flags as
+    // broken. `yarn typecheck` (tsc) already validates every one of these imports
+    // with full fidelity, so this rule would only ever produce false positives here.
+    'import/no-unresolved': 'off',
     'react/prop-types': 'off',
     // allow older patterns like loops in server-side scripts
     'no-restricted-syntax': 'off',
@@ -65,4 +71,38 @@ module.exports = {
     'react/destructuring-assignment': 'off',
     'prefer-const': 'warn',
   },
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: false,
+      },
+      plugins: ['@typescript-eslint'],
+      extends: ['plugin:@typescript-eslint/recommended'],
+      rules: {
+        // TypeScript's own compiler (see `yarn typecheck`) already catches unused
+        // vars/undefined names with full type information — airbnb's plain-JS
+        // versions of these rules can't see type-only imports/usages and would
+        // false-positive on them.
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          // caughtErrors: 'none' matches this codebase's existing `catch (e) { /* ignore */ }`
+          // convention (already pervasive in the original .js files) — ESLint 8's plain
+          // no-unused-vars defaults to ignoring catch bindings, but the TS-aware rule
+          // defaults to flagging them, so this has to be explicit to keep the same behavior.
+          { args: 'none', varsIgnorePattern: '^_', caughtErrors: 'none' },
+        ],
+        'no-undef': 'off',
+        // The scraper leans on `unknown`/loosely-typed third-party JSON (wiki HTML,
+        // game-data tables) deliberately rather than fully re-describing schemas this
+        // codebase doesn't own — see types.ts's own note on that tradeoff.
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+  ],
 };

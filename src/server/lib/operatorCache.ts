@@ -1,5 +1,6 @@
 import { fetchOperatorCategories } from './network.js';
 import { loadJson, saveJson } from './storage.js';
+import type { OperatorCache } from '../types.js';
 
 const CACHE_PATH = 'public/data/operators.json';
 
@@ -13,7 +14,7 @@ const NON_LIMITED_CATEGORIES = new Set([
   'Recruitment Operators',
 ]);
 
-function isLimitedFromCategories(categories) {
+function isLimitedFromCategories(categories: string[]): boolean {
   // The MediaWiki API serializes category names with underscores in place of spaces
   // (e.g. "Standard_Headhunting_Operators") when returned via prop=categories, unlike
   // the space-separated display form used elsewhere (e.g. list=allcategories) — so
@@ -21,11 +22,11 @@ function isLimitedFromCategories(categories) {
   return !categories.some((c) => NON_LIMITED_CATEGORIES.has(c.replace(/_/g, ' ')));
 }
 
-function loadOperatorCache() {
-  return loadJson(CACHE_PATH, {});
+function loadOperatorCache(): OperatorCache {
+  return loadJson<OperatorCache>(CACHE_PATH, {});
 }
 
-function saveOperatorCache(cache) {
+function saveOperatorCache(cache: OperatorCache): void {
   saveJson(CACHE_PATH, cache);
 }
 
@@ -35,7 +36,7 @@ function saveOperatorCache(cache) {
 // A failed fetch (fetchOperatorCategories returns null) is NOT cached: caching a
 // guess from a transient network error would permanently mislabel the operator,
 // since a cache hit short-circuits before ever fetching again.
-async function resolveOperatorLimited(name, cache) {
+async function resolveOperatorLimited(name: string, cache: OperatorCache): Promise<boolean> {
   if (Object.prototype.hasOwnProperty.call(cache, name)) return cache[name];
   const categories = await fetchOperatorCategories(name);
   if (categories == null) {

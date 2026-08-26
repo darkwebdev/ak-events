@@ -11,9 +11,22 @@ import {
   stageTableUrl,
   arkpediaBase,
 } from '../config.js';
-import { parseIndexHtml } from './parser.js';
+import { parseIndexHtml, type ParsedIndexEvent } from './parser.js';
+import { titleFromUrl } from './wiki.js';
+import type { ActivityTable, CharacterTable, GachaTable, StageTable } from '../types.js';
 
-function fetchWikiApi(title) {
+interface WikiApiResult {
+  statusCode?: number;
+  body?: unknown;
+  blocked?: boolean;
+}
+
+interface WikiParseBody {
+  parse?: { text?: { '*'?: string } };
+  error?: unknown;
+}
+
+function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> {
   return new Promise((resolve, reject) => {
     // Ensure title is not double-encoded (some links include percent-encoding like %27)
     let decodedTitle = title || '';
@@ -37,8 +50,10 @@ function fetchWikiApi(title) {
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
           // If response looks like HTML (Cloudflare challenge or other block), indicate blocked
-          if (typeof data === 'string' && data.trim().startsWith('<'))
-            return resolve({ statusCode: res.statusCode, body: null, blocked: true });
+          if (typeof data === 'string' && data.trim().startsWith('<')) {
+            resolve({ statusCode: res.statusCode, body: null, blocked: true });
+            return;
+          }
           try {
             const json = JSON.parse(data);
             resolve({ statusCode: res.statusCode, body: json });
@@ -53,12 +68,16 @@ function fetchWikiApi(title) {
 
 // dedupeEvents removed: index parsing and deduping handled in parseIndexHtml
 
-function downloadImage(url, filepath) {
+function downloadImage(url: string, filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {
+    let resolvedUrl = url;
     try {
       // If url is site-relative (/images/...), resolve against wikiBase
-      if (url && url.startsWith('/')) url = new URL(url, wikiBase).toString();
-    } catch (e) {}
+      if (resolvedUrl && resolvedUrl.startsWith('/'))
+        resolvedUrl = new URL(resolvedUrl, wikiBase).toString();
+    } catch (e) {
+      /* ignore */
+    }
     const options = {
       headers: {
         'User-Agent':
@@ -67,7 +86,7 @@ function downloadImage(url, filepath) {
       },
     };
     https
-      .get(url, options, (res) => {
+      .get(resolvedUrl, options, (res) => {
         if (res.statusCode === 200) {
           const dir = path.dirname(filepath);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -78,7 +97,7 @@ function downloadImage(url, filepath) {
             resolve();
           });
         } else {
-          reject(new Error(`Failed to download ${url}: ${res.statusCode}`));
+          reject(new Error(`Failed to download ${resolvedUrl}: ${res.statusCode}`));
         }
       })
       .on('error', reject);
@@ -86,22 +105,17 @@ function downloadImage(url, filepath) {
 }
 
 // Fetch event details via the wiki API. Accepts either a page title or a full wiki URL.
-async function fetchEventDetailsViaApi(urlOrTitle) {
+async function fetchEventDetailsViaApi(
+  urlOrTitle: string | null | undefined
+): Promise<WikiParseBody | null> {
   try {
     let title = urlOrTitle || '';
-    // If passed a URL, try to derive the title using wiki helper
+    // If passed a URL, derive the title using the wiki helper
     if (/^https?:\/\//i.test(title)) {
-      try {
-        const wikiModule = await import('./wiki.js');
-        const titleFromUrl =
-          (wikiModule.default && wikiModule.default.titleFromUrl) || wikiModule.titleFromUrl;
-        if (typeof titleFromUrl === 'function') title = titleFromUrl(title);
-      } catch (e) {
-        /* ignore */
-      }
+      title = titleFromUrl(title) || '';
     }
     const api = await fetchWikiApi(title);
-    if (api && api.statusCode === 200 && api.body) return api.body;
+    if (api && api.statusCode === 200 && api.body) return api.body as WikiParseBody;
   } catch (e) {
     // ignore
   }
@@ -109,19 +123,14 @@ async function fetchEventDetailsViaApi(urlOrTitle) {
 }
 
 // Fetch the Events index via the wiki API (action=parse on the 'Event' page) and parse it
-async function fetchEventsViaApi() {
+async function fetchEventsViaApi(): Promise<ParsedIndexEvent[] | null> {
   try {
     const api = await fetchWikiApi('Event');
     if (api) {
       if (api.blocked) return null; // blocked by cloudflare or similar
-      if (
-        api.statusCode === 200 &&
-        api.body &&
-        api.body.parse &&
-        api.body.parse.text &&
-        api.body.parse.text['*']
-      ) {
-        const html = api.body.parse.text['*'];
+      const body = api.body as WikiParseBody | null;
+      if (api.statusCode === 200 && body?.parse?.text?.['*']) {
+        const html = body.parse.text['*'];
         const events = parseIndexHtml(html);
         return events;
       }
@@ -134,19 +143,14 @@ async function fetchEventsViaApi() {
 
 // Fetch a "Headhunting/Banners/{year}" or "Headhunting/Banners/Upcoming" page's raw
 // parse HTML via the wiki API. Returns the HTML string, or null on error/blocked.
-async function fetchBannersPageHtml(pageTitle) {
+async function fetchBannersPageHtml(pageTitle: string): Promise<string | null> {
   try {
     const api = await fetchWikiApi(pageTitle);
     if (api) {
       if (api.blocked) return null;
-      if (
-        api.statusCode === 200 &&
-        api.body &&
-        api.body.parse &&
-        api.body.parse.text &&
-        api.body.parse.text['*']
-      ) {
-        return api.body.parse.text['*'];
+      const body = api.body as WikiParseBody | null;
+      if (api.statusCode === 200 && body?.parse?.text?.['*']) {
+        return body.parse.text['*'];
       }
     }
   } catch (e) {
@@ -164,7 +168,7 @@ async function fetchBannersPageHtml(pageTitle) {
 // Callers must NOT treat null the same as an empty array: a failed fetch is not
 // evidence of anything, and caching `null` as "no categories" would permanently
 // mislabel an operator based on a transient network error.
-async function fetchOperatorCategories(name) {
+function fetchOperatorCategories(name: string): Promise<string[] | null> {
   return new Promise((resolve) => {
     const encoded = encodeURIComponent(name);
     const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&prop=categories&format=json`;
@@ -190,7 +194,7 @@ async function fetchOperatorCategories(name) {
               resolve(null);
               return;
             }
-            const categories = (json.parse.categories || []).map((c) => c['*']);
+            const categories = (json.parse.categories || []).map((c: { '*': string }) => c['*']);
             resolve(categories);
           } catch (e) {
             resolve(null);
@@ -205,7 +209,7 @@ async function fetchOperatorCategories(name) {
 // (see lib/sparkCost.js). Resolves to null on any error rather than throwing/rejecting,
 // since this data is used to compute a "nice to have" spark-cost display and should
 // never be able to abort a whole scrape run the way a thrown error could.
-function fetchJsonUrl(url) {
+function fetchJsonUrl<T>(url: string): Promise<T | null> {
   return new Promise((resolve) => {
     https
       .get(url, { headers: { 'User-Agent': 'ak-events-scraper' } }, (res) => {
@@ -217,7 +221,7 @@ function fetchJsonUrl(url) {
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
           try {
-            resolve(JSON.parse(data));
+            resolve(JSON.parse(data) as T);
           } catch (e) {
             resolve(null);
           }
@@ -232,15 +236,15 @@ function fetchJsonUrl(url) {
 // doesn't state debut dates directly): every LIMITED-type pool's `limitParam` names
 // the one operator it debuted, alongside an exact `openTime` timestamp. See
 // lib/sparkCost.js for what this is used for.
-function fetchGachaTable() {
-  return fetchJsonUrl(gachaTableUrl);
+function fetchGachaTable(): Promise<GachaTable | null> {
+  return fetchJsonUrl<GachaTable>(gachaTableUrl);
 }
 
 // Fetch the game's own character data — used only to map the gacha table's numeric
 // character ids (e.g. "char_2023_ling") back to the operator names our own scraped
 // banner data uses (e.g. "Ling").
-function fetchCharacterTable() {
-  return fetchJsonUrl(characterTableUrl);
+function fetchCharacterTable(): Promise<CharacterTable | null> {
+  return fetchJsonUrl<CharacterTable>(characterTableUrl);
 }
 
 // Fetch an arbitrary URL's raw text body — used for arkpedia.net pages (see
@@ -248,7 +252,7 @@ function fetchCharacterTable() {
 // rather than exposing it at a stable API endpoint. Resolves to null on any error
 // rather than throwing, same as fetchJsonUrl above: a supplementary source should
 // never be able to abort a whole scrape run.
-function fetchTextUrl(url) {
+function fetchTextUrl(url: string): Promise<string | null> {
   return new Promise((resolve) => {
     https
       .get(
@@ -275,22 +279,22 @@ function fetchTextUrl(url) {
 
 // Fetch the game's own activity data — the primary source for event dates now (see
 // lib/gameData.js). Only contains events already added to the EN client.
-function fetchActivityTable() {
-  return fetchJsonUrl(activityTableUrl);
+function fetchActivityTable(): Promise<ActivityTable | null> {
+  return fetchJsonUrl<ActivityTable>(activityTableUrl);
 }
 
 // Fetch the game's own per-stage data — used to compute an event's total Originite
 // Prime reward from its stages' diamondOnceDrop fields (see lib/gameData.js). This
 // file is large (~20MB); only fetched once per scrape run.
-function fetchStageTable() {
-  return fetchJsonUrl(stageTableUrl);
+function fetchStageTable(): Promise<StageTable | null> {
+  return fetchJsonUrl<StageTable>(stageTableUrl);
 }
 
 // Fetch arkpedia.net's events listing page and return its raw HTML (for
 // lib/arkpedia.js to parse the embedded __NEXT_DATA__ JSON out of). Resolves to null
 // on any error — arkpedia is a supplementary source, never one that should be able to
 // abort a whole scrape run.
-async function fetchArkpediaEventsHtml() {
+async function fetchArkpediaEventsHtml(): Promise<string | null> {
   try {
     return await fetchTextUrl(`${arkpediaBase}/events`);
   } catch (e) {
@@ -301,7 +305,7 @@ async function fetchArkpediaEventsHtml() {
 // Fetch a single arkpedia.net event's own detail page HTML by its exact page name
 // (as found in the events listing's own `name` field — arkpedia's event URLs are
 // literally /events/<name>, not a separate slug).
-async function fetchArkpediaEventDetailHtml(name) {
+async function fetchArkpediaEventDetailHtml(name: string): Promise<string | null> {
   try {
     return await fetchTextUrl(`${arkpediaBase}/events/${encodeURIComponent(name)}`);
   } catch (e) {
@@ -310,19 +314,14 @@ async function fetchArkpediaEventDetailHtml(name) {
 }
 
 // Fetch the Upcoming events page (CN upcoming list) via the wiki API and parse it
-async function fetchUpcomingViaApi() {
+async function fetchUpcomingViaApi(): Promise<ParsedIndexEvent[] | null> {
   try {
     const api = await fetchWikiApi('Event/Upcoming');
     if (api) {
       if (api.blocked) return null;
-      if (
-        api.statusCode === 200 &&
-        api.body &&
-        api.body.parse &&
-        api.body.parse.text &&
-        api.body.parse.text['*']
-      ) {
-        const html = api.body.parse.text['*'];
+      const body = api.body as WikiParseBody | null;
+      if (api.statusCode === 200 && body?.parse?.text?.['*']) {
+        const html = body.parse.text['*'];
         const events = parseIndexHtml(html);
         return events;
       }

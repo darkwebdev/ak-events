@@ -11,7 +11,7 @@ import {
   fetchArkpediaEventDetailHtml,
 } from './lib/network.js';
 import { ensureDir, saveJson, fileExists } from './lib/storage.js';
-import { applyRerunSuffix } from './lib/wiki.js';
+import { applyRerunSuffix, isRerunLink, titleFromUrl } from './lib/wiki.js';
 import { parseDateRange } from './lib/dateRange.js';
 import { parseBannersPage, indexBannersByDate } from './lib/banners.js';
 import {
@@ -32,23 +32,29 @@ import {
   resolveOperatorDebutEvent,
 } from './lib/operatorDebuts.js';
 import { fetchLimitedDebutDates, calcSparkCost } from './lib/sparkCost.js';
+import type { RawEvent, ProcessedEvent, RawBanner, ResolvedBannerOperator } from './types.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
 
-function localFilenameFor(url) {
+function localFilenameFor(url: string | null | undefined): string {
   const rawFilename = (url || '').split('/').pop() || '';
   return rawFilename.split('?')[0];
 }
 
 // Download `url` to `filepath` unless it's already there. Returns whether the file
 // exists at `filepath` afterward (true on success or if it was already cached).
-async function downloadIfMissing(url, filepath, label, name) {
+async function downloadIfMissing(
+  url: string,
+  filepath: string,
+  label: string,
+  name: string
+): Promise<boolean> {
   if (fileExists(filepath)) return true;
   try {
     await downloadImage(url, filepath);
     console.log(`Downloaded ${label} for`, name);
   } catch (err) {
-    console.error(`Error downloading ${label} for`, name, err.message);
+    console.error(`Error downloading ${label} for`, name, (err as Error).message);
   }
   return fileExists(filepath);
 }
@@ -58,8 +64,12 @@ async function downloadIfMissing(url, filepath, label, name) {
 // resolution and icon-download stages below; the event-fetch stage further down has
 // its own hand-rolled version of this loop because it also needs to persist interim
 // progress after each batch, which this generic version intentionally doesn't do.
-async function runBatched(items, concurrency, fn) {
-  const results = [];
+async function runBatched<T, R>(
+  items: T[],
+  concurrency: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = [];
   for (let i = 0; i < items.length; i += concurrency) {
     const batch = items.slice(i, i + concurrency);
     // eslint-disable-next-line no-await-in-loop
@@ -68,10 +78,10 @@ async function runBatched(items, concurrency, fn) {
   return results;
 }
 
-export async function scrapeEvents() {
+export async function scrapeEvents(): Promise<void> {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
-  const fetchAndParseEvent = async (event) => {
+  const fetchAndParseEvent = async (event: RawEvent): Promise<RawEvent> => {
     // arkpedia's reward-store data is the preferred Headhunting Permit source (see
     // lib/arkpedia.js — verified to match the wiki's own extraction exactly, but
     // structured rather than heuristic), tried before the wiki fetch below so a hit
@@ -97,8 +107,8 @@ export async function scrapeEvents() {
     // ' (Rerun)'. This ensures types like 'Side Story (Carnival)' become
     // 'Side Story (Carnival) (Rerun)'. Avoid appending twice if type already
     // includes '(Rerun)'.
-    const isRerunLink = /\/Rerun$/.test(event.link);
-    const fetchUrl = isRerunLink ? event.link.replace(/\/Rerun$/, '') : event.link;
+    const linkEndsWithRerun = /\/Rerun$/.test(event.link);
+    const fetchUrl = linkEndsWithRerun ? event.link.replace(/\/Rerun$/, '') : event.link;
     let jsonStatus = 'err';
     try {
       console.log('Fetching wiki for', event.name, fetchUrl);
@@ -115,7 +125,7 @@ export async function scrapeEvents() {
         event.hhPermits = parsed.hhPermits;
       }
       if (parsed.type) {
-        event.type = applyRerunSuffix(parsed.type, event.link);
+        event.type = applyRerunSuffix(parsed.type, event.link) ?? null;
       }
 
       // If this was a rerun link and we didn't find origPrime or hhPermits on the
@@ -124,9 +134,8 @@ export async function scrapeEvents() {
       // '/Rerun' or '_Rerun' page lacks store/priming info but the original page
       // contains it.
       try {
-        const wiki = (await import('./lib/wiki.js')).default;
-        if (wiki.isRerunLink(event.link) && (event.origPrime == null || event.hhPermits == null)) {
-          const originalTitle = wiki.titleFromUrl(event.link);
+        if (isRerunLink(event.link) && (event.origPrime == null || event.hhPermits == null)) {
+          const originalTitle = titleFromUrl(event.link);
           if (originalTitle) {
             const originalApi = await fetchEventDetailsViaApi(originalTitle);
             const originalHtml = originalApi?.parse?.text?.['*'] || '';
@@ -137,14 +146,14 @@ export async function scrapeEvents() {
               event.hhPermits = parsed2.hhPermits;
             // If we didn't get a type earlier, use the original type and mark as rerun
             if (!event.type && parsed2.type)
-              event.type = applyRerunSuffix(parsed2.type, event.link);
+              event.type = applyRerunSuffix(parsed2.type, event.link) ?? null;
           }
         }
       } catch (e) {
         // ignore any errors in the fallback attempt
       }
     } catch (err) {
-      console.error('Error fetching wiki for', event.name, err && err.message);
+      console.error('Error fetching wiki for', event.name, err && (err as Error).message);
     }
     console.log(`[${fetchUrl}] json:${jsonStatus}`);
     if (event.origPrime != null)
@@ -156,7 +165,7 @@ export async function scrapeEvents() {
 
   // Fetch the index via the wiki API. fetchEventsViaApi already returns a parsed
   // array of events when successful, or null when blocked/failed.
-  const events = (await fetchEventsViaApi()) || [];
+  const events: RawEvent[] = (await fetchEventsViaApi()) || [];
   // Also fetch the CN 'Upcoming' page and merge events that aren't already present.
   try {
     const cnUpcoming = await fetchUpcomingViaApi();
@@ -166,8 +175,7 @@ export async function scrapeEvents() {
         const exists = events.find((e) => e.name === ce.name);
         if (!exists) {
           // CN upcoming only has CN release date; leave dateStr null so processed row will be TBD
-          ce.dateStr = null;
-          events.push(ce);
+          events.push({ ...ce, dateStr: null });
         }
       }
     }
@@ -230,7 +238,7 @@ export async function scrapeEvents() {
   }
 
   // Concurrency limiter: process events in batches
-  const concurrency = parseInt(process.env.AK_CONCURRENCY || '3');
+  const concurrency = parseInt(process.env.AK_CONCURRENCY || '3', 10);
   for (let i = 0; i < events.length; i += concurrency) {
     const batch = events.slice(i, i + concurrency);
     const results = await Promise.all(batch.map((e) => fetchAndParseEvent(e)));
@@ -245,7 +253,7 @@ export async function scrapeEvents() {
   );
 
   // Process events
-  let processed = events.map((event) => {
+  let processed: ProcessedEvent[] = events.map((event) => {
     // Parse global dates
     const globalDates = parseDateRange(event.globalDateStr);
     const globalStart = globalDates.start;
@@ -278,11 +286,11 @@ export async function scrapeEvents() {
       // a confirmed source (activityTable or the wiki) — the client should show this
       // distinctly rather than presenting an estimate as an official date.
       datesPredicted: !!event.datesPredicted,
-      type: event.type,
-      image: event.image,
-      link: event.link,
-      origPrime: event.origPrime,
-      hhPermits: event.hhPermits,
+      type: event.type ?? null,
+      image: event.image ?? null,
+      link: event.link ?? null,
+      origPrime: event.origPrime ?? null,
+      hhPermits: event.hhPermits ?? null,
     };
   });
 
@@ -308,22 +316,23 @@ export async function scrapeEvents() {
 
   // Match each event to its banner (if any) up front, so the operator-resolution and
   // icon-download work below can be planned across the whole run instead of per event.
-  const eventBannerMatches = processed.map((event) => ({
-    event,
-    matchedBanner:
-      (event.globalStart && bannerByGlobalStart[event.globalStart]) ||
-      (event.cnStart && bannerByCnStart[event.cnStart]) ||
-      null,
-  }));
+  const eventBannerMatches: { event: ProcessedEvent; matchedBanner: RawBanner | null }[] =
+    processed.map((event) => ({
+      event,
+      matchedBanner:
+        (event.globalStart && bannerByGlobalStart[event.globalStart]) ||
+        (event.cnStart && bannerByCnStart[event.cnStart]) ||
+        null,
+    }));
   const matchedOperators = eventBannerMatches
     .filter((m) => m.matchedBanner)
-    .flatMap((m) => m.matchedBanner.operators)
+    .flatMap((m) => m.matchedBanner!.operators)
     .filter((op) => op.name);
 
   // Resolve each unique operator's Limited status, batched with the same concurrency
   // limiter used for event fetching above (rather than one await at a time).
   const operatorCache = loadOperatorCache();
-  const uniqueOperatorNames = [...new Set(matchedOperators.map((op) => op.name))];
+  const uniqueOperatorNames = [...new Set(matchedOperators.map((op) => op.name as string))];
   await runBatched(uniqueOperatorNames, concurrency, (opName) =>
     resolveOperatorLimited(opName, operatorCache)
   );
@@ -340,9 +349,9 @@ export async function scrapeEvents() {
     ...new Set(
       eventBannerMatches
         .filter((m) => m.matchedBanner && m.matchedBanner.type === 'Limited')
-        .flatMap((m) => m.matchedBanner.operators)
+        .flatMap((m) => m.matchedBanner!.operators)
         .filter((op) => op.name && (op.star === 5 || op.star === 6))
-        .map((op) => op.name)
+        .map((op) => op.name as string)
     ),
   ];
   await runBatched(sparkRelevantOperatorNames, concurrency, (opName) =>
@@ -355,9 +364,9 @@ export async function scrapeEvents() {
   // name alongside its URL so download logs identify the operator, not the filename).
   const uniqueIcons = [
     ...new Map(
-      matchedOperators.filter((op) => op.icon).map((op) => [localFilenameFor(op.icon), op])
+      matchedOperators.filter((op) => op.icon).map((op) => [localFilenameFor(op.icon), op] as const)
     ),
-  ].map(([filename, op]) => ({ filename, url: op.icon, name: op.name }));
+  ].map(([filename, op]) => ({ filename, url: op.icon as string, name: op.name as string }));
   await runBatched(uniqueIcons, concurrency, ({ filename, url, name }) =>
     downloadIfMissing(url, `public/data/images/operators/${filename}`, 'operator icon', name)
   );
@@ -367,7 +376,7 @@ export async function scrapeEvents() {
   // lib/sparkCost.js for what this is used for and why. Falls back to an empty map
   // (every operator's sparkCost defaults to 300) if the game-data fetch failed, since
   // this is nice-to-have and shouldn't be able to abort a whole scrape run.
-  const limitedDebutDates = (await fetchLimitedDebutDates()) ?? new Map();
+  const limitedDebutDates = (await fetchLimitedDebutDates()) ?? new Map<string, Date>();
   if (limitedDebutDates.size === 0) {
     console.error(
       'Could not fetch operator debut dates from game data — spark costs will default to 300'
@@ -381,7 +390,7 @@ export async function scrapeEvents() {
       continue;
     }
     const sparkEligible = matchedBanner.type === 'Limited';
-    const operators = matchedBanner.operators
+    const operators: ResolvedBannerOperator[] = matchedBanner.operators
       .filter((op) => op.name)
       .map((op) => {
         const filename = op.icon ? localFilenameFor(op.icon) : null;
@@ -399,24 +408,26 @@ export async function scrapeEvents() {
         // banner's matched event (from the outer loop), and
         // `operatorDebutCache[op.name]` is that operator's resolved debut info, so a
         // match means this is their first-ever appearance.
-        const isDebutingOnThisEvent = operatorDebutCache[op.name]?.event === event.name;
-        const limited = operatorCache[op.name] ?? false;
+        const debutInfo = operatorDebutCache[op.name as string];
+        const debutObj = debutInfo && typeof debutInfo === 'object' ? debutInfo : null;
+        const isDebutingOnThisEvent = debutObj?.event === event.name;
+        const limited = operatorCache[op.name as string] ?? false;
         // Spark redemption is a limited-exclusive perk — a standard/guest operator
         // featured on an otherwise-Limited banner never has a spark cost, regardless
         // of the banner's own sparkEligible flag.
-        let sparkCost = null;
+        let sparkCost: number | null = null;
         if (limited && sparkEligible && !isDebutingOnThisEvent) {
           if (op.star === 6) {
             sparkCost = calcSparkCost({
-              debutDate: limitedDebutDates.get(op.name),
-              isFestival: operatorDebutCache[op.name]?.isFestival ?? false,
+              debutDate: limitedDebutDates.get(op.name as string),
+              isFestival: debutObj?.isFestival ?? false,
             });
           } else if (op.star === 5) {
             sparkCost = 75;
           }
         }
         return {
-          name: op.name,
+          name: op.name as string,
           star: op.star,
           class: op.class,
           limited,
@@ -440,7 +451,8 @@ export async function scrapeEvents() {
   // since users track events specifically to plan pulls toward a banner's operators.
   // A predicted date is kept regardless of orundum/banner — an estimated heads-up is
   // exactly the point of surfacing it this early, before either would even be knowable.
-  const eventOrundumValue = (event) => (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600;
+  const eventOrundumValue = (event: ProcessedEvent) =>
+    (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600;
   const beforeFilterCount = processed.length;
   processed = processed.filter(
     (event) => event.start && (event.datesPredicted || eventOrundumValue(event) > 0 || event.banner)

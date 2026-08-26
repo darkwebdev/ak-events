@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S npx tsx
 import { scrapeEvents } from '../src/server/scrape.js';
 
 scrapeEvents().catch((err) => {

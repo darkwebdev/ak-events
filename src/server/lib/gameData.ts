@@ -1,3 +1,5 @@
+import type { ActivityTable, ActivityTableEntry, StageTable } from '../types.js';
+
 // Helpers for the game's own official data (activity_table.json/stage_table.json —
 // see config.js for the URLs), used as the primary source for event dates and
 // Originite Prime rewards. See the "estimated future events + immediate/over-time
@@ -10,7 +12,7 @@
 // Alliance", or wiki's "When Elegies Are Ashes" vs the game data's "When Elegies Are
 // Ashes - Rerun". Normalizing both sides to the same bare form is what makes an exact
 // match possible across sources that don't otherwise agree on formatting.
-function normalizeEventName(name) {
+function normalizeEventName(name: string | null | undefined): string {
   if (!name) return '';
   return name
     .replace(/\[[^\]]*\]/g, ' ')
@@ -36,7 +38,11 @@ function normalizeEventName(name) {
 // attach a long-past date to what the wiki is currently listing as upcoming, which is
 // worse than not matching at all — the wiki/arkpedia fallback path only ever deals in
 // current-or-upcoming events, so it should still get a chance instead.
-function findActivity(activityTable, eventName, now = Date.now()) {
+function findActivity(
+  activityTable: ActivityTable | null | undefined,
+  eventName: string | null | undefined,
+  now: number = Date.now()
+): ActivityTableEntry | null {
   if (!activityTable || !activityTable.basicInfo || !eventName) return null;
   const target = normalizeEventName(eventName);
   if (!target) return null;
@@ -52,9 +58,9 @@ function findActivity(activityTable, eventName, now = Date.now()) {
 // Convert an activity's startTime/endTime (Unix seconds) to the same
 // { globalDateStr } shape parseDateRange already expects elsewhere in the pipeline,
 // so this can slot into the same processing path as wiki-sourced dates.
-function activityDateStr(activity) {
+function activityDateStr(activity: ActivityTableEntry | null | undefined): string | null {
   if (!activity || !activity.startTime || !activity.endTime) return null;
-  const fmt = (unixSeconds) =>
+  const fmt = (unixSeconds: number) =>
     new Date(unixSeconds * 1000).toISOString().slice(0, 10).replace(/-/g, '/');
   return `${fmt(activity.startTime)}–${fmt(activity.endTime)}`;
 }
@@ -70,7 +76,10 @@ function activityDateStr(activity) {
 // reach, not because the event truly gives none. A standard side-story event
 // genuinely awarding zero would be unusual enough that treating a computed zero as
 // "inconclusive, let the wiki fallback try instead" is the safer default.
-function originitePrimeFromStages(activityId, stageTable) {
+function originitePrimeFromStages(
+  activityId: string | null | undefined,
+  stageTable: StageTable | null | undefined
+): number | null {
   if (!activityId || !stageTable || !stageTable.stages) return null;
   const prefix = `${activityId}_`;
   let total = 0;

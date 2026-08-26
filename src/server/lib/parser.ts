@@ -3,7 +3,7 @@ import { wikiBase } from '../config.js';
 
 // (Table-aware parseIndexHtml removed from this position; the exported version lives further down.)
 
-function extractOrigPrimeFromHtml(html) {
+function extractOrigPrimeFromHtml(html: string | null | undefined): number | null {
   if (!html) return null;
   // strip tags and search text for typical phrasing
   // First, try conservative text regexes for explicit phrasing like "All X operations are worth N Originite Prime"
@@ -69,7 +69,7 @@ function extractOrigPrimeFromHtml(html) {
         // 2) fallback to first .quantity in td
         if (quantities.length) {
           const raw = (quantities[0].textContent || '').trim();
-          const v = parseInt(raw);
+          const v = parseInt(raw, 10);
           if (!Number.isNaN(v) && v > 0 && v <= 10000) return v;
         }
 
@@ -118,7 +118,7 @@ function extractOrigPrimeFromHtml(html) {
   return null;
 }
 
-function extractHhPermitsFromHtml(html) {
+function extractHhPermitsFromHtml(html: string | null | undefined): number | null {
   if (!html) return null;
   try {
     // strip <style> blocks to avoid jsdom CSS parsing errors
@@ -129,7 +129,7 @@ function extractHhPermitsFromHtml(html) {
     // 0) Prefer scanning Store tables: find a table with a 'Stock' header and return the Stock for the Headhunting Permit row.
     const allTables = Array.from(doc.querySelectorAll('table'));
     // detect paid-store tables: tables that contain a header 'Price' or currency markers in headers
-    const paidTables = new Set();
+    const paidTables = new Set<Element>();
     for (const table of allTables) {
       const headerText = Array.from(table.querySelectorAll('th'))
         .map((th) => (th.textContent || '').trim())
@@ -187,7 +187,7 @@ function extractHhPermitsFromHtml(html) {
       // Find the closest enclosing <td> (if any) and prefer a .quantity that is adjacent to the item element
       const td = tip.closest('td');
       const itemContainer = tip.closest('.item') || tip.parentElement || tip.closest('div');
-      let qEl = null;
+      let qEl: Element | { _fake: true; value: number } | null = null;
       if (td) {
         // prefer a .quantity that appears after the itemContainer in DOM order inside this td
         const quantities = Array.from(td.querySelectorAll('.quantity'));
@@ -233,10 +233,10 @@ function extractHhPermitsFromHtml(html) {
         // multiplier: Ten-roll permits count as 10 each
         const tipName = tip.getAttribute('data-name') || '';
         const multiplier = /Ten-?roll/i.test(tipName) ? 10 : 1;
-        if (qEl._fake) {
+        if ('_fake' in qEl) {
           sum += qEl.value * multiplier;
         } else {
-          const v = parseInt(qEl.textContent.trim());
+          const v = parseInt((qEl.textContent || '').trim(), 10);
           if (!Number.isNaN(v) && v > 0) sum += v * multiplier;
         }
       }
@@ -249,13 +249,13 @@ function extractHhPermitsFromHtml(html) {
     }
 
     // If no explicit quantities found, collect candidate numbers but ignore px-suffixed numbers (image sizes like 50px)
-    const candidates = [];
+    const candidates: number[] = [];
     for (const table of allTables) {
       // skip entire paid tables from consideration
       if (paidTables.has(table)) continue;
       const rows = Array.from(table.querySelectorAll('tr'));
       for (const row of rows) {
-        if (!/Headhunting Permit/i.test(row.textContent)) continue;
+        if (!/Headhunting Permit/i.test(row.textContent || '')) continue;
         // If this row belongs to a paid table, skip it
         if (paidTables.has(table)) continue;
         // restrict numeric scanning to the td that contains the permit mention to avoid nearby unrelated numbers
@@ -267,7 +267,7 @@ function extractHhPermitsFromHtml(html) {
         if (/price|\$|US\$|USD|€|£/.test(td.textContent || '')) continue;
         const qEl = td.querySelector('.quantity');
         if (qEl) {
-          const v = parseInt(qEl.textContent.trim());
+          const v = parseInt((qEl.textContent || '').trim(), 10);
           if (!Number.isNaN(v)) {
             const itemEl = td.querySelector('[data-name]');
             const multiplier =
@@ -319,14 +319,14 @@ function extractHhPermitsFromHtml(html) {
       const small = candidates.filter((n) => n > 0 && n <= 100);
       if (small.length) {
         // prefer the most frequent small value
-        const freq = {};
+        const freq: Record<number, number> = {};
         for (const v of small) freq[v] = (freq[v] || 0) + 1;
-        let best = null;
+        let best: number | null = null;
         let bestCount = 0;
         for (const k of Object.keys(freq)) {
-          if (freq[k] > bestCount) {
-            best = parseInt(k);
-            bestCount = freq[k];
+          if (freq[Number(k)] > bestCount) {
+            best = parseInt(k, 10);
+            bestCount = freq[Number(k)];
           }
         }
         if (best != null) {
@@ -369,7 +369,7 @@ function extractHhPermitsFromHtml(html) {
     // debug: final regex fallback
     // eslint-disable-next-line no-console
     console.debug('extractHhPermitsFromHtml: regex fallback ->', hhMatch[1] || hhMatch[2]);
-    return parseInt(hhMatch[1] || hhMatch[2]);
+    return parseInt(hhMatch[1] || hhMatch[2], 10);
   }
   return null;
 }
@@ -379,7 +379,7 @@ function extractHhPermitsFromHtml(html) {
 // <div class="druid-row druid-row-type" data-druid-section-row="Intro"><div class="druid-label druid-label-type">Type</div><div class="druid-data druid-data-type druid-data-nonempty">
 // <a href="/wiki/Event/Side_Story" title="Event/Side Story">Side Story</a>–Celebration</div></div>
 // We want to return: "Side Story (Celebration)"
-function extractEventTypeFromHtml(html) {
+function extractEventTypeFromHtml(html: string | null | undefined): string | null {
   if (!html) return null;
   try {
     const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
@@ -402,12 +402,12 @@ function extractEventTypeFromHtml(html) {
     // If no link present, return the normalized raw text
     if (!link) {
       // remove leading dash characters if any
-      const cleaned = rawText.replace(/^[\s\u2013\-–—]+/, '').trim();
+      const cleaned = rawText.replace(/^[\s–\-–—]+/, '').trim();
       if (cleaned) return cleaned;
       return null;
     }
     // normalize en-dash/minus/dash characters
-    remainder = remainder.replace(/^[\s\u2013\-–—]+/, '').trim();
+    remainder = remainder.replace(/^[\s–\-–—]+/, '').trim();
     if (primary && remainder) return `${primary} (${remainder})`;
     if (primary) return primary;
   } catch (e) {
@@ -422,12 +422,17 @@ function extractEventTypeFromHtml(html) {
 // Limited operator (5-year spark-cost-reduction threshold, see lib/sparkCost.js) from
 // every other Limited operator (4-year threshold) — the wiki doesn't expose a
 // separate category tag for "Festival Limited", only this infobox text.
-function extractObtainMethod(html) {
+function extractObtainMethod(html: string | null | undefined): string | null {
   if (!html) return null;
   const m = html.match(
     /How to obtain<\/b>\s*<\/td>\s*<td>[\s\S]{0,300}?<span[^>]*>([^<]+)<\/span>/i
   );
   return m ? m[1].trim() : null;
+}
+
+interface OperatorDebutEvent {
+  event: string;
+  introduced: boolean;
 }
 
 // An operator's own wiki page has a "Changelog" section listing every event they've
@@ -439,7 +444,7 @@ function extractObtainMethod(html) {
 //   <li><b><a href="/wiki/X" title="X">X</a></b> <i>Introduced.</i></li>
 // This is what determines spark eligibility: a Limited operator is rate-up but NOT
 // sparkable on the banner where they debut — only once carried over to a later one.
-function extractOperatorDebutEvent(html) {
+function extractOperatorDebutEvent(html: string | null | undefined): OperatorDebutEvent | null {
   if (!html) return null;
   try {
     const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
@@ -459,34 +464,47 @@ function extractOperatorDebutEvent(html) {
     const debutEntry = topLevelEntries[topLevelEntries.length - 1];
     const link = debutEntry.querySelector('a');
     if (!link) return null;
-    const withoutNestedList = debutEntry.cloneNode(true);
+    const withoutNestedList = debutEntry.cloneNode(true) as Element;
     const nestedUl = withoutNestedList.querySelector('ul');
     if (nestedUl) nestedUl.remove();
     const directText = (withoutNestedList.textContent || '').replace(/\s+/g, ' ').trim();
-    return { event: link.textContent.trim(), introduced: /introduced/i.test(directText) };
+    return { event: (link.textContent || '').trim(), introduced: /introduced/i.test(directText) };
   } catch (e) {
     // ignore, fall through
   }
   return null;
 }
 
+interface ParsedEventFromHtml {
+  origPrime: number | null;
+  hhPermits: number | null;
+  type: string | null;
+  debug: string | null;
+}
+
 // High level parse: given an HTML string (API parse HTML), return best guesses
-function parseEventFromHtml(html) {
-  const result = { origPrime: null, hhPermits: null, type: null, debug: null };
+function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtml {
+  const result: ParsedEventFromHtml = { origPrime: null, hhPermits: null, type: null, debug: null };
   if (!html) return result;
   try {
     const op = extractOrigPrimeFromHtml(html);
     if (op != null) result.origPrime = op;
-  } catch (e) {}
+  } catch (e) {
+    /* ignore */
+  }
   try {
     const hh = extractHhPermitsFromHtml(html);
     if (hh != null) result.hhPermits = hh;
-  } catch (e) {}
+  } catch (e) {
+    /* ignore */
+  }
 
   try {
     const t = extractEventTypeFromHtml(html);
     if (t) result.type = t;
-  } catch (e) {}
+  } catch (e) {
+    /* ignore */
+  }
 
   if (result.origPrime == null) {
     // produce a small debug snippet to help locate OP in the html
@@ -501,15 +519,25 @@ function parseEventFromHtml(html) {
 // Multi-source parsing was removed in favor of the API-only flow. Use
 // `parseEventFromHtml(html)` directly with the API parse HTML.
 
+export interface ParsedIndexEvent {
+  name: string;
+  dateStr: string | null;
+  globalDateStr: string | null;
+  cnDateStr: string | null;
+  type: string | null;
+  image: string | null;
+  link: string | null;
+}
+
 // Extract events from the MediaWiki API parse HTML for the Event page.
 // Returns array of { name, dateStr, type, image, link } where dateStr is the raw cell text.
-function parseIndexHtml(html) {
+function parseIndexHtml(html: string | null | undefined): ParsedIndexEvent[] {
   if (!html) return [];
   const clean = (html || '').replace(/<style[\s\S]*?<\/style>/gi, '');
   const dom = new JSDOM(clean);
   const doc = dom.window.document;
 
-  const events = [];
+  const events: ParsedIndexEvent[] = [];
 
   const tables = Array.from(doc.querySelectorAll('table'));
   for (const table of tables) {
@@ -533,13 +561,13 @@ function parseIndexHtml(html) {
       const first = cells[0];
       const linkEl = first.querySelector('a[href]');
       let name = '';
-      let link = null;
+      let link: string | null = null;
       if (linkEl) {
-        link = linkEl.getAttribute('href') || linkEl.href || null;
+        link = linkEl.getAttribute('href') || (linkEl as HTMLAnchorElement).href || null;
         name = (linkEl.getAttribute('title') || linkEl.textContent || '').trim();
       }
       if ((!name || name.length === 0) && first.querySelector('b')) {
-        name = (first.querySelector('b').textContent || '').trim();
+        name = (first.querySelector('b')?.textContent || '').trim();
       }
       if (!name || name.length === 0) {
         name = (first.textContent || '')
@@ -548,9 +576,9 @@ function parseIndexHtml(html) {
           .trim();
       }
 
-      let dateStr = null;
-      let globalDateStr = null;
-      let cnDateStr = null;
+      let dateStr: string | null = null;
+      let globalDateStr: string | null = null;
+      let cnDateStr: string | null = null;
 
       if (cells.length >= 2) {
         const secondText = (cells[1].textContent || '').replace(/\s+/g, ' ').trim();
@@ -572,8 +600,8 @@ function parseIndexHtml(html) {
       }
 
       const img = first.querySelector('img');
-      let image = null;
-      if (img) image = img.getAttribute('src') || img.src || null;
+      let image: string | null = null;
+      if (img) image = img.getAttribute('src') || (img as HTMLImageElement).src || null;
 
       if (link && link.startsWith('/')) {
         try {

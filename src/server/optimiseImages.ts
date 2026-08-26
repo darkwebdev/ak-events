@@ -5,15 +5,15 @@ import jpegJs from 'jpeg-js';
 
 const defaultDir = () => path.join(process.cwd(), 'public/data/images');
 
-async function processFile(file, dir) {
+async function processFile(file: string, dir: string): Promise<boolean | undefined> {
   const ext = path.extname(file).toLowerCase();
   const base = path.basename(file, ext);
   const input = path.join(dir, file);
   const output = path.join(dir, `${base}.jpg`);
-  if (ext === '.jpg' || ext === '.jpeg') return;
+  if (ext === '.jpg' || ext === '.jpeg') return undefined;
   if (fs.existsSync(output)) {
     // already converted
-    return;
+    return undefined;
   }
 
   try {
@@ -31,16 +31,16 @@ async function processFile(file, dir) {
     console.warn('unsupported format for conversion:', input);
     return false;
   } catch (e) {
-    console.error('Failed to convert', input, e && e.message);
+    console.error('Failed to convert', input, e && (e as Error).message);
     return false;
   }
 }
 
-export async function main(dirArg) {
+export async function main(dirArg?: string): Promise<number | undefined> {
   const dirToUse = dirArg || process.argv[2] || defaultDir();
   if (!fs.existsSync(dirToUse)) {
     console.error('Images directory not found:', dirToUse);
-    return;
+    return undefined;
   }
   const files = fs.readdirSync(dirToUse);
   let convertedCount = 0;

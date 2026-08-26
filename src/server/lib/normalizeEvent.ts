@@ -1,13 +1,35 @@
-const slugify = (s) =>
+const slugify = (s: string): string =>
   s
     .replace(/[^a-z0-9]+/gi, '_')
     .replace(/^_+|_+$/g, '')
     .toLowerCase();
 
+interface RawNormalizeInput {
+  name?: string | null;
+  dateStr?: string | null;
+  type?: string | null;
+  image?: string | null;
+  link?: string | null;
+  origPrime?: number | string | null;
+  hhPermits?: number | string | null;
+}
+
+interface NormalizedEvent {
+  name: string;
+  start: string;
+  end: string;
+  type: string;
+  image: string | null;
+  link: string | null;
+  origPrime: number | null;
+  hhPermits: number | null;
+  slug: string;
+}
+
 // Normalize a single raw event object produced by page.evaluate in scrape.js
 // Input shape (partial): { name, dateStr, type, image, link, origPrime, hhPermits }
 // Output shape: { name, start, end, type, image, link, origPrime, hhPermits, slug }
-function normalizeEvent(raw) {
+function normalizeEvent(raw: RawNormalizeInput): NormalizedEvent {
   const event = { ...raw };
   // Normalize name: strip rerun markers and trailing qualifiers
   if (event.name) {
@@ -41,10 +63,10 @@ function normalizeEvent(raw) {
 
   // Normalize numeric fields: coerce to integer or null
   const { origPrime, hhPermits } = event;
-  const op = origPrime == null ? null : parseInt(origPrime) || null;
-  const hh = hhPermits == null ? null : parseInt(hhPermits) || null;
+  const op = origPrime == null ? null : parseInt(String(origPrime), 10) || null;
+  const hh = hhPermits == null ? null : parseInt(String(hhPermits), 10) || null;
 
-  const out = {
+  const out: NormalizedEvent = {
     name: event.name || 'Unknown',
     start,
     end,

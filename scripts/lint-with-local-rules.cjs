@@ -15,7 +15,11 @@ function walkDir(dir, acc) {
   for (const e of entries) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) walkDir(full, acc);
-    else if (e.isFile() && (full.endsWith('.js') || full.endsWith('.jsx'))) acc.push(full);
+    else if (
+      e.isFile() &&
+      (full.endsWith('.js') || full.endsWith('.jsx') || full.endsWith('.ts') || full.endsWith('.tsx'))
+    )
+      acc.push(full);
   }
 }
 
@@ -50,19 +54,28 @@ async function main() {
   const customRule = require(rulePath);
   const linter = new Linter();
   linter.defineRule('no-duplicate-exports', customRule);
+  // espree (the default parser) can't parse TypeScript syntax at all — .ts/.tsx
+  // files need @typescript-eslint/parser for this manual second pass, the same way
+  // the airbnb-config-driven `eslint` instance above already gets it via .eslintrc.
+  linter.defineParser('typescript-eslint-parser', require('@typescript-eslint/parser'));
 
   let hasCustomErrors = false;
   for (const file of files) {
     const code = fs.readFileSync(file, 'utf8');
     // Configure parser options based on file extension
     const isJsx = file.endsWith('.jsx');
-    const config = { 
+    const isTs = file.endsWith('.ts') || file.endsWith('.tsx');
+    const config = {
       rules: { 'no-duplicate-exports': 'error' },
-      parserOptions: { 
-        ecmaVersion: 2020, 
-        sourceType: 'module',
-        ...(isJsx && { ecmaFeatures: { jsx: true } })
-      }
+      ...(isTs
+        ? { parser: 'typescript-eslint-parser' }
+        : {
+            parserOptions: {
+              ecmaVersion: 2020,
+              sourceType: 'module',
+              ...(isJsx && { ecmaFeatures: { jsx: true } }),
+            },
+          }),
     };
     const customResult = linter.verifyAndFix(code, config, { filename: file });
 

@@ -1,14 +1,15 @@
 import { fetchEventDetailsViaApi } from './network.js';
 import { extractOperatorDebutEvent, extractObtainMethod } from './parser.js';
 import { loadJson, saveJson } from './storage.js';
+import type { OperatorDebutCache, OperatorDebutInfo } from '../types.js';
 
 const CACHE_PATH = 'public/data/operator_debuts.json';
 
-function loadOperatorDebutCache() {
-  return loadJson(CACHE_PATH, {});
+function loadOperatorDebutCache(): OperatorDebutCache {
+  return loadJson<OperatorDebutCache>(CACHE_PATH, {});
 }
 
-function saveOperatorDebutCache(cache) {
+function saveOperatorDebutCache(cache: OperatorDebutCache): void {
   saveJson(CACHE_PATH, cache);
 }
 
@@ -27,7 +28,10 @@ function saveOperatorDebutCache(cache) {
 // every run) — but NOT when the fetch itself failed, since caching a guess from a
 // transient network error would permanently and wrongly block that operator from ever
 // sparking.
-async function resolveOperatorDebutEvent(name, cache) {
+async function resolveOperatorDebutEvent(
+  name: string,
+  cache: OperatorDebutCache
+): Promise<OperatorDebutInfo | null> {
   // Older cache entries (before isFestival was tracked) are a bare string|null rather
   // than this object shape — treat those as stale and re-resolve instead of returning
   // a shape callers now assume has an `isFestival` field.
@@ -36,7 +40,7 @@ async function resolveOperatorDebutEvent(name, cache) {
     cache[name] !== null &&
     typeof cache[name] === 'object'
   ) {
-    return cache[name];
+    return cache[name] as OperatorDebutInfo;
   }
   const apiJson = await fetchEventDetailsViaApi(name);
   const html = apiJson?.parse?.text?.['*'] || '';
@@ -49,7 +53,7 @@ async function resolveOperatorDebutEvent(name, cache) {
   const obtainMethod = extractObtainMethod(html);
   const isFestival = obtainMethod != null && /festival/i.test(obtainMethod);
   cache[name] = { event, isFestival };
-  return cache[name];
+  return cache[name] as OperatorDebutInfo;
 }
 
 export { loadOperatorDebutCache, saveOperatorDebutCache, resolveOperatorDebutEvent };

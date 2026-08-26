@@ -1,6 +1,8 @@
+import type { DateRange } from '../types.js';
+
 // Parse date strings like "2025/10/14–2025/11/04" or "2025-10-14 - 2025-11-04"
 // into { start: 'YYYY-MM-DD'|null, end: 'YYYY-MM-DD'|null }.
-function parseDateRange(dateStr) {
+function parseDateRange(dateStr: string | null | undefined): DateRange {
   if (!dateStr) return { start: null, end: null };
 
   const m = dateStr.match(/(\d{4})[/-](\d{1,2})[/-](\d{1,2})/g);
@@ -12,7 +14,7 @@ function parseDateRange(dateStr) {
     const dd = parts[2].padStart(2, '0');
     const start = `${yyyy}-${mm}-${dd}`;
 
-    let end = null;
+    let end: string | null = null;
     if (m.length > 1) {
       const s2 = m[1];
       const parts2 = s2.split(/\D/).filter(Boolean);

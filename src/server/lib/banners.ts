@@ -1,16 +1,22 @@
 import { JSDOM } from 'jsdom';
 import { parseDateRange } from './dateRange.js';
+import type { BannerDateIndex, BannerOperator, BannerType, RawBanner } from '../types.js';
 
-const SECTION_TYPES = {
+const SECTION_TYPES: Record<string, BannerType> = {
   Limited_Headhunting: 'Limited',
   Standard_Headhunting: 'Standard',
   Kernel_Headhunting: 'Kernel',
   Special_Headhunting: 'Special',
 };
 
+interface Heading {
+  el: Element;
+  type: BannerType;
+}
+
 // Find the closest Headhunting-type section heading that precedes `el` in document order.
-function typeForElement(el, headings) {
-  let best = null;
+function typeForElement(el: Element, headings: Heading[]): BannerType | null {
+  let best: BannerType | null = null;
   for (const h of headings) {
     // eslint-disable-next-line no-bitwise
     if (h.el.compareDocumentPosition(el) & 4 /* DOCUMENT_POSITION_FOLLOWING */) {
@@ -28,7 +34,7 @@ function typeForElement(el, headings) {
 // "[Limited Headhunting ‐ Celebration]" or "[Standard Headhunting - Limited-Time]").
 // Try that first since it's authoritative when present, falling back to the section
 // heading for the year-archive pages where the tag alone doesn't name a type.
-function typeFromTag(rawName) {
+function typeFromTag(rawName: string): BannerType | null {
   const m = rawName.match(/^\[([^\]]+)\]/);
   if (!m) return null;
   const tag = m[1];
@@ -42,21 +48,21 @@ function typeFromTag(rawName) {
 // Parse a "Headhunting/Banners/{year}" or "Headhunting/Banners/Upcoming" wiki page
 // (API parse HTML) into an array of banner records:
 // { name, type, cnStart, cnEnd, globalStart, globalEnd, operators: [{ name, star, class, icon }] }
-function parseBannersPage(html) {
+function parseBannersPage(html: string | null | undefined): RawBanner[] {
   if (!html) return [];
   const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
   const dom = new JSDOM(clean);
   const doc = dom.window.document;
 
-  const headings = Array.from(doc.querySelectorAll('h2, h3'))
+  const headings: Heading[] = Array.from(doc.querySelectorAll('h2, h3'))
     .map((el) => {
       const headline = el.querySelector('.mw-headline');
       const id = headline && headline.id;
       return id && SECTION_TYPES[id] ? { el, type: SECTION_TYPES[id] } : null;
     })
-    .filter(Boolean);
+    .filter((h): h is Heading => h !== null);
 
-  const banners = [];
+  const banners: RawBanner[] = [];
   const bannerTds = Array.from(doc.querySelectorAll('td')).filter((td) =>
     td.querySelector('.banner')
   );
@@ -100,12 +106,12 @@ function parseBannersPage(html) {
 
     const tr = td.closest('tr');
     const opTd = tr && Array.from(tr.querySelectorAll('td')).find((t) => t !== td);
-    const operators = opTd
+    const operators: BannerOperator[] = opTd
       ? Array.from(opTd.querySelectorAll('.character-tooltip')).map((el) => {
           const img = el.querySelector('img');
           return {
             name: el.getAttribute('data-name') || null,
-            star: parseInt(el.getAttribute('data-star'), 10) || null,
+            star: parseInt(el.getAttribute('data-star') || '', 10) || null,
             class: el.getAttribute('data-class') || null,
             icon: img ? img.getAttribute('src') : null,
           };
@@ -132,8 +138,8 @@ function parseBannersPage(html) {
 // is merged rather than treated as two competing banners — keeping the LAST occurrence
 // for a given name, so callers control priority via array order (put the more
 // authoritative/complete source later).
-function dedupeBannersByName(banners) {
-  const byName = new Map();
+function dedupeBannersByName(banners: RawBanner[]): RawBanner[] {
+  const byName = new Map<string, RawBanner>();
   for (const banner of banners) {
     byName.set(banner.name, banner);
   }
@@ -145,11 +151,15 @@ function dedupeBannersByName(banners) {
 // banners share the same start date (e.g. a dual Limited-banner drop), the Limited
 // one wins since that's what matters most for this app, and the loser is logged
 // rather than silently dropped.
-function indexBannersByDate(banners) {
+function indexBannersByDate(banners: RawBanner[]): BannerDateIndex {
   const deduped = dedupeBannersByName(banners);
-  const byGlobalStart = {};
-  const byCnStart = {};
-  const indexOne = (index, dateKey, banner) => {
+  const byGlobalStart: Record<string, RawBanner> = {};
+  const byCnStart: Record<string, RawBanner> = {};
+  const indexOne = (
+    index: Record<string, RawBanner>,
+    dateKey: string | null,
+    banner: RawBanner
+  ) => {
     if (!dateKey) return;
     const existing = index[dateKey];
     if (!existing) {

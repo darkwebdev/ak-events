@@ -1,7 +1,12 @@
 import React from 'react';
 import { jpgifyLocal } from '../../utils/images.js';
 import { getEffectiveStart, getEffectiveEnd } from '../../utils/dates.js';
-import { calcEventOrundum, orundumFromOP, orundumFromHH } from '../../utils/orundum.js';
+import {
+  calcEventOrundum,
+  orundumFromOP,
+  orundumFromHH,
+  orundumFromIntCerts,
+} from '../../utils/orundum.js';
 import { splitOperatorColumns } from '../../utils/operators.js';
 import { Orundum } from '../Orundum';
 import { InfoButton } from '../InfoButton';
@@ -29,8 +34,20 @@ function OperatorColumn({ groups }) {
   );
 }
 
-export function Event({ event, selectedEvents, onEventToggle }) {
-  const { name, type, image, origPrime, hhPermits, link, banner, datesPredicted } = event;
+export function Event({ event, selectedEvents, onEventToggle, onToggleIntCerts = () => {} }) {
+  const {
+    name,
+    type,
+    image,
+    origPrime,
+    hhPermits,
+    intCerts,
+    intCertsIncluded,
+    link,
+    banner,
+    datesPredicted,
+  } = event;
+  const hasIntCertsValue = intCertsIncluded && intCerts;
   const start = getEffectiveStart(event);
   const end = getEffectiveEnd(event);
   const startStr = start ? start.toLocaleDateString() : 'Unknown';
@@ -42,7 +59,13 @@ export function Event({ event, selectedEvents, onEventToggle }) {
       className={`ak-events-list-item ${selectedEvents.has(name) ? 'selected' : ''}`}
       role="button"
       tabIndex={0}
-      onClick={() => onEventToggle(name)}
+      onClick={(e) => {
+        // The Intelligence Certificates checkbox/label is its own control nested
+        // inside this otherwise-fully-clickable card — clicking it should toggle
+        // that checkbox, not also select/deselect the event.
+        if (e.target.closest('.ak-event-int-certs')) return;
+        onEventToggle(name);
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -76,7 +99,7 @@ export function Event({ event, selectedEvents, onEventToggle }) {
               )}
             </div>
             <div>
-              {(origPrime || hhPermits) && (
+              {(origPrime || hhPermits || hasIntCertsValue) && (
                 // The Orundum value itself is the hover/click trigger now — no
                 // separate "Orundum" label needed, and no duplicate icon either.
                 <InfoButton
@@ -92,14 +115,17 @@ export function Event({ event, selectedEvents, onEventToggle }) {
                       // A Headhunting Permit is redeemable as one pull, so it's
                       // labeled with the pull icon rather than its own text.
                       hhPermits && <PullIcon key="hh" />,
+                      hasIntCertsValue && <span key="ic">Intelligence Certificates</span>,
                     ].filter(Boolean)}
                     calcs={[
                       origPrime && `${origPrime} × 180`,
                       hhPermits && `${hhPermits} × 600`,
+                      hasIntCertsValue && `${intCerts} × 5`,
                     ].filter(Boolean)}
                     totals={[
                       origPrime && orundumFromOP(origPrime),
                       hhPermits && orundumFromHH(hhPermits),
+                      hasIntCertsValue && orundumFromIntCerts(intCerts),
                     ].filter(Boolean)}
                   />
                   Source:{' '}
@@ -110,6 +136,22 @@ export function Event({ event, selectedEvents, onEventToggle }) {
               )}
             </div>
           </div>
+          {intCerts != null && (
+            // A rerun's Intelligence Certificate total is a ceiling (the maximum if
+            // the player already owns every substitutable reward — see
+            // extractIntCertsFromHtml on the server), not a guaranteed amount like
+            // origPrime/hhPermits, so it's opt-in rather than counted by default.
+            <div className="ak-event-int-certs">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!!intCertsIncluded}
+                  onChange={(e) => onToggleIntCerts(name, e.target.checked)}
+                />
+                Intelligence Certificates (up to {intCerts})
+              </label>
+            </div>
+          )}
         </div>
         {banner && (
           <div className="ak-event-banner">

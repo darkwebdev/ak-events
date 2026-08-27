@@ -30,7 +30,16 @@ export function pullsFromOrundum(orundum, precision = 0) {
  * @returns {number} Total orundum value
  */
 export function calcEventOrundum(event) {
-  return orundumFromOP(event.origPrime) + (event.hhPermits || 0) * 600;
+  return (
+    orundumFromOP(event.origPrime) +
+    (event.hhPermits || 0) * 600 +
+    // event.intCerts is the maximum a rerun's own page states (see
+    // extractIntCertsFromHtml on the server) — a ceiling assuming the player already
+    // owns every substitutable reward, not a guaranteed amount, so it's only counted
+    // when the user has explicitly opted in via event.intCertsIncluded (the rerun
+    // event card's own checkbox).
+    (event.intCertsIncluded ? orundumFromIntCerts(event.intCerts) : 0)
+  );
 }
 
 export function calcDailyOrundum(settings) {
@@ -54,4 +63,11 @@ export function orundumFromOP(origPrime = 0) {
 
 export function orundumFromHH(hhPermits = 0) {
   return hhPermits * 600;
+}
+
+// The Intelligence Store exchanges 100 Orundum for 20 Intelligence Certificates —
+// confirmed against a real account's own conversion (1820 certificates -> 9100
+// Orundum, exactly 5:1).
+export function orundumFromIntCerts(intCerts = 0) {
+  return intCerts * 5;
 }

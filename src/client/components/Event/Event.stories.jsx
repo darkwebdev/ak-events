@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Event } from './index.jsx';
 
 const baseEvent = {
@@ -121,6 +121,45 @@ export const Selected = {
 export const MultipleDiscountedOperators = {
   args: { bannerType: 'Limited', selected: false, discountedOperators: ['Chongyue', 'Shu'] },
 };
+
+const rerunEvent = {
+  ...baseEvent,
+  name: 'When Elegies Are Ashes',
+  type: 'Side Story (Rerun)',
+  origPrime: 28,
+  hhPermits: 3,
+  // A rerun's own scraped maximum (see extractIntCertsFromHtml on the server) — a
+  // ceiling assuming the player already owns every substitutable reward, so the
+  // event card only counts it toward the Orundum total once the checkbox below is
+  // checked (intCertsIncluded), not just because intCerts is present.
+  intCerts: 1755,
+};
+
+// Interactive (real useState, not a fixed args object) so clicking the checkbox
+// visibly updates the event's Orundum total and its Breakdown popover — the
+// behavior itself is the point of this story, not just a static snapshot of one
+// checked/unchecked state.
+export function RerunWithIntCerts() {
+  const [intCertsIncluded, setIntCertsIncluded] = useState(false);
+  const [selectedEvents, setSelectedEvents] = useState(new Set());
+  return (
+    <ul className="ak-events-list">
+      <Event
+        event={{ ...rerunEvent, intCertsIncluded, banner: buildBanner('Limited', []) }}
+        selectedEvents={selectedEvents}
+        onEventToggle={(name) =>
+          setSelectedEvents((prev) => {
+            const next = new Set(prev);
+            if (next.has(name)) next.delete(name);
+            else next.add(name);
+            return next;
+          })
+        }
+        onToggleIntCerts={(_name, checked) => setIntCertsIncluded(checked)}
+      />
+    </ul>
+  );
+}
 
 // A banner-less event's row keeps the same ~2/3 event-column width as a paired one
 // instead of stretching to fill the row — shown stacked against a bannered event so

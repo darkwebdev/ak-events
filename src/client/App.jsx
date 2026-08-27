@@ -28,6 +28,11 @@ export default function App() {
     defaultPlayerStatus
   );
   const [arkAuth, setArkAuth] = useStorage('ak-events-arknights-auth', null);
+  // Whether the user has opted in to counting a rerun's Intelligence Certificates
+  // (event.intCerts, a scraped maximum — see extractIntCertsFromHtml on the server)
+  // toward its Orundum total. Keyed by event name; only reruns with scraped data
+  // show the checkbox at all (see Event/index.jsx).
+  const [intCertsIncluded, setIntCertsIncluded] = useStorage('ak-events-int-certs-included', {});
   // Off by default in every environment, including staging — turn it on in a given
   // browser via the ?ff_accountImport=1 URL param (sticks after that, see
   // utils/featureFlags.js) or `localStorage.setItem('ak-events-flag-accountImport',
@@ -59,6 +64,10 @@ export default function App() {
     updatePlayerStatus('hhPermits', data.headhuntingPermits);
   };
 
+  const toggleIntCertsIncluded = (eventName, checked) => {
+    setIntCertsIncluded((prev) => ({ ...prev, [eventName]: checked }));
+  };
+
   useEffect(() => {
     async function fetchEvents() {
       try {
@@ -75,7 +84,13 @@ export default function App() {
   const playerOrundumTotal =
     playerStatus.orundum + playerStatus.op * 180 + playerStatus.hhPermits * 600;
 
-  const futureEvents = filterUpcomingEvents(events, new Date());
+  const rawFutureEvents = filterUpcomingEvents(events, new Date());
+  // Only reruns actually carry a scraped `intCerts` value — every other event is
+  // passed through untouched, so calcEventOrundum's existing origPrime/hhPermits
+  // math is unaffected by this merge.
+  const futureEvents = rawFutureEvents.map((event) =>
+    event.intCerts != null ? { ...event, intCertsIncluded: !!intCertsIncluded[event.name] } : event
+  );
 
   const handleEventToggle = (eventName) => {
     setSelectedEvents((prev) => {
@@ -118,6 +133,7 @@ export default function App() {
           filteredEvents={futureEvents}
           selectedEvents={selectedEvents}
           onEventToggle={handleEventToggle}
+          onToggleIntCerts={toggleIntCertsIncluded}
           settingsTotal={dailyOrundum}
           playerOrundumTotal={playerOrundumTotal}
         />

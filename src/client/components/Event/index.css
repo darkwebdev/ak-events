@@ -68,6 +68,28 @@
   gap: 12px;
 }
 
+.ak-event-int-certs {
+  margin-top: 8px;
+  font-size: 0.85em;
+  color: var(--ak-text-muted);
+  /* Not a click target for event selection, unlike the rest of the card — a normal
+     cursor (rather than the card's inherited pointer) signals that. */
+  cursor: default;
+  /* Mobile (≤480px) turns the event image into a full-bleed absolutely-positioned
+     background (see the .ak-event:has(.ak-event-image-wrap) rules further down) —
+     without its own stacking context this row would render behind that background
+     instead of on top of it, same reason .ak-event-title/.ak-event-meta need it. */
+  position: relative;
+  z-index: 1;
+}
+
+.ak-event-int-certs label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
 .ak-event-date {
   color: var(--ak-text-muted);
 }
@@ -238,5 +260,11 @@
 
   .ak-event:has(.ak-event-image-wrap) .ak-event-orundum {
     color: #fff;
+  }
+
+  .ak-event:has(.ak-event-image-wrap) .ak-event-int-certs {
+    padding: 0 16px 10px;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   }
 }

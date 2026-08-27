@@ -4,7 +4,7 @@ import { Orundum } from '../Orundum';
 import { Event } from '../Event';
 import './index.css';
 
-export function EventsList({ filteredEvents, selectedEvents, onEventToggle }) {
+export function EventsList({ filteredEvents, selectedEvents, onEventToggle, onToggleIntCerts }) {
   const totalEventsOrundum = calcTotalOrundum(filteredEvents, selectedEvents, 0, 0);
 
   return (
@@ -19,6 +19,7 @@ export function EventsList({ filteredEvents, selectedEvents, onEventToggle }) {
               event={event}
               selectedEvents={selectedEvents}
               onEventToggle={onEventToggle}
+              onToggleIntCerts={onToggleIntCerts}
             />
           ))}
         </ul>

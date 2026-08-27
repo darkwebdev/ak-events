@@ -159,7 +159,7 @@
     "type": "Side Story",
     "image": "data/images/CN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
-    "origPrime": null,
+    "origPrime": 27,
     "hhPermits": 3,
     "banner": {
       "name": "Rage of The Many",

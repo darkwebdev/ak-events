@@ -3,6 +3,7 @@ import path from 'path';
 import {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
+  extractIntCertsFromHtml,
   extractObtainMethod,
   extractOperatorDebutEvent,
 } from '../src/server/lib/parser.js';
@@ -24,6 +25,9 @@ test('Act or Die: extracts OP and hhPermits from API HTML', () => {
   const html = loadApiHtml('act_or_die');
   expect(extractOrigPrimeFromHtml(html)).toBe(28);
   expect(extractHhPermitsFromHtml(html)).toBe(3);
+  // A regular (non-rerun) event page never mentions Intelligence Certificates —
+  // that substitution mechanic only exists on rerun pages.
+  expect(extractIntCertsFromHtml(html)).toBeNull();
 });
 
 test('Path of Life: extracts OP and hhPermits from API HTML', () => {

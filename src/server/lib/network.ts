@@ -12,7 +12,7 @@ import {
   arkpediaBase,
 } from '../config.js';
 import { parseIndexHtml, type ParsedIndexEvent } from './parser.js';
-import { titleFromUrl } from './wiki.js';
+import { rawTitleFromUrl } from './wiki.js';
 import type { ActivityTable, CharacterTable, GachaTable, StageTable } from '../types.js';
 
 interface WikiApiResult {
@@ -36,7 +36,11 @@ function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> 
       /* keep original if decode fails */
     }
     const encoded = encodeURIComponent(decodedTitle);
-    const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&prop=text&format=json`;
+    // redirects=1: several rerun pages (e.g. "X Rerun") are themselves just a
+    // MediaWiki redirect to the real content page (e.g. "X/Rerun") — without this,
+    // action=parse returns only a tiny "Redirect to: ..." stub with none of the
+    // actual page content, silently starving every extractor that reads this HTML.
+    const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&redirects=1&prop=text&format=json`;
     const options = {
       headers: {
         'User-Agent':
@@ -104,7 +108,11 @@ function downloadImage(url: string, filepath: string): Promise<void> {
   });
 }
 
-// Fetch event details via the wiki API. Accepts either a page title or a full wiki URL.
+// Fetch event details via the wiki API. Accepts either a page title or a full wiki
+// URL — a URL is fetched exactly as given (rawTitleFromUrl only strips the domain,
+// it does NOT resolve to the original run's page for a rerun URL; callers that
+// specifically want the original page pass its already-resolved title directly, see
+// scrape.ts's own titleFromUrl usage in its rerun-fallback fetch).
 async function fetchEventDetailsViaApi(
   urlOrTitle: string | null | undefined
 ): Promise<WikiParseBody | null> {
@@ -112,7 +120,7 @@ async function fetchEventDetailsViaApi(
     let title = urlOrTitle || '';
     // If passed a URL, derive the title using the wiki helper
     if (/^https?:\/\//i.test(title)) {
-      title = titleFromUrl(title) || '';
+      title = rawTitleFromUrl(title) || '';
     }
     const api = await fetchWikiApi(title);
     if (api && api.statusCode === 200 && api.body) return api.body as WikiParseBody;

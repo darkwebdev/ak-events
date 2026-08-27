@@ -374,6 +374,39 @@ function extractHhPermitsFromHtml(html: string | null | undefined): number | nul
   return null;
 }
 
+// Reruns replace one-time rewards (furniture, plaques, outfits) the player already
+// owns from the original run with an "Intelligence Certificate" for each one —
+// exchangeable at a fixed 5 Orundum each (100 Orundum per 20 certificates, per the
+// in-game Intelligence Store). Every mission/threshold row that can pay out this
+// substitute reward states a fixed, page-authored quantity (e.g. "Clear EA-3" pays
+// 330 certificates if you already own that reward's furniture piece) — summing every
+// such quantity gives the maximum a player could get from this rerun, i.e. if they
+// already own every substitutable reward. This is a ceiling, not a guarantee: a
+// player who doesn't already own everything gets the furniture instead of (some of)
+// these certificates, same as anyone who hasn't done the original run at all. A
+// non-rerun event page never mentions this item, so this naturally returns null for
+// every regular event.
+function extractIntCertsFromHtml(html: string | null | undefined): number | null {
+  if (!html) return null;
+  try {
+    const clean = html.replace(/<style[\s\S]*?<\/style>/gi, '');
+    const dom = new JSDOM(clean);
+    const doc = dom.window.document;
+    const tips = Array.from(doc.querySelectorAll('[data-name="Intelligence Certificate"]'));
+    let sum = 0;
+    for (const tip of tips) {
+      const container = tip.closest('td') || tip.closest('.item') || tip.parentElement;
+      const qEl = container ? container.querySelector('.quantity') : null;
+      if (!qEl) continue;
+      const v = parseInt((qEl.textContent || '').trim(), 10);
+      if (!Number.isNaN(v) && v > 0) sum += v;
+    }
+    return sum > 0 ? sum : null;
+  } catch (e) {
+    return null;
+  }
+}
+
 // Extract event "Type" from the event detail API HTML.
 // The markup looks like:
 // <div class="druid-row druid-row-type" data-druid-section-row="Intro"><div class="druid-label druid-label-type">Type</div><div class="druid-data druid-data-type druid-data-nonempty">
@@ -478,13 +511,20 @@ function extractOperatorDebutEvent(html: string | null | undefined): OperatorDeb
 interface ParsedEventFromHtml {
   origPrime: number | null;
   hhPermits: number | null;
+  intCerts: number | null;
   type: string | null;
   debug: string | null;
 }
 
 // High level parse: given an HTML string (API parse HTML), return best guesses
 function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtml {
-  const result: ParsedEventFromHtml = { origPrime: null, hhPermits: null, type: null, debug: null };
+  const result: ParsedEventFromHtml = {
+    origPrime: null,
+    hhPermits: null,
+    intCerts: null,
+    type: null,
+    debug: null,
+  };
   if (!html) return result;
   try {
     const op = extractOrigPrimeFromHtml(html);
@@ -495,6 +535,12 @@ function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtm
   try {
     const hh = extractHhPermitsFromHtml(html);
     if (hh != null) result.hhPermits = hh;
+  } catch (e) {
+    /* ignore */
+  }
+  try {
+    const ic = extractIntCertsFromHtml(html);
+    if (ic != null) result.intCerts = ic;
   } catch (e) {
     /* ignore */
   }
@@ -633,6 +679,7 @@ function parseIndexHtml(html: string | null | undefined): ParsedIndexEvent[] {
 export {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
+  extractIntCertsFromHtml,
   extractEventTypeFromHtml,
   extractObtainMethod,
   extractOperatorDebutEvent,

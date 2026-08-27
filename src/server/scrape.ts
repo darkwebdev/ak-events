@@ -99,8 +99,11 @@ export async function scrapeEvents(): Promise<void> {
       }
     }
 
-    // Skip fetching the wiki page if we already have both values
-    if (event.origPrime != null && event.hhPermits != null) return event;
+    // Skip fetching the wiki page if we already have both values — unless this is a
+    // rerun, where the wiki page is the only source for Intelligence Certificates
+    // (see extractIntCertsFromHtml), so it's still worth fetching purely for that.
+    if (event.origPrime != null && event.hhPermits != null && !isRerunLink(event.link))
+      return event;
     if (!event.link) return event;
     // If the link ends with '/Rerun', we should fetch the original event page
     // (without '/Rerun') and then mark the parsed type as a rerun by appending
@@ -118,11 +121,19 @@ export async function scrapeEvents(): Promise<void> {
       const apiHtml = apiJson?.parse?.text?.['*'] || '';
       const parsed = parseEventFromHtml(apiHtml);
 
-      if (parsed.origPrime != null) {
+      // Only fill these in if not already set: a higher-priority source
+      // (activityTable/arkpedia, tried before this function's wiki fetch — see
+      // above) already sets one or both for most reruns, and the wiki value
+      // shouldn't override an already-trusted one just because this fetch also
+      // happened to run (now unconditional for reruns, to reach intCerts below).
+      if (parsed.origPrime != null && event.origPrime == null) {
         event.origPrime = parsed.origPrime;
       }
-      if (parsed.hhPermits != null) {
+      if (parsed.hhPermits != null && event.hhPermits == null) {
         event.hhPermits = parsed.hhPermits;
+      }
+      if (parsed.intCerts != null) {
+        event.intCerts = parsed.intCerts;
       }
       if (parsed.type) {
         event.type = applyRerunSuffix(parsed.type, event.link) ?? null;
@@ -291,6 +302,7 @@ export async function scrapeEvents(): Promise<void> {
       link: event.link ?? null,
       origPrime: event.origPrime ?? null,
       hhPermits: event.hhPermits ?? null,
+      intCerts: event.intCerts ?? null,
     };
   });
 
@@ -452,7 +464,7 @@ export async function scrapeEvents(): Promise<void> {
   // A predicted date is kept regardless of orundum/banner — an estimated heads-up is
   // exactly the point of surfacing it this early, before either would even be knowable.
   const eventOrundumValue = (event: ProcessedEvent) =>
-    (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600;
+    (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600 + (event.intCerts || 0) * 5;
   const beforeFilterCount = processed.length;
   processed = processed.filter(
     (event) => event.start && (event.datesPredicted || eventOrundumValue(event) > 0 || event.banner)

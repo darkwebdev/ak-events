@@ -22,6 +22,11 @@ export interface RawEvent {
   link?: string | null;
   origPrime?: number | null;
   hhPermits?: number | null;
+  // The maximum Intelligence Certificates a rerun's own page states across every
+  // mission/threshold that can substitute one for an already-owned reward — see
+  // extractIntCertsFromHtml in lib/parser.ts for how this is derived, and why it's a
+  // ceiling rather than a guaranteed amount. null for every non-rerun event.
+  intCerts?: number | null;
   datesPredicted?: boolean;
 }
 
@@ -80,6 +85,7 @@ export interface ProcessedEvent {
   link: string | null;
   origPrime: number | null;
   hhPermits: number | null;
+  intCerts: number | null;
   banner?: ResolvedBanner | null;
 }
 

@@ -13,6 +13,7 @@
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_Part_2",
     "origPrime": null,
     "hhPermits": null,
+    "intCerts": null,
     "banner": {
       "name": "Joint Operation #21",
       "type": "Standard",
@@ -115,6 +116,7 @@
     "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun",
     "origPrime": 28,
     "hhPermits": 3,
+    "intCerts": 1755,
     "banner": {
       "name": "Returned From A Pyre Rerun",
       "type": "Standard",
@@ -159,8 +161,9 @@
     "type": "Side Story",
     "image": "data/images/CN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
-    "origPrime": null,
+    "origPrime": 27,
     "hhPermits": 3,
+    "intCerts": null,
     "banner": {
       "name": "Rage of The Many",
       "type": "Standard",
@@ -207,6 +210,7 @@
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
     "origPrime": null,
     "hhPermits": 39,
+    "intCerts": null,
     "banner": {
       "name": "Sealed With Time",
       "type": "Limited",
@@ -277,6 +281,7 @@
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
     "origPrime": 41,
     "hhPermits": 3,
+    "intCerts": 1160,
     "banner": null
   },
   {
@@ -293,6 +298,7 @@
     "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
     "origPrime": null,
     "hhPermits": 120,
+    "intCerts": null,
     "banner": null
   },
   {
@@ -304,11 +310,12 @@
     "cnStart": null,
     "cnEnd": null,
     "datesPredicted": false,
-    "type": "Crossover (Side Story) (Rerun)",
+    "type": "Side Story (Rerun)",
     "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
     "origPrime": 31,
     "hhPermits": 10,
+    "intCerts": null,
     "banner": null
   }
 ]

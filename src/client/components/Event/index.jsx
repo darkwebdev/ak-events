@@ -14,6 +14,7 @@ import { Breakdown } from '../Breakdown';
 import { Operator } from '../Operator';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
+import { IntCertsIcon } from '../IntCertsIcon';
 import './index.css';
 
 function OperatorColumn({ groups }) {
@@ -115,7 +116,7 @@ export function Event({ event, selectedEvents, onEventToggle, onToggleIntCerts =
                       // A Headhunting Permit is redeemable as one pull, so it's
                       // labeled with the pull icon rather than its own text.
                       hhPermits && <PullIcon key="hh" />,
-                      hasIntCertsValue && <span key="ic">Intelligence Certificates</span>,
+                      hasIntCertsValue && <IntCertsIcon key="ic" />,
                     ].filter(Boolean)}
                     calcs={[
                       origPrime && `${origPrime} × 180`,
@@ -148,7 +149,7 @@ export function Event({ event, selectedEvents, onEventToggle, onToggleIntCerts =
                   checked={!!intCertsIncluded}
                   onChange={(e) => onToggleIntCerts(name, e.target.checked)}
                 />
-                Intelligence Certificates (up to {intCerts})
+                <IntCertsIcon /> Intelligence Certificates (up to {intCerts})
               </label>
             </div>
           )}

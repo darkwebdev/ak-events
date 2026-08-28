@@ -3,6 +3,7 @@ import { OrundumIcon } from '../Orundum/OrundumIcon.jsx';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { SparkIcon } from '../Operator/SparkIcon.jsx';
+import { IntCertsIcon } from '../IntCertsIcon';
 import './index.css';
 
 // Every icon renders via its *real* component, at its real deployed size (the same
@@ -38,6 +39,12 @@ const ICONS = [
     // real tag background instead.
     previewBackground: 'color-mix(in srgb, var(--ak-limited) 80%, transparent)',
     render: () => <SparkIcon />,
+  },
+  {
+    name: 'Intelligence Certificates',
+    usage: 'IntCertsIcon',
+    file: 'icon-int-certs.svg',
+    render: () => <IntCertsIcon />,
   },
 ];
 

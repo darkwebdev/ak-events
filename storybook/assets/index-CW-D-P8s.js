@@ -1,0 +1,1 @@
+import{R as t}from"./iframe-CAItsOV1.js";import{n}from"./images-BVwpUHA0.js";function i({className:e}){return t.createElement("img",{className:`ak-int-certs-icon${e?` ${e}`:""}`,src:n("/images/icon-int-certs.svg"),alt:"Intelligence Certificates",title:"Intelligence Certificates"})}i.__docgenInfo={description:"",methods:[],displayName:"IntCertsIcon"};export{i as I};

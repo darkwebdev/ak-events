@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 104">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4B4C56"/>
+      <stop offset="45%" stop-color="#422995"/>
+      <stop offset="92%" stop-color="#422995"/>
+      <stop offset="100%" stop-color="#574F79"/>
+    </linearGradient>
+
+    <mask id="pageMask">
+      <!-- white = visible page, black = cut through to background -->
+      <path d="M16,12 L48,12 L70,37 L70,93 L12,93 L12,16 A4,4 0 0 1 16,12 Z" fill="#fff"/>
+      <text x="12" y="34" font-family="Arial, Helvetica, sans-serif" font-weight="700"
+            font-size="30" letter-spacing="-1" fill="#000">RE</text>
+      <path d="M27,47 L48,86 L12,86 Z" fill="none" stroke="#000" stroke-width="6" stroke-linejoin="round"/>
+      <rect x="12" y="87" width="40" height="5" fill="#000"/>
+    </mask>
+  </defs>
+
+  <rect x="0" y="0" width="80" height="104" fill="url(#bgGrad)"/>
+
+  <path d="M16,12 L48,12 L70,37 L70,93 L12,93 L12,16 A4,4 0 0 1 16,12 Z"
+        fill="#9C9AFF" mask="url(#pageMask)"/>
+
+  <!-- folded corner: floating bracket + small connecting flap -->
+  <path d="M58,5 L72,5 L72,20 L68,20 L68,10 L58,10 Z" fill="#9C9AFF"/>
+  <path d="M52,23 L64,23 L63,29 L51,29 Z" fill="#9C9AFF"/>
+</svg>

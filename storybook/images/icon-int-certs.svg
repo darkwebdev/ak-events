@@ -1,28 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 104">
-  <defs>
-    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4B4C56"/>
-      <stop offset="45%" stop-color="#422995"/>
-      <stop offset="92%" stop-color="#422995"/>
-      <stop offset="100%" stop-color="#574F79"/>
-    </linearGradient>
-
-    <mask id="pageMask">
-      <!-- white = visible page, black = cut through to background -->
-      <path d="M16,12 L48,12 L70,37 L70,93 L12,93 L12,16 A4,4 0 0 1 16,12 Z" fill="#fff"/>
-      <text x="12" y="34" font-family="Arial, Helvetica, sans-serif" font-weight="700"
-            font-size="30" letter-spacing="-1" fill="#000">RE</text>
-      <path d="M27,47 L48,86 L12,86 Z" fill="none" stroke="#000" stroke-width="6" stroke-linejoin="round"/>
-      <rect x="12" y="87" width="40" height="5" fill="#000"/>
-    </mask>
-  </defs>
-
-  <rect x="0" y="0" width="80" height="104" fill="url(#bgGrad)"/>
-
-  <path d="M16,12 L48,12 L70,37 L70,93 L12,93 L12,16 A4,4 0 0 1 16,12 Z"
-        fill="#9C9AFF" mask="url(#pageMask)"/>
-
-  <!-- folded corner: floating bracket + small connecting flap -->
-  <path d="M58,5 L72,5 L72,20 L68,20 L68,10 L58,10 Z" fill="#9C9AFF"/>
-  <path d="M52,23 L64,23 L63,29 L51,29 Z" fill="#9C9AFF"/>
+<svg width="99" height="132" viewBox="0 0 99 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_1_11" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="-4" y="2" width="103" height="130">
+<path d="M97.3 49.1462V132H12.3V49C35.0989 49 87.6472 49 97.3 49.1462Z" fill="white"/>
+<path d="M12.2897 49V11.7773H25.2643C28.582 11.7773 30.9518 12.1159 32.3737 12.793C33.7956 13.4531 34.9635 14.6126 35.8776 16.2715C36.7917 17.9134 37.2487 19.8854 37.2487 22.1875C37.2487 25.099 36.5462 27.4434 35.1413 29.2207C33.7532 30.998 31.7728 32.1152 29.1999 32.5723C30.5202 33.5202 31.612 34.5612 32.4753 35.6953C33.3385 36.8125 34.515 38.8268 36.0045 41.7383L39.7116 49H32.3737L27.9049 40.9004C26.2969 37.972 25.2051 36.1439 24.6295 35.416C24.054 34.6712 23.4447 34.1634 22.8014 33.8926C22.1582 33.6048 21.1256 33.4609 19.7038 33.4609H18.4342V49H12.2897ZM18.4342 27.5195H23.0045C25.7975 27.5195 27.5749 27.401 28.3366 27.1641C29.0983 26.9102 29.7161 26.4108 30.1901 25.666C30.6641 24.9212 30.901 23.931 30.901 22.6953C30.901 21.5104 30.6641 20.5625 30.1901 19.8516C29.7161 19.1237 29.0729 18.6243 28.2604 18.3535C27.6849 18.1673 26.0176 18.0742 23.2585 18.0742H18.4342V27.5195ZM43.0631 49V11.7773H65.7116V18.0742H49.2077V26.3262H64.5436V32.5977H49.2077V42.7285H66.2702V49H43.0631Z" fill="white"/>
+<path d="M78 2H99V22H93.849V7H78V2Z" fill="white"/>
+<path d="M69 28H88V35H69V28Z" fill="white"/>
+<path d="M33 69L64 123H2L33 69Z" fill="white" stroke="black" stroke-width="6"/>
+</mask>
+<g mask="url(#mask0_1_11)">
+<path d="M99 2V132H0V2C44.0593 2.00002 82.4644 1.99999 99 2Z" fill="#9C9AFF"/>
+</g>
 </svg>

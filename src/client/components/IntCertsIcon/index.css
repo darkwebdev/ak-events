@@ -1,5 +1,5 @@
 .ak-int-certs-icon {
-  /* icon-int-certs.svg is an 80x104 badge shape (0.77:1), not square — fix the
+  /* icon-int-certs.svg is a 99x132 badge shape (0.75:1), not square — fix the
      height and let width follow, same as PullIcon's non-square handling, instead of
      a width/height pair that would distort it. 14px matches every other icon's
      fixed height (OriginitePrimeIcon is the reference). */

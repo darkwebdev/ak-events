@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "noEmit": true,
+    // Only vite.config.ts actually needs this (it runs in Node, not the browser) —
+    // included here rather than via a separate tsconfig.node.json since it's one
+    // small file, not enough to justify a second project/reference for.
+    "types": ["node"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

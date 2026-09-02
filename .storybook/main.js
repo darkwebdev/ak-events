@@ -10,5 +10,12 @@ const config = {
     name: '@storybook/react-vite',
     options: {},
   },
+  // The default docgen parser (react-docgen, babel-based) chokes on `import type`
+  // syntax now that stories are .tsx — nothing here actually depends on its output,
+  // since no Controls-panel addon is registered and every story that needs argTypes
+  // already declares them explicitly, so disabling it outright is simplest.
+  typescript: {
+    reactDocgen: false,
+  },
 };
 export default config;

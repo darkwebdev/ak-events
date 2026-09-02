@@ -29,7 +29,7 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'react/jsx-filename-extension': [1, { extensions: ['.jsx', '.js'] }],
+    'react/jsx-filename-extension': [1, { extensions: ['.jsx', '.js', '.tsx'] }],
     'import/extensions': 'off',
     'import/no-commonjs': 'error',
     // The server writes `.js` import specifiers pointing at `.ts` source files (the
@@ -102,6 +102,11 @@ module.exports = {
         // codebase doesn't own — see types.ts's own note on that tradeoff.
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
+        // A PropTypes-era rule: it wants an explicit `defaultProps` (or destructuring
+        // default) for every optional prop, which is exactly what TypeScript's own
+        // `prop?: T` already declares — same rationale as react/prop-types being off
+        // globally, since the type checker (see `yarn typecheck`) already enforces this.
+        'react/require-default-props': 'off',
       },
     },
   ],

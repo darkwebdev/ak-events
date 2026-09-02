@@ -1,0 +1,1 @@
+import{j as i}from"./jsx-runtime-BTRzZzJ0.js";import{n as r}from"./images-Dzy9b8zS.js";function m(){return i.jsx("img",{className:"ak-op-icon",src:r("/images/icon-diamond-yellow.svg")??void 0,alt:"Originite Prime",title:"Originite Prime"})}export{m as O};

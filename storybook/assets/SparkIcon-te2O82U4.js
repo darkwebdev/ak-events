@@ -1,0 +1,1 @@
+import{j as o}from"./jsx-runtime-BTRzZzJ0.js";import{n as a}from"./images-Dzy9b8zS.js";function n({className:r}){return o.jsx("img",{className:`ak-spark-icon${r?` ${r}`:""}`,src:a("/images/icon-spark-token.svg")??void 0,alt:"Spark"})}export{n as S};

@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-BTRzZzJ0.js";import{n as i}from"./images-Dzy9b8zS.js";function m({className:o}){return r.jsx("img",{className:`ak-pulls-icon${o?` ${o}`:""}`,src:i("/images/icon-pull.svg")??void 0,alt:"Pull"})}export{m as P};

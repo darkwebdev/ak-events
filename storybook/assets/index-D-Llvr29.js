@@ -1,0 +1,1 @@
+import{j as e}from"./jsx-runtime-BTRzZzJ0.js";import{n as i}from"./images-Dzy9b8zS.js";function s({className:t}){return e.jsx("img",{className:`ak-int-certs-icon${t?` ${t}`:""}`,src:i("/images/icon-int-certs.svg")??void 0,alt:"Intelligence Certificates",title:"Intelligence Certificates"})}export{s as I};

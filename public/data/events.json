@@ -266,56 +266,5 @@
         }
       ]
     }
-  },
-  {
-    "name": "The Masses' Travels",
-    "start": "2026-10-28",
-    "end": "2026-11-07",
-    "globalStart": "2026-10-28",
-    "globalEnd": "2026-11-07",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
-    "type": "Side Story (Rerun)",
-    "image": "data/images/CN_The_Masses%27_Travels_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
-    "origPrime": 41,
-    "hhPermits": 3,
-    "intCerts": 1160,
-    "banner": null
-  },
-  {
-    "name": "Thunder in the Azure Dream",
-    "start": "2026-11-07",
-    "end": "2026-11-21",
-    "globalStart": "2026-11-07",
-    "globalEnd": "2026-11-21",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
-    "type": "Crossover (Side Story)",
-    "image": "data/images/CN_Thunder_in_the_Azure_Dream_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
-    "origPrime": null,
-    "hhPermits": 120,
-    "intCerts": null,
-    "banner": null
-  },
-  {
-    "name": "A Flurry to the Flame",
-    "start": "2026-11-21",
-    "end": "2026-12-01",
-    "globalStart": "2026-11-21",
-    "globalEnd": "2026-12-01",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
-    "type": "Side Story (Rerun)",
-    "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
-    "origPrime": 31,
-    "hhPermits": 10,
-    "intCerts": null,
-    "banner": null
   }
 ]

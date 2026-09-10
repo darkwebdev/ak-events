@@ -103,53 +103,6 @@
     }
   },
   {
-    "name": "When Elegies Are Ashes",
-    "start": "2026-08-27",
-    "end": "2026-09-06",
-    "globalStart": "2026-08-27",
-    "globalEnd": "2026-09-06",
-    "cnStart": "2026-03-27",
-    "cnEnd": "2026-04-06",
-    "datesPredicted": false,
-    "type": "Side Story (Rerun)",
-    "image": "data/images/EN_When_Elegies_Are_Ashes_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/When_Elegies_Are_Ashes_Rerun",
-    "origPrime": 28,
-    "hhPermits": 3,
-    "intCerts": 1755,
-    "banner": {
-      "name": "Returned From A Pyre Rerun",
-      "type": "Standard",
-      "sparkEligible": false,
-      "operators": [
-        {
-          "name": "Necrass",
-          "star": 6,
-          "class": "Caster",
-          "limited": false,
-          "icon": "data/images/operators/60px-Necrass_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Wulfenite",
-          "star": 5,
-          "class": "Specialist",
-          "limited": false,
-          "icon": "data/images/operators/60px-Wulfenite_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Warmy",
-          "star": 5,
-          "class": "Caster",
-          "limited": false,
-          "icon": "data/images/operators/60px-Warmy_icon.png",
-          "sparkCost": null
-        }
-      ]
-    }
-  },
-  {
     "name": "People, A People",
     "start": "2026-09-16",
     "end": "2026-09-30",

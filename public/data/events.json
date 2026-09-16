@@ -112,13 +112,13 @@
     "cnEnd": "2026-04-21",
     "datesPredicted": false,
     "type": "Side Story",
-    "image": "data/images/CN_People%2C_A_People_banner.png",
+    "image": "data/images/EN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
     "origPrime": 27,
     "hhPermits": 3,
     "intCerts": null,
     "banner": {
-      "name": "Rage of The Many",
+      "name": "Rage of the Many",
       "type": "Standard",
       "sparkEligible": false,
       "operators": [
@@ -139,11 +139,11 @@
           "sparkCost": null
         },
         {
-          "name": "Mitm",
+          "name": "Kazemaru",
           "star": 5,
-          "class": "Vanguard",
+          "class": "Specialist",
           "limited": false,
-          "icon": "data/images/operators/60px-Mitm_icon.png",
+          "icon": "data/images/operators/60px-Kazemaru_icon.png",
           "sparkCost": null
         }
       ]

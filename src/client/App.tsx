@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStorage } from './hooks/useStorage.js';
 import { useFeatureFlag } from './utils/featureFlags.js';
 import { calcDailyOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
@@ -14,6 +14,7 @@ import { DailyOrundum } from './components/DailyOrundum';
 import { EventsList } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
 import { Header } from './components/Header';
+import { Toast } from './components/Toast';
 
 import defaultSettings from './settings.json';
 import defaultPlayerStatus from './playerStatus.json';
@@ -28,8 +29,41 @@ import type {
 import type { FetchAccountDataResult } from './utils/arkCharsApi.js';
 import './App.css';
 
+// How often to recheck events.json for events that weren't there on the previous
+// check — the scraper (see scrape.yml) only updates it once a day, so this doesn't
+// need to be aggressive; it just needs to notice a change sometime during a tab left
+// open across that daily update.
+const EVENTS_POLL_INTERVAL_MS = 5 * 60 * 1000;
+const NEW_EVENTS_NOTICE_DURATION_MS = 5000;
+
+// Persists the event names seen as of the last successful fetch, so a fresh page
+// load (not just a tab left open across a poll) can also tell "an event that was
+// already here last visit" apart from "one that showed up since" — plain useState
+// wouldn't survive a reload, and useStorage's re-render-on-every-write isn't needed
+// for a value this only ever gets read from once per fetch.
+const KNOWN_EVENT_NAMES_STORAGE_KEY = 'ak-events-known-event-names';
+
+function loadKnownEventNames(): Set<string> | null {
+  try {
+    const raw = localStorage.getItem(KNOWN_EVENT_NAMES_STORAGE_KEY);
+    return raw ? new Set(JSON.parse(raw) as string[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveKnownEventNames(names: Set<string>) {
+  try {
+    localStorage.setItem(KNOWN_EVENT_NAMES_STORAGE_KEY, JSON.stringify([...names]));
+  } catch {
+    // Storage can be unavailable (private browsing, quota) — losing this is harmless,
+    // it just means the next visit won't have a "since last time" baseline either.
+  }
+}
+
 export default function App() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [newEventsNotice, setNewEventsNotice] = useState<string | null>(null);
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
   const [settings, setSettings] = useStorage<Settings>('ak-events-settings', defaultSettings);
   const [playerStatus, setPlayerStatus] = useStorage<PlayerStatus>(
@@ -52,6 +86,39 @@ export default function App() {
   // every fetch (see ArknightsAccount's own warning) with no fix, only an accepted
   // limitation — that's the reason this stays gated rather than shipping wide open.
   const [accountImportEnabled] = useFeatureFlag('accountImport', false);
+
+  const asideScrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // Chromium can route mouse-wheel input over this sticky, internally-scrollable
+    // sidebar to the page's own scroller instead of the sidebar itself — a real,
+    // reproducible quirk (confirmed by tracing: window.scrollY moves while this
+    // element's own scrollTop stays put) that a wheel listener on the element itself
+    // does NOT reliably fix, even non-passive with preventDefault: Chromium classifies
+    // the *nested* sticky scroll region incorrectly at the compositor level, before
+    // that listener ever gets a say. Listening on the document instead and deciding
+    // by hand whether the pointer is over the sidebar sidesteps that per-element
+    // misclassification, since a document-level non-passive listener isn't subject to
+    // it — this is a deliberate workaround for a browser quirk, not the normal way to
+    // do this.
+    const onWheel = (event: WheelEvent) => {
+      const el = asideScrollRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const overAside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+      if (!overAside) return;
+      const atTop = el.scrollTop <= 0;
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight;
+      if ((event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)) return;
+      el.scrollTop += event.deltaY;
+      event.preventDefault();
+    };
+    document.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    return () => document.removeEventListener('wheel', onWheel, { capture: true });
+  }, []);
 
   const updateSetting = (key: string, property: keyof DailySetting, value: boolean | number) => {
     setSettings((prev) => ({
@@ -81,17 +148,41 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Seeded from localStorage (the last visit's saved names) rather than starting
+    // empty, so a plain page reload — not just an already-open tab left running
+    // across a poll — can also notice "new since I was last here". null means truly
+    // never-before-seen (nothing saved yet), which is what keeps the very first-ever
+    // load from notifying about every event as "new".
+    let knownNames = loadKnownEventNames();
     async function fetchEvents() {
       try {
         const response = await fetch('./data/events.json');
         const data = (await response.json()) as Event[];
+        if (knownNames) {
+          const newlyAdded = data.filter((event) => !knownNames!.has(event.name));
+          if (newlyAdded.length === 1) {
+            setNewEventsNotice(`New event: ${newlyAdded[0].name}`);
+          } else if (newlyAdded.length > 1) {
+            setNewEventsNotice(`${newlyAdded.length} new events added`);
+          }
+        }
+        knownNames = new Set(data.map((event) => event.name));
+        saveKnownEventNames(knownNames);
         setEvents(data);
       } catch (error) {
         console.error('Failed to fetch events:', error);
       }
     }
     fetchEvents();
+    const interval = setInterval(fetchEvents, EVENTS_POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!newEventsNotice) return undefined;
+    const timeout = setTimeout(() => setNewEventsNotice(null), NEW_EVENTS_NOTICE_DURATION_MS);
+    return () => clearTimeout(timeout);
+  }, [newEventsNotice]);
 
   const playerOrundumTotal =
     playerStatus.orundum + playerStatus.op * 180 + playerStatus.hhPermits * 600;
@@ -138,6 +229,8 @@ export default function App() {
 
   return (
     <>
+      {newEventsNotice && <Toast message={newEventsNotice} />}
+
       <Header totalPulls={pullsFromOrundum(totalOrundum)} />
 
       <div className="ak-main-content">
@@ -149,40 +242,42 @@ export default function App() {
         />
 
         <div className="ak-aside-column">
-          {accountImportEnabled && (
-            <ArknightsAccount
-              authState={arkAuth}
-              setAuthState={setArkAuth}
-              onFetched={handleAccountFetched}
+          <div className="ak-aside-scroll" ref={asideScrollRef}>
+            {accountImportEnabled && (
+              <ArknightsAccount
+                authState={arkAuth}
+                setAuthState={setArkAuth}
+                onFetched={handleAccountFetched}
+              />
+            )}
+
+            <CurrentlyOwned
+              owned={playerStatus}
+              updateOwned={updatePlayerStatus}
+              totalOwned={playerOrundumTotal}
             />
-          )}
 
-          <CurrentlyOwned
-            owned={playerStatus}
-            updateOwned={updatePlayerStatus}
-            totalOwned={playerOrundumTotal}
-          />
+            <DailyOrundum
+              settings={settings}
+              updateSetting={updateSetting}
+              setAllSettingsEnabled={setAllSettingsEnabled}
+              settingsTotal={dailyOrundum}
+            />
 
-          <DailyOrundum
-            settings={settings}
-            updateSetting={updateSetting}
-            setAllSettingsEnabled={setAllSettingsEnabled}
-            settingsTotal={dailyOrundum}
-          />
-
-          <TotalOrundum
-            latestEventStart={calculateLatestEventStart(selectedList)}
-            totalOrundum={totalOrundum}
-            totalEventsOrundum={calcTotalOrundum(futureEvents, selectedEvents, 0, 0)}
-            eventsOrundumCalc={`from ${selectedList.length} event${
-              selectedList.length === 1 ? '' : 's'
-            }`}
-            totalDailyOrundum={totalDailyOrundum}
-            dailyOrundumCalc={`${Math.floor(dailyOrundum)} × ${daysUntilLastEvent} day${
-              daysUntilLastEvent === 1 ? '' : 's'
-            }`}
-            playerOrundumTotal={playerOrundumTotal}
-          />
+            <TotalOrundum
+              latestEventStart={calculateLatestEventStart(selectedList)}
+              totalOrundum={totalOrundum}
+              totalEventsOrundum={calcTotalOrundum(futureEvents, selectedEvents, 0, 0)}
+              eventsOrundumCalc={`from ${selectedList.length} event${
+                selectedList.length === 1 ? '' : 's'
+              }`}
+              totalDailyOrundum={totalDailyOrundum}
+              dailyOrundumCalc={`${Math.floor(dailyOrundum)} × ${daysUntilLastEvent} day${
+                daysUntilLastEvent === 1 ? '' : 's'
+              }`}
+              playerOrundumTotal={playerOrundumTotal}
+            />
+          </div>
         </div>
       </div>
     </>

@@ -99,7 +99,11 @@
           "icon": "data/images/operators/60px-Cairn_icon.png",
           "sparkCost": null
         }
-      ]
+      ],
+      "globalStart": "2026-08-20",
+      "globalEnd": "2026-09-03",
+      "cnStart": "2026-03-14",
+      "cnEnd": "2026-03-28"
     }
   },
   {
@@ -146,7 +150,11 @@
           "icon": "data/images/operators/60px-Kazemaru_icon.png",
           "sparkCost": null
         }
-      ]
+      ],
+      "globalStart": "2026-09-16",
+      "globalEnd": "2026-09-30",
+      "cnStart": "2026-04-07",
+      "cnEnd": "2026-04-21"
     }
   },
   {
@@ -234,7 +242,11 @@
           "icon": "data/images/operators/60px-Wi%C5%A1%27adel_icon.png",
           "sparkCost": 300
         }
-      ]
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-05-01",
+      "cnEnd": "2026-05-15"
     }
   },
   {

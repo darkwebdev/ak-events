@@ -63,6 +63,13 @@ export interface ResolvedBanner {
   type: BannerType | null;
   sparkEligible: boolean;
   operators: ResolvedBannerOperator[];
+  // The banner's own run dates, from the wiki banner pages — usually the same as its
+  // matched event's, but a banner can end earlier or later than the event does.
+  // Optional since event data scraped before these were added doesn't have them.
+  globalStart?: string | null;
+  globalEnd?: string | null;
+  cnStart?: string | null;
+  cnEnd?: string | null;
 }
 
 export interface BannerDateIndex {

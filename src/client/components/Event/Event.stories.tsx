@@ -59,6 +59,9 @@ function buildBanner(bannerType: BannerType, discountedOperators: string[]): Res
       type: 'Standard',
       sparkEligible: false,
       operators: standardOperators.map((op) => ({ ...op, sparkCost: null })),
+      // A banner can run on different dates than its event — here it ends a week early.
+      globalStart: baseEvent.globalStart,
+      globalEnd: '2026-07-23',
     };
   }
   if (bannerType === 'Limited') {
@@ -66,6 +69,8 @@ function buildBanner(bannerType: BannerType, discountedOperators: string[]): Res
       name: baseEvent.name,
       type: 'Limited',
       sparkEligible: true,
+      globalStart: baseEvent.globalStart,
+      globalEnd: baseEvent.globalEnd,
       operators: limitedOperators.map((op) => ({
         ...op,
         sparkCost: sparkCostFor(op, discountedOperators),

@@ -1,6 +1,11 @@
 import React from 'react';
 import { jpgifyLocal } from '../../utils/images.js';
-import { getEffectiveStart, getEffectiveEnd } from '../../utils/dates.js';
+import {
+  getEffectiveStart,
+  getEffectiveEnd,
+  getBannerDates,
+  isEventRunning,
+} from '../../utils/dates.js';
 import {
   calcEventOrundum,
   orundumFromOP,
@@ -15,6 +20,7 @@ import { Operator } from '../Operator';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { IntCertsIcon } from '../IntCertsIcon';
+import { PlayIcon } from '../PlayIcon';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
 import './index.css';
 
@@ -73,6 +79,10 @@ export function Event({
   const end = getEffectiveEnd(event);
   const startStr = start ? start.toLocaleDateString() : 'Unknown';
   const endStr = end ? end.toLocaleDateString() : 'Unknown';
+  const running = isEventRunning(event);
+  // A banner's own run dates, which can differ from its event's — absent in data
+  // scraped before they were added, in which case the range is simply omitted.
+  const bannerDates = banner ? getBannerDates(banner, event) : null;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
 
   return (
@@ -97,7 +107,10 @@ export function Event({
       <div className="ak-event-row">
         <div className="ak-event">
           <div className="ak-event-title">
-            <span className="ak-event-name">{name}</span>
+            <span className="ak-event-name">
+              {running && <PlayIcon />}
+              {name}
+            </span>
             {type && <span className="ak-event-type">{type}</span>}
           </div>
           {image &&
@@ -189,6 +202,17 @@ export function Event({
               <OperatorColumn groups={sixStarGroups} />
               <OperatorColumn groups={otherGroups} />
             </div>
+            {bannerDates?.start && bannerDates.end && (
+              <div className="ak-event-banner-date">
+                {bannerDates.start.toLocaleDateString()} - {bannerDates.end.toLocaleDateString()}
+                {bannerDates.estimated && (
+                  <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
+                    Not yet confirmed for Global — based on this banner&apos;s CN dates and how long
+                    after CN this event reaches Global.
+                  </InfoButton>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

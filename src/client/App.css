@@ -146,13 +146,36 @@ body {
      this box wider still, which is the same content-driven resize the fixed basis
      was meant to prevent. */
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   /* Matches .ak-events' own `margin: 0 1em` on the opposite edge — without this the
      aside sits flush against the browser's right edge instead of getting the same
      breathing room the events column gets on the left. */
   margin-right: 1em;
+}
+
+.ak-aside-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* On a separate inner element rather than directly on the sticky .ak-aside-column,
+     to keep "sticks to the viewport" and "scrolls its own content" as separate
+     concerns. Without a height cap here, an aside taller than the viewport would
+     overflow past the bottom of the screen with no way to reach the rest of it.
+     Note: this element also has an explicit non-passive wheel listener attached in
+     App.tsx — plain CSS overflow wasn't enough on its own. Chromium can route
+     mouse-wheel input over a sticky sidebar like this one to the page's own scroller
+     instead of the sidebar, next to a taller column in this flex row (reproduced
+     while debugging: this element's scrollTop stayed put while window.scrollY moved
+     instead) — see the comment on that listener for the full story. */
+  max-height: calc(100vh - 5.5em);
+  overflow-y: auto;
+  /* Normal trailing breathing room after the last card, as part of the scrollable
+     content rather than baked into the height cap above: reserving space in the cap
+     itself would leave a gap between the box and the browser window's bottom edge
+     even when the content is short enough that nothing needs to scroll, which reads
+     as a stray empty strip with nothing to do with the content. This only shows up
+     once you've actually scrolled to the end of a genuinely overflowing sidebar —
+     right where it belongs. */
+  padding-bottom: 20px;
 }
 
 /* Below this width there isn't room for the events column and the aside stats side by
@@ -175,6 +198,14 @@ body {
     flex-basis: auto;
     width: auto;
     margin: 0 1em;
+  }
+
+  .ak-aside-scroll {
+    /* Stacked under the events list here rather than stuck to the viewport, so the
+       height cap/scroll from the base rule (meant for the sticky sidebar) would just
+       clip content pointlessly — let it size to content like the rest of the page. */
+    max-height: none;
+    overflow-y: visible;
   }
 }
 

@@ -1,0 +1,40 @@
+@keyframes ak-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ak-toast {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  max-width: 320px;
+  background: var(--ak-surface);
+  color: var(--ak-text);
+  border: 1px solid var(--ak-border);
+  box-shadow: 0 6px 14px var(--ak-shadow);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  /* Above InfoButton's popovers (z-index: 9999) — a background refresh can land at
+     any time, including while one of those is open, and it should still be seen. */
+  z-index: 10000;
+  animation: ak-toast-in 200ms ease-out;
+}
+
+@media (max-width: 600px) {
+  .ak-toast {
+    /* Matches the header's own side padding at this width (Header/index.css) rather
+       than the wider default, and gives up the fixed max-width so it doesn't run
+       close to the opposite edge on a narrow screen. */
+    top: 0.75em;
+    right: 1em;
+    left: 1em;
+    max-width: none;
+  }
+}

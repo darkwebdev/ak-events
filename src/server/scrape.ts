@@ -468,6 +468,10 @@ export async function scrapeEvents(): Promise<void> {
       type: matchedBanner.type,
       sparkEligible,
       operators,
+      globalStart: matchedBanner.globalStart,
+      globalEnd: matchedBanner.globalEnd,
+      cnStart: matchedBanner.cnStart,
+      cnEnd: matchedBanner.cnEnd,
     };
   }
 

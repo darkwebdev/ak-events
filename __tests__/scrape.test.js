@@ -254,6 +254,11 @@ describe('scrapeEvents', () => {
           sparkCost: 300,
         },
       ],
+      // The banner's own dates, not the event's (which runs to 06-20).
+      globalStart: '2026-06-01',
+      globalEnd: '2026-06-15',
+      cnStart: '2026-01-01',
+      cnEnd: '2026-01-15',
     });
   });
 

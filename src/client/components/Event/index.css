@@ -115,6 +115,15 @@
   min-width: 200px;
   padding: 14px 16px;
   border-left: 1px solid var(--ak-border);
+  /* Column so the date range can sit at the bottom, level with the event's own. */
+  display: flex;
+  flex-direction: column;
+}
+
+.ak-event-banner-date {
+  margin-top: auto;
+  padding-top: 10px;
+  color: var(--ak-text-muted);
 }
 
 .ak-event-banner-header {

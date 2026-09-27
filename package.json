@@ -65,7 +65,7 @@
     "lint": "node ./scripts/lint-with-local-rules.cjs",
     "lint:fix": "node ./scripts/lint-with-local-rules.cjs --fix",
     "typecheck": "tsc --noEmit && tsc --noEmit -p src/client/tsconfig.json",
-    "scrape": "tsx scripts/scrape.ts",
+    "scrape": "tsx scripts/scrape.ts && tsx scripts/optimiseImages.ts",
     "optimise-images": "tsx scripts/optimiseImages.ts",
     "emulate-action": "yarn scrape && (git diff --quiet public/data/events.json || echo 'public/data/events.json changed, would commit and push') && echo 'GitHub Action emulation complete'",
     "dev": "cd src/client && vite",

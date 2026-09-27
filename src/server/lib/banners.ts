@@ -137,11 +137,18 @@ function parseBannersPage(html: string | null | undefined): RawBanner[] {
 // banner is listed on both pages. Dedupe by name before date-indexing so that overlap
 // is merged rather than treated as two competing banners — keeping the LAST occurrence
 // for a given name, so callers control priority via array order (put the more
-// authoritative/complete source later).
+// authoritative/complete source later). Names are compared case- and
+// whitespace-insensitively, since the wiki's editors don't keep capitalisation
+// consistent between the two pages (e.g. "Rage of The Many" on Upcoming vs "Rage of
+// the Many" on the year page) — and a missed match here matters, because Upcoming
+// lists the CN roster, which can differ from Global's in the off-rate operators.
 function dedupeBannersByName(banners: RawBanner[]): RawBanner[] {
   const byName = new Map<string, RawBanner>();
   for (const banner of banners) {
-    byName.set(banner.name, banner);
+    const key = banner.name.toLowerCase().replace(/\s+/g, ' ').trim();
+    // Delete first so a replacement takes the later entry's position in the order.
+    byName.delete(key);
+    byName.set(key, banner);
   }
   return [...byName.values()];
 }

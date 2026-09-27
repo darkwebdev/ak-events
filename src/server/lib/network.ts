@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import {
   wikiApiBase,
+  wikiUserAgent,
   wikiBase,
   indexUrl,
   gachaTableUrl,
@@ -43,8 +44,7 @@ function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> 
     const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&redirects=1&prop=text&format=json`;
     const options = {
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'User-Agent': wikiUserAgent,
         Accept: 'application/json',
       },
     };
@@ -84,8 +84,7 @@ function downloadImage(url: string, filepath: string): Promise<void> {
     }
     const options = {
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'User-Agent': wikiUserAgent,
         Referer: indexUrl,
       },
     };
@@ -101,6 +100,7 @@ function downloadImage(url: string, filepath: string): Promise<void> {
             resolve();
           });
         } else {
+          res.resume();
           reject(new Error(`Failed to download ${resolvedUrl}: ${res.statusCode}`));
         }
       })
@@ -182,8 +182,7 @@ function fetchOperatorCategories(name: string): Promise<string[] | null> {
     const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&prop=categories&format=json`;
     const options = {
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'User-Agent': wikiUserAgent,
         Accept: 'application/json',
       },
     };
@@ -193,6 +192,7 @@ function fetchOperatorCategories(name: string): Promise<string[] | null> {
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
           if (res.statusCode !== 200) {
+            res.resume();
             resolve(null);
             return;
           }
@@ -222,6 +222,8 @@ function fetchJsonUrl<T>(url: string): Promise<T | null> {
     https
       .get(url, { headers: { 'User-Agent': 'ak-events-scraper' } }, (res) => {
         if (res.statusCode !== 200) {
+          // Drain the unread body, or its socket stays open and keeps the process alive.
+          res.resume();
           resolve(null);
           return;
         }
@@ -273,6 +275,7 @@ function fetchTextUrl(url: string): Promise<string | null> {
         },
         (res) => {
           if (res.statusCode !== 200) {
+            res.resume();
             resolve(null);
             return;
           }
@@ -298,21 +301,22 @@ function fetchStageTable(): Promise<StageTable | null> {
   return fetchJsonUrl<StageTable>(stageTableUrl);
 }
 
-// Fetch arkpedia.net's events listing page and return its raw HTML (for
+// Fetch arkpedia.net's schedule page (formerly /events, which now 308-redirects here)
+// and return its raw HTML (for
 // lib/arkpedia.js to parse the embedded __NEXT_DATA__ JSON out of). Resolves to null
 // on any error — arkpedia is a supplementary source, never one that should be able to
 // abort a whole scrape run.
 async function fetchArkpediaEventsHtml(): Promise<string | null> {
   try {
-    return await fetchTextUrl(`${arkpediaBase}/events`);
+    return await fetchTextUrl(`${arkpediaBase}/schedule`);
   } catch (e) {
     return null;
   }
 }
 
 // Fetch a single arkpedia.net event's own detail page HTML by its exact page name
-// (as found in the events listing's own `name` field — arkpedia's event URLs are
-// literally /events/<name>, not a separate slug).
+// (as found in the schedule page's own `name` fields, "[Side Story]"-style tag
+// included — arkpedia's event URLs are literally /events/<name>, not a separate slug).
 async function fetchArkpediaEventDetailHtml(name: string): Promise<string | null> {
   try {
     return await fetchTextUrl(`${arkpediaBase}/events/${encodeURIComponent(name)}`);

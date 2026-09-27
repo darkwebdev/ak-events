@@ -52,6 +52,7 @@ describe('network helpers', () => {
   test('fetchOperatorCategories returns null (not []) on a non-200 response', async () => {
     const fakeResponse = {
       statusCode: 429,
+      resume: vi.fn(),
       on: vi.fn((ev, cb) => {
         if (ev === 'data') cb('rate limited');
         if (ev === 'end') cb();
@@ -65,6 +66,8 @@ describe('network helpers', () => {
     const categories = await fetchOperatorCategories('Pepe');
 
     expect(categories).toBeNull();
+    // The unread body must be drained, or its socket keeps the scrape process alive.
+    expect(fakeResponse.resume).toHaveBeenCalled();
   });
 
   test('fetchOperatorCategories returns null on unparseable JSON', async () => {

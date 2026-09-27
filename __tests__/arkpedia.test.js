@@ -1,4 +1,9 @@
-import { parseArkpediaEventsList, parseArkpediaEventDetail } from '../src/server/lib/arkpedia.js';
+import {
+  parseArkpediaEventsList,
+  parseArkpediaEventNames,
+  parseArkpediaEventDetail,
+  arkpediaNameKey,
+} from '../src/server/lib/arkpedia.js';
 
 function wrapNextData(pageProps) {
   const json = JSON.stringify({ props: { pageProps } });
@@ -22,6 +27,33 @@ describe('parseArkpediaEventsList', () => {
     ]);
   });
 
+  test('reads eventRows on the /schedule layout, ignoring its per-server events array', () => {
+    const html = wrapNextData({
+      events: [
+        {
+          name: '[Side Story] People, A People',
+          cn: { dateRange: '2026/04/07–2026/04/21' },
+          global: { dateRange: '2026/09/16–2026/09/30' },
+        },
+      ],
+      eventRows: [
+        {
+          name: '[Side Story] People, A People',
+          dateRange: '2026/09/16–2026/09/30',
+          isPredicted: false,
+        },
+      ],
+    });
+
+    expect(parseArkpediaEventsList(html)).toEqual([
+      {
+        name: '[Side Story] People, A People',
+        dateStr: '2026/09/16–2026/09/30',
+        isPredicted: false,
+      },
+    ]);
+  });
+
   test('skips entries missing a name or dateRange rather than throwing', () => {
     const html = wrapNextData({
       events: [{ name: 'No Date' }, { dateRange: '2026/08/20–2026/10/02' }],
@@ -35,6 +67,41 @@ describe('parseArkpediaEventsList', () => {
       []
     );
     expect(parseArkpediaEventsList(null)).toEqual([]);
+  });
+});
+
+describe('parseArkpediaEventNames', () => {
+  test('collects unique names from both the full history and the upcoming rows', () => {
+    const html = wrapNextData({
+      events: [{ name: '[Side Story] Old Event' }, { name: '[Side Story] People, A People' }],
+      eventRows: [{ name: '[Side Story] People, A People' }, { name: 'Duel Channel: Ivy Vine' }],
+    });
+
+    expect(parseArkpediaEventNames(html)).toEqual([
+      '[Side Story] Old Event',
+      '[Side Story] People, A People',
+      'Duel Channel: Ivy Vine',
+    ]);
+  });
+
+  test('returns an empty array without __NEXT_DATA__', () => {
+    expect(parseArkpediaEventNames(null)).toEqual([]);
+  });
+});
+
+describe('arkpediaNameKey', () => {
+  test("matches the wiki's name to arkpedia's tagged, differently-punctuated name", () => {
+    expect(arkpediaNameKey('[Side Story] People, A People')).toBe(
+      arkpediaNameKey('People, A People')
+    );
+    expect(arkpediaNameKey('Duel Channel: Ivy Vine')).toBe(
+      arkpediaNameKey('Duel Channel Ivy Vine')
+    );
+  });
+
+  test('keeps a rerun distinct from its original run', () => {
+    expect(arkpediaNameKey('[Rerun] Ato Rerun')).not.toBe(arkpediaNameKey('[Side Story] Ato'));
+    expect(arkpediaNameKey('[Rerun] Ato Rerun')).toBe(arkpediaNameKey('Ato Rerun'));
   });
 });
 

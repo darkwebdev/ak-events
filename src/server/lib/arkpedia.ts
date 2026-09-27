@@ -16,30 +16,75 @@ function extractNextData(html: string | null | undefined): unknown {
   }
 }
 
-interface NextDataShape {
-  props?: { pageProps?: Record<string, unknown> };
+interface ArkpediaPageEntry {
+  name?: string;
+  dateRange?: unknown;
+  isPredicted?: boolean;
 }
 
-// Parse arkpedia.net/events into an array of
-// { name, dateStr, isPredicted } — `dateStr` is already the plain "YYYY/MM/DD–
-// YYYY/MM/DD" shape parseDateRange accepts directly (no "Global:"/"CN:" label to
-// strip, unlike the wiki's own combined-cell format). `isPredicted: true` marks a
-// CN→Global lag estimate for an event not yet confirmed for Global, rather than an
-// official date — callers should surface that distinction to the user rather than
-// presenting it as confirmed.
+interface NextDataShape {
+  props?: {
+    pageProps?: {
+      events?: ArkpediaPageEntry[];
+      eventRows?: ArkpediaPageEntry[];
+      [key: string]: unknown;
+    };
+  };
+}
+
+// Parse arkpedia.net/schedule's upcoming/ongoing rows (`pageProps.eventRows`) into an
+// array of { name, dateStr, isPredicted } — `dateStr` is already the plain
+// "YYYY/MM/DD–YYYY/MM/DD" shape parseDateRange accepts directly (no "Global:"/"CN:"
+// label to strip, unlike the wiki's own combined-cell format). `isPredicted: true`
+// marks a CN→Global lag estimate for an event not yet confirmed for Global, rather
+// than an official date — callers should surface that distinction to the user rather
+// than presenting it as confirmed. `name` is arkpedia's own, which carries a type tag
+// (e.g. "[Side Story] People, A People") — match it via normalizeEventName, which
+// strips tags. Falls back to `pageProps.events` for the pre-/schedule page layout,
+// whose `events` array had these same fields (the /schedule page's `events` is a
+// different, full-history per-server shape, which the filter below skips anyway).
 function parseArkpediaEventsList(html: string | null | undefined): ArkpediaListEvent[] {
   const data = extractNextData(html) as NextDataShape | null;
-  const events = data?.props?.pageProps?.events;
+  const pageProps = data?.props?.pageProps;
+  const events = pageProps?.eventRows ?? pageProps?.events;
   if (!Array.isArray(events)) return [];
   return events
     .filter((e): e is { name: string; dateRange: string; isPredicted?: boolean } =>
-      Boolean(e && e.name && e.dateRange)
+      Boolean(e && e.name && typeof e.dateRange === 'string')
     )
     .map((e) => ({
       name: e.name,
       dateStr: e.dateRange,
       isPredicted: !!e.isPredicted,
     }));
+}
+
+// Every event name arkpedia.net/schedule knows about — the full history
+// (`pageProps.events`) plus the upcoming/ongoing rows (`pageProps.eventRows`). Detail
+// pages live at /events/<arkpedia's own name>, tag prefix included, so this is how a
+// wiki event name gets turned into a fetchable URL (see arkpediaNameKey).
+function parseArkpediaEventNames(html: string | null | undefined): string[] {
+  const data = extractNextData(html) as NextDataShape | null;
+  const pageProps = data?.props?.pageProps;
+  const names = [pageProps?.events, pageProps?.eventRows]
+    .flatMap((list) => (Array.isArray(list) ? list : []))
+    .map((e) => e?.name)
+    .filter((name): name is string => typeof name === 'string' && name.length > 0);
+  return [...new Set(names)];
+}
+
+// Key for matching a wiki event name to arkpedia's name for the same event: drops
+// arkpedia's leading "[Side Story]"-style tag, punctuation the two sites disagree on
+// ("Duel Channel: Ivy Vine" vs "Duel Channel Ivy Vine"), case and spacing. Unlike
+// normalizeEventName it keeps "Rerun", since a rerun's detail page has its own reward
+// store and must not be confused with the original run's.
+function arkpediaNameKey(name: string): string {
+  return name
+    .replace(/^\s*\[[^\]]*\]\s*/, '')
+    .replace(/[:,'’"]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 }
 
 interface ArkpediaRewardItem {
@@ -60,7 +105,7 @@ interface ArkpediaEventDetailProps {
   rewardStores?: ArkpediaRewardStore[];
 }
 
-// Parse a single arkpedia.net event detail page (arkpedia.net/events/<name>) into
+// Parse a single arkpedia.net event detail page (arkpedia.net/events/<arkpedia name>) into
 // { dateStr, isPredicted, bannerName, featuredOperators, headhuntingPermits }.
 // featuredOperators is [{ name, rarity, percent }] — percent is the rate-up chance,
 // which the wiki's own banner pages don't expose. headhuntingPermits is summed from
@@ -93,4 +138,9 @@ function parseArkpediaEventDetail(html: string | null | undefined): ArkpediaEven
   };
 }
 
-export { parseArkpediaEventsList, parseArkpediaEventDetail };
+export {
+  parseArkpediaEventsList,
+  parseArkpediaEventNames,
+  parseArkpediaEventDetail,
+  arkpediaNameKey,
+};

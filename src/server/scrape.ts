@@ -20,7 +20,12 @@ import {
   activityDateStr,
   originitePrimeFromStages,
 } from './lib/gameData.js';
-import { parseArkpediaEventsList, parseArkpediaEventDetail } from './lib/arkpedia.js';
+import {
+  parseArkpediaEventsList,
+  parseArkpediaEventNames,
+  parseArkpediaEventDetail,
+  arkpediaNameKey,
+} from './lib/arkpedia.js';
 import {
   loadOperatorCache,
   saveOperatorCache,
@@ -81,14 +86,19 @@ async function runBatched<T, R>(
 export async function scrapeEvents(): Promise<void> {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
+  // arkpedia's own name for each event, keyed by arkpediaNameKey — filled in once the
+  // schedule page is fetched below, before any fetchAndParseEvent call runs.
+  const arkpediaNameByKey = new Map<string, string>();
+
   const fetchAndParseEvent = async (event: RawEvent): Promise<RawEvent> => {
     // arkpedia's reward-store data is the preferred Headhunting Permit source (see
     // lib/arkpedia.js — verified to match the wiki's own extraction exactly, but
     // structured rather than heuristic), tried before the wiki fetch below so a hit
     // here can skip that fetch entirely.
-    if (event.hhPermits == null) {
+    const arkpediaName = arkpediaNameByKey.get(arkpediaNameKey(event.name));
+    if (event.hhPermits == null && arkpediaName) {
       try {
-        const html = await fetchArkpediaEventDetailHtml(event.name);
+        const html = await fetchArkpediaEventDetailHtml(arkpediaName);
         const detail = html ? parseArkpediaEventDetail(html) : null;
         if (detail?.headhuntingPermits != null) {
           event.hhPermits = detail.headhuntingPermits;
@@ -216,6 +226,12 @@ export async function scrapeEvents(): Promise<void> {
     fetchArkpediaEventsHtml(),
   ]);
   const arkpediaEvents = arkpediaEventsHtml ? parseArkpediaEventsList(arkpediaEventsHtml) : [];
+  for (const name of parseArkpediaEventNames(arkpediaEventsHtml)) {
+    arkpediaNameByKey.set(arkpediaNameKey(name), name);
+  }
+  console.log(
+    `Fetched ${arkpediaEvents.length} upcoming arkpedia event(s), ${arkpediaNameByKey.size} names total`
+  );
 
   // Layer in dates + Originite Prime from the most authoritative source available for
   // each event, before the per-event wiki-detail-fetch loop below. Priority: the

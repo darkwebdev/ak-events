@@ -140,6 +140,13 @@ describe('dedupeBannersByName', () => {
     expect(deduped).toEqual([newer]);
   });
 
+  test('matches names case- and whitespace-insensitively', () => {
+    const upcoming = { name: 'Rage of The Many', operators: ['Mitm'] };
+    const yearPage = { name: 'Rage of  the Many', operators: ['Kazemaru'] };
+
+    expect(dedupeBannersByName([upcoming, yearPage])).toEqual([yearPage]);
+  });
+
   test('leaves distinctly-named banners untouched', () => {
     const a = { name: 'A' };
     const b = { name: 'B' };

@@ -2,6 +2,10 @@
 export const indexUrl = 'https://arknights.wiki.gg/wiki/Event';
 export const wikiBase = 'https://arknights.wiki.gg/wiki/';
 export const wikiApiBase = 'https://arknights.wiki.gg/api.php';
+// wiki.gg serves a bot challenge (403 "Just a second...") to requests posing as a
+// browser, but lets through clients that identify themselves honestly, per
+// MediaWiki's API etiquette — so every wiki.gg request uses this, not a browser UA.
+export const wikiUserAgent = 'ak-events-scraper/1.0 (https://github.com/darkwebdev/ak-events)';
 
 // The game's own data, used by lib/network.js to determine Limited operator debut
 // dates authoritatively (see its fetchGachaTable/fetchCharacterTable for why).
@@ -28,6 +32,7 @@ const config = {
   indexUrl,
   wikiBase,
   wikiApiBase,
+  wikiUserAgent,
   gachaTableUrl,
   characterTableUrl,
   activityTableUrl,

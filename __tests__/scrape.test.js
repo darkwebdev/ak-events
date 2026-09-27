@@ -523,10 +523,12 @@ describe('scrapeEvents', () => {
     // network fetch and letting the real parser run is what actually exercises the
     // wiring between them, not just the parser in isolation (already covered by
     // arkpedia.test.js) or the mock in isolation.
-    vi.doMock('../src/server/lib/arkpedia.js', () => ({
+    vi.doMock('../src/server/lib/arkpedia.js', async (importOriginal) => ({
+      ...(await importOriginal()),
       parseArkpediaEventsList: () => [
         { name: 'Future Event', dateStr: '2026/12/01–2026/12/15', isPredicted: true },
       ],
+      parseArkpediaEventNames: () => [],
       parseArkpediaEventDetail: () => null,
     }));
     vi.resetModules();
@@ -579,9 +581,14 @@ describe('scrapeEvents', () => {
         origPrime: 10, // already known, so only hhPermits is missing
       },
     ]);
+    mockFetchArkpediaEventsHtml.mockResolvedValue('fake-html');
     mockFetchArkpediaEventDetailHtml.mockResolvedValue('fake-html');
-    vi.doMock('../src/server/lib/arkpedia.js', () => ({
+    vi.doMock('../src/server/lib/arkpedia.js', async (importOriginal) => ({
+      ...(await importOriginal()),
       parseArkpediaEventsList: () => [],
+      // arkpedia's own name carries a type tag the wiki's doesn't — the detail page
+      // must be fetched by arkpedia's name, not the wiki's.
+      parseArkpediaEventNames: () => ['[Side Story] Story Event'],
       parseArkpediaEventDetail: () => ({
         dateStr: null,
         isPredicted: false,
@@ -597,6 +604,7 @@ describe('scrapeEvents', () => {
 
     await scrapeEventsWithMockedArkpedia();
 
+    expect(mockFetchArkpediaEventDetailHtml).toHaveBeenCalledWith('[Side Story] Story Event');
     expect(mockFetchEventDetailsViaApi).not.toHaveBeenCalled();
     const eventsJsonCalls = mockSaveJson.mock.calls.filter(
       ([path]) => path === 'public/data/events.json'

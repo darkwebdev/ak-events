@@ -74,8 +74,14 @@ export function InfoButton({ children, title, label }: InfoButtonProps) {
           <div style={transitionStyles}>
             {title && <h3>{title}</h3>}
             {children}
-            <FloatingArrow ref={arrowRef} context={context} className="info-arrow" />
           </div>
+          {/* A direct child of the popover, not of the transition wrapper: a transformed
+              element becomes the containing block for absolutely-positioned descendants,
+              so while the wrapper's entry `scale(...)` was on, the arrow was positioned
+              against the wrapper (inside the popover's padding) and visibly jumped to
+              the popover's edge the moment the transform ended. Like the popover's own
+              box (border/background), the arrow doesn't animate — only content does. */}
+          <FloatingArrow ref={arrowRef} context={context} className="info-arrow" />
         </div>
       )}
     </span>

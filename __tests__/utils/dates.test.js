@@ -6,6 +6,7 @@ let getBannerDates;
 let parseDate;
 let formatLongDate;
 let toIsoDate;
+let getCountdown;
 beforeAll(async () => {
   const mod = await import('../../src/client/utils/dates.js');
   getEffectiveStart = mod.getEffectiveStart;
@@ -16,6 +17,7 @@ beforeAll(async () => {
   parseDate = mod.parseDate;
   formatLongDate = mod.formatLongDate;
   toIsoDate = mod.toIsoDate;
+  getCountdown = mod.getCountdown;
 });
 
 describe('date utils', () => {
@@ -123,5 +125,48 @@ describe('parseDate', () => {
 describe('formatLongDate', () => {
   test('includes the full month name', () => {
     expect(formatLongDate(new Date(2026, 8, 16))).toMatch(/September/);
+  });
+});
+
+describe('getCountdown', () => {
+  const now = new Date(2026, 8, 28, 12, 0); // 28 Sep 2026, 12:00 local
+  const at = (d, h = 0, m = 0) => new Date(2026, 8, d, h, m);
+
+  test('counts whole days to an upcoming start', () => {
+    const c = getCountdown(at(30, 16), at(40), true, now);
+    expect(c.phase).toBe('starts');
+    expect(c.remaining).toMatch(/^2 days?$/);
+  });
+
+  test('counts down to the end while running', () => {
+    const c = getCountdown(at(20), at(30, 12), true, now);
+    expect(c.phase).toBe('ends');
+    expect(c.target).toEqual(at(30, 12));
+  });
+
+  test('switches to hours and minutes in the last day when the time is exact', () => {
+    const c = getCountdown(at(20), at(28, 14, 15), true, now);
+    expect(c.remaining).toMatch(/2.*h.*15.*m/);
+  });
+
+  test('shows only minutes in the last hour', () => {
+    expect(getCountdown(at(20), at(28, 12, 40), true, now).remaining).toMatch(/^40\s?m/);
+  });
+
+  // Calendar dates are read as local midnight; the real time of day is unknown, so an
+  // hours countdown to midnight would be wrong by hours.
+  test('stays in whole days for calendar dates, even on the last day', () => {
+    const c = getCountdown(at(20), at(29), false, now);
+    expect(c).toMatchObject({ phase: 'ends' });
+    expect(c.remaining).toMatch(/^1 day$/);
+  });
+
+  test('counts calendar days between midnights for a date-only start', () => {
+    expect(getCountdown(at(1 + 30), at(45), false, now).remaining).toMatch(/^3 days$/);
+  });
+
+  test('is null once it has ended', () => {
+    expect(getCountdown(at(10), at(20), true, now)).toBeNull();
+    expect(getCountdown(null, null, false, now)).toBeNull();
   });
 });

@@ -846,6 +846,9 @@ describe('scrapeEvents', () => {
       globalStart: '2099-08-20',
       datesPredicted: false,
       origPrime: 8,
+      // The exact moments too, for countdowns in hours and minutes.
+      globalStartAt: '2099-08-20T00:00:00.000Z',
+      globalEndAt: '2099-10-01T00:00:00.000Z',
     });
   });
 

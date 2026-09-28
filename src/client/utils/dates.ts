@@ -153,3 +153,68 @@ export function formatEventDates(event: Event): string {
 }
 
 // (ESM module) no CommonJS fallback
+
+export interface Countdown {
+  phase: 'starts' | 'ends';
+  target: Date;
+  // e.g. "3 days", or "2h 15m" in the last day when the time is exact.
+  remaining: string;
+}
+
+const MS_PER_MINUTE = 60 * 1000;
+const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+const MS_PER_DAY = 24 * MS_PER_HOUR;
+
+const unit = (value: number, u: 'day' | 'hour' | 'minute', unitDisplay: 'long' | 'narrow') =>
+  new Intl.NumberFormat(undefined, { style: 'unit', unit: u, unitDisplay }).format(value);
+
+/**
+ * Time until something starts, or until it ends while it's running; null once it's
+ * over. With `exact` times (a real start/end moment), the last day counts down in
+ * hours and minutes. Without them — calendar dates read as local midnight — only whole
+ * days are meaningful, since the real time of day is unknown.
+ */
+export function getCountdown(
+  start: Date | null,
+  end: Date | null,
+  exact: boolean,
+  now: Date = new Date()
+): Countdown | null {
+  let phase: Countdown['phase'];
+  let target: Date;
+  if (start && now < start) {
+    phase = 'starts';
+    target = start;
+  } else if (end && now < end) {
+    phase = 'ends';
+    target = end;
+  } else {
+    return null;
+  }
+  const ms = target.getTime() - now.getTime();
+  if (exact && ms < MS_PER_DAY) {
+    const hours = Math.floor(ms / MS_PER_HOUR);
+    const minutes = Math.max(1, Math.floor((ms % MS_PER_HOUR) / MS_PER_MINUTE));
+    const remaining = hours
+      ? `${unit(hours, 'hour', 'narrow')} ${unit(minutes, 'minute', 'narrow')}`
+      : unit(minutes, 'minute', 'narrow');
+    return { phase, target, remaining };
+  }
+  // Whole days: floor for an exact moment; for a calendar date, the number of
+  // midnights between today and it (at least 1, since it's still ahead).
+  const days = exact
+    ? Math.floor(ms / MS_PER_DAY)
+    : Math.max(1, Math.round((target.getTime() - startOfDay(now).getTime()) / MS_PER_DAY));
+  return { phase, target, remaining: unit(days, 'day', 'long') };
+}
+
+function startOfDay(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/** Long date and time in the viewer's locale, e.g. "16 September 2026 at 16:00". */
+export function formatLongDateTime(date: Date): string {
+  return date.toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
+}

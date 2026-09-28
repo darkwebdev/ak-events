@@ -199,45 +199,92 @@ const bannerTypeKey = (name: string) =>
     .replace(/\s+rerun\s*$/, '')
     .replace(/[^a-z0-9]/g, '');
 
-// Each banner's kind, from a Headhunting/Banners page's wikitext: the `|type =` field
-// of its {{Banners cell |type = festival |name = … }} template. This is the wiki's own
-// vocabulary (festival, carnival, celebration, crossover, special, jo, rerun…), which
-// bannerRules.ts is keyed by; the rendered page only shows a [Tag] that, for a
-// crossover, is the collaboration's name. Named cells are keyed by bannerTypeKey(name).
-// Numbered ones (Joint Operation, Orienteering…) have no `|name =` — the page generates
-// their titles from `|no =` — so they're keyed by start date instead ("global:" /
-// "cn:" + YYYY-MM-DD), the same dates events are matched to banners by.
+// Each {{Banners cell}} on a Headhunting/Banners page's wikitext, with the keys it can
+// be looked up by (see bannerLookup): named cells by bannerTypeKey(name); numbered ones
+// (Joint Operation, Orienteering…) have no `|name =` — the page generates their titles
+// from `|no =` — so they're keyed by start date instead ("global:" / "cn:" +
+// YYYY-MM-DD), the same dates events are matched to banners by.
+function bannerCells(
+  wikitext: string | null | undefined
+): { keys: string[]; field: (key: string) => string }[] {
+  if (!wikitext) return [];
+  return [...wikitext.matchAll(/\{\{\s*Banners cell([^{}]*(?:\{\{[^{}]*\}\}[^{}]*)*)\}\}/gi)].map(
+    (m) => {
+      const field = (key: string) =>
+        m[1].match(new RegExp(`\\|\\s*${key}\\s*=\\s*([^|\\n}]*)`))?.[1].trim() ?? '';
+      const name = field('name');
+      if (name) return { keys: [bannerTypeKey(name)], field };
+      const day = (value: string) => value.match(/\d{4}\/\d{2}\/\d{2}/)?.[0].replace(/\//g, '-');
+      const globalDay = day(field('globalstart'));
+      const cnDay = day(field('cnstart'));
+      return {
+        keys: [globalDay && `global:${globalDay}`, cnDay && `cn:${cnDay}`].filter(
+          (k): k is string => !!k
+        ),
+        field,
+      };
+    }
+  );
+}
+
+// Look `banner` up in a record built from bannerCells: by name, or for a numbered
+// banner, by its start date.
+function bannerLookup<T>(banner: RawBanner, record: Record<string, T>): T | null {
+  return (
+    record[bannerTypeKey(banner.name)] ??
+    (banner.globalStart ? record[`global:${banner.globalStart}`] : undefined) ??
+    (banner.cnStart ? record[`cn:${banner.cnStart}`] : undefined) ??
+    null
+  );
+}
+
+// Each banner's kind: the `|type =` field of its {{Banners cell |type = festival |name
+// = … }} template. This is the wiki's own vocabulary (festival, carnival, celebration,
+// crossover, special, jo, rerun…), which bannerRules.ts is keyed by; the rendered page
+// only shows a [Tag] that, for a crossover, is the collaboration's name.
 function parseBannerTypesFromWikitext(wikitext: string | null | undefined): Record<string, string> {
   const types: Record<string, string> = {};
-  if (!wikitext) return types;
-  for (const m of wikitext.matchAll(/\{\{\s*Banners cell([^{}]*(?:\{\{[^{}]*\}\}[^{}]*)*)\}\}/gi)) {
-    const field = (key: string) =>
-      m[1].match(new RegExp(`\\|\\s*${key}\\s*=\\s*([^|\\n}]*)`))?.[1].trim() ?? '';
+  for (const { keys, field } of bannerCells(wikitext)) {
     const type = field('type').toLowerCase();
-    if (!type) continue;
-    const name = field('name');
-    if (name) {
-      types[bannerTypeKey(name)] = type;
-      continue;
-    }
-    const day = (value: string) => value.match(/\d{4}\/\d{2}\/\d{2}/)?.[0].replace(/\//g, '-');
-    const globalDay = day(field('globalstart'));
-    const cnDay = day(field('cnstart'));
-    if (globalDay) types[`global:${globalDay}`] = type;
-    if (cnDay) types[`cn:${cnDay}`] = type;
+    if (type) for (const key of keys) types[key] = type;
   }
   return types;
 }
 
-// The wiki `type` of `banner`, from parseBannerTypesFromWikitext's result: by name, or
-// for a numbered banner, by its start date.
+// The wiki `type` of `banner`, from parseBannerTypesFromWikitext's result.
 function bannerWikiType(banner: RawBanner, types: Record<string, string>): string | null {
-  return (
-    types[bannerTypeKey(banner.name)] ??
-    (banner.globalStart && types[`global:${banner.globalStart}`]) ??
-    (banner.cnStart && types[`cn:${banner.cnStart}`]) ??
-    null
-  );
+  return bannerLookup(banner, types);
+}
+
+// A wikitext date-time like "2026/08/20 09:00:00" — Global server time, UTC-7 (as the
+// in-game banners state: "August 20, 09:00 – October 1, 03:59 (UTC-7)") — as an ISO
+// timestamp. Null for a bare date: the rendered pages carry dates only, and a
+// countdown in hours needs the real time, not a guessed midnight.
+function wikiTimeToIso(value: string): string | null {
+  const m = value.match(/(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})(?::(\d{2}))?/);
+  if (!m) return null;
+  const [, y, mo, d, h, mi, sec = '00'] = m;
+  return new Date(`${y}-${mo}-${d}T${h}:${mi}:${sec}-07:00`).toISOString();
+}
+
+export interface BannerTimes {
+  globalStartAt: string;
+  globalEndAt: string;
+}
+
+// Each banner's exact Global start and end, where the wikitext gives times (not just
+// dates) for both.
+function parseBannerTimesFromWikitext(
+  wikitext: string | null | undefined
+): Record<string, BannerTimes> {
+  const times: Record<string, BannerTimes> = {};
+  for (const { keys, field } of bannerCells(wikitext)) {
+    const globalStartAt = wikiTimeToIso(field('globalstart'));
+    const globalEndAt = wikiTimeToIso(field('globalend'));
+    if (!globalStartAt || !globalEndAt) continue;
+    for (const key of keys) times[key] = { globalStartAt, globalEndAt };
+  }
+  return times;
 }
 
 export {
@@ -246,4 +293,6 @@ export {
   dedupeBannersByName,
   parseBannerTypesFromWikitext,
   bannerWikiType,
+  parseBannerTimesFromWikitext,
+  bannerLookup,
 };

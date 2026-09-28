@@ -22,6 +22,7 @@ import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { IntCertsIcon } from '../IntCertsIcon';
 import { PlayIcon } from '../PlayIcon';
 import { DateText } from '../DateText';
+import { Countdown } from '../Countdown';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
 import './index.css';
 
@@ -96,6 +97,11 @@ export function Event({
   // A banner's own run dates, which can differ from its event's — absent in data
   // scraped before they were added, in which case the range is simply omitted.
   const bannerDates = banner ? getBannerDates(banner, event) : null;
+  // Countdowns use the exact start/end moments where the scraper found them (the game's
+  // activity table for events, the banner pages' wikitext for banners); otherwise the
+  // calendar dates, counted in whole days.
+  const exactEvent = event.globalStartAt && event.globalEndAt;
+  const exactBanner = banner?.globalStartAt && banner.globalEndAt;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
 
   return (
@@ -148,6 +154,11 @@ export function Event({
                   event releases in China, and may shift.
                 </InfoButton>
               )}
+              <Countdown
+                start={exactEvent ? new Date(event.globalStartAt as string) : start}
+                end={exactEvent ? new Date(event.globalEndAt as string) : end}
+                exact={!!exactEvent}
+              />
             </div>
             <div>
               {(origPrime || hhPermits || dailyFreePulls || bannerPermits || hasIntCertsValue) && (
@@ -257,6 +268,11 @@ export function Event({
                     after CN this event reaches Global.
                   </InfoButton>
                 )}
+                <Countdown
+                  start={exactBanner ? new Date(banner.globalStartAt as string) : bannerDates.start}
+                  end={exactBanner ? new Date(banner.globalEndAt as string) : bannerDates.end}
+                  exact={!!exactBanner}
+                />
               </div>
             )}
           </div>

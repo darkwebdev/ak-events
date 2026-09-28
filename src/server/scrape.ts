@@ -20,6 +20,8 @@ import {
   indexBannersByDate,
   parseBannerTypesFromWikitext,
   bannerWikiType,
+  parseBannerTimesFromWikitext,
+  bannerLookup,
 } from './lib/banners.js';
 import {
   checkBannerFreePulls,
@@ -287,6 +289,8 @@ export async function scrapeEvents(): Promise<void> {
       if (dateStr) {
         event.globalDateStr = dateStr;
         event.datesPredicted = false;
+        event.globalStartAt = new Date(activity.startTime * 1000).toISOString();
+        event.globalEndAt = new Date(activity.endTime * 1000).toISOString();
       }
       if (event.origPrime == null) {
         const op = originitePrimeFromStages(activity.id, stageTable);
@@ -352,6 +356,11 @@ export async function scrapeEvents(): Promise<void> {
       // a confirmed source (activityTable or the wiki) — the client should show this
       // distinctly rather than presenting an estimate as an official date.
       datesPredicted: !!event.datesPredicted,
+      ...(event.globalStartAt &&
+        event.globalEndAt && {
+          globalStartAt: event.globalStartAt,
+          globalEndAt: event.globalEndAt,
+        }),
       type: event.type ?? null,
       image: event.image ?? null,
       link: event.link ?? null,
@@ -404,7 +413,11 @@ export async function scrapeEvents(): Promise<void> {
   const banners = [...upcomingBanners, ...yearBanners];
   // Each banner's exact kind (festival, crossover, special…), for the free-pull rules.
   const bannerTypes = Object.assign({}, ...bannerWikitexts.map(parseBannerTypesFromWikitext));
-  for (const banner of banners) banner.wikiType = bannerWikiType(banner, bannerTypes);
+  const bannerTimes = Object.assign({}, ...bannerWikitexts.map(parseBannerTimesFromWikitext));
+  for (const banner of banners) {
+    banner.wikiType = bannerWikiType(banner, bannerTypes);
+    Object.assign(banner, bannerLookup(banner, bannerTimes));
+  }
   const { byGlobalStart: bannerByGlobalStart, byCnStart: bannerByCnStart } =
     indexBannersByDate(banners);
   console.log(`Fetched ${banners.length} banner entries for matching`);
@@ -576,6 +589,11 @@ export async function scrapeEvents(): Promise<void> {
       globalEnd: matchedBanner.globalEnd,
       cnStart: matchedBanner.cnStart,
       cnEnd: matchedBanner.cnEnd,
+      ...(matchedBanner.globalStartAt &&
+        matchedBanner.globalEndAt && {
+          globalStartAt: matchedBanner.globalStartAt,
+          globalEndAt: matchedBanner.globalEndAt,
+        }),
     };
   }
 

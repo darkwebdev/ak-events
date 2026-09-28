@@ -6,6 +6,8 @@ import {
   dedupeBannersByName,
   parseBannerTypesFromWikitext,
   bannerWikiType,
+  parseBannerTimesFromWikitext,
+  bannerLookup,
 } from '../src/server/lib/banners.js';
 
 function loadFixture(name) {
@@ -266,5 +268,25 @@ describe('parseBannerTypesFromWikitext / bannerWikiType', () => {
   test('returns null for an unknown banner', () => {
     expect(bannerWikiType({ name: 'Nope' }, types)).toBeNull();
     expect(parseBannerTypesFromWikitext(null)).toEqual({});
+  });
+});
+
+describe('parseBannerTimesFromWikitext', () => {
+  const wikitext = `{{Banners cell |type = jo |no = 21 |cnstart = 2026/03/14
+|globalstart = 2026/08/20 09:00:00 |globalend = 2026/09/03 03:59:59}}
+{{Banners cell |type = festival |name = Old Banner |globalstart = 2020/07/29 |globalend = 2020/08/11}}`;
+  const times = parseBannerTimesFromWikitext(wikitext);
+
+  // The wiki's times are Global server time, UTC-7.
+  test('reads exact Global start and end as UTC timestamps', () => {
+    const jo = { name: 'Joint Operation #21', globalStart: '2026-08-20', cnStart: '2026-03-14' };
+    expect(bannerLookup(jo, times)).toEqual({
+      globalStartAt: '2026-08-20T16:00:00.000Z',
+      globalEndAt: '2026-09-03T10:59:59.000Z',
+    });
+  });
+
+  test('skips banners with dates but no times', () => {
+    expect(bannerLookup({ name: 'Old Banner' }, times)).toBeNull();
   });
 });

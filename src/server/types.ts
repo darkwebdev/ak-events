@@ -36,6 +36,9 @@ export interface RawEvent {
   // ceiling rather than a guaranteed amount. null for every non-rerun event.
   intCerts?: number | null;
   datesPredicted?: boolean;
+  // Exact Global start/end (ISO), from the game's activity table — see ProcessedEvent.
+  globalStartAt?: string | null;
+  globalEndAt?: string | null;
 }
 
 export interface BannerOperator {
@@ -74,6 +77,9 @@ export interface RawBanner {
   // The wiki's own kind for this banner (festival, crossover, special…), from the
   // banner pages' wikitext — see parseBannerTypesFromWikitext. Keys bannerRules.ts.
   wikiType?: string | null;
+  // Exact Global start/end (ISO), where the banner page's wikitext gives times.
+  globalStartAt?: string | null;
+  globalEndAt?: string | null;
 }
 
 export interface ResolvedBanner {
@@ -93,6 +99,10 @@ export interface ResolvedBanner {
   globalEnd?: string | null;
   cnStart?: string | null;
   cnEnd?: string | null;
+  // Exact Global start/end (ISO), where the banner page's wikitext gives times — lets
+  // the client count down in hours and minutes, not just days.
+  globalStartAt?: string | null;
+  globalEndAt?: string | null;
 }
 
 export interface BannerDateIndex {
@@ -110,6 +120,11 @@ export interface ProcessedEvent {
   cnStart: string | null;
   cnEnd: string | null;
   datesPredicted: boolean;
+  // Exact Global start/end (ISO), from the game's activity table, when the event is
+  // already on the EN client. The date fields above are calendar dates only; these let
+  // the client count down in hours and minutes.
+  globalStartAt?: string | null;
+  globalEndAt?: string | null;
   type: string | null;
   image: string | null;
   link: string | null;

@@ -66,7 +66,12 @@ export const ConnectedWithAccount = {
     (Story: React.ComponentType) => {
       localStorage.setItem(
         'ak-events-arknights-linked-account',
-        JSON.stringify({ nickName: 'Doctor', level: 120, avatarUrl: FAKE_AVATAR })
+        JSON.stringify({
+          nickName: 'Doctor',
+          level: 120,
+          avatarUrl: FAKE_AVATAR,
+          fetchedAt: '2026-09-28T14:05:00.000Z',
+        })
       );
       return <Story />;
     },

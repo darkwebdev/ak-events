@@ -17,6 +17,20 @@ interface ArknightsAccountProps {
   onFetched: (data: FetchAccountDataResult) => void;
 }
 
+// When the account data was last fetched: date and time in the viewer's own locale
+// format, with the long form (full month name) in the browser's native tooltip.
+function LastUpdated({ date }: { date: Date }) {
+  return (
+    <time
+      className="ak-ark-account-updated"
+      dateTime={date.toISOString()}
+      title={date.toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' })}
+    >
+      Updated {date.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
+    </time>
+  );
+}
+
 // Imports Orundum/Originite Prime/Headhunting Permit counts from a real Arknights
 // account via the user's own ak-chars-api (which wraps Yostar's email one-time-code
 // login — the same flow the official game client uses). `authState` is
@@ -108,7 +122,12 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }: Arknigh
     setBusy(true);
     try {
       const data = await fetchAccountData(auth);
-      setLinkedAccount({ nickName: data.nickName, level: data.level, avatarUrl: data.avatarUrl });
+      setLinkedAccount({
+        nickName: data.nickName,
+        level: data.level,
+        avatarUrl: data.avatarUrl,
+        fetchedAt: new Date().toISOString(),
+      });
       onFetched(data);
     } catch (err) {
       // Most likely an expired/invalidated token (each fetch logs the game session
@@ -222,6 +241,7 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }: Arknigh
             >
               {busy ? 'Fetching…' : 'Refresh data'}
             </button>
+            {linkedAccount?.fetchedAt && <LastUpdated date={new Date(linkedAccount.fetchedAt)} />}
           </div>
         </div>
       )}

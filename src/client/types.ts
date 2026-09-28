@@ -54,6 +54,9 @@ export interface LinkedAccount {
   nickName: string | null;
   level: number | null;
   avatarUrl: string | null;
+  // When this snapshot was fetched (ISO timestamp). Optional: snapshots persisted
+  // before it was added don't have it.
+  fetchedAt?: string;
 }
 
 // Per-event opt-in state for Intelligence Certificates, keyed by event name — see

@@ -6,6 +6,7 @@ let getBannerDates;
 let parseDate;
 let formatLongDate;
 let toIsoDate;
+let formatTimeAgo;
 let getCountdown;
 beforeAll(async () => {
   const mod = await import('../../src/client/utils/dates.js');
@@ -17,6 +18,7 @@ beforeAll(async () => {
   parseDate = mod.parseDate;
   formatLongDate = mod.formatLongDate;
   toIsoDate = mod.toIsoDate;
+  formatTimeAgo = mod.formatTimeAgo;
   getCountdown = mod.getCountdown;
 });
 
@@ -168,5 +170,22 @@ describe('getCountdown', () => {
   test('is null once it has ended', () => {
     expect(getCountdown(at(10), at(20), true, now)).toBeNull();
     expect(getCountdown(null, null, false, now)).toBeNull();
+  });
+});
+
+describe('formatTimeAgo', () => {
+  const now = new Date(2026, 8, 28, 15, 0);
+  const ago = (ms) => formatTimeAgo(new Date(now.getTime() - ms), now, 'en');
+  const MIN = 60000;
+
+  test('"now" under a minute', () => {
+    expect(ago(30000)).toBe('now');
+  });
+
+  test('minutes, then hours, then days', () => {
+    expect(ago(5 * MIN)).toBe('5 minutes ago');
+    expect(ago(3 * 60 * MIN)).toBe('3 hours ago');
+    expect(ago(26 * 60 * MIN)).toBe('yesterday');
+    expect(ago(12 * 24 * 60 * MIN)).toBe('12 days ago');
   });
 });

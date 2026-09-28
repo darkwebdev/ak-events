@@ -1,5 +1,7 @@
 import React, { useState, type Dispatch, type SetStateAction } from 'react';
 import { useStorage } from '../../hooks/useStorage.js';
+import { useNow } from '../../hooks/useNow.js';
+import { formatLongDateTime, formatTimeAgo } from '../../utils/dates.js';
 import {
   sendAuthCode,
   getAuthToken,
@@ -17,16 +19,17 @@ interface ArknightsAccountProps {
   onFetched: (data: FetchAccountDataResult) => void;
 }
 
-// When the account data was last fetched: date and time in the viewer's own locale
-// format, with the long form (full month name) in the browser's native tooltip.
+// When the account data was last fetched, as "Updated 5 minutes ago" (refreshed every
+// minute), with the exact date and time in the browser's native tooltip.
 function LastUpdated({ date }: { date: Date }) {
+  const now = useNow();
   return (
     <time
       className="ak-ark-account-updated"
       dateTime={date.toISOString()}
-      title={date.toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' })}
+      title={formatLongDateTime(date)}
     >
-      Updated {date.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
+      Updated {formatTimeAgo(date, now)}
     </time>
   );
 }

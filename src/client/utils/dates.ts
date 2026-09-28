@@ -218,3 +218,17 @@ function startOfDay(date: Date): Date {
 export function formatLongDateTime(date: Date): string {
   return date.toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
 }
+
+/**
+ * How long ago `date` was, in the viewer's language — "now", "5 minutes ago",
+ * "3 hours ago", "yesterday", "12 days ago" — in the largest whole unit up to days.
+ */
+export function formatTimeAgo(date: Date, now: Date, locale?: string): string {
+  const format = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const minutes = Math.floor((now.getTime() - date.getTime()) / 60_000);
+  if (minutes < 1) return format.format(0, 'second');
+  if (minutes < 60) return format.format(-minutes, 'minute');
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return format.format(-hours, 'hour');
+  return format.format(-Math.floor(hours / 24), 'day');
+}

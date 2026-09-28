@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-BW5AP8Nb.js";import{P as o}from"./PullIcon-EG_o06QJ.js";function a({children:s}){const t=parseFloat(String(s));return r.jsxs(r.Fragment,{children:[r.jsx(o,{}),"×",t]})}export{a as P};

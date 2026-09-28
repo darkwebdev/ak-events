@@ -4,6 +4,13 @@ import { wikiApiBase } from '../src/server/config.js';
 
 vi.mock('https');
 
+// A stand-in for http.ClientRequest: every request gets an inactivity timeout, so the
+// mock needs setTimeout/destroy as well as on().
+function fakeRequest() {
+  const req = { on: vi.fn(() => req), setTimeout: vi.fn(), destroy: vi.fn() };
+  return req;
+}
+
 describe('network helpers', () => {
   beforeEach(() => {
     https.get.mockReset();
@@ -21,7 +28,7 @@ describe('network helpers', () => {
       // ensure url contains config.wikiApiBase
       expect(url.startsWith(wikiApiBase)).toBe(true);
       cb(fakeResponse);
-      return { on: vi.fn() };
+      return fakeRequest();
     });
     const res = await fetchWikiApi('Some_Page');
     expect(res.statusCode).toBe(200);
@@ -39,7 +46,7 @@ describe('network helpers', () => {
     };
     https.get.mockImplementation((url, options, cb) => {
       cb(fakeResponse);
-      return { on: vi.fn() };
+      return fakeRequest();
     });
 
     const categories = await fetchOperatorCategories('Pepe');
@@ -60,7 +67,7 @@ describe('network helpers', () => {
     };
     https.get.mockImplementation((url, options, cb) => {
       cb(fakeResponse);
-      return { on: vi.fn() };
+      return fakeRequest();
     });
 
     const categories = await fetchOperatorCategories('Pepe');
@@ -80,7 +87,7 @@ describe('network helpers', () => {
     };
     https.get.mockImplementation((url, options, cb) => {
       cb(fakeResponse);
-      return { on: vi.fn() };
+      return fakeRequest();
     });
 
     const categories = await fetchOperatorCategories('Pepe');
@@ -90,6 +97,7 @@ describe('network helpers', () => {
 
   test('fetchOperatorCategories returns null on a request error', async () => {
     https.get.mockImplementation(() => ({
+      ...fakeRequest(),
       on: (ev, cb) => {
         if (ev === 'error') cb(new Error('network down'));
       },
@@ -98,5 +106,32 @@ describe('network helpers', () => {
     const categories = await fetchOperatorCategories('Pepe');
 
     expect(categories).toBeNull();
+  });
+
+  test('a request that stalls is destroyed after the timeout, and resolves null instead of hanging', async () => {
+    let onTimeout;
+    let onError;
+    const req = {
+      on: vi.fn((ev, cb) => {
+        if (ev === 'error') onError = cb;
+        return req;
+      }),
+      setTimeout: vi.fn((ms, cb) => {
+        onTimeout = cb;
+      }),
+      // What a real request does on destroy(err): emit 'error' with that err.
+      destroy: vi.fn((err) => onError(err)),
+    };
+    // Never calls the response callback — the server never answers.
+    https.get.mockImplementation(() => req);
+
+    const pending = fetchOperatorCategories('Pepe');
+    expect(req.setTimeout).toHaveBeenCalledWith(expect.any(Number), expect.any(Function));
+    onTimeout();
+
+    await expect(pending).resolves.toBeNull();
+    expect(req.destroy).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.stringMatching(/Timed out/) })
+    );
   });
 });

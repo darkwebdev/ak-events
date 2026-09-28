@@ -82,7 +82,16 @@ describe('scrapeEvents', () => {
     // independent caches (operator Limited flags, operator debut events, ...), and a
     // single shared `{}` would make writes to one accidentally pollute the others.
     mockLoadJson.mockImplementation(() => ({}));
-    mockFetchBannersPageHtml.mockResolvedValue(null);
+    // Default: a banner page with one banner dated long before any test event, so it
+    // never gets attached to one — but the scrape health check still sees working
+    // banner pages. Tests about banner matching override this.
+    mockFetchBannersPageHtml.mockResolvedValue(
+      buildBannerPageHtml({
+        name: 'Unrelated Old Banner',
+        globalDate: '2000/01/01 – 2000/01/15',
+        cnDate: '1999/07/01 – 1999/07/15',
+      })
+    );
     mockFetchOperatorCategories.mockResolvedValue([]);
     mockDownloadImage.mockResolvedValue(undefined);
     // Default: no game data available, so every 6★ spark cost falls back to 300 —
@@ -128,30 +137,43 @@ describe('scrapeEvents', () => {
     expect(mockSaveJson).not.toHaveBeenCalled();
   });
 
-  test('does not abort, and still saves data, when the CN upcoming page fills in events the main index missed', async () => {
+  test('merges CN upcoming events when the main index is blocked, but fails the health check when none are usable', async () => {
     mockFetchEventsViaApi.mockResolvedValue(null);
     mockFetchUpcomingViaApi.mockResolvedValue([
       { name: 'CN Upcoming Event', link: null, image: null },
     ]);
 
-    await scrapeEvents();
-
-    expect(exitSpy).not.toHaveBeenCalled();
-    // The merge itself worked (proven by the pre-filter index snapshot)...
+    // The up-front "empty index" abort isn't hit: the CN upcoming page filled it in...
+    await expect(scrapeEvents()).rejects.toThrow('process.exit:1');
     const indexCalls = mockSaveJson.mock.calls.filter(
       ([path]) => path === 'public/data/events_index.json'
     );
     const [, indexedEvents] = indexCalls[indexCalls.length - 1];
     expect(indexedEvents.map((e) => e.name)).toContain('CN Upcoming Event');
     // ...but a CN-upcoming entry has no resolvable start date by construction (see
-    // scrape.js's own comment on that merge), so the final, filtered events.json
-    // correctly drops it rather than shipping a dateless dead entry.
-    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
-      ([path]) => path === 'public/data/events.json'
-    );
-    expect(eventsJsonCalls.length).toBeGreaterThan(0);
-    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
-    expect(savedEvents.map((e) => e.name)).not.toContain('CN Upcoming Event');
+    // scrape.ts's own comment on that merge), so the filter drops it, leaving nothing
+    // usable — which the end-of-run health check treats as a failed scrape (a blocked
+    // main index), rather than publishing an empty event list.
+    expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/No events left/));
+  });
+
+  test('fails the run, before the final write, when the banner pages return nothing', async () => {
+    mockFetchBannersPageHtml.mockResolvedValue(null);
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Test Event',
+        link: null,
+        image: 'https://example.com/banner.png',
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        origPrime: 10,
+      },
+    ]);
+
+    await expect(scrapeEvents()).rejects.toThrow('process.exit:1');
+    expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/No banners found/));
+    // Aborted before the image-download step that precedes the final write.
+    expect(mockDownloadImage).not.toHaveBeenCalled();
   });
 
   test('saves the scraped events when the index fetch succeeds normally', async () => {
@@ -563,6 +585,16 @@ describe('scrapeEvents', () => {
         image: null,
         globalDateStr: '2026/09/01–2026/09/20',
         cnDateStr: null,
+      },
+      // Something worth keeping, so the run isn't left with zero events (which the
+      // health check would rightly fail as a broken scrape).
+      {
+        name: 'Worthwhile Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/09/01–2026/09/20',
+        cnDateStr: null,
+        origPrime: 10,
       },
     ]);
 

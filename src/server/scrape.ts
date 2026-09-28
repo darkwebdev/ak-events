@@ -10,7 +10,8 @@ import {
   fetchArkpediaEventsHtml,
   fetchArkpediaEventDetailHtml,
 } from './lib/network.js';
-import { ensureDir, saveJson, fileExists } from './lib/storage.js';
+import { ensureDir, saveJson, fileExists, loadJson } from './lib/storage.js';
+import { checkScrapeHealth, reportScrapeHealth } from './lib/scrapeHealth.js';
 import { applyRerunSuffix, isRerunLink, titleFromUrl } from './lib/wiki.js';
 import { parseDateRange } from './lib/dateRange.js';
 import { parseBannersPage, indexBannersByDate } from './lib/banners.js';
@@ -85,6 +86,11 @@ async function runBatched<T, R>(
 
 export async function scrapeEvents(): Promise<void> {
   console.log('Fetching index (prefer API over fetched/index API)...');
+
+  // The last run's event count, read before this run's interim saves overwrite the
+  // file — the health check at the end compares against it.
+  const previousEvents = loadJson<unknown>('public/data/events.json', null);
+  const previousEventCount = Array.isArray(previousEvents) ? previousEvents.length : null;
 
   // arkpedia's own name for each event, keyed by arkpediaNameKey — filled in once the
   // schedule page is fetched below, before any fetchAndParseEvent call runs.
@@ -337,7 +343,9 @@ export async function scrapeEvents(): Promise<void> {
     fetchBannersPageHtml('Headhunting/Banners/Upcoming'),
     fetchBannersPageHtml(`Headhunting/Banners/${currentYear}`),
   ]);
-  const banners = [...parseBannersPage(upcomingBannersHtml), ...parseBannersPage(yearBannersHtml)];
+  const upcomingBanners = parseBannersPage(upcomingBannersHtml);
+  const yearBanners = parseBannersPage(yearBannersHtml);
+  const banners = [...upcomingBanners, ...yearBanners];
   const { byGlobalStart: bannerByGlobalStart, byCnStart: bannerByCnStart } =
     indexBannersByDate(banners);
   console.log(`Fetched ${banners.length} banner entries for matching`);
@@ -495,6 +503,24 @@ export async function scrapeEvents(): Promise<void> {
         beforeFilterCount - processed.length
       } event(s) with no start date, no orundum value, and no banner`
     );
+  }
+
+  // Fail the run (before the final write, and before any image downloads) when a core
+  // source came back empty — see lib/scrapeHealth.ts. In CI, a failed run skips the
+  // commit step, so partial data from this run never gets published.
+  const health = checkScrapeHealth({
+    events: processed.length,
+    previousEvents: previousEventCount,
+    upcomingBanners: upcomingBanners.length,
+    yearBanners: yearBanners.length,
+    arkpediaEvents: arkpediaEvents.length,
+    hasActivityTable: activityTable != null,
+    hasStageTable: stageTable != null,
+  });
+  reportScrapeHealth(health);
+  if (health.errors.length) {
+    console.error('Scrape health check failed. Aborting without the final write.');
+    process.exit(1);
   }
 
   for (const event of processed) {

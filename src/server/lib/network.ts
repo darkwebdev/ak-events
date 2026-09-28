@@ -1,4 +1,5 @@
 import https from 'https';
+import type { ClientRequest } from 'http';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -27,6 +28,20 @@ interface WikiParseBody {
   error?: unknown;
 }
 
+// No request may stall a scrape run indefinitely: with no timeout, one stalled
+// socket kept CI runs hanging until GitHub's 6-hour job limit. This is an inactivity
+// timeout (no bytes in either direction for this long), so a large download that keeps
+// flowing, like the ~20MB stage table, is unaffected. Destroying the request with an
+// error routes it into each caller's existing error handling (reject / resolve null).
+const REQUEST_TIMEOUT_MS = 30_000;
+
+function withTimeout(req: ClientRequest, url: string): ClientRequest {
+  req.setTimeout(REQUEST_TIMEOUT_MS, () => {
+    req.destroy(new Error(`Timed out after ${REQUEST_TIMEOUT_MS / 1000}s: ${url}`));
+  });
+  return req;
+}
+
 function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> {
   return new Promise((resolve, reject) => {
     // Ensure title is not double-encoded (some links include percent-encoding like %27)
@@ -48,8 +63,11 @@ function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> 
         Accept: 'application/json',
       },
     };
-    https
-      .get(apiUrl, options, (res) => {
+    withTimeout(
+      https.get(apiUrl, options, (res) => {
+        // A timeout/abort after the response has started errors the response, not the
+        // request — without this, the promise would never settle.
+        res.on('error', reject);
         let data = '';
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
@@ -65,8 +83,9 @@ function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> 
             resolve({ statusCode: res.statusCode, body: null });
           }
         });
-      })
-      .on('error', reject);
+      }),
+      apiUrl
+    ).on('error', reject);
   });
 }
 
@@ -88,12 +107,18 @@ function downloadImage(url: string, filepath: string): Promise<void> {
         Referer: indexUrl,
       },
     };
-    https
-      .get(resolvedUrl, options, (res) => {
+    withTimeout(
+      https.get(resolvedUrl, options, (res) => {
         if (res.statusCode === 200) {
           const dir = path.dirname(filepath);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
           const file = fs.createWriteStream(filepath);
+          // A download cut off mid-body must not leave a truncated file behind:
+          // downloadIfMissing treats any existing file as already downloaded.
+          res.on('error', (err) => {
+            file.destroy();
+            fs.rm(filepath, { force: true }, () => reject(err));
+          });
           res.pipe(file);
           file.on('finish', () => {
             file.close();
@@ -103,8 +128,9 @@ function downloadImage(url: string, filepath: string): Promise<void> {
           res.resume();
           reject(new Error(`Failed to download ${resolvedUrl}: ${res.statusCode}`));
         }
-      })
-      .on('error', reject);
+      }),
+      resolvedUrl
+    ).on('error', reject);
   });
 }
 
@@ -186,8 +212,9 @@ function fetchOperatorCategories(name: string): Promise<string[] | null> {
         Accept: 'application/json',
       },
     };
-    https
-      .get(apiUrl, options, (res) => {
+    withTimeout(
+      https.get(apiUrl, options, (res) => {
+        res.on('error', () => resolve(null));
         let data = '';
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
@@ -208,8 +235,9 @@ function fetchOperatorCategories(name: string): Promise<string[] | null> {
             resolve(null);
           }
         });
-      })
-      .on('error', () => resolve(null));
+      }),
+      apiUrl
+    ).on('error', () => resolve(null));
   });
 }
 
@@ -219,8 +247,9 @@ function fetchOperatorCategories(name: string): Promise<string[] | null> {
 // never be able to abort a whole scrape run the way a thrown error could.
 function fetchJsonUrl<T>(url: string): Promise<T | null> {
   return new Promise((resolve) => {
-    https
-      .get(url, { headers: { 'User-Agent': 'ak-events-scraper' } }, (res) => {
+    withTimeout(
+      https.get(url, { headers: { 'User-Agent': 'ak-events-scraper' } }, (res) => {
+        res.on('error', () => resolve(null));
         if (res.statusCode !== 200) {
           // Drain the unread body, or its socket stays open and keeps the process alive.
           res.resume();
@@ -236,8 +265,9 @@ function fetchJsonUrl<T>(url: string): Promise<T | null> {
             resolve(null);
           }
         });
-      })
-      .on('error', () => resolve(null));
+      }),
+      url
+    ).on('error', () => resolve(null));
   });
 }
 
@@ -264,8 +294,8 @@ function fetchCharacterTable(): Promise<CharacterTable | null> {
 // never be able to abort a whole scrape run.
 function fetchTextUrl(url: string): Promise<string | null> {
   return new Promise((resolve) => {
-    https
-      .get(
+    withTimeout(
+      https.get(
         url,
         {
           headers: {
@@ -274,6 +304,7 @@ function fetchTextUrl(url: string): Promise<string | null> {
           },
         },
         (res) => {
+          res.on('error', () => resolve(null));
           if (res.statusCode !== 200) {
             res.resume();
             resolve(null);
@@ -283,8 +314,9 @@ function fetchTextUrl(url: string): Promise<string | null> {
           res.on('data', (chunk) => (data += chunk));
           res.on('end', () => resolve(data));
         }
-      )
-      .on('error', () => resolve(null));
+      ),
+      url
+    ).on('error', () => resolve(null));
   });
 }
 

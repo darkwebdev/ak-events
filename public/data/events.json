@@ -140,7 +140,7 @@
           "name": "Zima the Raging Tide",
           "star": 6,
           "class": "Guard",
-          "limited": true,
+          "limited": false,
           "icon": "data/images/operators/60px-Zima_the_Raging_Tide_icon.png",
           "sparkCost": null
         },
@@ -148,7 +148,7 @@
           "name": "Ukusik",
           "star": 5,
           "class": "Medic",
-          "limited": true,
+          "limited": false,
           "icon": "data/images/operators/60px-Ukusik_icon.png",
           "sparkCost": null
         },
@@ -216,7 +216,7 @@
           "name": "Closure",
           "star": 6,
           "class": "Vanguard",
-          "limited": true,
+          "limited": false,
           "icon": "data/images/operators/60px-Closure_icon.png",
           "sparkCost": null
         },
@@ -224,7 +224,7 @@
           "name": "Crackborne",
           "star": 5,
           "class": "Defender",
-          "limited": true,
+          "limited": false,
           "icon": "data/images/operators/60px-Crackborne_icon.png",
           "sparkCost": null
         },

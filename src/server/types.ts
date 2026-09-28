@@ -27,6 +27,8 @@ export interface RawEvent {
   // whose wiki fetch reads the original run's page.
   dailyFreePull?: boolean;
   bannerPermits?: number | null;
+  headhuntingDescribed?: boolean;
+  bannerKind?: string | null;
   // The maximum Intelligence Certificates a rerun's own page states across every
   // mission/threshold that can substitute one for an already-owned reward — see
   // extractIntCertsFromHtml in lib/parser.ts for how this is derived, and why it's a
@@ -61,6 +63,9 @@ export interface RawBanner {
   globalStart: string | null;
   globalEnd: string | null;
   operators: BannerOperator[];
+  // The wiki's own kind for this banner (festival, crossover, special…), from the
+  // banner pages' wikitext — see parseBannerTypesFromWikitext. Keys bannerRules.ts.
+  wikiType?: string | null;
 }
 
 export interface ResolvedBanner {
@@ -104,6 +109,9 @@ export interface ProcessedEvent {
   // Optional since event data scraped before these were added doesn't have them.
   dailyFreePulls?: number | null;
   bannerPermits?: number | null;
+  // True when those come from the banner type's rule (lib/bannerRules.ts) because the
+  // event's page doesn't describe its banner yet.
+  freePullsEstimated?: boolean;
   intCerts: number | null;
   banner?: ResolvedBanner | null;
 }

@@ -19,6 +19,8 @@ export interface ScrapeSourceCounts {
   arkpediaEvents: number;
   hasActivityTable: boolean;
   hasStageTable: boolean;
+  // Banners whose wiki type was read from the banner pages' wikitext.
+  bannerTypes: number;
 }
 
 export interface ScrapeHealth {
@@ -64,6 +66,11 @@ export function checkScrapeHealth(counts: ScrapeSourceCounts): ScrapeHealth {
   }
   if (!counts.hasActivityTable) {
     warnings.push('Could not fetch the game activity table (official event dates unavailable).');
+  }
+  if (counts.bannerTypes === 0 && counts.upcomingBanners + counts.yearBanners > 0) {
+    warnings.push(
+      "Could not read banner types from the banner pages' wikitext (free-pull rule checks skipped)."
+    );
   }
   if (!counts.hasStageTable) {
     warnings.push('Could not fetch the game stage table (Originite Prime totals unavailable).');

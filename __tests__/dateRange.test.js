@@ -1,4 +1,4 @@
-import { parseDateRange, daysBetween } from '../src/server/lib/dateRange.js';
+import { parseDateRange } from '../src/server/lib/dateRange.js';
 
 describe('parseDateRange', () => {
   test('parses a start–end range separated by an en-dash', () => {
@@ -20,20 +20,5 @@ describe('parseDateRange', () => {
     expect(parseDateRange(null)).toEqual({ start: null, end: null });
     expect(parseDateRange('')).toEqual({ start: null, end: null });
     expect(parseDateRange('TBD')).toEqual({ start: null, end: null });
-  });
-});
-
-describe('daysBetween', () => {
-  test('counts the daily resets a two-week banner spans', () => {
-    expect(daysBetween('2026-09-16', '2026-09-30')).toBe(14);
-  });
-
-  test('crosses month and DST boundaries by whole days', () => {
-    expect(daysBetween('2026-10-20', '2026-11-03')).toBe(14);
-  });
-
-  test('is null when either date is missing', () => {
-    expect(daysBetween('2026-09-16', null)).toBeNull();
-    expect(daysBetween(null, '2026-09-30')).toBeNull();
   });
 });

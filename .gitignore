@@ -11,3 +11,4 @@ public/data/events_index.json
 storybook-static
 .DS_Store
 /images/
+scrape-rule-check.json

@@ -125,7 +125,12 @@ describe('extractBannerFreePulls', () => {
       day, so they must be used before the daily reset.</li></ul></li></ul>`;
 
   test('finds the daily free pull and the claimable banner permit, a ten-roll', () => {
-    expect(extractBannerFreePulls(carnival)).toEqual({ dailyFreePull: true, bannerPermits: 10 });
+    expect(extractBannerFreePulls(carnival)).toEqual({
+      dailyFreePull: true,
+      bannerPermits: 10,
+      headhuntingDescribed: true,
+      bannerKind: 'carnival',
+    });
   });
 
   // Celebration banners like Our Kind give a free operator at 300 pulls instead.
@@ -134,14 +139,18 @@ describe('extractBannerFreePulls', () => {
       is featured.<ul><li>Wiš'adel can be claimed for free after the player had pulled 300
       times in <i>Our Kind</i>.</li><li>Every day, the player can perform one headhunting
       pull for free in <i>Our Kind</i>.</li></ul></li></ul>`;
-    expect(extractBannerFreePulls(html)).toEqual({ dailyFreePull: true, bannerPermits: null });
+    expect(extractBannerFreePulls(html)).toMatchObject({
+      dailyFreePull: true,
+      bannerPermits: null,
+      bannerKind: 'celebration',
+    });
   });
 
   // Crossover banners (e.g. Thunder in the Azure Dream) have the permit but no daily pull.
   test('a crossover banner with only the claimable permit', () => {
     const html = `<ul><li>A single <b>Song of the Bow, Leap to the Sky Headhunting Permit</b>
       can be claimed (one time only) while the Hunters of the Umbral Wilds banner is up.</li></ul>`;
-    expect(extractBannerFreePulls(html)).toEqual({ dailyFreePull: false, bannerPermits: 10 });
+    expect(extractBannerFreePulls(html)).toMatchObject({ dailyFreePull: false, bannerPermits: 10 });
   });
 
   test('does not count the free operator after 300 pulls', () => {
@@ -153,6 +162,17 @@ describe('extractBannerFreePulls', () => {
     expect(extractBannerFreePulls('<p>An ordinary side story.</p>')).toEqual({
       dailyFreePull: false,
       bannerPermits: null,
+      headhuntingDescribed: false,
+      bannerKind: null,
+    });
+  });
+
+  test('names a crossover banner by its wording', () => {
+    const html = `<p>The <b>Hunters of the Umbral Wilds</b> limited crossover headhunting banner
+      is featured.</p>`;
+    expect(extractBannerFreePulls(html)).toMatchObject({
+      headhuntingDescribed: true,
+      bannerKind: 'crossover',
     });
   });
 });

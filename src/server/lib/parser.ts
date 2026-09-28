@@ -406,11 +406,28 @@ function extractOperatorDebutEvent(html: string | null | undefined): OperatorDeb
 //   rolls at once", and newer ones like The Hitchers are only named in plain text.
 const BANNER_PERMIT_PULLS = 10;
 
-function extractBannerFreePulls(html: string | null | undefined): {
+interface BannerFreePulls {
   dailyFreePull: boolean;
   bannerPermits: number | null;
-} {
-  if (!html) return { dailyFreePull: false, bannerPermits: null };
+  // Whether the page describes a featured banner at all ("… banner, X, is featured")
+  // — until it does, a page saying nothing about free pulls isn't evidence of none.
+  headhuntingDescribed: boolean;
+  // The featured Limited banner's kind as the page names it, in the wiki's own banner
+  // `type` vocabulary ("The sixth Limited Headhunting - Carnival banner" → carnival,
+  // "limited crossover headhunting banner" → crossover) — for events whose banner
+  // isn't on the Headhunting/Banners pages yet.
+  bannerKind: string | null;
+}
+
+function extractBannerFreePulls(html: string | null | undefined): BannerFreePulls {
+  if (!html) {
+    return {
+      dailyFreePull: false,
+      bannerPermits: null,
+      headhuntingDescribed: false,
+      bannerKind: null,
+    };
+  }
   const text = html
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
@@ -421,7 +438,16 @@ function extractBannerFreePulls(html: string | null | undefined): {
   );
   const claimable = text.match(/\bA single\s+.{0,100}?\s*Headhunting Permit\s+can be claimed/gi);
   const bannerPermits = claimable ? claimable.length * BANNER_PERMIT_PULLS : null;
-  return { dailyFreePull, bannerPermits };
+  const headhuntingDescribed = /\bbanner\b[^.]{0,120}?\bis featured\b/i.test(text);
+  const kind =
+    text.match(/Limited Headhunting\s*[-‐–]\s*(Festival|Carnival|Celebration)\s+banner/i)?.[1] ??
+    (/\blimited crossover headhunting banner\b/i.test(text) ? 'crossover' : null);
+  return {
+    dailyFreePull,
+    bannerPermits,
+    headhuntingDescribed,
+    bannerKind: kind ? kind.toLowerCase() : null,
+  };
 }
 
 interface ParsedEventFromHtml {
@@ -429,6 +455,8 @@ interface ParsedEventFromHtml {
   hhPermits: number | null;
   dailyFreePull: boolean;
   bannerPermits: number | null;
+  headhuntingDescribed: boolean;
+  bannerKind: string | null;
   intCerts: number | null;
   type: string | null;
   debug: string | null;
@@ -441,6 +469,8 @@ function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtm
     hhPermits: null,
     dailyFreePull: false,
     bannerPermits: null,
+    headhuntingDescribed: false,
+    bannerKind: null,
     intCerts: null,
     type: null,
     debug: null,

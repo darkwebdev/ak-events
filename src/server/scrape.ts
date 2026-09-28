@@ -5,6 +5,7 @@ import {
   fetchEventsViaApi,
   fetchUpcomingViaApi,
   fetchBannersPageHtml,
+  fetchBannersPageWikitext,
   fetchActivityTable,
   fetchStageTable,
   fetchArkpediaEventsHtml,
@@ -13,8 +14,19 @@ import {
 import { ensureDir, saveJson, fileExists, loadJson } from './lib/storage.js';
 import { checkScrapeHealth, reportScrapeHealth } from './lib/scrapeHealth.js';
 import { applyRerunSuffix, isRerunLink, titleFromUrl } from './lib/wiki.js';
-import { parseDateRange, daysBetween } from './lib/dateRange.js';
-import { parseBannersPage, indexBannersByDate } from './lib/banners.js';
+import { parseDateRange } from './lib/dateRange.js';
+import {
+  parseBannersPage,
+  indexBannersByDate,
+  parseBannerTypesFromWikitext,
+  bannerWikiType,
+} from './lib/banners.js';
+import {
+  checkBannerFreePulls,
+  reportRuleIssues,
+  type BannerPerksOnPage,
+  type RuleIssue,
+} from './lib/bannerRules.js';
 import {
   normalizeEventName,
   findActivity,
@@ -83,9 +95,6 @@ async function runBatched<T, R>(
   }
   return results;
 }
-
-// The standard length of a Limited banner, in days (daily resets) — see dailyFreePulls.
-const LIMITED_BANNER_DAYS = 14;
 
 export async function scrapeEvents(): Promise<void> {
   console.log('Fetching index (prefer API over fetched/index API)...');
@@ -157,6 +166,8 @@ export async function scrapeEvents(): Promise<void> {
       if (!isRerunLink(event.link)) {
         event.dailyFreePull = parsed.dailyFreePull;
         event.bannerPermits = parsed.bannerPermits;
+        event.headhuntingDescribed = parsed.headhuntingDescribed;
+        event.bannerKind = parsed.bannerKind;
       }
       if (parsed.type) {
         event.type = applyRerunSuffix(parsed.type, event.link) ?? null;
@@ -331,17 +342,29 @@ export async function scrapeEvents(): Promise<void> {
       link: event.link ?? null,
       origPrime: event.origPrime ?? null,
       hhPermits: event.hhPermits ?? null,
-      // Every Limited banner with this offer has run exactly 14 days (checked across
-      // all of them on the wiki's banner pages, 2020–2026), so that's the default —
-      // replaced with the matched banner's own length below when it's known. Never the
-      // event's own dates: a Carnival event runs three weeks, its banner only two.
-      dailyFreePulls: event.dailyFreePull ? LIMITED_BANNER_DAYS : null,
+      // As the event's own page states them; checked against (and, where the page is
+      // silent, filled in from) the rules for its banner's type below.
+      dailyFreePulls: event.dailyFreePull ? 14 : null,
       bannerPermits: event.bannerPermits ?? null,
       intCerts: event.intCerts ?? null,
     };
   });
 
   console.log(`Processed ${processed.length} events`);
+
+  // What each event's own page said about its banner's free pulls, for the rule check
+  // below (processed[i] is events[i] at this point).
+  const pagePerks = new Map<ProcessedEvent, BannerPerksOnPage & { kind: string | null }>();
+  processed.forEach((event, i) => {
+    const raw = events[i];
+    if (isRerunLink(raw.link)) return;
+    pagePerks.set(event, {
+      dailyFreePull: !!raw.dailyFreePull,
+      bannerPermits: raw.bannerPermits ?? null,
+      headhuntingDescribed: !!raw.headhuntingDescribed,
+      kind: raw.bannerKind ?? null,
+    });
+  });
 
   ensureDir('public/data/images');
   ensureDir('public/data/images/operators');
@@ -352,13 +375,17 @@ export async function scrapeEvents(): Promise<void> {
   // start date, so each event's banner can be matched by "does a banner start on the
   // same day this event does" rather than by fragile prose text on the event page.
   const currentYear = new Date().getFullYear();
-  const [upcomingBannersHtml, yearBannersHtml] = await Promise.all([
-    fetchBannersPageHtml('Headhunting/Banners/Upcoming'),
-    fetchBannersPageHtml(`Headhunting/Banners/${currentYear}`),
+  const bannerPages = ['Headhunting/Banners/Upcoming', `Headhunting/Banners/${currentYear}`];
+  const [upcomingBannersHtml, yearBannersHtml, ...bannerWikitexts] = await Promise.all([
+    ...bannerPages.map((page) => fetchBannersPageHtml(page)),
+    ...bannerPages.map((page) => fetchBannersPageWikitext(page)),
   ]);
   const upcomingBanners = parseBannersPage(upcomingBannersHtml);
   const yearBanners = parseBannersPage(yearBannersHtml);
   const banners = [...upcomingBanners, ...yearBanners];
+  // Each banner's exact kind (festival, crossover, special…), for the free-pull rules.
+  const bannerTypes = Object.assign({}, ...bannerWikitexts.map(parseBannerTypesFromWikitext));
+  for (const banner of banners) banner.wikiType = bannerWikiType(banner, bannerTypes);
   const { byGlobalStart: bannerByGlobalStart, byCnStart: bannerByCnStart } =
     indexBannersByDate(banners);
   console.log(`Fetched ${banners.length} banner entries for matching`);
@@ -484,12 +511,6 @@ export async function scrapeEvents(): Promise<void> {
           sparkCost,
         };
       });
-    if (event.dailyFreePulls != null) {
-      event.dailyFreePulls =
-        daysBetween(matchedBanner.globalStart, matchedBanner.globalEnd) ??
-        daysBetween(matchedBanner.cnStart, matchedBanner.cnEnd) ??
-        event.dailyFreePulls;
-    }
     event.banner = {
       name: matchedBanner.name,
       type: matchedBanner.type,
@@ -526,6 +547,30 @@ export async function scrapeEvents(): Promise<void> {
     );
   }
 
+  // Check each event's banner free pulls against the rules for its banner's type (see
+  // lib/bannerRules.ts). The type comes from the banner pages, or, for a banner not
+  // listed there yet, from how the event's own page names it. Problems don't stop the
+  // run — the data still updates — but are reported for a human to review.
+  const ruleIssues: RuleIssue[] = [];
+  if (Object.keys(bannerTypes).length) {
+    for (const { event, matchedBanner } of eventBannerMatches) {
+      const page = pagePerks.get(event);
+      if (!page || !processed.includes(event)) continue;
+      const bannerType = matchedBanner ? matchedBanner.wikiType ?? null : page.kind;
+      if (!matchedBanner && !page.kind) continue; // no banner to check against
+      const result = checkBannerFreePulls(
+        event.name,
+        matchedBanner?.name ?? '(not on the banner pages yet)',
+        bannerType,
+        page
+      );
+      event.dailyFreePulls = result.dailyFreePulls;
+      event.bannerPermits = result.bannerPermits;
+      if (result.estimated) event.freePullsEstimated = true;
+      ruleIssues.push(...result.issues);
+    }
+  }
+
   // Fail the run (before the final write, and before any image downloads) when a core
   // source came back empty — see lib/scrapeHealth.ts. In CI, a failed run skips the
   // commit step, so partial data from this run never gets published.
@@ -537,6 +582,7 @@ export async function scrapeEvents(): Promise<void> {
     arkpediaEvents: arkpediaEvents.length,
     hasActivityTable: activityTable != null,
     hasStageTable: stageTable != null,
+    bannerTypes: Object.keys(bannerTypes).length,
   });
   reportScrapeHealth(health);
   if (health.errors.length) {
@@ -566,4 +612,6 @@ export async function scrapeEvents(): Promise<void> {
   // Save updated public/data/events.json with public image paths
   saveJson('public/data/events.json', processed);
   console.log('Updated public/data/events.json with public image paths');
+
+  reportRuleIssues(ruleIssues);
 }

@@ -142,10 +142,12 @@ function parseBannersPage(html: string | null | undefined): RawBanner[] {
 // consistent between the two pages (e.g. "Rage of The Many" on Upcoming vs "Rage of
 // the Many" on the year page) — and a missed match here matters, because Upcoming
 // lists the CN roster, which can differ from Global's in the off-rate operators.
+const bannerNameKey = (name: string) => name.toLowerCase().replace(/\s+/g, ' ').trim();
+
 function dedupeBannersByName(banners: RawBanner[]): RawBanner[] {
   const byName = new Map<string, RawBanner>();
   for (const banner of banners) {
-    const key = banner.name.toLowerCase().replace(/\s+/g, ' ').trim();
+    const key = bannerNameKey(banner.name);
     // Delete first so a replacement takes the later entry's position in the order.
     byName.delete(key);
     byName.set(key, banner);
@@ -188,4 +190,60 @@ function indexBannersByDate(banners: RawBanner[]): BannerDateIndex {
   return { byGlobalStart, byCnStart };
 }
 
-export { parseBannersPage, indexBannersByDate, dedupeBannersByName };
+// Looser than bannerNameKey: the wikitext's `|name =` and the rendered title differ in
+// punctuation ("Joint Operation 22" vs "Joint Operation #22") and in a rerun's
+// " Rerun" suffix, which only the rendered title has.
+const bannerTypeKey = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/\s+rerun\s*$/, '')
+    .replace(/[^a-z0-9]/g, '');
+
+// Each banner's kind, from a Headhunting/Banners page's wikitext: the `|type =` field
+// of its {{Banners cell |type = festival |name = … }} template. This is the wiki's own
+// vocabulary (festival, carnival, celebration, crossover, special, jo, rerun…), which
+// bannerRules.ts is keyed by; the rendered page only shows a [Tag] that, for a
+// crossover, is the collaboration's name. Named cells are keyed by bannerTypeKey(name).
+// Numbered ones (Joint Operation, Orienteering…) have no `|name =` — the page generates
+// their titles from `|no =` — so they're keyed by start date instead ("global:" /
+// "cn:" + YYYY-MM-DD), the same dates events are matched to banners by.
+function parseBannerTypesFromWikitext(wikitext: string | null | undefined): Record<string, string> {
+  const types: Record<string, string> = {};
+  if (!wikitext) return types;
+  for (const m of wikitext.matchAll(/\{\{\s*Banners cell([^{}]*(?:\{\{[^{}]*\}\}[^{}]*)*)\}\}/gi)) {
+    const field = (key: string) =>
+      m[1].match(new RegExp(`\\|\\s*${key}\\s*=\\s*([^|\\n}]*)`))?.[1].trim() ?? '';
+    const type = field('type').toLowerCase();
+    if (!type) continue;
+    const name = field('name');
+    if (name) {
+      types[bannerTypeKey(name)] = type;
+      continue;
+    }
+    const day = (value: string) => value.match(/\d{4}\/\d{2}\/\d{2}/)?.[0].replace(/\//g, '-');
+    const globalDay = day(field('globalstart'));
+    const cnDay = day(field('cnstart'));
+    if (globalDay) types[`global:${globalDay}`] = type;
+    if (cnDay) types[`cn:${cnDay}`] = type;
+  }
+  return types;
+}
+
+// The wiki `type` of `banner`, from parseBannerTypesFromWikitext's result: by name, or
+// for a numbered banner, by its start date.
+function bannerWikiType(banner: RawBanner, types: Record<string, string>): string | null {
+  return (
+    types[bannerTypeKey(banner.name)] ??
+    (banner.globalStart && types[`global:${banner.globalStart}`]) ??
+    (banner.cnStart && types[`cn:${banner.cnStart}`]) ??
+    null
+  );
+}
+
+export {
+  parseBannersPage,
+  indexBannersByDate,
+  dedupeBannersByName,
+  parseBannerTypesFromWikitext,
+  bannerWikiType,
+};

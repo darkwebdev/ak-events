@@ -4,6 +4,8 @@ import {
   parseBannersPage,
   indexBannersByDate,
   dedupeBannersByName,
+  parseBannerTypesFromWikitext,
+  bannerWikiType,
 } from '../src/server/lib/banners.js';
 
 function loadFixture(name) {
@@ -231,5 +233,38 @@ describe('indexBannersByDate', () => {
     expect(warnSpy).toHaveBeenCalled();
 
     warnSpy.mockRestore();
+  });
+});
+
+describe('parseBannerTypesFromWikitext / bannerWikiType', () => {
+  const wikitext = `{{Banners head}}
+{{Banners cell |type = festival |name = Ashes to Ashes, Ages on Ages |cnstart = 2026/01/01
+|operators = Wang, Ling |limited = 1,2}}
+{{Banners cell |type = rerun |name = Returned From A Pyre |cnstart = 2025/01/01}}
+{{Banners cell |type = jo |name = Joint Operation 22 |cnstart = 2025/01/01}}
+{{Banners cell |type = standard |name = |cnstart = 2025/01/01}}
+{{Banners cell |type = jo |no = 21 |cnstart = 2026/03/14 |globalstart = 2026/08/20 09:00:00}}
+{{Banners end}}`;
+  const types = parseBannerTypesFromWikitext(wikitext);
+
+  test("reads each named banner's type", () => {
+    expect(bannerWikiType({ name: 'Ashes to Ashes, Ages on Ages' }, types)).toBe('festival');
+  });
+
+  test("matches the rendered title's Rerun suffix and punctuation", () => {
+    expect(bannerWikiType({ name: 'Returned From A Pyre Rerun' }, types)).toBe('rerun');
+    expect(bannerWikiType({ name: 'Joint Operation #22' }, types)).toBe('jo');
+  });
+
+  // Numbered banners have no |name =; the page renders "Joint Operation #21" itself.
+  test('finds a numbered banner by its start date', () => {
+    const jo = { name: 'Joint Operation #21', globalStart: '2026-08-20', cnStart: '2026-03-14' };
+    expect(bannerWikiType(jo, types)).toBe('jo');
+    expect(bannerWikiType({ ...jo, globalStart: null }, types)).toBe('jo');
+  });
+
+  test('returns null for an unknown banner', () => {
+    expect(bannerWikiType({ name: 'Nope' }, types)).toBeNull();
+    expect(parseBannerTypesFromWikitext(null)).toEqual({});
   });
 });

@@ -48,3 +48,15 @@ jobs:
           git commit -m "Update events"
           git push
         fi
+
+    # After the commit on purpose: a free-pull rule problem (see
+    # src/server/lib/bannerRules.ts) shouldn't hold back the daily data update, but it
+    # should turn the run red — and notify — so a human reviews the rules. The details
+    # are in the scraper step's annotations and on the run's summary page.
+    - name: Check free-pull rules
+      run: |
+        node -e "
+          const { errors, warnings } = require('./scrape-rule-check.json');
+          console.log(errors.length + ' error(s), ' + warnings.length + ' warning(s) — see the run summary.');
+          process.exit(errors.length ? 1 : 0);
+        "

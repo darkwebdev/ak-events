@@ -80,6 +80,7 @@ export function Event({
     hhPermits,
     dailyFreePulls,
     bannerPermits,
+    freePullsEstimated,
     intCerts,
     intCertsIncluded,
     link,
@@ -165,8 +166,20 @@ export function Event({
                     items={[
                       origPrime && <OriginitePrimeIcon key="op" />,
                       hhPermits && <PullSource key="hh" label="Store & rewards" />,
-                      dailyFreePulls && <PullSource key="daily" label="Free daily pull" />,
-                      bannerPermits && <PullSource key="banner" label="Banner ten-roll" />,
+                      // Estimated from the banner type's usual free pulls when the
+                      // wiki hasn't described this banner yet (see bannerRules.ts).
+                      dailyFreePulls && (
+                        <PullSource
+                          key="daily"
+                          label={`Free daily pull${freePullsEstimated ? ' (estimated)' : ''}`}
+                        />
+                      ),
+                      bannerPermits && (
+                        <PullSource
+                          key="banner"
+                          label={`Banner ten-roll${freePullsEstimated ? ' (estimated)' : ''}`}
+                        />
+                      ),
                       hasIntCertsValue && <IntCertsIcon key="ic" />,
                     ].filter(truthy)}
                     calcs={[

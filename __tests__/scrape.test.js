@@ -5,6 +5,7 @@ const mockFetchUpcomingViaApi = vi.fn();
 const mockFetchEventDetailsViaApi = vi.fn();
 const mockDownloadImage = vi.fn();
 const mockFetchBannersPageHtml = vi.fn();
+const mockFetchBannersPageWikitext = vi.fn();
 const mockFetchOperatorCategories = vi.fn();
 const mockFetchGachaTable = vi.fn();
 const mockFetchCharacterTable = vi.fn();
@@ -19,6 +20,7 @@ vi.mock('../src/server/lib/network.js', () => ({
   fetchEventDetailsViaApi: (...args) => mockFetchEventDetailsViaApi(...args),
   downloadImage: (...args) => mockDownloadImage(...args),
   fetchBannersPageHtml: (...args) => mockFetchBannersPageHtml(...args),
+  fetchBannersPageWikitext: (...args) => mockFetchBannersPageWikitext(...args),
   fetchOperatorCategories: (...args) => mockFetchOperatorCategories(...args),
   fetchGachaTable: (...args) => mockFetchGachaTable(...args),
   fetchCharacterTable: (...args) => mockFetchCharacterTable(...args),
@@ -26,6 +28,13 @@ vi.mock('../src/server/lib/network.js', () => ({
   fetchStageTable: (...args) => mockFetchStageTable(...args),
   fetchArkpediaEventsHtml: (...args) => mockFetchArkpediaEventsHtml(...args),
   fetchArkpediaEventDetailHtml: (...args) => mockFetchArkpediaEventDetailHtml(...args),
+}));
+
+// Captures the free-pull rule issues instead of writing scrape-rule-check.json.
+const mockReportRuleIssues = vi.fn();
+vi.mock('../src/server/lib/bannerRules.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  reportRuleIssues: (...args) => mockReportRuleIssues(...args),
 }));
 
 const mockSaveJson = vi.fn();
@@ -71,6 +80,13 @@ function buildBannerPageHtml({
   `;
 }
 
+// The final events.json write, and the free-pull rule issues the run reported.
+function lastSavedEvents() {
+  const calls = mockSaveJson.mock.calls.filter(([path]) => path === 'public/data/events.json');
+  return calls[calls.length - 1][1];
+}
+const reportedIssues = () => mockReportRuleIssues.mock.calls[0][0];
+
 describe('scrapeEvents', () => {
   let exitSpy;
 
@@ -91,6 +107,11 @@ describe('scrapeEvents', () => {
         globalDate: '2000/01/01 – 2000/01/15',
         cnDate: '1999/07/01 – 1999/07/15',
       })
+    );
+    // The banner pages' wikitext, for each banner's type (free-pull rules): the
+    // default test banners are a Carnival, as buildBannerPageHtml tags them.
+    mockFetchBannersPageWikitext.mockResolvedValue(
+      '{{Banners cell |type = carnival |name = Test Banner}}{{Banners cell |type = special |name = Unrelated Old Banner}}'
     );
     mockFetchOperatorCategories.mockResolvedValue([]);
     mockDownloadImage.mockResolvedValue(undefined);
@@ -233,7 +254,7 @@ describe('scrapeEvents', () => {
     expect(names).toContain('Dated With Orundum Event');
   });
 
-  test("counts a banner's free daily pulls over the banner's own dates, and its claimable permit", async () => {
+  test("counts a Carnival banner's free pulls from its event page, matching the rule", async () => {
     mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
     mockFetchEventsViaApi.mockResolvedValue([
       {
@@ -261,9 +282,10 @@ describe('scrapeEvents', () => {
       ([path]) => path === 'public/data/events.json'
     );
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
-    // The banner runs 06-01 to 06-15 (see buildBannerPageHtml), though the event runs to 06-20.
     expect(savedEvents[0].dailyFreePulls).toBe(14);
     expect(savedEvents[0].bannerPermits).toBe(10);
+    expect(savedEvents[0].freePullsEstimated).toBeUndefined();
+    expect(mockReportRuleIssues).toHaveBeenCalledWith([]);
     // Known values aren't a reason to skip the page: it's the only source of these.
     expect(savedEvents[0].hhPermits).toBe(3);
   });
@@ -294,6 +316,85 @@ describe('scrapeEvents', () => {
     );
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
     expect(savedEvents[0].dailyFreePulls).toBe(14);
+  });
+
+  describe('free-pull rules', () => {
+    const carnivalEvent = {
+      name: 'Story Event',
+      link: 'https://example.com/wiki/Story_Event',
+      image: null,
+      globalDateStr: '2026/06/01–2026/06/20',
+      cnDateStr: null,
+      origPrime: 10,
+    };
+    const page = (html) =>
+      mockFetchEventDetailsViaApi.mockResolvedValue({ parse: { text: { '*': html } } });
+
+    beforeEach(() => {
+      mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
+      mockFetchEventsViaApi.mockResolvedValue([carnivalEvent]);
+    });
+
+    test("estimates a Carnival banner's free pulls when its event page doesn't describe the banner yet", async () => {
+      page('<p>Nothing about headhunting yet.</p>');
+
+      await scrapeEvents();
+
+      expect(lastSavedEvents()[0]).toMatchObject({
+        dailyFreePulls: 14,
+        bannerPermits: 10,
+        freePullsEstimated: true,
+      });
+      expect(reportedIssues()).toEqual([]);
+    });
+
+    test('warns when the page describes the banner but states no free pulls', async () => {
+      page('<p>The Limited Headhunting - Carnival banner, <b>Test Banner</b>, is featured.</p>');
+
+      await scrapeEvents();
+
+      expect(lastSavedEvents()[0]).toMatchObject({ dailyFreePulls: 14, bannerPermits: 10 });
+      expect(reportedIssues()).toEqual([expect.objectContaining({ level: 'warning' })]);
+    });
+
+    test("reports an error, and uses the page's numbers, when the page contradicts the rule", async () => {
+      page('<p>Every day, the player can perform one headhunting pull for free in <i>X</i>.</p>');
+
+      await scrapeEvents();
+
+      expect(lastSavedEvents()[0]).toMatchObject({ dailyFreePulls: 14, bannerPermits: null });
+      const issues = reportedIssues();
+      expect(issues).toEqual([expect.objectContaining({ level: 'error' })]);
+      expect(issues[0].message).toMatch(
+        /states 14 daily \+ 0 permit.*expects 14 daily \+ 10 permit/
+      );
+    });
+
+    test('reports an error for a banner type that has no rule', async () => {
+      mockFetchBannersPageWikitext.mockResolvedValue(
+        '{{Banners cell |type = mystery |name = Test Banner}}'
+      );
+      page('<p>Nothing about headhunting yet.</p>');
+
+      await scrapeEvents();
+
+      expect(reportedIssues()).toEqual([expect.objectContaining({ level: 'error' })]);
+      expect(reportedIssues()[0].message).toMatch(/no free-pull rule for this banner type/);
+    });
+
+    test('checks a banner not on the banner pages by the type its event page names', async () => {
+      mockFetchBannersPageHtml.mockResolvedValue(
+        buildBannerPageHtml({ name: 'Unrelated Old Banner', globalDate: '2000/01/01 – 2000/01/15' })
+      );
+      page(`<p>The sixth Limited Headhunting - Carnival banner, <b>New Banner</b>, is featured.
+        Every day, the player can perform one headhunting pull for free in <i>New Banner</i>.</p>`);
+
+      await scrapeEvents();
+
+      // A Carnival banner's permit is missing from the page — flagged, not guessed.
+      expect(reportedIssues()).toEqual([expect.objectContaining({ level: 'error' })]);
+      expect(reportedIssues()[0].message).toMatch(/not on the banner pages yet.*type carnival/);
+    });
   });
 
   test("never takes banner perks from a rerun, whose fetch reads the original run's page", async () => {

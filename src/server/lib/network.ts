@@ -42,7 +42,12 @@ function withTimeout(req: ClientRequest, url: string): ClientRequest {
   return req;
 }
 
-function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> {
+// `prop` picks what the parse API returns: rendered HTML ('text', the default) or the
+// page's source ('wikitext').
+function fetchWikiApi(
+  title: string | null | undefined,
+  prop: 'text' | 'wikitext' = 'text'
+): Promise<WikiApiResult> {
   return new Promise((resolve, reject) => {
     // Ensure title is not double-encoded (some links include percent-encoding like %27)
     let decodedTitle = title || '';
@@ -56,7 +61,7 @@ function fetchWikiApi(title: string | null | undefined): Promise<WikiApiResult> 
     // MediaWiki redirect to the real content page (e.g. "X/Rerun") — without this,
     // action=parse returns only a tiny "Redirect to: ..." stub with none of the
     // actual page content, silently starving every extractor that reads this HTML.
-    const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&redirects=1&prop=text&format=json`;
+    const apiUrl = `${wikiApiBase}?action=parse&page=${encoded}&redirects=1&prop=${prop}&format=json`;
     const options = {
       headers: {
         'User-Agent': wikiUserAgent,
@@ -191,6 +196,20 @@ async function fetchBannersPageHtml(pageTitle: string): Promise<string | null> {
     // ignore
   }
   return null;
+}
+
+// Fetch a Headhunting/Banners page's wikitext — the only place each banner's exact
+// kind is stated, as the `|type =` field of its {{Banners cell}} (see
+// parseBannerTypesFromWikitext). Null on error/blocked.
+async function fetchBannersPageWikitext(pageTitle: string): Promise<string | null> {
+  try {
+    const api = await fetchWikiApi(pageTitle, 'wikitext');
+    if (!api || api.blocked || api.statusCode !== 200) return null;
+    const body = api.body as { parse?: { wikitext?: { '*'?: string } } } | null;
+    return body?.parse?.wikitext?.['*'] ?? null;
+  } catch (e) {
+    return null;
+  }
 }
 
 // Fetch an operator's MediaWiki categories (a lightweight query, no page HTML) to
@@ -383,6 +402,7 @@ export {
   fetchEventsViaApi,
   fetchUpcomingViaApi,
   fetchBannersPageHtml,
+  fetchBannersPageWikitext,
   fetchOperatorCategories,
   fetchGachaTable,
   fetchCharacterTable,

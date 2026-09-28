@@ -8,6 +8,7 @@ const healthy = {
   arkpediaEvents: 15,
   hasActivityTable: true,
   hasStageTable: true,
+  bannerTypes: 20,
 };
 
 describe('checkScrapeHealth', () => {
@@ -30,6 +31,12 @@ describe('checkScrapeHealth', () => {
     const { errors, warnings } = checkScrapeHealth({ ...healthy, yearBanners: 0 });
     expect(errors).toEqual([]);
     expect(warnings).toEqual([expect.stringMatching(/current year/)]);
+  });
+
+  test("only warns when banner types can't be read (the free-pull rule check is skipped)", () => {
+    const { errors, warnings } = checkScrapeHealth({ ...healthy, bannerTypes: 0 });
+    expect(errors).toEqual([]);
+    expect(warnings).toEqual([expect.stringMatching(/banner types/)]);
   });
 
   test('only warns on a sharp drop in event count', () => {

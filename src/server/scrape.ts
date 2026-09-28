@@ -84,6 +84,9 @@ async function runBatched<T, R>(
   return results;
 }
 
+// The standard length of a Limited banner, in days (daily resets) — see dailyFreePulls.
+const LIMITED_BANNER_DAYS = 14;
+
 export async function scrapeEvents(): Promise<void> {
   console.log('Fetching index (prefer API over fetched/index API)...');
 
@@ -328,11 +331,11 @@ export async function scrapeEvents(): Promise<void> {
       link: event.link ?? null,
       origPrime: event.origPrime ?? null,
       hhPermits: event.hhPermits ?? null,
-      // From the event's own dates for now; replaced with the matched banner's own
-      // dates below, when it has them (a banner can run on different days).
-      dailyFreePulls: event.dailyFreePull
-        ? daysBetween(globalStart, globalEnd) ?? daysBetween(cnStart, cnEnd)
-        : null,
+      // Every Limited banner with this offer has run exactly 14 days (checked across
+      // all of them on the wiki's banner pages, 2020–2026), so that's the default —
+      // replaced with the matched banner's own length below when it's known. Never the
+      // event's own dates: a Carnival event runs three weeks, its banner only two.
+      dailyFreePulls: event.dailyFreePull ? LIMITED_BANNER_DAYS : null,
       bannerPermits: event.bannerPermits ?? null,
       intCerts: event.intCerts ?? null,
     };

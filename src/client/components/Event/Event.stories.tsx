@@ -96,7 +96,7 @@ function renderEvent({ bannerType, selected, discountedOperators }: EventArgs) {
           banner,
           // A Limited banner's free daily pull and claimable banner permit, shown as
           // their own lines in the Orundum breakdown.
-          ...(bannerType === 'Limited' && { dailyFreePulls: 14, bannerPermits: 1 }),
+          ...(bannerType === 'Limited' && { dailyFreePulls: 14, bannerPermits: 10 }),
         }}
         selectedEvents={selected ? new Set([baseEvent.name]) : new Set()}
         onEventToggle={() => {}}

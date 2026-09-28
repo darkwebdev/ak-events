@@ -400,9 +400,12 @@ function extractOperatorDebutEvent(html: string | null | undefined): OperatorDeb
 // - "Every day, the player can perform one headhunting pull for free in <banner>." —
 //   one pull per day the banner runs; the count itself depends on the banner's dates,
 //   so this only reports that the offer exists.
-// - "A single <name> Headhunting Permit can be claimed while <banner> is up." — an
-//   exclusive permit, usable on that banner only, worth one pull (the wiki's
-//   Headhunting Permit page: exclusive permits recruit one operator each).
+// - "A single <name> Headhunting Permit can be claimed while <banner> is up." — a
+//   banner-only permit worth a ten-roll: every one the wiki describes (e.g. Bountiful
+//   Harmony, Song of the Sea, Elite Forces, Expert, Collaboration Limited) reads "10
+//   rolls at once", and newer ones like The Hitchers are only named in plain text.
+const BANNER_PERMIT_PULLS = 10;
+
 function extractBannerFreePulls(html: string | null | undefined): {
   dailyFreePull: boolean;
   bannerPermits: number | null;
@@ -416,12 +419,8 @@ function extractBannerFreePulls(html: string | null | undefined): {
   const dailyFreePull = /every day,? the player can perform one headhunting pull for free/i.test(
     text
   );
-  let bannerPermits: number | null = null;
-  for (const m of text.matchAll(
-    /\bA single\s+(.{0,100}?)\s*Headhunting Permit\s+can be claimed/gi
-  )) {
-    bannerPermits = (bannerPermits ?? 0) + (/Ten-?roll/i.test(m[1]) ? 10 : 1);
-  }
+  const claimable = text.match(/\bA single\s+.{0,100}?\s*Headhunting Permit\s+can be claimed/gi);
+  const bannerPermits = claimable ? claimable.length * BANNER_PERMIT_PULLS : null;
   return { dailyFreePull, bannerPermits };
 }
 

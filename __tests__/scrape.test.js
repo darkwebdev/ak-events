@@ -263,9 +263,37 @@ describe('scrapeEvents', () => {
     const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
     // The banner runs 06-01 to 06-15 (see buildBannerPageHtml), though the event runs to 06-20.
     expect(savedEvents[0].dailyFreePulls).toBe(14);
-    expect(savedEvents[0].bannerPermits).toBe(1);
+    expect(savedEvents[0].bannerPermits).toBe(10);
     // Known values aren't a reason to skip the page: it's the only source of these.
     expect(savedEvents[0].hhPermits).toBe(3);
+  });
+
+  test('counts a standard 14-day banner when the banner is unmatched, not the longer event', async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Carnival Event',
+        link: 'https://example.com/wiki/Carnival_Event',
+        image: null,
+        // A three-week Carnival event; its banner (not on the banner pages yet) runs two.
+        globalDateStr: '2027/01/17–2027/02/06',
+        cnDateStr: null,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': '<p>Every day, the player can perform one headhunting pull for free in <i>X</i>.</p>',
+        },
+      },
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents[0].dailyFreePulls).toBe(14);
   });
 
   test("never takes banner perks from a rerun, whose fetch reads the original run's page", async () => {

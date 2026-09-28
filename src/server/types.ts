@@ -97,8 +97,9 @@ export interface ProcessedEvent {
   link: string | null;
   origPrime: number | null;
   hhPermits: number | null;
-  // One free pull per day the banner runs (null when the banner has no such offer),
-  // and exclusive banner permits claimable once. Counted separately from hhPermits
+  // One free pull per day the banner runs (null when the banner has no such offer;
+  // 14 for every Limited banner so far), and the banner-only ten-roll permit
+  // claimable once (10 pulls). Counted separately from hhPermits
   // (store and reward permits) so the UI can show where each pull comes from.
   // Optional since event data scraped before these were added doesn't have them.
   dailyFreePulls?: number | null;

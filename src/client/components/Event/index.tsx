@@ -166,7 +166,7 @@ export function Event({
                       origPrime && <OriginitePrimeIcon key="op" />,
                       hhPermits && <PullSource key="hh" label="Store & rewards" />,
                       dailyFreePulls && <PullSource key="daily" label="Free daily pull" />,
-                      bannerPermits && <PullSource key="banner" label="Banner permit" />,
+                      bannerPermits && <PullSource key="banner" label="Banner ten-roll" />,
                       hasIntCertsValue && <IntCertsIcon key="ic" />,
                     ].filter(truthy)}
                     calcs={[

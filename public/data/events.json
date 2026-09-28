@@ -8,6 +8,8 @@
     "cnStart": "2026-03-14",
     "cnEnd": "2026-04-25",
     "datesPredicted": false,
+    "globalStartAt": "2026-08-20T15:00:00.000Z",
+    "globalEndAt": "2026-10-01T10:59:59.000Z",
     "type": null,
     "image": "data/images/EN_Stronghold_Protocol_Alliance_Part_2_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_Part_2",
@@ -105,7 +107,9 @@
       "globalStart": "2026-08-20",
       "globalEnd": "2026-09-03",
       "cnStart": "2026-03-14",
-      "cnEnd": "2026-03-28"
+      "cnEnd": "2026-03-28",
+      "globalStartAt": "2026-08-20T16:00:00.000Z",
+      "globalEndAt": "2026-09-03T10:59:59.000Z"
     }
   },
   {
@@ -117,6 +121,8 @@
     "cnStart": "2026-04-07",
     "cnEnd": "2026-04-21",
     "datesPredicted": false,
+    "globalStartAt": "2026-09-16T15:00:00.000Z",
+    "globalEndAt": "2026-09-30T10:59:59.000Z",
     "type": "Side Story",
     "image": "data/images/EN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
@@ -158,7 +164,9 @@
       "globalStart": "2026-09-16",
       "globalEnd": "2026-09-30",
       "cnStart": "2026-04-07",
-      "cnEnd": "2026-04-21"
+      "cnEnd": "2026-04-21",
+      "globalStartAt": "2026-09-16T15:00:00.000Z",
+      "globalEndAt": "2026-09-30T10:59:59.000Z"
     }
   },
   {
@@ -170,6 +178,8 @@
     "cnStart": "2026-04-25",
     "cnEnd": "2026-05-09",
     "datesPredicted": false,
+    "globalStartAt": "2026-09-23T15:00:00.000Z",
+    "globalEndAt": "2026-10-07T10:59:59.000Z",
     "type": null,
     "image": "data/images/EN_Duel_Channel_Ivy_Vine_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Ivy_Vine",

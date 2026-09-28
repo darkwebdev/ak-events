@@ -211,6 +211,8 @@ function extractHhPermitsFromHtml(html: string | null | undefined): number | nul
       } else if (itemContainer) {
         qEl = itemContainer.querySelector('.quantity');
       }
+      // A reward table can also put the quantity in its own cell of the permit's row.
+      if (!qEl) qEl = tip.closest('tr')?.querySelector('.quantity') ?? null;
 
       // If we still don't have a .quantity, try to extract a small integer from the same td only
       if (!qEl && td) {
@@ -247,130 +249,15 @@ function extractHhPermitsFromHtml(html: string | null | undefined): number | nul
       console.debug('extractHhPermitsFromHtml: summed quantities ->', sum);
       return sum;
     }
-
-    // If no explicit quantities found, collect candidate numbers but ignore px-suffixed numbers (image sizes like 50px)
-    const candidates: number[] = [];
-    for (const table of allTables) {
-      // skip entire paid tables from consideration
-      if (paidTables.has(table)) continue;
-      const rows = Array.from(table.querySelectorAll('tr'));
-      for (const row of rows) {
-        if (!/Headhunting Permit/i.test(row.textContent || '')) continue;
-        // If this row belongs to a paid table, skip it
-        if (paidTables.has(table)) continue;
-        // restrict numeric scanning to the td that contains the permit mention to avoid nearby unrelated numbers
-        const td = Array.from(row.querySelectorAll('td')).find((t) =>
-          /Headhunting Permit/i.test(t.textContent || '')
-        );
-        if (!td) continue;
-        // skip td if it contains price markers (e.g., 'Price', '$', 'US$')
-        if (/price|\$|US\$|USD|€|£/.test(td.textContent || '')) continue;
-        const qEl = td.querySelector('.quantity');
-        if (qEl) {
-          const v = parseInt((qEl.textContent || '').trim(), 10);
-          if (!Number.isNaN(v)) {
-            const itemEl = td.querySelector('[data-name]');
-            const multiplier =
-              itemEl && /Ten-?roll/i.test(itemEl.getAttribute('data-name') || '') ? 10 : 1;
-            candidates.push(v * multiplier);
-          }
-        }
-        // collect numeric tokens inside this td but filter out tokens immediately followed or preceded by 'px'
-        const text = td.textContent || '';
-        const nums = Array.from(text.matchAll(/\b(\d{1,4})\b/g)).map((m) => parseInt(m[1], 10));
-        for (const n of nums) {
-          if (Number.isNaN(n)) continue;
-          // ensure the number isn't part of a 'px' token in the raw HTML nearby
-          const rawIndex = html.indexOf(String(n));
-          const after = html.substr(rawIndex, 5);
-          if (/\d+px/.test(after)) continue;
-          // apply Ten-roll multiplier if the td contains a Ten-roll permit
-          const itemEl = td.querySelector('[data-name]');
-          const multiplier =
-            itemEl && /Ten-?roll/i.test(itemEl.getAttribute('data-name') || '') ? 10 : 1;
-          candidates.push(n * multiplier);
-        }
-      }
-    }
-
-    // Regex fallback near Headhunting Permit mentions, but avoid px
-    const hhMatchAll = Array.from(
-      html.matchAll(/Headhunting Permit[\s\S]{0,200}?(?:>(\d+)<|\b(\d+)\b)/gi)
-    );
-    for (const mm of hhMatchAll) {
-      const [, g1, g2] = mm;
-      const n = parseInt(g1 || g2, 10);
-      if (!Number.isNaN(n)) {
-        const matchStr = mm[0] || '';
-        // ignore currency/price matches like 'US$25.99' or decimal numbers '25.99'
-        if (/\$|US\$|USD|€|£/.test(matchStr)) continue;
-        if (/\d+\.\d+/.test(matchStr)) continue;
-        // make sure this numeric occurrence isn't immediately followed by 'px' in the raw html
-        const idx = html.indexOf(String(n));
-        const after = html.substr(idx, 5);
-        if (/\d+px/.test(after)) continue;
-        // if the matchStr contains Ten-roll, multiply
-        const multiplier = /Ten-?roll/i.test(matchStr) ? 10 : 1;
-        candidates.push(n * multiplier);
-      }
-    }
-
-    if (candidates.length) {
-      const small = candidates.filter((n) => n > 0 && n <= 100);
-      if (small.length) {
-        // prefer the most frequent small value
-        const freq: Record<number, number> = {};
-        for (const v of small) freq[v] = (freq[v] || 0) + 1;
-        let best: number | null = null;
-        let bestCount = 0;
-        for (const k of Object.keys(freq)) {
-          if (freq[Number(k)] > bestCount) {
-            best = parseInt(k, 10);
-            bestCount = freq[Number(k)];
-          }
-        }
-        if (best != null) {
-          // debug: most frequent small candidate
-          // eslint-disable-next-line no-console
-          console.debug(
-            'extractHhPermitsFromHtml: most frequent candidate ->',
-            best,
-            'counts:',
-            bestCount
-          );
-          return best;
-        }
-      }
-      const positive = candidates.filter((n) => n > 0);
-      if (positive.length) {
-        // debug: no small frequent candidate, returning min positive
-        // eslint-disable-next-line no-console
-        console.debug('extractHhPermitsFromHtml: min positive candidate ->', Math.min(...positive));
-        return Math.min(...positive);
-      }
-    }
   } catch (e) {
-    // ignore errors and fallback to regex
+    // ignore
   }
-
-  // final regex fallback
-  const hhMatch = html.match(
-    /Headhunting Permit[\s\S]{0,200}?(?:Stock[\s\S]{0,50})?(?:>(\d+)<|\b(\d+)\b)/i
-  );
-  if (hhMatch) {
-    // debug: final regex fallback
-    // eslint-disable-next-line no-console
-    const matchedStr = hhMatch[0] || '';
-    // avoid currency/price matches like 'US$25.99' or decimal numbers
-    if (/\$|US\$|USD|€|£/.test(matchedStr)) return null;
-    if (/\d+\.\d+/.test(matchedStr)) return null;
-    // avoid px-based numeric tokens (image widths like '50px')
-    if (/\d+px/.test(matchedStr)) return null;
-    // debug: final regex fallback
-    // eslint-disable-next-line no-console
-    console.debug('extractHhPermitsFromHtml: regex fallback ->', hhMatch[1] || hhMatch[2]);
-    return parseInt(hhMatch[1] || hhMatch[2], 10);
-  }
+  // No store stock or explicit quantity for a free Headhunting Permit: report
+  // "unknown", never a guess. This used to fall back to scanning for any number
+  // near the words "Headhunting Permit", which picked up whatever was nearby — the
+  // "39" of an HTML-escaped apostrophe (&#39;) in a paid permit's tooltip, or "The
+  // 120 pulls to guarantee…" from a banner's rules — on pages whose only permits
+  // were in paid packs.
   return null;
 }
 
@@ -508,9 +395,41 @@ function extractOperatorDebutEvent(html: string | null | undefined): OperatorDeb
   return null;
 }
 
+// Free pulls a Limited banner gives out, which the event page's Headhunting section
+// only states in prose (there's no item or quantity to read):
+// - "Every day, the player can perform one headhunting pull for free in <banner>." —
+//   one pull per day the banner runs; the count itself depends on the banner's dates,
+//   so this only reports that the offer exists.
+// - "A single <name> Headhunting Permit can be claimed while <banner> is up." — an
+//   exclusive permit, usable on that banner only, worth one pull (the wiki's
+//   Headhunting Permit page: exclusive permits recruit one operator each).
+function extractBannerFreePulls(html: string | null | undefined): {
+  dailyFreePull: boolean;
+  bannerPermits: number | null;
+} {
+  if (!html) return { dailyFreePull: false, bannerPermits: null };
+  const text = html
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;|&#160;/g, ' ')
+    .replace(/\s+/g, ' ');
+  const dailyFreePull = /every day,? the player can perform one headhunting pull for free/i.test(
+    text
+  );
+  let bannerPermits: number | null = null;
+  for (const m of text.matchAll(
+    /\bA single\s+(.{0,100}?)\s*Headhunting Permit\s+can be claimed/gi
+  )) {
+    bannerPermits = (bannerPermits ?? 0) + (/Ten-?roll/i.test(m[1]) ? 10 : 1);
+  }
+  return { dailyFreePull, bannerPermits };
+}
+
 interface ParsedEventFromHtml {
   origPrime: number | null;
   hhPermits: number | null;
+  dailyFreePull: boolean;
+  bannerPermits: number | null;
   intCerts: number | null;
   type: string | null;
   debug: string | null;
@@ -521,6 +440,8 @@ function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtm
   const result: ParsedEventFromHtml = {
     origPrime: null,
     hhPermits: null,
+    dailyFreePull: false,
+    bannerPermits: null,
     intCerts: null,
     type: null,
     debug: null,
@@ -535,6 +456,11 @@ function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtm
   try {
     const hh = extractHhPermitsFromHtml(html);
     if (hh != null) result.hhPermits = hh;
+  } catch (e) {
+    /* ignore */
+  }
+  try {
+    Object.assign(result, extractBannerFreePulls(html));
   } catch (e) {
     /* ignore */
   }
@@ -679,6 +605,7 @@ function parseIndexHtml(html: string | null | undefined): ParsedIndexEvent[] {
 export {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
+  extractBannerFreePulls,
   extractIntCertsFromHtml,
   extractEventTypeFromHtml,
   extractObtainMethod,

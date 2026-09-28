@@ -233,6 +233,71 @@ describe('scrapeEvents', () => {
     expect(names).toContain('Dated With Orundum Event');
   });
 
+  test("counts a banner's free daily pulls over the banner's own dates, and its claimable permit", async () => {
+    mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: 'https://example.com/wiki/Story_Event',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        origPrime: 10,
+        hhPermits: 3,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': `<ul><li>A single <b>Test Headhunting Permit</b> can be claimed while it is up.</li>
+            <li>Every day, the player can perform one headhunting pull for free in <i>Test</i>.</li></ul>`,
+        },
+      },
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    // The banner runs 06-01 to 06-15 (see buildBannerPageHtml), though the event runs to 06-20.
+    expect(savedEvents[0].dailyFreePulls).toBe(14);
+    expect(savedEvents[0].bannerPermits).toBe(1);
+    // Known values aren't a reason to skip the page: it's the only source of these.
+    expect(savedEvents[0].hhPermits).toBe(3);
+  });
+
+  test("never takes banner perks from a rerun, whose fetch reads the original run's page", async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event Rerun',
+        link: 'https://example.com/wiki/Story_Event/Rerun',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        hhPermits: 3,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': `<ul><li>A single <b>Test Headhunting Permit</b> can be claimed while it is up.</li>
+            <li>Every day, the player can perform one headhunting pull for free in <i>Test</i>.</li></ul>`,
+        },
+      },
+    });
+
+    await scrapeEvents();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents[0].dailyFreePulls).toBeNull();
+    expect(savedEvents[0].bannerPermits).toBeNull();
+  });
+
   test("attaches banner + operator data when an event's start date matches a banner", async () => {
     // Simulate "file now exists after download" so the icon path resolves like it
     // would against a real filesystem.
@@ -607,7 +672,7 @@ describe('scrapeEvents', () => {
     expect(savedEvents.map((e) => e.name)).not.toContain('Confirmed But Worthless Event');
   });
 
-  test("arkpedia's per-event Headhunting Permit data is used, skipping the wiki fetch when it's the only thing missing", async () => {
+  test("arkpedia's per-event Headhunting Permit data is used, and the wiki page doesn't override it", async () => {
     mockFetchEventsViaApi.mockResolvedValue([
       {
         name: 'Story Event',
@@ -620,6 +685,15 @@ describe('scrapeEvents', () => {
     ]);
     mockFetchArkpediaEventsHtml.mockResolvedValue('fake-html');
     mockFetchArkpediaEventDetailHtml.mockResolvedValue('fake-html');
+    // A wiki page whose store lists a different permit count than arkpedia's.
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': `<table><tr><th>Item</th><th>Stock</th></tr><tr>
+            <td><span data-name="Headhunting Permit"></span></td><td>5</td></tr></table>`,
+        },
+      },
+    });
     vi.doMock('../src/server/lib/arkpedia.js', async (importOriginal) => ({
       ...(await importOriginal()),
       parseArkpediaEventsList: () => [],
@@ -642,7 +716,9 @@ describe('scrapeEvents', () => {
     await scrapeEventsWithMockedArkpedia();
 
     expect(mockFetchArkpediaEventDetailHtml).toHaveBeenCalledWith('[Side Story] Story Event');
-    expect(mockFetchEventDetailsViaApi).not.toHaveBeenCalled();
+    // The wiki page is still fetched (it's the only source of a banner's free pulls),
+    // but its own permit count must not replace arkpedia's.
+    expect(mockFetchEventDetailsViaApi).toHaveBeenCalled();
     const eventsJsonCalls = mockSaveJson.mock.calls.filter(
       ([path]) => path === 'public/data/events.json'
     );

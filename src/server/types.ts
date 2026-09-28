@@ -22,6 +22,11 @@ export interface RawEvent {
   link?: string | null;
   origPrime?: number | null;
   hhPermits?: number | null;
+  // Free pulls the event's Limited banner gives out, stated in prose on the event's
+  // own page — see extractBannerFreePulls in lib/parser.ts. Never taken from a rerun,
+  // whose wiki fetch reads the original run's page.
+  dailyFreePull?: boolean;
+  bannerPermits?: number | null;
   // The maximum Intelligence Certificates a rerun's own page states across every
   // mission/threshold that can substitute one for an already-owned reward — see
   // extractIntCertsFromHtml in lib/parser.ts for how this is derived, and why it's a
@@ -92,6 +97,12 @@ export interface ProcessedEvent {
   link: string | null;
   origPrime: number | null;
   hhPermits: number | null;
+  // One free pull per day the banner runs (null when the banner has no such offer),
+  // and exclusive banner permits claimable once. Counted separately from hhPermits
+  // (store and reward permits) so the UI can show where each pull comes from.
+  // Optional since event data scraped before these were added doesn't have them.
+  dailyFreePulls?: number | null;
+  bannerPermits?: number | null;
   intCerts: number | null;
   banner?: ResolvedBanner | null;
 }

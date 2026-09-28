@@ -9,7 +9,8 @@ test("The Masses' Travels extracts origPrime, hhPermits, and intCerts", () => {
   );
   const res = parseEventFromHtml(html);
   expect(res.origPrime).toBe(41);
-  expect(res.hhPermits).toBe(3);
+  // 3 Ten-roll Headhunting Permits (the quantity is in the next cell of their row).
+  expect(res.hhPermits).toBe(30);
   // Sums every mission's Intelligence Certificate quantity (75 + 115) — the maximum
   // a player could get from this rerun if they already own every substitutable
   // reward. See extractIntCertsFromHtml's own comment for why this is a ceiling.

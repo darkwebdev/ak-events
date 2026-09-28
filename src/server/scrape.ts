@@ -13,7 +13,7 @@ import {
 import { ensureDir, saveJson, fileExists, loadJson } from './lib/storage.js';
 import { checkScrapeHealth, reportScrapeHealth } from './lib/scrapeHealth.js';
 import { applyRerunSuffix, isRerunLink, titleFromUrl } from './lib/wiki.js';
-import { parseDateRange } from './lib/dateRange.js';
+import { parseDateRange, daysBetween } from './lib/dateRange.js';
 import { parseBannersPage, indexBannersByDate } from './lib/banners.js';
 import {
   normalizeEventName,
@@ -115,11 +115,9 @@ export async function scrapeEvents(): Promise<void> {
       }
     }
 
-    // Skip fetching the wiki page if we already have both values — unless this is a
-    // rerun, where the wiki page is the only source for Intelligence Certificates
-    // (see extractIntCertsFromHtml), so it's still worth fetching purely for that.
-    if (event.origPrime != null && event.hhPermits != null && !isRerunLink(event.link))
-      return event;
+    // Always fetch the wiki page, even when origPrime and hhPermits are already known:
+    // it's the only source for a banner's free pulls (see extractBannerFreePulls), and
+    // for a rerun's Intelligence Certificates (see extractIntCertsFromHtml).
     if (!event.link) return event;
     // If the link ends with '/Rerun', we should fetch the original event page
     // (without '/Rerun') and then mark the parsed type as a rerun by appending
@@ -150,6 +148,12 @@ export async function scrapeEvents(): Promise<void> {
       }
       if (parsed.intCerts != null) {
         event.intCerts = parsed.intCerts;
+      }
+      // A rerun's fetch above reads the ORIGINAL run's page, whose banner perks
+      // belonged to the original banner — so they're only taken from an event's own page.
+      if (!isRerunLink(event.link)) {
+        event.dailyFreePull = parsed.dailyFreePull;
+        event.bannerPermits = parsed.bannerPermits;
       }
       if (parsed.type) {
         event.type = applyRerunSuffix(parsed.type, event.link) ?? null;
@@ -324,6 +328,12 @@ export async function scrapeEvents(): Promise<void> {
       link: event.link ?? null,
       origPrime: event.origPrime ?? null,
       hhPermits: event.hhPermits ?? null,
+      // From the event's own dates for now; replaced with the matched banner's own
+      // dates below, when it has them (a banner can run on different days).
+      dailyFreePulls: event.dailyFreePull
+        ? daysBetween(globalStart, globalEnd) ?? daysBetween(cnStart, cnEnd)
+        : null,
+      bannerPermits: event.bannerPermits ?? null,
       intCerts: event.intCerts ?? null,
     };
   });
@@ -471,6 +481,12 @@ export async function scrapeEvents(): Promise<void> {
           sparkCost,
         };
       });
+    if (event.dailyFreePulls != null) {
+      event.dailyFreePulls =
+        daysBetween(matchedBanner.globalStart, matchedBanner.globalEnd) ??
+        daysBetween(matchedBanner.cnStart, matchedBanner.cnEnd) ??
+        event.dailyFreePulls;
+    }
     event.banner = {
       name: matchedBanner.name,
       type: matchedBanner.type,
@@ -492,7 +508,9 @@ export async function scrapeEvents(): Promise<void> {
   // A predicted date is kept regardless of orundum/banner — an estimated heads-up is
   // exactly the point of surfacing it this early, before either would even be knowable.
   const eventOrundumValue = (event: ProcessedEvent) =>
-    (event.origPrime || 0) * 180 + (event.hhPermits || 0) * 600 + (event.intCerts || 0) * 5;
+    (event.origPrime || 0) * 180 +
+    ((event.hhPermits || 0) + (event.dailyFreePulls || 0) + (event.bannerPermits || 0)) * 600 +
+    (event.intCerts || 0) * 5;
   const beforeFilterCount = processed.length;
   processed = processed.filter(
     (event) => event.start && (event.datesPredicted || eventOrundumValue(event) > 0 || event.banner)

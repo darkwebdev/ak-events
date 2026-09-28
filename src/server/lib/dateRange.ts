@@ -29,4 +29,17 @@ function parseDateRange(dateStr: string | null | undefined): DateRange {
   return { start: null, end: null };
 }
 
-export { parseDateRange };
+// Whole days from `start` to `end` ('YYYY-MM-DD'), or null if either is missing. A
+// banner running 2026-09-16 to 2026-09-30 gives 14: it opens partway through its
+// first day and closes before the last one's daily reset, so that's how many daily
+// resets (and daily free pulls) it spans.
+function daysBetween(
+  start: string | null | undefined,
+  end: string | null | undefined
+): number | null {
+  if (!start || !end) return null;
+  const days = (Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000;
+  return Number.isFinite(days) && days > 0 ? Math.round(days) : null;
+}
+
+export { parseDateRange, daysBetween };

@@ -31,7 +31,9 @@ export function pullsFromOrundum(orundum: number, precision = 0): number {
 export function calcEventOrundum(event: Event): number {
   return (
     orundumFromOP(event.origPrime) +
-    (event.hhPermits || 0) * 600 +
+    // Store/reward permits, the banner's free daily pulls and its claimable
+    // permit — each a pull worth 600 Orundum.
+    ((event.hhPermits || 0) + (event.dailyFreePulls || 0) + (event.bannerPermits || 0)) * 600 +
     // event.intCerts is the maximum a rerun's own page states (see
     // extractIntCertsFromHtml on the server) — a ceiling assuming the player already
     // owns every substitutable reward, not a guaranteed amount, so it's only counted

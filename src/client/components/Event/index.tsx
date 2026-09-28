@@ -57,6 +57,15 @@ interface EventProps {
   onToggleIntCerts?: (eventName: string, checked: boolean) => void;
 }
 
+// A breakdown row label for one source of pulls: the pull icon plus what it is.
+function PullSource({ label }: { label: string }) {
+  return (
+    <span className="ak-event-pull-source">
+      <PullIcon /> {label}
+    </span>
+  );
+}
+
 export function Event({
   event,
   selectedEvents,
@@ -69,6 +78,8 @@ export function Event({
     image,
     origPrime,
     hhPermits,
+    dailyFreePulls,
+    bannerPermits,
     intCerts,
     intCertsIncluded,
     link,
@@ -138,7 +149,7 @@ export function Event({
               )}
             </div>
             <div>
-              {(origPrime || hhPermits || hasIntCertsValue) && (
+              {(origPrime || hhPermits || dailyFreePulls || bannerPermits || hasIntCertsValue) && (
                 // The Orundum value itself is the hover/click trigger now — no
                 // separate "Orundum" label needed, and no duplicate icon either.
                 <InfoButton
@@ -149,21 +160,27 @@ export function Event({
                   }
                 >
                   <Breakdown
+                    // Every pull is worth the same 600 Orundum, so the three pull
+                    // sources share the pull icon and are told apart by a label.
                     items={[
                       origPrime && <OriginitePrimeIcon key="op" />,
-                      // A Headhunting Permit is redeemable as one pull, so it's
-                      // labeled with the pull icon rather than its own text.
-                      hhPermits && <PullIcon key="hh" />,
+                      hhPermits && <PullSource key="hh" label="Store & rewards" />,
+                      dailyFreePulls && <PullSource key="daily" label="Free daily pull" />,
+                      bannerPermits && <PullSource key="banner" label="Banner permit" />,
                       hasIntCertsValue && <IntCertsIcon key="ic" />,
                     ].filter(truthy)}
                     calcs={[
                       origPrime && `${origPrime} × 180`,
                       hhPermits && `${hhPermits} × 600`,
+                      dailyFreePulls && `${dailyFreePulls} days × 600`,
+                      bannerPermits && `${bannerPermits} × 600`,
                       hasIntCertsValue && `${intCerts} × 5`,
                     ].filter(truthy)}
                     totals={[
                       origPrime && orundumFromOP(origPrime),
                       hhPermits && orundumFromHH(hhPermits),
+                      dailyFreePulls && orundumFromHH(dailyFreePulls),
+                      bannerPermits && orundumFromHH(bannerPermits),
                       hasIntCertsValue && orundumFromIntCerts(intCerts),
                     ].filter(truthy)}
                   />

@@ -251,6 +251,16 @@
           "sparkCost": 300
         }
       ],
+      "storeDiscounts": [
+        {
+          "name": "Specter the Unchained",
+          "star": 6,
+          "class": null,
+          "limited": true,
+          "icon": "data/images/operators/60px-Specter_the_Unchained_icon.png",
+          "sparkCost": 200
+        }
+      ],
       "globalStart": null,
       "globalEnd": null,
       "cnStart": "2026-05-01",

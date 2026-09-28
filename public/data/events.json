@@ -261,14 +261,70 @@
           "sparkCost": 300
         }
       ],
-      "storeDiscounts": [
+      "storeOperators": [
+        {
+          "name": "W",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-W_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Rosmontis",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Rosmontis_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Skadi the Corrupting Heart",
+          "star": 6,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Skadi_the_Corrupting_Heart_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Nearl the Radiant Knight",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Nearl_the_Radiant_Knight_icon.png",
+          "sparkCost": 200
+        },
         {
           "name": "Specter the Unchained",
           "star": 6,
-          "class": null,
+          "class": "Specialist",
           "limited": true,
           "icon": "data/images/operators/60px-Specter_the_Unchained_icon.png",
           "sparkCost": 200
+        },
+        {
+          "name": "Texas the Omertosa",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Texas_the_Omertosa_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Muelsyse",
+          "star": 6,
+          "class": "Vanguard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Muelsyse_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Virtuosa",
+          "star": 6,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Virtuosa_icon.png",
+          "sparkCost": 300
         }
       ],
       "globalStart": null,

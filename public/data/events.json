@@ -13,6 +13,8 @@
     "link": "https://arknights.wiki.gg/wiki/Stronghold_Protocol_Alliance_Part_2",
     "origPrime": null,
     "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": {
       "name": "Joint Operation #21",
@@ -115,11 +117,13 @@
     "cnStart": "2026-04-07",
     "cnEnd": "2026-04-21",
     "datesPredicted": false,
-    "type": null,
+    "type": "Side Story",
     "image": "data/images/EN_People%2C_A_People_banner.png",
     "link": "https://arknights.wiki.gg/wiki/People,_A_People",
     "origPrime": 27,
     "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": {
       "name": "Rage of the Many",
@@ -171,6 +175,8 @@
     "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Ivy_Vine",
     "origPrime": 1,
     "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": null
   },
@@ -187,7 +193,9 @@
     "image": "data/images/CN_Critical_Phase_Transition_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
     "origPrime": null,
-    "hhPermits": 39,
+    "hhPermits": null,
+    "dailyFreePulls": 14,
+    "bannerPermits": 1,
     "intCerts": null,
     "banner": {
       "name": "Sealed With Time",
@@ -263,6 +271,8 @@
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
     "origPrime": 41,
     "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": 1160,
     "banner": null
   },
@@ -279,7 +289,9 @@
     "image": "data/images/CN_Thunder_in_the_Azure_Dream_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
     "origPrime": null,
-    "hhPermits": 120,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": 1,
     "intCerts": null,
     "banner": null
   },
@@ -296,7 +308,9 @@
     "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
     "origPrime": 31,
-    "hhPermits": 10,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": null
   },
@@ -314,6 +328,8 @@
     "link": "https://arknights.wiki.gg/wiki/Till_the_Lands_Become_an_Orange",
     "origPrime": null,
     "hhPermits": 3,
+    "dailyFreePulls": 20,
+    "bannerPermits": 1,
     "intCerts": null,
     "banner": null
   },
@@ -331,6 +347,8 @@
     "link": "https://arknights.wiki.gg/wiki/Ato_Rerun",
     "origPrime": 40,
     "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": 1715,
     "banner": null
   },
@@ -348,6 +366,8 @@
     "link": "https://arknights.wiki.gg/wiki/Sur_le_lac_lune_vivante",
     "origPrime": null,
     "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": null
   }

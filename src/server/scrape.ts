@@ -50,9 +50,23 @@ import {
   resolveOperatorDebutEvent,
 } from './lib/operatorDebuts.js';
 import { fetchLimitedDebutDates, calcSparkCost } from './lib/sparkCost.js';
-import type { RawEvent, ProcessedEvent, RawBanner, ResolvedBannerOperator } from './types.js';
+import type {
+  RawEvent,
+  ProcessedEvent,
+  RawBanner,
+  ResolvedBannerOperator,
+  SparkDiscount,
+} from './types.js';
 
 // Note: fetchEventsViaApi returns an array of events (or null on error/blocked).
+
+// The wiki's own 60px icon for an operator, as a site-relative path (the same form the
+// banner pages' icons come in, so the local filename matches theirs: names are
+// percent-encoded, apostrophes included — "Wi%C5%A1%27adel").
+function wikiOperatorIconPath(name: string): string {
+  const file = encodeURIComponent(name.replace(/ /g, '_')).replace(/'/g, '%27');
+  return `/images/thumb/${file}_icon.png/60px-${file}_icon.png`;
+}
 
 function localFilenameFor(url: string | null | undefined): string {
   const rawFilename = (url || '').split('/').pop() || '';
@@ -168,6 +182,7 @@ export async function scrapeEvents(): Promise<void> {
         event.bannerPermits = parsed.bannerPermits;
         event.headhuntingDescribed = parsed.headhuntingDescribed;
         event.bannerKind = parsed.bannerKind;
+        event.sparkDiscounts = parsed.sparkDiscounts;
       }
       if (parsed.type) {
         event.type = applyRerunSuffix(parsed.type, event.link) ?? null;
@@ -354,7 +369,10 @@ export async function scrapeEvents(): Promise<void> {
 
   // What each event's own page said about its banner's free pulls, for the rule check
   // below (processed[i] is events[i] at this point).
-  const pagePerks = new Map<ProcessedEvent, BannerPerksOnPage & { kind: string | null }>();
+  const pagePerks = new Map<
+    ProcessedEvent,
+    BannerPerksOnPage & { kind: string | null; sparkDiscounts: SparkDiscount[] }
+  >();
   processed.forEach((event, i) => {
     const raw = events[i];
     if (isRerunLink(raw.link)) return;
@@ -363,6 +381,7 @@ export async function scrapeEvents(): Promise<void> {
       bannerPermits: raw.bannerPermits ?? null,
       headhuntingDescribed: !!raw.headhuntingDescribed,
       kind: raw.bannerKind ?? null,
+      sparkDiscounts: raw.sparkDiscounts ?? [],
     });
   });
 
@@ -438,9 +457,17 @@ export async function scrapeEvents(): Promise<void> {
 
   // Download each unique operator icon (dedup by filename, keeping the operator's
   // name alongside its URL so download logs identify the operator, not the filename).
+  // A spark-discounted operator that isn't a rate-up has no icon on the banner page, so
+  // it's fetched from the wiki's standard icon path instead.
+  const discountedOperators = eventBannerMatches
+    .filter((m) => m.matchedBanner?.type === 'Limited')
+    .flatMap((m) => pagePerks.get(m.event)?.sparkDiscounts ?? [])
+    .map(({ name }) => ({ name, icon: wikiOperatorIconPath(name) }));
   const uniqueIcons = [
     ...new Map(
-      matchedOperators.filter((op) => op.icon).map((op) => [localFilenameFor(op.icon), op] as const)
+      [...matchedOperators, ...discountedOperators]
+        .filter((op) => op.icon)
+        .map((op) => [localFilenameFor(op.icon), op] as const)
     ),
   ].map(([filename, op]) => ({ filename, url: op.icon as string, name: op.name as string }));
   await runBatched(uniqueIcons, concurrency, ({ filename, url, name }) =>
@@ -466,14 +493,25 @@ export async function scrapeEvents(): Promise<void> {
       continue;
     }
     const sparkEligible = matchedBanner.type === 'Limited';
+    // The spark discount the event page names (see extractSparkDiscounts), and the date
+    // an operator's age counts to for the 4/5-year rule: when the banner runs, not now.
+    const discounts = new Map(
+      sparkEligible
+        ? (pagePerks.get(event)?.sparkDiscounts ?? []).map((d) => [d.name, d.cost] as const)
+        : []
+    );
+    const bannerStartStr = matchedBanner.globalStart ?? event.start;
+    const bannerStart = bannerStartStr ? new Date(`${bannerStartStr}T00:00:00Z`) : undefined;
+    const iconFor = (url: string | null) => {
+      const filename = url ? localFilenameFor(url) : null;
+      return filename && fileExists(`public/data/images/operators/${filename}`)
+        ? `data/images/operators/${filename}`
+        : null;
+    };
     const operators: ResolvedBannerOperator[] = matchedBanner.operators
       .filter((op) => op.name)
       .map((op) => {
-        const filename = op.icon ? localFilenameFor(op.icon) : null;
-        const icon =
-          filename && fileExists(`public/data/images/operators/${filename}`)
-            ? `data/images/operators/${filename}`
-            : null;
+        const icon = iconFor(op.icon);
         // Spark (guaranteed pick) cost in Headhunting Data Contracts: 75 for 5★, 300
         // for 6★ unless they're 4+ years past their debut (5+ for a Festival Limited
         // operator), per the wiki's Headhunting Data Contract Store page, in which
@@ -494,10 +532,13 @@ export async function scrapeEvents(): Promise<void> {
         let sparkCost: number | null = null;
         if (limited && sparkEligible && !isDebutingOnThisEvent) {
           if (op.star === 6) {
-            sparkCost = calcSparkCost({
-              debutDate: limitedDebutDates.get(op.name as string),
-              isFestival: debutObj?.isFestival ?? false,
-            });
+            sparkCost =
+              discounts.get(op.name as string) ??
+              calcSparkCost({
+                debutDate: limitedDebutDates.get(op.name as string),
+                isFestival: debutObj?.isFestival ?? false,
+                now: bannerStart,
+              });
           } else if (op.star === 5) {
             sparkCost = 75;
           }
@@ -511,11 +552,26 @@ export async function scrapeEvents(): Promise<void> {
           sparkCost,
         };
       });
+    // A discounted operator not on the rate-up list — the usual case: the series'
+    // oldest limited operator, rotated out of the rate-ups but still in the store.
+    const rateUpNames = new Set(operators.map((op) => op.name));
+    const storeDiscounts: ResolvedBannerOperator[] = [...discounts]
+      .filter(([name]) => !rateUpNames.has(name))
+      .map(([name, cost]) => ({
+        name,
+        // Only limited 6★ operators are ever discounted this way.
+        star: 6,
+        class: null,
+        limited: true,
+        icon: iconFor(wikiOperatorIconPath(name)),
+        sparkCost: cost,
+      }));
     event.banner = {
       name: matchedBanner.name,
       type: matchedBanner.type,
       sparkEligible,
       operators,
+      ...(storeDiscounts.length && { storeDiscounts }),
       globalStart: matchedBanner.globalStart,
       globalEnd: matchedBanner.globalEnd,
       cnStart: matchedBanner.cnStart,

@@ -29,6 +29,7 @@ export interface RawEvent {
   bannerPermits?: number | null;
   headhuntingDescribed?: boolean;
   bannerKind?: string | null;
+  sparkDiscounts?: SparkDiscount[];
   // The maximum Intelligence Certificates a rerun's own page states across every
   // mission/threshold that can substitute one for an already-owned reward — see
   // extractIntCertsFromHtml in lib/parser.ts for how this is derived, and why it's a
@@ -42,6 +43,13 @@ export interface BannerOperator {
   star: number | null;
   class: string | null;
   icon: string | null;
+}
+
+// An operator a banner's Headhunting Data Contract Store sells at a reduced spark cost,
+// as the event page names it — see extractSparkDiscounts in lib/parser.ts.
+export interface SparkDiscount {
+  name: string;
+  cost: number;
 }
 
 export interface ResolvedBannerOperator {
@@ -73,6 +81,11 @@ export interface ResolvedBanner {
   type: BannerType | null;
   sparkEligible: boolean;
   operators: ResolvedBannerOperator[];
+  // Operators this banner's Headhunting Data Contract Store sells at a discount (200)
+  // that aren't on its rate-up list — each new Limited banner discounts its series'
+  // oldest limited operator (see extractSparkDiscounts). A discounted rate-up operator
+  // just gets the lower sparkCost in `operators` instead.
+  storeDiscounts?: ResolvedBannerOperator[];
   // The banner's own run dates, from the wiki banner pages — usually the same as its
   // matched event's, but a banner can end earlier or later than the event does.
   // Optional since event data scraped before these were added doesn't have them.

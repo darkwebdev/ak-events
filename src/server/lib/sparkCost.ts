@@ -38,14 +38,14 @@ interface CalcSparkCostArgs {
   now?: Date;
 }
 
-// The wiki's Headhunting Data Contract Store page states the actual rule: "From
+// The wiki's Store/Certificate and Headhunting pages state the general rule: "From
 // Absolved Will Be the Seekers onward, the number of Headhunting Contracts required
 // to purchase limited 6★ Operators that were initially released at least 4 years ago
-// (5 years for Festival Limited Operators) was reduced from 300 to 200." This
-// replaced an older per-operator promotion the wiki used to separately announce on
-// event pages (which this project's scraper used to look for a sentence about) —
-// that announcement sentence doesn't appear on current event pages anymore, which is
-// why relying on it had silently stopped finding any reduced-cost operator at all.
+// (5 years for Festival Limited Operators) was reduced from 300 to 200." `now` should
+// be when the banner runs, not when the scrape does. Separately, each Limited event
+// page names the one operator its banner discounts ("…needed to buy X in the
+// Headhunting Data Contract Store is reduced to 200"), usually one no longer on the
+// rate-up list — see extractSparkDiscounts in lib/parser.ts, which takes precedence.
 function calcSparkCost({ debutDate, isFestival, now = new Date() }: CalcSparkCostArgs): number {
   if (!debutDate) return 300;
   const ageYears = (now.getTime() - debutDate.getTime()) / MS_PER_YEAR;

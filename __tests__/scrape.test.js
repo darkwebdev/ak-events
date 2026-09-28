@@ -518,6 +518,118 @@ describe('scrapeEvents', () => {
     });
   });
 
+  describe('spark discounts named on the event page', () => {
+    const discountPage = (name) => ({
+      parse: {
+        text: {
+          '*': `<p>The amount of Headhunting Data Contracts needed to buy ${name} in the
+            Headhunting Data Contract Store is reduced to 200.</p>`,
+        },
+      },
+    });
+    let downloadedPaths;
+
+    beforeEach(() => {
+      downloadedPaths = new Set();
+      mockFileExists.mockImplementation((p) => downloadedPaths.has(p));
+      mockDownloadImage.mockImplementation(async (url, filepath) => {
+        downloadedPaths.add(filepath);
+      });
+      mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
+      mockFetchEventsViaApi.mockResolvedValue([
+        {
+          name: 'Story Event',
+          link: 'https://example.com/wiki/Story_Event',
+          image: null,
+          globalDateStr: '2026/06/01–2026/06/20',
+          cnDateStr: null,
+        },
+      ]);
+    });
+
+    test('lists a discounted operator not on the rate-up list as a store discount, with its icon', async () => {
+      mockFetchEventDetailsViaApi.mockResolvedValue(discountPage('Old Operator'));
+
+      await scrapeEvents();
+
+      const { banner } = lastSavedEvents()[0];
+      expect(banner.storeDiscounts).toEqual([
+        {
+          name: 'Old Operator',
+          star: 6,
+          class: null,
+          limited: true,
+          icon: 'data/images/operators/60px-Old_Operator_icon.png',
+          sparkCost: 200,
+        },
+      ]);
+      expect(mockDownloadImage).toHaveBeenCalledWith(
+        '/images/thumb/Old_Operator_icon.png/60px-Old_Operator_icon.png',
+        'public/data/images/operators/60px-Old_Operator_icon.png'
+      );
+      // The rate-up operator is untouched.
+      expect(banner.operators[0]).toMatchObject({ name: 'Test Operator', sparkCost: 300 });
+    });
+
+    test('applies the discount to a rate-up operator the page names', async () => {
+      mockFetchEventDetailsViaApi.mockResolvedValue(discountPage('Test Operator'));
+
+      await scrapeEvents();
+
+      const { banner } = lastSavedEvents()[0];
+      expect(banner.operators[0]).toMatchObject({ name: 'Test Operator', sparkCost: 200 });
+      expect(banner.storeDiscounts).toBeUndefined();
+    });
+
+    test("never takes a discount from a rerun, whose fetch reads the original run's page", async () => {
+      mockFetchEventsViaApi.mockResolvedValue([
+        {
+          name: 'Story Event Rerun',
+          link: 'https://example.com/wiki/Story_Event/Rerun',
+          image: null,
+          globalDateStr: '2026/06/01–2026/06/20',
+          cnDateStr: null,
+        },
+      ]);
+      mockFetchEventDetailsViaApi.mockResolvedValue(discountPage('Old Operator'));
+
+      await scrapeEvents();
+
+      expect(lastSavedEvents()[0].banner.storeDiscounts).toBeUndefined();
+    });
+  });
+
+  test("measures an operator's age for the 4-year rule at the banner's start, not today", async () => {
+    mockFetchBannersPageHtml.mockResolvedValue(
+      buildBannerPageHtml({ globalDate: '2031/06/01 – 2031/06/15' })
+    );
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Future Event',
+        link: 'https://example.com/wiki/Future_Event',
+        image: null,
+        globalDateStr: '2031/06/01–2031/06/20',
+        cnDateStr: null,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockResolvedValue({ parse: { text: { '*': '<div></div>' } } });
+    mockFetchGachaTable.mockResolvedValue({
+      gachaPoolClient: [
+        {
+          gachaRuleType: 'LIMITED',
+          // Not 4 years old today, but 4+ by the time the 2031 banner runs.
+          openTime: Math.floor(new Date('2027-01-01').getTime() / 1000),
+          limitParam: { limitedCharId: 'char_test_op' },
+        },
+      ],
+    });
+    mockFetchCharacterTable.mockResolvedValue({ char_test_op: { name: 'Test Operator' } });
+
+    await scrapeEvents();
+
+    expect(lastSavedEvents()[0].banner.operators[0]).toMatchObject({ sparkCost: 200 });
+  });
+
   test("computes each operator's spark cost independently from their own debut date", async () => {
     const downloadedPaths = new Set();
     mockFileExists.mockImplementation((p) => downloadedPaths.has(p));

@@ -4,6 +4,7 @@ import {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractBannerFreePulls,
+  extractSparkDiscounts,
   extractIntCertsFromHtml,
   extractObtainMethod,
   extractOperatorDebutEvent,
@@ -174,5 +175,25 @@ describe('extractBannerFreePulls', () => {
       headhuntingDescribed: true,
       bannerKind: 'crossover',
     });
+  });
+});
+
+describe('extractSparkDiscounts', () => {
+  // Wording as on the wiki's Limited event pages (e.g. Critical Phase Transition, Ato).
+  test('finds the operator a banner discounts in its contract store', () => {
+    const html = `<ul><li>The amount of <a href="/wiki/Headhunting_Data_Contract">Headhunting
+      Data Contracts</a> needed to buy <a href="/wiki/Specter">Specter the Unchained</a> in the
+      Headhunting Data Contract Store is reduced to 200.</li></ul>`;
+    expect(extractSparkDiscounts(html)).toEqual([{ name: 'Specter the Unchained', cost: 200 }]);
+  });
+
+  test('decodes an escaped apostrophe in the name', () => {
+    const html = `<p>The amount of Headhunting Data Contracts needed to buy Ch&#39;en the
+      Holungday in the Headhunting Data Contract Store is reduced to 200.</p>`;
+    expect(extractSparkDiscounts(html)).toEqual([{ name: "Ch'en the Holungday", cost: 200 }]);
+  });
+
+  test('returns nothing for a page without a discount', () => {
+    expect(extractSparkDiscounts('<p>A side story.</p>')).toEqual([]);
   });
 });

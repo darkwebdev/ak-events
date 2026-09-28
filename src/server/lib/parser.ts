@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import { wikiBase } from '../config.js';
+import type { SparkDiscount } from '../types.js';
 
 // (Table-aware parseIndexHtml removed from this position; the exported version lives further down.)
 
@@ -450,6 +451,28 @@ function extractBannerFreePulls(html: string | null | undefined): BannerFreePull
   };
 }
 
+// The operator a Limited event's banner discounts in its Headhunting Data Contract
+// Store, as the event page states it: "The amount of Headhunting Data Contracts needed
+// to buy Specter the Unchained in the Headhunting Data Contract Store is reduced to
+// 200." Per the wiki's Headhunting/Banners page, each new banner of a series discounts
+// the series' oldest limited operator this way — usually one no longer on the rate-up
+// list, but still sold in the banner's contract store.
+function extractSparkDiscounts(html: string | null | undefined): SparkDiscount[] {
+  if (!html) return [];
+  const text = html
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;|&#160;/g, ' ')
+    .replace(/\s+/g, ' ');
+  return [
+    ...text.matchAll(
+      /Headhunting Data Contracts needed to buy\s+(.+?)\s+in the Headhunting Data Contract Store is reduced to\s+(\d+)/gi
+    ),
+  ].map((m) => ({ name: m[1].trim(), cost: Number(m[2]) }));
+}
+
 interface ParsedEventFromHtml {
   origPrime: number | null;
   hhPermits: number | null;
@@ -457,6 +480,7 @@ interface ParsedEventFromHtml {
   bannerPermits: number | null;
   headhuntingDescribed: boolean;
   bannerKind: string | null;
+  sparkDiscounts: SparkDiscount[];
   intCerts: number | null;
   type: string | null;
   debug: string | null;
@@ -471,6 +495,7 @@ function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtm
     bannerPermits: null,
     headhuntingDescribed: false,
     bannerKind: null,
+    sparkDiscounts: [],
     intCerts: null,
     type: null,
     debug: null,
@@ -490,6 +515,11 @@ function parseEventFromHtml(html: string | null | undefined): ParsedEventFromHtm
   }
   try {
     Object.assign(result, extractBannerFreePulls(html));
+  } catch (e) {
+    /* ignore */
+  }
+  try {
+    result.sparkDiscounts = extractSparkDiscounts(html);
   } catch (e) {
     /* ignore */
   }
@@ -635,6 +665,7 @@ export {
   extractOrigPrimeFromHtml,
   extractHhPermitsFromHtml,
   extractBannerFreePulls,
+  extractSparkDiscounts,
   extractIntCertsFromHtml,
   extractEventTypeFromHtml,
   extractObtainMethod,

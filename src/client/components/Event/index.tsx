@@ -233,6 +233,21 @@ export function Event({
               <OperatorColumn groups={sixStarGroups} />
               <OperatorColumn groups={otherGroups} />
             </div>
+            {banner.storeDiscounts?.length ? (
+              // Not rate-ups: the series' older limited operator this banner's
+              // Headhunting Data Contract Store sells at a discount.
+              <div className="ak-operator-group ak-event-banner-store">
+                <InfoButton label={<span className="ak-operator-group-label">Store</span>}>
+                  Not on the rate-up list, but sold at a discount in this banner&apos;s Headhunting
+                  Data Contract Store.
+                </InfoButton>
+                <div className="ak-operator-group-badges">
+                  {banner.storeDiscounts.map((op) => (
+                    <Operator key={op.name} operator={op} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
             {bannerDates?.start && bannerDates.end && (
               <div className="ak-event-banner-date">
                 <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />

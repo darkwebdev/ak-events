@@ -250,11 +250,13 @@ export function Event({
               <div className="ak-operator-group ak-event-banner-store">
                 <InfoButton label={<span className="ak-operator-group-label">Store</span>}>
                   Not on the rate-up list, but also sold in this banner&apos;s Headhunting Data
-                  Contract Store: 200 for operators 4+ years past their debut (5+ for Festival ones)
-                  or discounted by the event, 300 otherwise.
+                  Contract Store: 300, or 200 for operators 4+ years past their debut (5+ for
+                  Festival ones) or discounted by the event.
                 </InfoButton>
                 <div className="ak-operator-group-badges">
-                  {banner.storeOperators.map((op) => (
+                  {/* Newest first: storeOperators is in the series' debut order, oldest
+                      first — so this also puts full price (300) before the aged-out 200s. */}
+                  {[...banner.storeOperators].reverse().map((op) => (
                     <Operator key={op.name} operator={op} />
                   ))}
                 </div>

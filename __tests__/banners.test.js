@@ -6,6 +6,8 @@ import {
   dedupeBannersByName,
   parseBannerTypesFromWikitext,
   bannerWikiType,
+  parseSeriesBanners,
+  seriesStoreOperators,
   parseBannerTimesFromWikitext,
   bannerLookup,
 } from '../src/server/lib/banners.js';
@@ -288,5 +290,53 @@ describe('parseBannerTimesFromWikitext', () => {
 
   test('skips banners with dates but no times', () => {
     expect(bannerLookup({ name: 'Old Banner' }, times)).toBeNull();
+  });
+});
+
+describe('parseSeriesBanners / seriesStoreOperators', () => {
+  const cell = (type, name, cnstart, operators, limited) =>
+    `{{Banners cell |type = ${type} |name = ${name} |cnstart = ${cnstart} |operators = ${operators} |limited = ${limited}}}`;
+  // Real Celebration history (abridged): each debut is coded 1, a returning limited 2.
+  const page2020 = [
+    cell('celebration', 'Cremation Last Wish', '2020/05/01', 'Elysium, W, Weedy', '0,1,0'),
+    cell('celebration', 'Forget Me Not', '2020/11/01', 'Rosmontis, W', '1,2'),
+    cell('festival', 'Earthborn Metals', '2020/01/16', 'Aak, Hung, Nian', '0,0,1'),
+    cell('special', 'Some Standard Banner', '2020/02/01', 'Nobody', '0'),
+  ].join('\n');
+  const page2021 = [
+    cell('celebration', 'Deep Drown Lament', '2021/05/01', 'Skadi the Corrupting Heart, W', '1,2'),
+    cell('festival', 'Hidden Moon', '2021/02/05', 'Dusk, Nian', '1,2'),
+    // Also listed on another page — counted once.
+    cell('celebration', 'Forget Me Not', '2020/11/01', 'Rosmontis, W', '1,2'),
+  ].join('\n');
+  const series = parseSeriesBanners([page2020, page2021]);
+
+  test('lists each series banner once, oldest first, with its debuts', () => {
+    expect(series.map((b) => [b.type, b.cnStart, b.debuts])).toEqual([
+      ['festival', '2020/01/16', ['Nian']],
+      ['celebration', '2020/05/01', ['W']],
+      ['celebration', '2020/11/01', ['Rosmontis']],
+      ['festival', '2021/02/05', ['Dusk']],
+      ['celebration', '2021/05/01', ['Skadi the Corrupting Heart']],
+    ]);
+  });
+
+  test("a Celebration banner's store has its series' debuts from two banners back", () => {
+    // Rosmontis (the previous Celebration) only joins from the one after this.
+    expect(seriesStoreOperators({ name: 'Deep Drown Lament' }, series)).toEqual({
+      type: 'celebration',
+      names: ['W'],
+    });
+  });
+
+  test("a Festival banner's store has every earlier Festival debut", () => {
+    expect(seriesStoreOperators({ name: 'Hidden Moon' }, series)).toEqual({
+      type: 'festival',
+      names: ['Nian'],
+    });
+  });
+
+  test('null for a banner outside the Limited series', () => {
+    expect(seriesStoreOperators({ name: 'Some Standard Banner' }, series)).toBeNull();
   });
 });

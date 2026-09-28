@@ -1,12 +1,9 @@
-import { fetchLimitedDebutDates, calcSparkCost } from '../src/server/lib/sparkCost.js';
-
-const mockFetchGachaTable = vi.fn();
-const mockFetchCharacterTable = vi.fn();
-
-vi.mock('../src/server/lib/network.js', () => ({
-  fetchGachaTable: (...args) => mockFetchGachaTable(...args),
-  fetchCharacterTable: (...args) => mockFetchCharacterTable(...args),
-}));
+import {
+  limitedDebutDatesFrom,
+  operatorInfoFrom,
+  operatorNameKey,
+  calcSparkCost,
+} from '../src/server/lib/sparkCost.js';
 
 describe('calcSparkCost', () => {
   test('returns 300 when there is no debut date (unknown operator)', () => {
@@ -40,14 +37,9 @@ describe('calcSparkCost', () => {
   });
 });
 
-describe('fetchLimitedDebutDates', () => {
-  beforeEach(() => {
-    mockFetchGachaTable.mockReset();
-    mockFetchCharacterTable.mockReset();
-  });
-
-  test('maps operator name to the earliest LIMITED pool openTime for their character id', async () => {
-    mockFetchGachaTable.mockResolvedValue({
+describe('limitedDebutDatesFrom', () => {
+  test('maps operator name to the earliest LIMITED pool openTime for their character id', () => {
+    const gacha = {
       gachaPoolClient: [
         {
           gachaRuleType: 'LIMITED',
@@ -63,18 +55,18 @@ describe('fetchLimitedDebutDates', () => {
         // A pool with no limitedCharId must be ignored, not throw.
         { gachaRuleType: 'LIMITED', openTime: 1680000000, limitParam: null },
       ],
-    });
-    mockFetchCharacterTable.mockResolvedValue({
+    };
+    const characters = {
       char_2023_ling: { name: 'Ling' },
-    });
+    };
 
-    const result = await fetchLimitedDebutDates();
+    const result = limitedDebutDatesFrom(gacha, characters);
 
     expect(result.get('Ling')).toEqual(new Date(1690000000 * 1000));
   });
 
-  test('keeps the earliest openTime when the same character id appears in multiple LIMITED pools', async () => {
-    mockFetchGachaTable.mockResolvedValue({
+  test('keeps the earliest openTime when the same character id appears in multiple LIMITED pools', () => {
+    const gacha = {
       gachaPoolClient: [
         {
           gachaRuleType: 'LIMITED',
@@ -87,20 +79,40 @@ describe('fetchLimitedDebutDates', () => {
           limitParam: { limitedCharId: 'char_113_cqbw' },
         },
       ],
-    });
-    mockFetchCharacterTable.mockResolvedValue({
+    };
+    const characters = {
       char_113_cqbw: { name: 'W' },
-    });
+    };
 
-    const result = await fetchLimitedDebutDates();
+    const result = limitedDebutDatesFrom(gacha, characters);
 
     expect(result.get('W')).toEqual(new Date(1600000000 * 1000));
   });
 
-  test('returns null if either table fails to fetch', async () => {
-    mockFetchGachaTable.mockResolvedValue(null);
-    mockFetchCharacterTable.mockResolvedValue({});
+  test('returns null if either table failed to fetch', () => {
+    expect(limitedDebutDatesFrom(null, {})).toBeNull();
+    expect(limitedDebutDatesFrom({ gachaPoolClient: [] }, null)).toBeNull();
+  });
+});
 
-    expect(await fetchLimitedDebutDates()).toBeNull();
+describe('operatorInfoFrom / operatorNameKey', () => {
+  const info = operatorInfoFrom({
+    char_113_cqbw: { name: 'W', rarity: 'TIER_6', profession: 'SNIPER' },
+    char_1016_agoat2: { name: 'Eyjafjalla the Hvít Aska', rarity: 'TIER_6', profession: 'CASTER' },
+    token_x: { name: 'A Token', rarity: 'TIER_1', profession: 'TOKEN' },
+  });
+
+  test("reads each operator's game spelling, rarity and class", () => {
+    expect(info.get(operatorNameKey('W'))).toEqual({ name: 'W', star: 6, class: 'Sniper' });
+  });
+
+  test('matches a name spelled without its accent', () => {
+    expect(info.get(operatorNameKey('Eyjafjalla the Hvit Aska'))?.name).toBe(
+      'Eyjafjalla the Hvít Aska'
+    );
+  });
+
+  test('skips tokens and traps', () => {
+    expect(info.has(operatorNameKey('A Token'))).toBe(false);
   });
 });

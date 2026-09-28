@@ -553,7 +553,7 @@ describe('scrapeEvents', () => {
       await scrapeEvents();
 
       const { banner } = lastSavedEvents()[0];
-      expect(banner.storeDiscounts).toEqual([
+      expect(banner.storeOperators).toEqual([
         {
           name: 'Old Operator',
           star: 6,
@@ -578,7 +578,53 @@ describe('scrapeEvents', () => {
 
       const { banner } = lastSavedEvents()[0];
       expect(banner.operators[0]).toMatchObject({ name: 'Test Operator', sparkCost: 200 });
-      expect(banner.storeDiscounts).toBeUndefined();
+      expect(banner.storeOperators).toBeUndefined();
+    });
+
+    test("lists the series' earlier limited operators, priced by the age rule at the banner's start", async () => {
+      // Test Banner is a Carnival (CN 2026/01/01); two earlier Carnivals debuted two
+      // operators — one long past 4 years old by the banner, one not.
+      mockFetchBannersPageWikitext.mockResolvedValue(
+        [
+          '{{Banners cell |type = carnival |name = Old Carnival |cnstart = 2020/08/01 |operators = Eyjafjalla the Hvit Aska |limited = 1}}',
+          '{{Banners cell |type = carnival |name = Recent Carnival |cnstart = 2025/08/01 |operators = New Op |limited = 1}}',
+          '{{Banners cell |type = carnival |name = Test Banner |cnstart = 2026/01/01 |operators = Test Operator |limited = 2}}',
+        ].join('\n')
+      );
+      mockFetchEventDetailsViaApi.mockResolvedValue({ parse: { text: { '*': '<div></div>' } } });
+      mockFetchGachaTable.mockResolvedValue({
+        gachaPoolClient: [
+          {
+            gachaRuleType: 'LIMITED',
+            openTime: Date.parse('2021-01-01') / 1000,
+            limitParam: { limitedCharId: 'char_eyja' },
+          },
+          {
+            gachaRuleType: 'LIMITED',
+            openTime: Date.parse('2025-12-01') / 1000,
+            limitParam: { limitedCharId: 'char_new' },
+          },
+        ],
+      });
+      mockFetchCharacterTable.mockResolvedValue({
+        char_eyja: { name: 'Eyjafjalla the Hvít Aska', rarity: 'TIER_6', profession: 'CASTER' },
+        char_new: { name: 'New Op', rarity: 'TIER_6', profession: 'WARRIOR' },
+      });
+
+      await scrapeEvents();
+
+      expect(lastSavedEvents()[0].banner.storeOperators).toEqual([
+        {
+          // The game's spelling, not the wikitext's unaccented one.
+          name: 'Eyjafjalla the Hvít Aska',
+          star: 6,
+          class: 'Caster',
+          limited: true,
+          icon: 'data/images/operators/60px-Eyjafjalla_the_Hv%C3%ADt_Aska_icon.png',
+          sparkCost: 200,
+        },
+        expect.objectContaining({ name: 'New Op', class: 'Guard', sparkCost: 300 }),
+      ]);
     });
 
     test("never takes a discount from a rerun, whose fetch reads the original run's page", async () => {
@@ -595,7 +641,7 @@ describe('scrapeEvents', () => {
 
       await scrapeEvents();
 
-      expect(lastSavedEvents()[0].banner.storeDiscounts).toBeUndefined();
+      expect(lastSavedEvents()[0].banner.storeOperators).toBeUndefined();
     });
   });
 

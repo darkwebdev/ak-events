@@ -87,11 +87,11 @@ export interface ResolvedBanner {
   type: BannerType | null;
   sparkEligible: boolean;
   operators: ResolvedBannerOperator[];
-  // Operators this banner's Headhunting Data Contract Store sells at a discount (200)
-  // that aren't on its rate-up list — each new Limited banner discounts its series'
-  // oldest limited operator (see extractSparkDiscounts). A discounted rate-up operator
-  // just gets the lower sparkCost in `operators` instead.
-  storeDiscounts?: ResolvedBannerOperator[];
+  // The rest of this Limited banner's Headhunting Data Contract Store: its series'
+  // earlier limited operators that aren't rate-ups (see seriesStoreOperators), each at
+  // its spark cost — 200 for one the event page names as discounted, or 4+ years past
+  // debut (5+ for Festival), else 300.
+  storeOperators?: ResolvedBannerOperator[];
   // The banner's own run dates, from the wiki banner pages — usually the same as its
   // matched event's, but a banner can end earlier or later than the event does.
   // Optional since event data scraped before these were added doesn't have them.

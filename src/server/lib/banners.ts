@@ -287,7 +287,66 @@ function parseBannerTimesFromWikitext(
   return times;
 }
 
+// A Limited series banner (Festival, Carnival or Celebration) from the wikitext, with
+// the limited operators it debuted — its {{Banners cell}}'s `|limited =` field codes
+// each of `|operators =` as 1 (debuts here), 2 (a returning limited rate-up) or 0 (not
+// limited).
+export interface SeriesBanner {
+  type: string;
+  key: string;
+  cnStart: string;
+  debuts: string[];
+}
+
+const SERIES_TYPES = new Set(['festival', 'carnival', 'celebration']);
+
+// Every Limited series banner across the given Headhunting/Banners pages' wikitexts,
+// oldest first (by CN start — both servers run a series in the same order), each once
+// even when listed on more than one page.
+function parseSeriesBanners(wikitexts: (string | null | undefined)[]): SeriesBanner[] {
+  const byKey = new Map<string, SeriesBanner>();
+  for (const wikitext of wikitexts) {
+    for (const { keys, field } of bannerCells(wikitext)) {
+      const type = field('type').toLowerCase();
+      const cnStart = field('cnstart').match(/\d{4}\/\d{2}\/\d{2}/)?.[0];
+      if (!SERIES_TYPES.has(type) || !cnStart || !field('name')) continue;
+      const operators = field('operators')
+        .split(',')
+        .map((n) => n.trim());
+      const codes = field('limited')
+        .split(',')
+        .map((c) => c.trim());
+      const debuts = operators.filter((name, i) => name && codes[i] === '1');
+      byKey.set(keys[0], { type, key: keys[0], cnStart, debuts });
+    }
+  }
+  return [...byKey.values()].sort((a, b) => a.cnStart.localeCompare(b.cnStart));
+}
+
+// The limited operators `banner`'s Headhunting Data Contract Store sells: every
+// operator its series debuted before it, once they've joined the series. Per the wiki's
+// Headhunting/Banners page, a Festival or Carnival debut joins from the series' next
+// banner, a Celebration debut only from the one after that ("a year's gap"). Null for a
+// banner that isn't in a series (crossover, standard…).
+function seriesStoreOperators(
+  banner: RawBanner,
+  series: SeriesBanner[]
+): { type: string; names: string[] } | null {
+  const key = bannerTypeKey(banner.name);
+  const current = series.find((b) => b.key === key);
+  if (!current) return null;
+  const sameSeries = series.filter((b) => b.type === current.type);
+  const index = sameSeries.indexOf(current);
+  const gap = current.type === 'celebration' ? 2 : 1;
+  return {
+    type: current.type,
+    names: sameSeries.slice(0, Math.max(0, index - gap + 1)).flatMap((b) => b.debuts),
+  };
+}
+
 export {
+  parseSeriesBanners,
+  seriesStoreOperators,
   parseBannersPage,
   indexBannersByDate,
   dedupeBannersByName,

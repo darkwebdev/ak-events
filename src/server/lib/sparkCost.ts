@@ -1,4 +1,4 @@
-import { fetchGachaTable, fetchCharacterTable } from './network.js';
+import type { CharacterTable, GachaTable } from '../types.js';
 
 const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
 
@@ -7,8 +7,10 @@ const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
 // `limitParam.limitedCharId` names the one operator it debuted, alongside an exact
 // `openTime` timestamp) rather than scraped from the wiki, which doesn't state debut
 // dates directly. Returns null if either table failed to fetch.
-async function fetchLimitedDebutDates(): Promise<Map<string, Date> | null> {
-  const [gacha, characters] = await Promise.all([fetchGachaTable(), fetchCharacterTable()]);
+function limitedDebutDatesFrom(
+  gacha: GachaTable | null,
+  characters: CharacterTable | null
+): Map<string, Date> | null {
   if (!gacha || !characters) return null;
 
   const debutTimeByCharId = new Map<string, number>();
@@ -53,4 +55,52 @@ function calcSparkCost({ debutDate, isFestival, now = new Date() }: CalcSparkCos
   return ageYears >= threshold ? 200 : 300;
 }
 
-export { fetchLimitedDebutDates, calcSparkCost };
+const CLASS_BY_PROFESSION: Record<string, string> = {
+  PIONEER: 'Vanguard',
+  WARRIOR: 'Guard',
+  TANK: 'Defender',
+  SNIPER: 'Sniper',
+  CASTER: 'Caster',
+  MEDIC: 'Medic',
+  SUPPORT: 'Supporter',
+  SPECIAL: 'Specialist',
+};
+
+// A key for matching an operator's name across sources that spell it slightly
+// differently — the banner pages' wikitext writes "Eyjafjalla the Hvit Aska" where the
+// game data has "Hvít".
+function operatorNameKey(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+interface OperatorInfo {
+  // The game's own spelling (e.g. "Eyjafjalla the Hvít Aska"), which the wiki's icon
+  // file names use too.
+  name: string;
+  star: number | null;
+  class: string | null;
+}
+
+// Each operator's rarity and class from the game's character table, keyed by
+// operatorNameKey — for operators the banner pages don't describe (a contract store's
+// non-rate-up stock).
+function operatorInfoFrom(characters: CharacterTable | null): Map<string, OperatorInfo> {
+  const info = new Map<string, OperatorInfo>();
+  for (const character of Object.values(characters ?? {})) {
+    const profession = String(character.profession ?? '');
+    if (!CLASS_BY_PROFESSION[profession]) continue; // tokens, traps
+    const star = Number(String(character.rarity ?? '').match(/TIER_(\d)/)?.[1]) || null;
+    info.set(operatorNameKey(character.name), {
+      name: character.name,
+      star,
+      class: CLASS_BY_PROFESSION[profession],
+    });
+  }
+  return info;
+}
+
+export { limitedDebutDatesFrom, operatorInfoFrom, operatorNameKey, calcSparkCost };

@@ -6,6 +6,8 @@ import {
   fetchUpcomingViaApi,
   fetchBannersPageHtml,
   fetchBannersPageWikitext,
+  fetchGachaTable,
+  fetchCharacterTable,
   fetchActivityTable,
   fetchStageTable,
   fetchArkpediaEventsHtml,
@@ -22,6 +24,8 @@ import {
   bannerWikiType,
   parseBannerTimesFromWikitext,
   bannerLookup,
+  parseSeriesBanners,
+  seriesStoreOperators,
 } from './lib/banners.js';
 import {
   checkBannerFreePulls,
@@ -51,7 +55,12 @@ import {
   saveOperatorDebutCache,
   resolveOperatorDebutEvent,
 } from './lib/operatorDebuts.js';
-import { fetchLimitedDebutDates, calcSparkCost } from './lib/sparkCost.js';
+import {
+  limitedDebutDatesFrom,
+  operatorInfoFrom,
+  operatorNameKey,
+  calcSparkCost,
+} from './lib/sparkCost.js';
 import type {
   RawEvent,
   ProcessedEvent,
@@ -404,10 +413,18 @@ export async function scrapeEvents(): Promise<void> {
   // same day this event does" rather than by fragile prose text on the event page.
   const currentYear = new Date().getFullYear();
   const bannerPages = ['Headhunting/Banners/Upcoming', `Headhunting/Banners/${currentYear}`];
+  // Earlier years' pages are only needed as wikitext, for each Limited series' history
+  // (see parseSeriesBanners) — listed first, so the current pages' entries win where a
+  // banner appears on both (a rerun's `type` differs from its original run's).
+  const historyPages = Array.from(
+    { length: currentYear - 2020 },
+    (_, i) => `Headhunting/Banners/${2020 + i}`
+  );
   const [upcomingBannersHtml, yearBannersHtml, ...bannerWikitexts] = await Promise.all([
     ...bannerPages.map((page) => fetchBannersPageHtml(page)),
-    ...bannerPages.map((page) => fetchBannersPageWikitext(page)),
+    ...[...historyPages, ...bannerPages].map((page) => fetchBannersPageWikitext(page)),
   ]);
+  const series = parseSeriesBanners(bannerWikitexts);
   const upcomingBanners = parseBannersPage(upcomingBannersHtml);
   const yearBanners = parseBannersPage(yearBannersHtml);
   const banners = [...upcomingBanners, ...yearBanners];
@@ -470,15 +487,52 @@ export async function scrapeEvents(): Promise<void> {
 
   // Download each unique operator icon (dedup by filename, keeping the operator's
   // name alongside its URL so download logs identify the operator, not the filename).
-  // A spark-discounted operator that isn't a rate-up has no icon on the banner page, so
-  // it's fetched from the wiki's standard icon path instead.
-  const discountedOperators = eventBannerMatches
+  // Every Limited 6★ operator's debut date, computed from the game's own gacha pool
+  // data rather than scraped from the wiki (which doesn't state it directly) — see
+  // lib/sparkCost.js for what this is used for and why — and every operator's rarity
+  // and class, for contract-store stock the banner pages don't describe. Both default
+  // to empty (spark costs fall back to 300) if the game-data fetch failed, since this
+  // is nice-to-have and shouldn't be able to abort a whole scrape run.
+  const [gachaTable, characterTable] = await Promise.all([
+    fetchGachaTable(),
+    fetchCharacterTable(),
+  ]);
+  const limitedDebutDates =
+    limitedDebutDatesFrom(gachaTable, characterTable) ?? new Map<string, Date>();
+  if (limitedDebutDates.size === 0) {
+    console.error(
+      'Could not fetch operator debut dates from game data — spark costs will default to 300'
+    );
+  }
+  const debutDateByKey = new Map(
+    [...limitedDebutDates].map(([name, date]) => [operatorNameKey(name), date] as const)
+  );
+  const operatorInfo = operatorInfoFrom(characterTable);
+
+  // Each Limited banner's Headhunting Data Contract Store stock beyond its rate-ups: its
+  // series' earlier limited operators (see seriesStoreOperators).
+  const storeRosters = new Map<ProcessedEvent, { type: string; names: string[] }>();
+  for (const { event, matchedBanner } of eventBannerMatches) {
+    if (matchedBanner?.type !== 'Limited') continue;
+    const roster = seriesStoreOperators(matchedBanner, series);
+    if (roster) storeRosters.set(event, roster);
+  }
+
+  // Contract-store operators that aren't rate-ups have no icon on the banner page, so
+  // they're fetched from the wiki's standard icon path instead.
+  const storeIconOperators = eventBannerMatches
     .filter((m) => m.matchedBanner?.type === 'Limited')
-    .flatMap((m) => pagePerks.get(m.event)?.sparkDiscounts ?? [])
-    .map(({ name }) => ({ name, icon: wikiOperatorIconPath(name) }));
+    .flatMap((m) => [
+      ...(storeRosters.get(m.event)?.names ?? []),
+      ...(pagePerks.get(m.event)?.sparkDiscounts ?? []).map((d) => d.name),
+    ])
+    .map((name) => {
+      const properName = operatorInfo.get(operatorNameKey(name))?.name ?? name;
+      return { name: properName, icon: wikiOperatorIconPath(properName) };
+    });
   const uniqueIcons = [
     ...new Map(
-      [...matchedOperators, ...discountedOperators]
+      [...matchedOperators, ...storeIconOperators]
         .filter((op) => op.icon)
         .map((op) => [localFilenameFor(op.icon), op] as const)
     ),
@@ -486,18 +540,6 @@ export async function scrapeEvents(): Promise<void> {
   await runBatched(uniqueIcons, concurrency, ({ filename, url, name }) =>
     downloadIfMissing(url, `public/data/images/operators/${filename}`, 'operator icon', name)
   );
-
-  // Every Limited 6★ operator's debut date, computed from the game's own gacha pool
-  // data rather than scraped from the wiki (which doesn't state it directly) — see
-  // lib/sparkCost.js for what this is used for and why. Falls back to an empty map
-  // (every operator's sparkCost defaults to 300) if the game-data fetch failed, since
-  // this is nice-to-have and shouldn't be able to abort a whole scrape run.
-  const limitedDebutDates = (await fetchLimitedDebutDates()) ?? new Map<string, Date>();
-  if (limitedDebutDates.size === 0) {
-    console.error(
-      'Could not fetch operator debut dates from game data — spark costs will default to 300'
-    );
-  }
 
   // Now assemble event.banner from the (already-resolved) cache and (already-downloaded) icons.
   for (const { event, matchedBanner } of eventBannerMatches) {
@@ -510,7 +552,9 @@ export async function scrapeEvents(): Promise<void> {
     // an operator's age counts to for the 4/5-year rule: when the banner runs, not now.
     const discounts = new Map(
       sparkEligible
-        ? (pagePerks.get(event)?.sparkDiscounts ?? []).map((d) => [d.name, d.cost] as const)
+        ? (pagePerks.get(event)?.sparkDiscounts ?? []).map(
+            (d) => [operatorNameKey(d.name), d] as const
+          )
         : []
     );
     const bannerStartStr = matchedBanner.globalStart ?? event.start;
@@ -546,7 +590,7 @@ export async function scrapeEvents(): Promise<void> {
         if (limited && sparkEligible && !isDebutingOnThisEvent) {
           if (op.star === 6) {
             sparkCost =
-              discounts.get(op.name as string) ??
+              discounts.get(operatorNameKey(op.name as string))?.cost ??
               calcSparkCost({
                 debutDate: limitedDebutDates.get(op.name as string),
                 isFestival: debutObj?.isFestival ?? false,
@@ -567,24 +611,51 @@ export async function scrapeEvents(): Promise<void> {
       });
     // A discounted operator not on the rate-up list — the usual case: the series'
     // oldest limited operator, rotated out of the rate-ups but still in the store.
-    const rateUpNames = new Set(operators.map((op) => op.name));
-    const storeDiscounts: ResolvedBannerOperator[] = [...discounts]
-      .filter(([name]) => !rateUpNames.has(name))
-      .map(([name, cost]) => ({
-        name,
-        // Only limited 6★ operators are ever discounted this way.
-        star: 6,
-        class: null,
-        limited: true,
-        icon: iconFor(wikiOperatorIconPath(name)),
-        sparkCost: cost,
-      }));
+    // The rest of the banner's contract store: its series' earlier limited operators,
+    // plus the one the event page names as discounted if it isn't among them — each at
+    // the discount if named, else by the 4/5-year age rule at the banner's start.
+    const roster = storeRosters.get(event);
+    const seen = new Set(operators.map((op) => operatorNameKey(op.name)));
+    const storeOperators: ResolvedBannerOperator[] = [
+      ...(roster?.names ?? []),
+      ...[...discounts.values()].map((d) => d.name),
+    ]
+      .filter((name) => {
+        const key = operatorNameKey(name);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map((wikiName) => {
+        const key = operatorNameKey(wikiName);
+        const info = operatorInfo.get(key);
+        const name = info?.name ?? wikiName;
+        const star = info?.star ?? 6;
+        let sparkCost: number | null = discounts.get(key)?.cost ?? null;
+        if (sparkCost == null && star === 6) {
+          sparkCost = calcSparkCost({
+            debutDate: debutDateByKey.get(key),
+            isFestival: roster?.type === 'festival',
+            now: bannerStart,
+          });
+        } else if (sparkCost == null && star === 5) {
+          sparkCost = 75;
+        }
+        return {
+          name,
+          star,
+          class: info?.class ?? null,
+          limited: true,
+          icon: iconFor(wikiOperatorIconPath(name)),
+          sparkCost,
+        };
+      });
     event.banner = {
       name: matchedBanner.name,
       type: matchedBanner.type,
       sparkEligible,
       operators,
-      ...(storeDiscounts.length && { storeDiscounts }),
+      ...(storeOperators.length && { storeOperators }),
       globalStart: matchedBanner.globalStart,
       globalEnd: matchedBanner.globalEnd,
       cnStart: matchedBanner.cnStart,

@@ -244,16 +244,17 @@ export function Event({
               <OperatorColumn groups={sixStarGroups} />
               <OperatorColumn groups={otherGroups} />
             </div>
-            {banner.storeDiscounts?.length ? (
-              // Not rate-ups: the series' older limited operator this banner's
-              // Headhunting Data Contract Store sells at a discount.
+            {banner.storeOperators?.length ? (
+              // Not rate-ups: the series' earlier limited operators, which this banner's
+              // Headhunting Data Contract Store also sells.
               <div className="ak-operator-group ak-event-banner-store">
                 <InfoButton label={<span className="ak-operator-group-label">Store</span>}>
-                  Not on the rate-up list, but sold at a discount in this banner&apos;s Headhunting
-                  Data Contract Store.
+                  Not on the rate-up list, but also sold in this banner&apos;s Headhunting Data
+                  Contract Store: 200 for operators 4+ years past their debut (5+ for Festival ones)
+                  or discounted by the event, 300 otherwise.
                 </InfoButton>
                 <div className="ak-operator-group-badges">
-                  {banner.storeDiscounts.map((op) => (
+                  {banner.storeOperators.map((op) => (
                     <Operator key={op.name} operator={op} />
                   ))}
                 </div>

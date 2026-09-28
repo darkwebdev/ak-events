@@ -1,6 +1,7 @@
 let calculateSelectedEventData;
 let calculateLatestEventStart;
 let getEffectiveStart;
+let toIsoDate;
 
 beforeAll(async () => {
   const eventsMod = await import('../../src/client/utils/events.js');
@@ -8,6 +9,7 @@ beforeAll(async () => {
   calculateLatestEventStart = eventsMod.calculateLatestEventStart;
   const datesMod = await import('../../src/client/utils/dates.js');
   getEffectiveStart = datesMod.getEffectiveStart;
+  toIsoDate = datesMod.toIsoDate;
 });
 
 describe('calculateSelectedEventData / calculateLatestEventStart', () => {
@@ -49,7 +51,7 @@ describe('calculateSelectedEventData / calculateLatestEventStart', () => {
 
     const { latestStart } = calculateSelectedEventData([globalEvent], new Set(['Global Event']));
 
-    expect(latestStart.toISOString().startsWith('2026-09-10')).toBe(true);
+    expect(toIsoDate(latestStart)).toBe('2026-09-10');
   });
 
   test('picks the latest start among multiple selected events', () => {
@@ -61,7 +63,7 @@ describe('calculateSelectedEventData / calculateLatestEventStart', () => {
       new Set(['Earlier', 'Later'])
     );
 
-    expect(latestStart.toISOString().startsWith('2026-10-15')).toBe(true);
+    expect(toIsoDate(latestStart)).toBe('2026-10-15');
     expect(daysUntilLastEvent).toBeGreaterThanOrEqual(0);
   });
 });

@@ -12,6 +12,32 @@ export interface DateFields {
 }
 
 /**
+ * Parse a scraped "YYYY-MM-DD" date as a calendar date in the viewer's own timezone.
+ * `new Date('2026-09-16')` would be UTC midnight per spec, which is still the previous
+ * evening anywhere west of UTC — every date would display a day early there.
+ */
+export function parseDate(value: string): Date {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(value);
+}
+
+/** Short date in the viewer's own locale format, e.g. 16/09/2026 or 9/16/2026. */
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString();
+}
+
+/** Long date in the viewer's own locale, with the full month name: "16 September 2026". */
+export function formatLongDate(date: Date): string {
+  return date.toLocaleDateString(undefined, { dateStyle: 'long' });
+}
+
+/** Machine-readable local calendar date ("YYYY-MM-DD"), for <time dateTime>. */
+export function toIsoDate(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/**
  * Calculate days between today and event date
  */
 export function calculateDaysBetween(eventDate: string | null | undefined): number {
@@ -20,7 +46,7 @@ export function calculateDaysBetween(eventDate: string | null | undefined): numb
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set to start of today
 
-  const eventStart = new Date(eventDate);
+  const eventStart = parseDate(eventDate);
   eventStart.setHours(0, 0, 0, 0); // Set to start of event day
 
   // If event is in the past, return 0
@@ -38,28 +64,28 @@ export function calculateDaysBetween(eventDate: string | null | undefined): numb
  */
 export function getEffectiveStart(event: DateFields): Date | null {
   // Prefer globalStart, fallback to estimated cnStart (+6 months), then globalStart/global (if present), then cnStart
-  if (event.globalStart) return new Date(event.globalStart);
+  if (event.globalStart) return parseDate(event.globalStart);
   if (event.cnStart) {
-    const d = new Date(event.cnStart);
+    const d = parseDate(event.cnStart);
     d.setMonth(d.getMonth() + 6);
     return d;
   }
-  if (event.start) return new Date(event.start);
+  if (event.start) return parseDate(event.start);
   return null;
 }
 
 export function getEffectiveEnd(event: DateFields): Date | null {
   // Prefer globalEnd, fallback to estimated cnEnd (+6 months), then end/start fallbacks
-  if (event.globalEnd) return new Date(event.globalEnd);
+  if (event.globalEnd) return parseDate(event.globalEnd);
   if (event.cnEnd) {
-    const d = new Date(event.cnEnd);
+    const d = parseDate(event.cnEnd);
     d.setMonth(d.getMonth() + 6);
     return d;
   }
-  if (event.end) return new Date(event.end);
-  if (event.globalStart) return new Date(event.globalStart);
+  if (event.end) return parseDate(event.end);
+  if (event.globalStart) return parseDate(event.globalStart);
   if (event.cnStart) {
-    const d = new Date(event.cnStart);
+    const d = parseDate(event.cnStart);
     d.setMonth(d.getMonth() + 6);
     return d;
   }
@@ -78,15 +104,22 @@ export function getBannerDates(
 ): { start: Date | null; end: Date | null; estimated: boolean } {
   if (banner.globalStart) {
     return {
-      start: new Date(banner.globalStart),
-      end: banner.globalEnd ? new Date(banner.globalEnd) : null,
+      start: parseDate(banner.globalStart),
+      end: banner.globalEnd ? parseDate(banner.globalEnd) : null,
       estimated: false,
     };
   }
   const eventStart = getEffectiveStart(event);
   if (banner.cnStart && event.cnStart && eventStart) {
-    const lag = eventStart.getTime() - new Date(event.cnStart).getTime();
-    const shift = (d: string) => new Date(new Date(d).getTime() + lag);
+    const lag = eventStart.getTime() - parseDate(event.cnStart).getTime();
+    // Shifted by whole days rather than raw milliseconds, so a DST change between
+    // the two dates can't land the result an hour short, on the previous day.
+    const lagDays = Math.round(lag / (1000 * 60 * 60 * 24));
+    const shift = (d: string) => {
+      const shifted = parseDate(d);
+      shifted.setDate(shifted.getDate() + lagDays);
+      return shifted;
+    };
     return {
       start: shift(banner.cnStart),
       end: banner.cnEnd ? shift(banner.cnEnd) : null,
@@ -112,9 +145,9 @@ export function formatEventDates(event: Event): string {
   if (start) {
     // If this is an estimated CN->global mapping, indicate estimated
     if (!event.globalStart && event.cnStart) {
-      return `${start.toLocaleDateString()} (estimated)`;
+      return `${formatDate(start)} (estimated)`;
     }
-    return start.toLocaleDateString();
+    return formatDate(start);
   }
   return 'Unknown';
 }

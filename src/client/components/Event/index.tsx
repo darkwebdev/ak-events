@@ -21,6 +21,7 @@ import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { IntCertsIcon } from '../IntCertsIcon';
 import { PlayIcon } from '../PlayIcon';
+import { DateText } from '../DateText';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
 import './index.css';
 
@@ -77,8 +78,8 @@ export function Event({
   const hasIntCertsValue = intCertsIncluded && intCerts;
   const start = getEffectiveStart(event);
   const end = getEffectiveEnd(event);
-  const startStr = start ? start.toLocaleDateString() : 'Unknown';
-  const endStr = end ? end.toLocaleDateString() : 'Unknown';
+  const startStr = start ? <DateText date={start} /> : 'Unknown';
+  const endStr = end ? <DateText date={end} /> : 'Unknown';
   const running = isEventRunning(event);
   // A banner's own run dates, which can differ from its event's — absent in data
   // scraped before they were added, in which case the range is simply omitted.
@@ -204,7 +205,7 @@ export function Event({
             </div>
             {bannerDates?.start && bannerDates.end && (
               <div className="ak-event-banner-date">
-                {bannerDates.start.toLocaleDateString()} - {bannerDates.end.toLocaleDateString()}
+                <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />
                 {bannerDates.estimated && (
                   <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
                     Not yet confirmed for Global — based on this banner&apos;s CN dates and how long

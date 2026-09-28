@@ -1,4 +1,5 @@
 import React from 'react';
+import { DateText } from '../DateText';
 import { InfoButton } from '../InfoButton';
 import { Orundum } from '../Orundum';
 import { Breakdown } from '../Breakdown';
@@ -28,9 +29,15 @@ export function TotalOrundum({
       <div className="ak-total-orundum">
         <strong>
           <InfoButton
-            label={`Total ${
-              latestEventStart ? `by ${latestEventStart.toLocaleDateString()}` : 'now'
-            }`}
+            label={
+              latestEventStart ? (
+                <>
+                  Total by <DateText date={latestEventStart} />
+                </>
+              ) : (
+                'Total now'
+              )
+            }
           >
             <Breakdown
               items={['Events', 'Daily', 'Owned']}

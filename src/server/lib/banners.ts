@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import { parseDateRange } from './dateRange.js';
+import { operatorNameKey } from './sparkCost.js';
 import type { BannerDateIndex, BannerOperator, BannerType, RawBanner } from '../types.js';
 
 const SECTION_TYPES: Record<string, BannerType> = {
@@ -344,7 +345,33 @@ function seriesStoreOperators(
   };
 }
 
+// Whether each operator on each banner is limited, from its {{Banners cell}}'s
+// `|limited =` codes (1 debuts here, 2 returns — both limited; 0 isn't), keyed like
+// parseBannerTypesFromWikitext and then by operatorNameKey. The wiki marks this per
+// banner, so it's right even for a brand-new operator whose own page isn't categorized
+// yet. Cells without codes (crossovers leave the field empty) are left out.
+function parseBannerLimitedFromWikitext(
+  wikitext: string | null | undefined
+): Record<string, Record<string, boolean>> {
+  const limited: Record<string, Record<string, boolean>> = {};
+  for (const { keys, field } of bannerCells(wikitext)) {
+    const codes = field('limited')
+      .split(',')
+      .map((c) => c.trim());
+    if (!codes.some(Boolean)) continue;
+    const byOperator: Record<string, boolean> = {};
+    field('operators')
+      .split(',')
+      .forEach((name, i) => {
+        if (name.trim() && codes[i]) byOperator[operatorNameKey(name)] = codes[i] !== '0';
+      });
+    for (const key of keys) limited[key] = byOperator;
+  }
+  return limited;
+}
+
 export {
+  parseBannerLimitedFromWikitext,
   parseSeriesBanners,
   seriesStoreOperators,
   parseBannersPage,

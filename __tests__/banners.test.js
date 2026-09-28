@@ -7,6 +7,7 @@ import {
   parseBannerTypesFromWikitext,
   bannerWikiType,
   parseSeriesBanners,
+  parseBannerLimitedFromWikitext,
   seriesStoreOperators,
   parseBannerTimesFromWikitext,
   bannerLookup,
@@ -338,5 +339,23 @@ describe('parseSeriesBanners / seriesStoreOperators', () => {
 
   test('null for a banner outside the Limited series', () => {
     expect(seriesStoreOperators({ name: 'Some Standard Banner' }, series)).toBeNull();
+  });
+});
+
+describe('parseBannerLimitedFromWikitext', () => {
+  test("reads each operator's limited code, and skips cells without codes", () => {
+    const limited = parseBannerLimitedFromWikitext(
+      [
+        // As on the wiki: Closure is a new standard operator on this Limited banner.
+        "{{Banners cell |type = celebration |name = Sealed With Time |operators = Closure, Kal'tsit - Esperanta, Wiš'adel |limited = 0,1,2}}",
+        '{{Banners cell |type = crossover |name = Hunters of the Umbral Wilds |operators = Zinogre S Catapult |limited = }}',
+      ].join('\n')
+    );
+    expect(bannerWikiType({ name: 'Sealed With Time' }, limited)).toEqual({
+      closure: false,
+      kaltsitesperanta: true,
+      wisadel: true,
+    });
+    expect(bannerWikiType({ name: 'Hunters of the Umbral Wilds' }, limited)).toBeNull();
   });
 });

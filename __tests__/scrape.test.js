@@ -518,6 +518,33 @@ describe('scrapeEvents', () => {
     });
   });
 
+  test("trusts the banner page's limited marking over the operator page's categories", async () => {
+    // No "obtainable through" categories — what a brand-new operator's page looks like,
+    // which the category check alone reads as limited.
+    mockFetchOperatorCategories.mockResolvedValue([]);
+    mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
+    mockFetchBannersPageWikitext.mockResolvedValue(
+      '{{Banners cell |type = carnival |name = Test Banner |operators = Test Operator |limited = 0}}'
+    );
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: null,
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+      },
+    ]);
+
+    await scrapeEvents();
+
+    expect(lastSavedEvents()[0].banner.operators[0]).toMatchObject({
+      name: 'Test Operator',
+      limited: false,
+      sparkCost: null,
+    });
+  });
+
   describe('spark discounts named on the event page', () => {
     const discountPage = (name) => ({
       parse: {

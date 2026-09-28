@@ -34,14 +34,18 @@ function saveOperatorCache(cache: OperatorCache): void {
 // loadOperatorCache) to avoid re-fetching operators already resolved in a past run.
 // Mutates `cache` with any newly-resolved entry — but only on a successful fetch.
 // A failed fetch (fetchOperatorCategories returns null) is NOT cached: caching a
-// guess from a transient network error would permanently mislabel the operator,
-// since a cache hit short-circuits before ever fetching again.
+// guess from a transient network error would permanently mislabel the operator.
+// Only "not limited" is final: an operator's page keeps its "obtainable through"
+// category once added. "Limited" is re-checked every run, because it's also what a
+// brand-new operator's still-uncategorized page looks like (Zima the Raging Tide was
+// cached as limited until its page gained "Standard Headhunting Operators").
 async function resolveOperatorLimited(name: string, cache: OperatorCache): Promise<boolean> {
-  if (Object.prototype.hasOwnProperty.call(cache, name)) return cache[name];
+  const cached = Object.prototype.hasOwnProperty.call(cache, name) ? cache[name] : undefined;
+  if (cached === false) return false;
   const categories = await fetchOperatorCategories(name);
   if (categories == null) {
     console.error('Failed to fetch categories for operator', name, '- leaving uncached');
-    return false;
+    return cached ?? false;
   }
   const limited = isLimitedFromCategories(categories);
   cache[name] = limited;

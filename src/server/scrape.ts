@@ -26,6 +26,7 @@ import {
   bannerLookup,
   parseSeriesBanners,
   seriesStoreOperators,
+  parseBannerLimitedFromWikitext,
 } from './lib/banners.js';
 import {
   checkBannerFreePulls,
@@ -431,8 +432,10 @@ export async function scrapeEvents(): Promise<void> {
   // Each banner's exact kind (festival, crossover, special…), for the free-pull rules.
   const bannerTypes = Object.assign({}, ...bannerWikitexts.map(parseBannerTypesFromWikitext));
   const bannerTimes = Object.assign({}, ...bannerWikitexts.map(parseBannerTimesFromWikitext));
+  const bannerLimited = Object.assign({}, ...bannerWikitexts.map(parseBannerLimitedFromWikitext));
   for (const banner of banners) {
     banner.wikiType = bannerWikiType(banner, bannerTypes);
+    banner.limitedByOperator = bannerLookup(banner, bannerLimited);
     Object.assign(banner, bannerLookup(banner, bannerTimes));
   }
   const { byGlobalStart: bannerByGlobalStart, byCnStart: bannerByCnStart } =
@@ -582,7 +585,14 @@ export async function scrapeEvents(): Promise<void> {
         const debutInfo = operatorDebutCache[op.name as string];
         const debutObj = debutInfo && typeof debutInfo === 'object' ? debutInfo : null;
         const isDebutingOnThisEvent = debutObj?.event === event.name;
-        const limited = operatorCache[op.name as string] ?? false;
+        // The banner page's own per-operator marking when it has one; otherwise the
+        // operator page's categories (see resolveOperatorLimited), which a brand-new
+        // operator's page doesn't have yet — that marked new standard operators
+        // (e.g. Closure on Sealed With Time) as limited.
+        // Only a Limited banner can feature limited operators at all.
+        const limited =
+          matchedBanner.limitedByOperator?.[operatorNameKey(op.name as string)] ??
+          (sparkEligible && (operatorCache[op.name as string] ?? false));
         // Spark redemption is a limited-exclusive perk — a standard/guest operator
         // featured on an otherwise-Limited banner never has a spark cost, regardless
         // of the banner's own sparkEligible flag.

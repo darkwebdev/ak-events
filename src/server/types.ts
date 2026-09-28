@@ -77,6 +77,9 @@ export interface RawBanner {
   // The wiki's own kind for this banner (festival, crossover, special…), from the
   // banner pages' wikitext — see parseBannerTypesFromWikitext. Keys bannerRules.ts.
   wikiType?: string | null;
+  // Whether each of its operators is limited, keyed by operatorNameKey, where the
+  // banner pages' wikitext says — see parseBannerLimitedFromWikitext.
+  limitedByOperator?: Record<string, boolean> | null;
   // Exact Global start/end (ISO), where the banner page's wikitext gives times.
   globalStartAt?: string | null;
   globalEndAt?: string | null;

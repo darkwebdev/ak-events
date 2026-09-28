@@ -58,7 +58,27 @@ describe('resolveOperatorLimited', () => {
     expect(mockFetchOperatorCategories).toHaveBeenCalledTimes(1);
   });
 
-  test('reuses a cached value without fetching again', async () => {
+  test('rechecks a cached "limited", which a new operator\'s page gets categorized out of', async () => {
+    mockFetchOperatorCategories.mockResolvedValue(['Operator', 'Standard_Headhunting_Operators']);
+    const cache = { 'Zima the Raging Tide': true };
+
+    const limited = await resolveOperatorLimited('Zima the Raging Tide', cache);
+
+    expect(limited).toBe(false);
+    expect(cache['Zima the Raging Tide']).toBe(false);
+  });
+
+  test('keeps a cached "limited" when the recheck fails', async () => {
+    mockFetchOperatorCategories.mockResolvedValue(null);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const cache = { Pepe: true };
+
+    expect(await resolveOperatorLimited('Pepe', cache)).toBe(true);
+    expect(cache.Pepe).toBe(true);
+    vi.restoreAllMocks();
+  });
+
+  test('reuses a cached "not limited" without fetching again', async () => {
     const cache = { Mudrock: false };
 
     const limited = await resolveOperatorLimited('Mudrock', cache);

@@ -37,6 +37,14 @@ export function InfoButton({ children, title, label }: InfoButtonProps) {
     ],
     whileElementsMounted: autoUpdate,
     placement: 'bottom',
+    // `position: fixed` rather than the default `absolute`: an absolutely positioned
+    // popover counts toward its scroll container's overflow, so one opened near the
+    // edge of the independently-scrolling sidebar (.ak-aside-scroll, whose
+    // `overflow-y: auto` also makes its x-axis scrollable) made that sidebar grow a
+    // horizontal scrollbar for as long as it showed. A fixed element doesn't count
+    // toward any ancestor's overflow, isn't clipped by it either, and autoUpdate still
+    // repositions it when that ancestor scrolls.
+    strategy: 'fixed',
   });
   const hover = useHover(context, { delay: { open: 50, close: 100 } });
   const click = useClick(context);

@@ -1,0 +1,1 @@
+import{j as n}from"./jsx-runtime-vEF3Pvl4.js";function e({className:r}){return n.jsxs("svg",{className:`ak-play-icon${r?` ${r}`:""}`,viewBox:"0 0 16 16",role:"img","aria-label":"Currently running",children:[n.jsx("title",{children:"Currently running"}),n.jsx("path",{d:"M4 2.5v11l10-5.5z"})]})}export{e as P};

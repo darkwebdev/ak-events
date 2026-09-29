@@ -1,0 +1,5 @@
+import{j as r}from"./jsx-runtime-ClxbuBi0.js";import"./iframe-C0MbBWNn.js";import"./preload-helper-C1FmrZbK.js";function o({message:u}){return r.jsx("div",{className:"ak-toast",role:"status","aria-live":"polite",children:u})}const g={title:"Components/Toast",component:o};function e(){return r.jsx(o,{message:"2 new events added"})}function t(){return r.jsx(o,{message:"New event: Stronghold Protocol Alliance Part 2"})}var s,a,n;e.parameters={...e.parameters,docs:{...(s=e.parameters)==null?void 0:s.docs,source:{originalSource:`function Default() {
+  return <Toast message="2 new events added" />;
+}`,...(n=(a=e.parameters)==null?void 0:a.docs)==null?void 0:n.source}}};var c,i,l;t.parameters={...t.parameters,docs:{...(c=t.parameters)==null?void 0:c.docs,source:{originalSource:`function SingleEvent() {
+  return <Toast message="New event: Stronghold Protocol Alliance Part 2" />;
+}`,...(l=(i=t.parameters)==null?void 0:i.docs)==null?void 0:l.source}}};const f=["Default","SingleEvent"];export{e as Default,t as SingleEvent,f as __namedExportsOrder,g as default};

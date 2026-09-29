@@ -1,0 +1,1 @@
+import{r as t}from"./iframe-C0MbBWNn.js";function a(e=6e4){const[r,n]=t.useState(()=>new Date);return t.useEffect(()=>{const o=setInterval(()=>n(new Date),e);return()=>clearInterval(o)},[e]),r}export{a as u};

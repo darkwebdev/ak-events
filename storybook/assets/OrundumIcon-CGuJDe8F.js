@@ -1,0 +1,1 @@
+import{j as o}from"./jsx-runtime-Bti7MDco.js";import{n as m}from"./images-Dzy9b8zS.js";function i({className:r}){return o.jsx("img",{className:`ak-orundum-icon${r?` ${r}`:""}`,src:m("/images/icon-orundum-red.svg")??void 0,alt:"Orundum"})}export{i as O};

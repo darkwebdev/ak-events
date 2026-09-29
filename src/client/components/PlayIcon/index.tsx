@@ -5,8 +5,8 @@ interface PlayIconProps {
   className?: string;
 }
 
-// Marks an event that's currently running (today falls within its start/end range —
-// see isEventRunning in utils/dates.ts) — an inline SVG rather than a static asset
+// Marks an event or banner that's currently running, before its date range (see
+// isEventRunning in utils/dates.ts) — an inline SVG rather than a static asset
 // like the other icons here, since a plain triangle needs no artwork and this way it
 // picks up currentColor instead of a baked-in fill.
 export function PlayIcon({ className }: PlayIconProps) {

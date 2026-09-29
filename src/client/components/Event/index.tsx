@@ -21,6 +21,7 @@ import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { IntCertsIcon } from '../IntCertsIcon';
 import { PlayIcon } from '../PlayIcon';
+import { EndedIcon } from '../EndedIcon';
 import { DateText } from '../DateText';
 import { Countdown } from '../Countdown';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
@@ -109,6 +110,7 @@ export function Event({
   const now = new Date();
   const bannerRunning =
     !!bannerStartAt && !!bannerEndAt && bannerStartAt <= now && now < bannerEndAt;
+  const bannerEnded = !!bannerEndAt && now >= bannerEndAt;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
 
   return (
@@ -133,10 +135,7 @@ export function Event({
       <div className="ak-event-row">
         <div className="ak-event">
           <div className="ak-event-title">
-            <span className="ak-event-name">
-              {running && <PlayIcon />}
-              {name}
-            </span>
+            <span className="ak-event-name">{name}</span>
             {type && <span className="ak-event-type">{type}</span>}
           </div>
           {image &&
@@ -154,6 +153,7 @@ export function Event({
             })()}
           <div className="ak-event-meta">
             <div className="ak-event-date">
+              {running && <PlayIcon />}
               {startStr} - {endStr}
               {datesPredicted && (
                 <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
@@ -244,7 +244,6 @@ export function Event({
           <div className="ak-event-banner">
             <div className="ak-event-banner-header">
               <span className="ak-event-banner-name">
-                {bannerRunning && <PlayIcon />}
                 {banner.name === name ? 'Banner' : `Banner: ${banner.name}`}
               </span>
             </div>
@@ -272,6 +271,8 @@ export function Event({
             ) : null}
             {bannerDates?.start && bannerDates.end && (
               <div className="ak-event-banner-date">
+                {bannerRunning && <PlayIcon />}
+                {bannerEnded && <EndedIcon />}
                 <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />
                 {bannerDates.estimated && (
                   <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>

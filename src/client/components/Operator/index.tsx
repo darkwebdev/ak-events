@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { normalizeImageSrc } from '../../utils/images.js';
 import { SparkIcon } from './SparkIcon.jsx';
 import type { ResolvedBannerOperator } from '../../types.js';
+import { OwnedOperatorsContext } from '../../ownedOperators.js';
 import './index.css';
 
 interface OperatorProps {
@@ -9,7 +10,11 @@ interface OperatorProps {
 }
 
 export function Operator({ operator }: OperatorProps) {
-  const { name, star, class: opClass, limited, icon, sparkCost } = operator;
+  const { name, charId, star, class: opClass, limited, icon, sparkCost } = operator;
+  // The linked account's potential rank for this operator (0 = Potential 1), if owned.
+  const owned = useContext(OwnedOperatorsContext);
+  const potentialRank = charId && owned ? owned[charId] : undefined;
+  const isOwned = potentialRank != null;
   const src = icon ? normalizeImageSrc(icon) : null;
   // A 6★ operator normally costs 300 Headhunting Data Contracts to spark (the plain
   // LIMITED yellow); 200 marks one currently discounted by the wiki's rotating
@@ -25,6 +30,7 @@ export function Operator({ operator }: OperatorProps) {
     star ? `${star}★` : null,
     opClass,
     sparkCost != null ? `Spark at ${sparkCost}` : null,
+    isOwned ? `Owned · Potential ${potentialRank + 1}` : null,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -32,6 +38,7 @@ export function Operator({ operator }: OperatorProps) {
   const badgeClassName = [
     'ak-operator-badge',
     limited && 'limited',
+    isOwned && 'owned',
     // Lets the icon's own border color match the tag's color below it (see
     // .ak-operator-badge.spark-200/.spark-75 in index.css) — without this, a
     // reduced-cost operator's border stayed the plain LIMITED yellow while its tag
@@ -43,6 +50,11 @@ export function Operator({ operator }: OperatorProps) {
 
   return (
     <div className={badgeClassName} title={title}>
+      {isOwned && (
+        <span className="ak-operator-owned" aria-label="Owned">
+          ✓
+        </span>
+      )}
       {src ? (
         <img className="ak-operator-icon" src={src} alt={name} />
       ) : (

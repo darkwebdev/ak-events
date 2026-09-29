@@ -15,6 +15,7 @@ import { EventsList } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
 import { Header } from './components/Header';
 import { Toast } from './components/Toast';
+import { OwnedOperatorsContext, type OwnedOperators } from './ownedOperators.js';
 
 import defaultSettings from './settings.json';
 import defaultPlayerStatus from './playerStatus.json';
@@ -71,6 +72,13 @@ export default function App() {
     defaultPlayerStatus
   );
   const [arkAuth, setArkAuth] = useStorage<ArkAuth | null>('ak-events-arknights-auth', null);
+  // The linked account's roster as last fetched, for marking owned operators on
+  // banners — kept across reloads like the rest of the account snapshot, since
+  // fetching again logs the game session out.
+  const [ownedOperators, setOwnedOperators] = useStorage<OwnedOperators | null>(
+    'ak-events-arknights-roster',
+    null
+  );
   // Whether the user has opted in to counting a rerun's Intelligence Certificates
   // (event.intCerts, a scraped maximum — see extractIntCertsFromHtml on the server)
   // toward its Orundum total. Keyed by event name; only reruns with scraped data
@@ -141,6 +149,7 @@ export default function App() {
     updatePlayerStatus('orundum', data.orundum);
     updatePlayerStatus('op', data.originitePrime);
     updatePlayerStatus('hhPermits', data.headhuntingPermits);
+    setOwnedOperators(data.roster);
   };
 
   const toggleIntCertsIncluded = (eventName: string, checked: boolean) => {
@@ -234,12 +243,14 @@ export default function App() {
       <Header totalPulls={pullsFromOrundum(totalOrundum)} />
 
       <div className="ak-main-content">
-        <EventsList
-          filteredEvents={futureEvents}
-          selectedEvents={selectedEvents}
-          onEventToggle={handleEventToggle}
-          onToggleIntCerts={toggleIntCertsIncluded}
-        />
+        <OwnedOperatorsContext.Provider value={accountImportEnabled ? ownedOperators : null}>
+          <EventsList
+            filteredEvents={futureEvents}
+            selectedEvents={selectedEvents}
+            onEventToggle={handleEventToggle}
+            onToggleIntCerts={toggleIntCertsIncluded}
+          />
+        </OwnedOperatorsContext.Provider>
 
         <div className="ak-aside-column">
           <div className="ak-aside-scroll" ref={asideScrollRef}>
@@ -248,6 +259,7 @@ export default function App() {
                 authState={arkAuth}
                 setAuthState={setArkAuth}
                 onFetched={handleAccountFetched}
+                onLogout={() => setOwnedOperators(null)}
               />
             )}
 

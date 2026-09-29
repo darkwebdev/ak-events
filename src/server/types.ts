@@ -57,6 +57,9 @@ export interface SparkDiscount {
 
 export interface ResolvedBannerOperator {
   name: string;
+  // The game's own id, from its character table — matches an account's roster, so the
+  // client can mark operators the player owns. Absent for one not yet in the Global game.
+  charId?: string | null;
   star: number | null;
   class: string | null;
   limited: boolean;

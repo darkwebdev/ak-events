@@ -17,6 +17,8 @@ interface ArknightsAccountProps {
   authState: ArkAuth | null;
   setAuthState: Dispatch<SetStateAction<ArkAuth | null>>;
   onFetched: (data: FetchAccountDataResult) => void;
+  // Disconnecting the account — for clearing account-specific data (its roster).
+  onLogout?: () => void;
 }
 
 // When the account data was last fetched, as "Updated 5 minutes ago" (refreshed every
@@ -40,7 +42,12 @@ function LastUpdated({ date }: { date: Date }) {
 // `{ channelUid, yostarToken, server } | null`, persisted by the caller (via
 // useStorage) so a successful login survives a page reload; this component only
 // owns the transient email/code form state and in-flight/error UI.
-export function ArknightsAccount({ authState, setAuthState, onFetched }: ArknightsAccountProps) {
+export function ArknightsAccount({
+  authState,
+  setAuthState,
+  onFetched,
+  onLogout,
+}: ArknightsAccountProps) {
   const connected = !!authState;
   const [pendingStep, setPendingStep] = useState<PendingStep>('email'); // only used while !connected
   const [email, setEmail] = useState('');
@@ -115,6 +122,7 @@ export function ArknightsAccount({ authState, setAuthState, onFetched }: Arknigh
     // manually-entered value.
     setAuthState(null);
     setLinkedAccount(null);
+    onLogout?.();
     setPendingStep('email');
     setEmail('');
     setError(null);

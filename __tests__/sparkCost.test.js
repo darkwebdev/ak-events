@@ -103,7 +103,12 @@ describe('operatorInfoFrom / operatorNameKey', () => {
   });
 
   test("reads each operator's game spelling, rarity and class", () => {
-    expect(info.get(operatorNameKey('W'))).toEqual({ name: 'W', star: 6, class: 'Sniper' });
+    expect(info.get(operatorNameKey('W'))).toEqual({
+      charId: 'char_113_cqbw',
+      name: 'W',
+      star: 6,
+      class: 'Sniper',
+    });
   });
 
   test('matches a name spelled without its accent', () => {

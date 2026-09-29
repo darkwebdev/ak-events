@@ -1,4 +1,6 @@
 .ak-operator-badge {
+  /* Anchors the owned check (.ak-operator-owned) to the icon's corner. */
+  position: relative;
   /* Column flow, not an absolutely-positioned tag hanging off a fixed-height box: the
      tag is a normal child directly below the icon, so it just contributes to the
      badge's own height like anything else — no manual top offset, no width-matching
@@ -106,4 +108,24 @@
 .ak-operator-badge.spark-75 .ak-operator-icon,
 .ak-operator-badge.spark-75 .ak-operator-icon-fallback {
   border-color: #b85c1a;
+}
+
+/* An operator the linked account owns: a check in the icon's top-right corner. */
+.ak-operator-owned {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ak-accent);
+  color: var(--ak-bg);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 0 1.5px var(--ak-surface);
 }

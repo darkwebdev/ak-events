@@ -1,6 +1,7 @@
 import React from 'react';
 import { Operator } from './index.jsx';
 import type { ResolvedBannerOperator } from '../../types.js';
+import { OwnedOperatorsContext } from '../../ownedOperators.js';
 
 interface OperatorArgs {
   name: string;
@@ -77,3 +78,27 @@ export const ReducedSparkCost = {
 export const FiveStarSparkable = {
   args: { name: 'Crackborne', star: 5, opClass: 'Defender', limited: true, sparkCost: '75' },
 };
+
+const OWNED_W = { char_113_cqbw: 2 };
+
+// With a linked account whose roster includes the operator (here at Potential 3): a
+// check in the icon's corner, and "Owned · Potential 3" in the tooltip.
+export function Owned() {
+  const operator: ResolvedBannerOperator = {
+    name: 'W',
+    charId: 'char_113_cqbw',
+    star: 6,
+    class: 'Sniper',
+    limited: true,
+    icon: null,
+    sparkCost: 200,
+  };
+  return (
+    <OwnedOperatorsContext.Provider value={OWNED_W}>
+      <div style={{ padding: '24px', display: 'flex', gap: '12px' }}>
+        <Operator operator={operator} />
+        <Operator operator={{ ...operator, name: 'Not owned', charId: 'char_other' }} />
+      </div>
+    </OwnedOperatorsContext.Provider>
+  );
+}

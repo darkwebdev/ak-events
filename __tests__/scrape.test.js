@@ -463,6 +463,8 @@ describe('scrapeEvents', () => {
       operators: [
         {
           name: 'Test Operator',
+          // No game character table in this test, so no id to mark ownership by.
+          charId: null,
           star: 6,
           class: 'Guard',
           limited: true,
@@ -583,6 +585,7 @@ describe('scrapeEvents', () => {
       expect(banner.storeOperators).toEqual([
         {
           name: 'Old Operator',
+          charId: null,
           star: 6,
           class: null,
           limited: true,
@@ -644,6 +647,7 @@ describe('scrapeEvents', () => {
         {
           // The game's spelling, not the wikitext's unaccented one.
           name: 'Eyjafjalla the Hvít Aska',
+          charId: 'char_eyja',
           star: 6,
           class: 'Caster',
           limited: true,

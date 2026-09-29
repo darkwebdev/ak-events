@@ -615,6 +615,7 @@ export async function scrapeEvents(): Promise<void> {
         }
         return {
           name: op.name as string,
+          charId: operatorInfo.get(operatorNameKey(op.name as string))?.charId ?? null,
           star: op.star,
           class: op.class,
           limited,
@@ -656,6 +657,7 @@ export async function scrapeEvents(): Promise<void> {
         }
         return {
           name,
+          charId: info?.charId ?? null,
           star,
           class: info?.class ?? null,
           limited: true,

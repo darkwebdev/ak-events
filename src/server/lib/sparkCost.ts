@@ -78,6 +78,8 @@ function operatorNameKey(name: string): string {
 }
 
 interface OperatorInfo {
+  // The game's own id (e.g. "char_113_cqbw" for W) — what an account's roster lists.
+  charId: string;
   // The game's own spelling (e.g. "Eyjafjalla the Hvít Aska"), which the wiki's icon
   // file names use too.
   name: string;
@@ -90,11 +92,12 @@ interface OperatorInfo {
 // non-rate-up stock).
 function operatorInfoFrom(characters: CharacterTable | null): Map<string, OperatorInfo> {
   const info = new Map<string, OperatorInfo>();
-  for (const character of Object.values(characters ?? {})) {
+  for (const [charId, character] of Object.entries(characters ?? {})) {
     const profession = String(character.profession ?? '');
     if (!CLASS_BY_PROFESSION[profession]) continue; // tokens, traps
     const star = Number(String(character.rarity ?? '').match(/TIER_(\d)/)?.[1]) || null;
     info.set(operatorNameKey(character.name), {
+      charId,
       name: character.name,
       star,
       class: CLASS_BY_PROFESSION[profession],

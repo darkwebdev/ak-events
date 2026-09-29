@@ -86,6 +86,9 @@ export interface FetchAccountDataResult {
   orundum: number;
   originitePrime: number;
   headhuntingPermits: number;
+  // Every owned operator's potential rank (0 = Potential 1 … 5 = maxed), keyed by the
+  // game's operator id — see OwnedOperators.
+  roster: Record<string, number>;
 }
 
 interface FetchAccountDataResponse {
@@ -100,11 +103,13 @@ interface FetchAccountDataResponse {
     originitePrime?: number | null;
     headhuntingPermits?: number | null;
   } | null;
+  myRoster?: { charId?: string | null; potentialRank?: number | null }[] | null;
 }
 
 // Fetches the linked account's nickname/level/uid/avatar (for display, confirming
-// which account is connected) and current Orundum / Originite Prime / Headhunting
-// Permit counts, using a previously obtained { channelUid, yostarToken, server }.
+// which account is connected), current Orundum / Originite Prime / Headhunting
+// Permit counts, and its operator roster — all in one request, since every
+// authenticated request logs the game session out, using a previously obtained { channelUid, yostarToken, server }.
 // avatarUrl comes straight from myStatus as a ready-to-use image URL (resolved
 // server-side from the account's own chosen portrait — this only works for the
 // logged-in user's own avatar, not an arbitrary player id) and may be null if the
@@ -127,6 +132,10 @@ export async function fetchAccountData({
         originitePrime
         headhuntingPermits
       }
+      myRoster(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
+        charId
+        potentialRank
+      }
     }`,
     { channelUid, yostarToken, server }
   );
@@ -137,5 +146,10 @@ export async function fetchAccountData({
     orundum: data.myInventory?.orundum ?? 0,
     originitePrime: data.myInventory?.originitePrime ?? 0,
     headhuntingPermits: data.myInventory?.headhuntingPermits ?? 0,
+    roster: Object.fromEntries(
+      (data.myRoster ?? [])
+        .filter((op) => op.charId)
+        .map((op) => [op.charId as string, op.potentialRank ?? 0])
+    ),
   };
 }

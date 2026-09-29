@@ -102,6 +102,13 @@ export function Event({
   // calendar dates, counted in whole days.
   const exactEvent = event.globalStartAt && event.globalEndAt;
   const exactBanner = banner?.globalStartAt && banner.globalEndAt;
+  const bannerStartAt = exactBanner ? new Date(banner.globalStartAt as string) : bannerDates?.start;
+  const bannerEndAt = exactBanner ? new Date(banner.globalEndAt as string) : bannerDates?.end;
+  // Same moment the banner's countdown switches from "Starts in" to "Ends in" and on to
+  // "Ended" (see getCountdown), so the icon and the countdown always agree.
+  const now = new Date();
+  const bannerRunning =
+    !!bannerStartAt && !!bannerEndAt && bannerStartAt <= now && now < bannerEndAt;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
 
   return (
@@ -237,6 +244,7 @@ export function Event({
           <div className="ak-event-banner">
             <div className="ak-event-banner-header">
               <span className="ak-event-banner-name">
+                {bannerRunning && <PlayIcon />}
                 {banner.name === name ? 'Banner' : `Banner: ${banner.name}`}
               </span>
             </div>
@@ -272,8 +280,8 @@ export function Event({
                   </InfoButton>
                 )}
                 <Countdown
-                  start={exactBanner ? new Date(banner.globalStartAt as string) : bannerDates.start}
-                  end={exactBanner ? new Date(banner.globalEndAt as string) : bannerDates.end}
+                  start={bannerStartAt ?? null}
+                  end={bannerEndAt ?? null}
                   exact={!!exactBanner}
                 />
               </div>

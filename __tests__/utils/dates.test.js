@@ -7,6 +7,7 @@ let parseDate;
 let formatLongDate;
 let toIsoDate;
 let formatTimeAgo;
+let formatEndedAgo;
 let getCountdown;
 beforeAll(async () => {
   const mod = await import('../../src/client/utils/dates.js');
@@ -19,6 +20,7 @@ beforeAll(async () => {
   formatLongDate = mod.formatLongDate;
   toIsoDate = mod.toIsoDate;
   formatTimeAgo = mod.formatTimeAgo;
+  formatEndedAgo = mod.formatEndedAgo;
   getCountdown = mod.getCountdown;
 });
 
@@ -187,5 +189,19 @@ describe('formatTimeAgo', () => {
     expect(ago(3 * 60 * MIN)).toBe('3 hours ago');
     expect(ago(26 * 60 * MIN)).toBe('yesterday');
     expect(ago(12 * 24 * 60 * MIN)).toBe('12 days ago');
+  });
+});
+
+describe('formatEndedAgo', () => {
+  const now = new Date(2026, 8, 29, 15, 0);
+
+  test('an exact end reads like formatTimeAgo', () => {
+    expect(formatEndedAgo(new Date(2026, 8, 29, 12, 0), true, now, 'en')).toBe('3 hours ago');
+  });
+
+  test('a calendar-date end counts whole days, never hours', () => {
+    expect(formatEndedAgo(new Date(2026, 8, 29), false, now, 'en')).toBe('today');
+    expect(formatEndedAgo(new Date(2026, 8, 28), false, now, 'en')).toBe('yesterday');
+    expect(formatEndedAgo(new Date(2026, 8, 3), false, now, 'en')).toBe('26 days ago');
   });
 });

@@ -9,3 +9,7 @@
   color: var(--ak-accent);
   font-weight: 500;
 }
+
+.ak-countdown-ended {
+  font-style: italic;
+}

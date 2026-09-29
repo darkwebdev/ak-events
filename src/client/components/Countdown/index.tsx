@@ -1,6 +1,11 @@
 import React from 'react';
 import { useNow } from '../../hooks/useNow.js';
-import { getCountdown, formatLongDate, formatLongDateTime } from '../../utils/dates.js';
+import {
+  getCountdown,
+  formatEndedAgo,
+  formatLongDate,
+  formatLongDateTime,
+} from '../../utils/dates.js';
 import './index.css';
 
 interface CountdownProps {
@@ -11,18 +16,23 @@ interface CountdownProps {
   exact: boolean;
 }
 
-// "Starts in 3 days" / "Ends in 2h 15m", ticking every minute; nothing once it's over.
-// The exact moment is in the native tooltip.
+// "Starts in 3 days" / "Ends in 2h 15m", then "Ended 3 days ago", ticking every
+// minute. The exact moment is in the native tooltip.
 export function Countdown({ start, end, exact }: CountdownProps) {
   const now = useNow();
   const countdown = getCountdown(start, end, exact, now);
-  if (!countdown) return null;
+  const tooltip = (date: Date) => (exact ? formatLongDateTime(date) : formatLongDate(date));
+  if (!countdown) {
+    if (!end || now < end) return null;
+    return (
+      <span className="ak-countdown ak-countdown-ended" title={tooltip(end)}>
+        Ended {formatEndedAgo(end, exact, now)}
+      </span>
+    );
+  }
   const { phase, target, remaining } = countdown;
   return (
-    <span
-      className={`ak-countdown ak-countdown-${phase}`}
-      title={exact ? formatLongDateTime(target) : formatLongDate(target)}
-    >
+    <span className={`ak-countdown ak-countdown-${phase}`} title={tooltip(target)}>
       {phase === 'starts' ? 'Starts' : 'Ends'} in {remaining}
     </span>
   );

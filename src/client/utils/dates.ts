@@ -232,3 +232,14 @@ export function formatTimeAgo(date: Date, now: Date, locale?: string): string {
   if (hours < 24) return format.format(-hours, 'hour');
   return format.format(-Math.floor(hours / 24), 'day');
 }
+
+/**
+ * How long ago something ended: formatTimeAgo for an exact moment; for a calendar date
+ * (read as its midnight), whole days only — "today", "yesterday", "26 days ago" —
+ * since hours counted from a guessed midnight would be wrong.
+ */
+export function formatEndedAgo(end: Date, exact: boolean, now: Date, locale?: string): string {
+  if (exact) return formatTimeAgo(end, now, locale);
+  const days = Math.round((startOfDay(now).getTime() - startOfDay(end).getTime()) / MS_PER_DAY);
+  return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-days, 'day');
+}

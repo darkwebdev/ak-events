@@ -16,10 +16,19 @@ function extractNextData(html: string | null | undefined): unknown {
   }
 }
 
+interface ArkpediaServerDates {
+  dateRange?: string | null;
+  note?: string | null;
+}
+
 interface ArkpediaPageEntry {
   name?: string;
   dateRange?: unknown;
   isPredicted?: boolean;
+  // Only in the /schedule page's full-history `events`: per-server dates, where the
+  // Global `note` is what marks an estimate now.
+  cn?: ArkpediaServerDates;
+  global?: ArkpediaServerDates;
 }
 
 interface NextDataShape {
@@ -48,15 +57,27 @@ function parseArkpediaEventsList(html: string | null | undefined): ArkpediaListE
   const pageProps = data?.props?.pageProps;
   const events = pageProps?.eventRows ?? pageProps?.events;
   if (!Array.isArray(events)) return [];
+  // The same events' per-server detail, by name. The rows' own `isPredicted` is now
+  // always false: arkpedia marks an estimated Global date only in that date's note
+  // ("ESTIMATED Global date, not officially confirmed").
+  const detail = new Map(
+    (Array.isArray(pageProps?.events) ? pageProps.events : [])
+      .filter((e) => e?.name)
+      .map((e) => [e.name as string, e] as const)
+  );
   return events
-    .filter((e): e is { name: string; dateRange: string; isPredicted?: boolean } =>
+    .filter((e): e is ArkpediaPageEntry & { name: string; dateRange: string } =>
       Boolean(e && e.name && typeof e.dateRange === 'string')
     )
-    .map((e) => ({
-      name: e.name,
-      dateStr: e.dateRange,
-      isPredicted: !!e.isPredicted,
-    }));
+    .map((e) => {
+      const { cn, global } = detail.get(e.name) ?? {};
+      return {
+        name: e.name,
+        dateStr: e.dateRange,
+        isPredicted: !!e.isPredicted || /\bestimated\b/i.test(global?.note ?? ''),
+        cnDateStr: cn?.dateRange ?? null,
+      };
+    });
 }
 
 // Every event name arkpedia.net/schedule knows about — the full history

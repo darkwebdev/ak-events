@@ -6,6 +6,12 @@ import {
 } from '../src/server/lib/gameData.js';
 
 describe('normalizeEventName', () => {
+  test("matches the wiki's rerun-page form to arkpedia's name", () => {
+    expect(normalizeEventName('Act or Die/Rerun')).toBe(
+      normalizeEventName('[Rerun] Act or Die Rerun')
+    );
+  });
+
   test('matches names that differ by punctuation and a "Part N" suffix', () => {
     expect(normalizeEventName('Stronghold Protocol: Alliance')).toBe(
       normalizeEventName('Stronghold Protocol Alliance Part 2')

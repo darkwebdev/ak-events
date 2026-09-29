@@ -5,6 +5,7 @@ import {
   getEffectiveEnd,
   getBannerDates,
   isEventRunning,
+  parseDate,
 } from '../../utils/dates.js';
 import {
   calcEventOrundum,
@@ -159,6 +160,13 @@ export function Event({
                 <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
                   Not yet confirmed for Global — a prediction based on the usual delay after this
                   event releases in China, and may shift.
+                  {event.cnStart && event.cnEnd && (
+                    <>
+                      {' '}
+                      In CN it ran <DateText date={parseDate(event.cnStart)} /> -{' '}
+                      <DateText date={parseDate(event.cnEnd)} />.
+                    </>
+                  )}
                 </InfoButton>
               )}
               <Countdown

@@ -178,6 +178,9 @@ export interface ArkpediaListEvent {
   name: string;
   dateStr: string;
   isPredicted: boolean;
+  // The CN run's dates ("YYYY/MM/DD–YYYY/MM/DD"), which the wiki's upcoming index
+  // doesn't give for CN-only events.
+  cnDateStr: string | null;
 }
 
 export interface ArkpediaFeaturedOperator {

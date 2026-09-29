@@ -22,12 +22,22 @@ describe('parseArkpediaEventsList', () => {
     const events = parseArkpediaEventsList(html);
 
     expect(events).toEqual([
-      { name: 'Confirmed Event', dateStr: '2026/08/20–2026/10/02', isPredicted: false },
-      { name: 'Predicted Event', dateStr: '2026/10/08–2026/10/22', isPredicted: true },
+      {
+        name: 'Confirmed Event',
+        dateStr: '2026/08/20–2026/10/02',
+        isPredicted: false,
+        cnDateStr: null,
+      },
+      {
+        name: 'Predicted Event',
+        dateStr: '2026/10/08–2026/10/22',
+        isPredicted: true,
+        cnDateStr: null,
+      },
     ]);
   });
 
-  test('reads eventRows on the /schedule layout, ignoring its per-server events array', () => {
+  test('reads eventRows on the /schedule layout, with the CN dates from its per-server events', () => {
     const html = wrapNextData({
       events: [
         {
@@ -50,7 +60,49 @@ describe('parseArkpediaEventsList', () => {
         name: '[Side Story] People, A People',
         dateStr: '2026/09/16–2026/09/30',
         isPredicted: false,
+        cnDateStr: '2026/04/07–2026/04/21',
       },
+    ]);
+  });
+
+  // arkpedia's rows now always say isPredicted: false; the Global note is the marker.
+  test("treats a date as estimated when arkpedia's Global note says so", () => {
+    const html = wrapNextData({
+      events: [
+        {
+          name: '[Side Story – Carnival] Till the Lands Become an Orange',
+          cn: { dateRange: '2026/08/01–2026/08/22', note: 'as the 2026 Summer Carnival event' },
+          global: {
+            dateRange: '2027/01/17–2027/02/06',
+            note: 'as the 2026 Summer Carnival event (estimated Global date, not officially confirmed)',
+          },
+        },
+        {
+          name: 'Positional Football Championship',
+          cn: { dateRange: '2026/06/08–2026/06/22', note: null },
+          global: {
+            dateRange: '2026/11/14–2026/11/28',
+            note: 'ESTIMATED Global date, not officially confirmed',
+          },
+        },
+      ],
+      eventRows: [
+        {
+          name: '[Side Story – Carnival] Till the Lands Become an Orange',
+          dateRange: '2027/01/17–2027/02/06',
+          isPredicted: false,
+        },
+        {
+          name: 'Positional Football Championship',
+          dateRange: '2026/11/14–2026/11/28',
+          isPredicted: false,
+        },
+      ],
+    });
+
+    expect(parseArkpediaEventsList(html).map((e) => [e.isPredicted, e.cnDateStr])).toEqual([
+      [true, '2026/08/01–2026/08/22'],
+      [true, '2026/06/08–2026/06/22'],
     ]);
   });
 

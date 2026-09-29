@@ -959,6 +959,51 @@ describe('scrapeEvents', () => {
     vi.doUnmock('../src/server/lib/arkpedia.js');
   });
 
+  // End to end through the real arkpedia parser, with /schedule as arkpedia serves it
+  // now: every row says isPredicted: false, and only the Global note marks an estimate.
+  test("a CN-only event gets arkpedia's estimated Global dates and CN dates, and its banner by CN date", async () => {
+    mockFetchEventsViaApi.mockResolvedValue([{ name: 'Future Event', link: null, image: null }]);
+    // Test Banner isn't dated for Global yet, only CN (2026/01/01).
+    mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml({ globalDate: '' }));
+    const nextData = {
+      props: {
+        pageProps: {
+          events: [
+            {
+              name: '[Side Story] Future Event',
+              cn: { dateRange: '2026/01/01–2026/01/15', note: null },
+              global: {
+                dateRange: '2026/07/01–2026/07/15',
+                note: 'ESTIMATED Global date, not officially confirmed',
+              },
+            },
+          ],
+          eventRows: [
+            {
+              name: '[Side Story] Future Event',
+              dateRange: '2026/07/01–2026/07/15',
+              isPredicted: false,
+            },
+          ],
+        },
+      },
+    };
+    mockFetchArkpediaEventsHtml.mockResolvedValue(
+      `<script id="__NEXT_DATA__" type="application/json">${JSON.stringify(nextData)}</script>`
+    );
+
+    await scrapeEvents();
+
+    expect(lastSavedEvents()[0]).toMatchObject({
+      name: 'Future Event',
+      datesPredicted: true,
+      globalStart: '2026-07-01',
+      cnStart: '2026-01-01',
+      cnEnd: '2026-01-15',
+      banner: expect.objectContaining({ name: 'Test Banner' }),
+    });
+  });
+
   test('still drops a confirmed-dated event with no orundum and no banner (predicted dates are the only exception)', async () => {
     mockFetchEventsViaApi.mockResolvedValue([
       {

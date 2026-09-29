@@ -313,6 +313,9 @@ export async function scrapeEvents(): Promise<void> {
       if (arkEvent) {
         event.globalDateStr = arkEvent.dateStr;
         event.datesPredicted = arkEvent.isPredicted;
+        // The CN run's dates too: shown alongside an estimate, and what the event's
+        // banner is matched by until it's listed with Global dates.
+        event.cnDateStr = arkEvent.cnDateStr;
       }
     }
   }

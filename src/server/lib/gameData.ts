@@ -17,6 +17,7 @@ function normalizeEventName(name: string | null | undefined): string {
   return name
     .replace(/\[[^\]]*\]/g, ' ')
     .replace(/[:,'’"]/g, '')
+    .replace(/\//g, ' ') // "Act or Die/Rerun" — the wiki's rerun-page form
     .replace(/\bRerun\b/gi, ' ')
     .replace(/\bPart\s*\d+\b/gi, ' ')
     .replace(/\s*-\s*(?=\s|$)/g, ' ') // a now-dangling hyphen left by stripping "Rerun"/tags around it

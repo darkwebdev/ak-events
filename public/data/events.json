@@ -339,9 +339,9 @@
     "end": "2026-11-07",
     "globalStart": "2026-10-28",
     "globalEnd": "2026-11-07",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
+    "cnStart": "2026-05-22",
+    "cnEnd": "2026-06-01",
+    "datesPredicted": true,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_The_Masses%27_Travels_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
@@ -358,9 +358,9 @@
     "end": "2026-11-21",
     "globalStart": "2026-11-07",
     "globalEnd": "2026-11-21",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
+    "cnStart": "2026-06-01",
+    "cnEnd": "2026-06-15",
+    "datesPredicted": true,
     "type": "Crossover (Side Story)",
     "image": "data/images/CN_Thunder_in_the_Azure_Dream_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
@@ -368,6 +368,51 @@
     "hhPermits": null,
     "dailyFreePulls": null,
     "bannerPermits": 10,
+    "intCerts": null,
+    "banner": {
+      "name": "Hunters of the Umbral Wilds",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Violet Mizutsune Orchid",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Violet_Mizutsune_Orchid_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Zinogre S Catapult",
+          "star": 5,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Zinogre_S_Catapult_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-06-01",
+      "cnEnd": "2026-06-15"
+    }
+  },
+  {
+    "name": "Positional Football Championship",
+    "start": "2026-11-14",
+    "end": "2026-11-28",
+    "globalStart": "2026-11-14",
+    "globalEnd": "2026-11-28",
+    "cnStart": "2026-06-08",
+    "cnEnd": "2026-06-22",
+    "datesPredicted": true,
+    "type": null,
+    "image": "data/images/CN_Positional_Football_Championship_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Positional_Football_Championship",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": null
   },
@@ -377,9 +422,9 @@
     "end": "2026-12-01",
     "globalStart": "2026-11-21",
     "globalEnd": "2026-12-01",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
+    "cnStart": "2026-06-15",
+    "cnEnd": "2026-06-25",
+    "datesPredicted": true,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
@@ -388,7 +433,267 @@
     "dailyFreePulls": null,
     "bannerPermits": null,
     "intCerts": null,
+    "banner": {
+      "name": "Sharpened by Flame Rerun",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Kirin R Yato",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Kirin_R_Yato_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Rathalos S Noir Corne",
+          "star": 5,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Rathalos_S_Noir_Corne_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-06-15",
+      "cnEnd": "2026-06-29"
+    }
+  },
+  {
+    "name": "Contingency Contract Obliteration",
+    "start": "2026-12-02",
+    "end": "2026-12-16",
+    "globalStart": "2026-12-02",
+    "globalEnd": "2026-12-16",
+    "cnStart": "2026-06-26",
+    "cnEnd": "2026-07-10",
+    "datesPredicted": true,
+    "type": null,
+    "image": "data/images/CN_Contingency_Contract_Obliteration_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Obliteration",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "Joint Operation #22",
+      "type": "Standard",
+      "sparkEligible": false,
+      "operators": [
+        {
+          "name": "Ines",
+          "star": 6,
+          "class": "Vanguard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Ines_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Ho'olheyak",
+          "star": 6,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Ho%27olheyak_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Nasti",
+          "star": 6,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Nasti_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Lemuen",
+          "star": 6,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Lemuen_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Ripresa",
+          "star": 5,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Ripresa_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Melanite",
+          "star": 5,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Melanite_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Santalla",
+          "star": 5,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Santalla_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Snow Hunter",
+          "star": 5,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Snow_Hunter_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Gracebearer",
+          "star": 5,
+          "class": "Guard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Gracebearer_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Firewhistle",
+          "star": 5,
+          "class": "Defender",
+          "limited": false,
+          "icon": "data/images/operators/60px-Firewhistle_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-06-26",
+      "cnEnd": "2026-07-10"
+    }
+  },
+  {
+    "name": "Magic and Friendship",
+    "start": "2026-12-09",
+    "end": "2026-12-30",
+    "globalStart": "2026-12-09",
+    "globalEnd": "2026-12-30",
+    "cnStart": "2026-07-03",
+    "cnEnd": "2026-07-24",
+    "datesPredicted": true,
+    "type": "Crossover event",
+    "image": "data/images/CN_Magic_and_Friendship_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Magic_and_Friendship",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
     "banner": null
+  },
+  {
+    "name": "Bolívar Diagnosed",
+    "start": "2026-12-16",
+    "end": "2026-12-23",
+    "globalStart": "2026-12-16",
+    "globalEnd": "2026-12-23",
+    "cnStart": "2026-07-10",
+    "cnEnd": "2026-07-17",
+    "datesPredicted": true,
+    "type": "Story Collection",
+    "image": "data/images/CN_Bol%C3%ADvar_Diagnosed_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Bol%C3%ADvar_Diagnosed",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "Deterministic Chaos",
+      "type": "Standard",
+      "sparkEligible": false,
+      "operators": [
+        {
+          "name": "Aphrissa",
+          "star": 6,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Aphrissa_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Pedro",
+          "star": 5,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Pedro_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Wulfenite",
+          "star": 5,
+          "class": "Specialist",
+          "limited": false,
+          "icon": "data/images/operators/60px-Wulfenite_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-07-10",
+      "cnEnd": "2026-07-24"
+    }
+  },
+  {
+    "name": "Act or Die",
+    "start": "2026-12-26",
+    "end": "2027-01-05",
+    "globalStart": "2026-12-26",
+    "globalEnd": "2027-01-05",
+    "cnStart": "2026-07-20",
+    "cnEnd": "2026-07-30",
+    "datesPredicted": true,
+    "type": "Side Story (Rerun)",
+    "image": "data/images/CN_Act_or_Die_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Act_or_Die/Rerun",
+    "origPrime": 28,
+    "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "Dithyramb Unending Rerun",
+      "type": "Standard",
+      "sparkEligible": false,
+      "operators": [
+        {
+          "name": "Tragodia",
+          "star": 6,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Tragodia_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Tippi",
+          "star": 5,
+          "class": "Specialist",
+          "limited": false,
+          "icon": "data/images/operators/60px-Tippi_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Alanna",
+          "star": 5,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Alanna_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-07-20",
+      "cnEnd": "2026-08-03"
+    }
   },
   {
     "name": "Till the Lands Become an Orange",
@@ -396,9 +701,9 @@
     "end": "2027-02-06",
     "globalStart": "2027-01-17",
     "globalEnd": "2027-02-06",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
+    "cnStart": "2026-08-01",
+    "cnEnd": "2026-08-22",
+    "datesPredicted": true,
     "type": "Side Story",
     "image": "data/images/CN_Till_the_Lands_Become_an_Orange_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Till_the_Lands_Become_an_Orange",
@@ -407,7 +712,83 @@
     "dailyFreePulls": 14,
     "bannerPermits": 10,
     "intCerts": null,
-    "banner": null
+    "banner": {
+      "name": "Trails End Winds Rest",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Angelina the Mellow Wish",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Angelina_the_Mellow_Wish_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Thumpy",
+          "star": 6,
+          "class": "Defender",
+          "limited": false,
+          "icon": "data/images/operators/60px-Thumpy_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Jacinta",
+          "star": 5,
+          "class": "Vanguard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Jacinta_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Pepe",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Pepe_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Hoshiguma the Breacher",
+          "star": 6,
+          "class": "Defender",
+          "limited": true,
+          "icon": "data/images/operators/60px-Hoshiguma_the_Breacher_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Eyjafjalla the Hvít Aska",
+          "star": 6,
+          "class": "Medic",
+          "limited": true,
+          "icon": "data/images/operators/60px-Eyjafjalla_the_Hv%C3%ADt_Aska_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "storeOperators": [
+        {
+          "name": "Ch'en the Holungday",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Ch%27en_the_Holungday_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Gavial the Invincible",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Gavial_the_Invincible_icon.png",
+          "sparkCost": 200
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-08-01",
+      "cnEnd": "2026-08-15"
+    }
   },
   {
     "name": "Ato",
@@ -415,9 +796,9 @@
     "end": "2027-02-16",
     "globalStart": "2027-02-06",
     "globalEnd": "2027-02-16",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
+    "cnStart": "2026-08-22",
+    "cnEnd": "2026-09-01",
+    "datesPredicted": true,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_Ato_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Ato_Rerun",
@@ -434,9 +815,9 @@
     "end": "2027-03-04",
     "globalStart": "2027-02-19",
     "globalEnd": "2027-03-04",
-    "cnStart": null,
-    "cnEnd": null,
-    "datesPredicted": false,
+    "cnStart": "2026-09-04",
+    "cnEnd": "2026-09-18",
+    "datesPredicted": true,
     "type": "Crossover (Side Story)",
     "image": "data/images/CN_Sur_le_lac_lune_vivante_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Sur_le_lac_lune_vivante",
@@ -445,6 +826,40 @@
     "dailyFreePulls": null,
     "bannerPermits": null,
     "intCerts": null,
-    "banner": null
+    "banner": {
+      "name": "Some Evening of White and Mystic Blue",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Makoto Yuki",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Makoto_Yuki_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Yukari Takeba",
+          "star": 5,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Yukari_Takeba_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Aegis",
+          "star": 5,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Aegis_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-09-04",
+      "cnEnd": "2026-09-18"
+    }
   }
 ]

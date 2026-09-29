@@ -46,5 +46,45 @@
   "Pepe": {
     "event": "Adventure That Cannot Wait for the Sun",
     "isFestival": false
+  },
+  "Violet Mizutsune Orchid": {
+    "event": "Thunder in the Azure Dream",
+    "isFestival": false
+  },
+  "Zinogre S Catapult": {
+    "event": "Thunder in the Azure Dream",
+    "isFestival": false
+  },
+  "Kirin R Yato": {
+    "event": "A Flurry to the Flame",
+    "isFestival": false
+  },
+  "Rathalos S Noir Corne": {
+    "event": "A Flurry to the Flame",
+    "isFestival": false
+  },
+  "Thumpy": {
+    "event": "Till the Lands Become an Orange",
+    "isFestival": false
+  },
+  "Angelina the Mellow Wish": {
+    "event": "Till the Lands Become an Orange",
+    "isFestival": false
+  },
+  "Jacinta": {
+    "event": "Till the Lands Become an Orange",
+    "isFestival": false
+  },
+  "Yukari Takeba": {
+    "event": "Sur le lac lune vivante",
+    "isFestival": false
+  },
+  "Makoto Yuki": {
+    "event": "Sur le lac lune vivante",
+    "isFestival": false
+  },
+  "Aegis": {
+    "event": "Sur le lac lune vivante",
+    "isFestival": false
   }
 }

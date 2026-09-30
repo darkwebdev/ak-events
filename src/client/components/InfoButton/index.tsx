@@ -7,6 +7,7 @@ import {
   autoUpdate,
   arrow,
   FloatingArrow,
+  FloatingPortal,
   useHover,
   useClick,
   useDismiss,
@@ -83,34 +84,42 @@ export function InfoButton({ children, title, label, isolateClick, plain }: Info
         {label}
       </span>
       {isMounted && (
-        <div
-          className="info-popover"
-          ref={refs.setFloating}
-          // `floatingStyles` starts at an unpositioned default (effectively 0,0)
-          // until the arrow/flip/shift middleware actually resolve — without
-          // gating visibility on `isPositioned`, the popover (and its arrow, which
-          // depends on that same resolved position) briefly renders there first and
-          // visibly jumps to the real spot once positioning catches up a frame
-          // later. Hiding it until then means it only ever appears already correct.
-          style={{ ...floatingStyles, visibility: isPositioned ? 'visible' : 'hidden' }}
-          // The popover renders inside the label's wrapper, so its clicks (e.g. on a
-          // link in it) bubble to whatever contains the label too.
-          {...getFloatingProps(
-            isolateClick ? { onClick: (e: React.MouseEvent) => e.stopPropagation() } : undefined
-          )}
-        >
-          <div style={transitionStyles}>
-            {title && <h3>{title}</h3>}
-            {children}
-          </div>
-          {/* A direct child of the popover, not of the transition wrapper: a transformed
+        // Portaled to the end of <body>: rendered in place, it was confined to the
+        // stacking context of whatever contained its label — on a phone event card
+        // the dates row (z-index: 1), so a rerun's Intelligence Certificates row or
+        // the next card, level with it and later in the page, drew over the popup.
+        // React events still bubble through a portal to its React parents (hence
+        // isolateClick below still matters).
+        <FloatingPortal>
+          <div
+            className="info-popover"
+            ref={refs.setFloating}
+            // `floatingStyles` starts at an unpositioned default (effectively 0,0)
+            // until the arrow/flip/shift middleware actually resolve — without
+            // gating visibility on `isPositioned`, the popover (and its arrow, which
+            // depends on that same resolved position) briefly renders there first and
+            // visibly jumps to the real spot once positioning catches up a frame
+            // later. Hiding it until then means it only ever appears already correct.
+            style={{ ...floatingStyles, visibility: isPositioned ? 'visible' : 'hidden' }}
+            // Though portaled, the popover's React events (e.g. a click on a link in
+            // it) still bubble to whatever contains the label.
+            {...getFloatingProps(
+              isolateClick ? { onClick: (e: React.MouseEvent) => e.stopPropagation() } : undefined
+            )}
+          >
+            <div style={transitionStyles}>
+              {title && <h3>{title}</h3>}
+              {children}
+            </div>
+            {/* A direct child of the popover, not of the transition wrapper: a transformed
               element becomes the containing block for absolutely-positioned descendants,
               so while the wrapper's entry `scale(...)` was on, the arrow was positioned
               against the wrapper (inside the popover's padding) and visibly jumped to
               the popover's edge the moment the transform ended. Like the popover's own
               box (border/background), the arrow doesn't animate — only content does. */}
-          <FloatingArrow ref={arrowRef} context={context} className="info-arrow" />
-        </div>
+            <FloatingArrow ref={arrowRef} context={context} className="info-arrow" />
+          </div>
+        </FloatingPortal>
       )}
     </span>
   );

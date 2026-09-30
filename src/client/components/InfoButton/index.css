@@ -36,6 +36,8 @@
   padding: 12px 16px;
   border-radius: 8px;
   z-index: 9999;
+  /* Portaled outside #ak-root (see index.tsx), so it doesn't inherit the app's font. */
+  font-family: var(--ak-font-family);
   font-size: 14px;
   font-weight: normal;
   overflow-wrap: break-word;

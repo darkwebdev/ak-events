@@ -13,3 +13,12 @@
 .ak-countdown-ended {
   font-style: italic;
 }
+
+/* The play/cross icons are sized for full-size text; scaled down to this line's
+   smaller font so they sit level with it. */
+.ak-countdown .ak-play-icon,
+.ak-countdown .ak-ended-icon {
+  width: 12px;
+  height: 12px;
+  vertical-align: -1px;
+}

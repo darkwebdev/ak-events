@@ -10,11 +10,11 @@ export function Default() {
   return <EndedIcon />;
 }
 
-export function BeforeADateRange() {
+export function BeforeACountdown() {
   return (
     <span>
       <EndedIcon />
-      20/08/2026 - 03/09/2026
+      Ended 25 days ago
     </span>
   );
 }

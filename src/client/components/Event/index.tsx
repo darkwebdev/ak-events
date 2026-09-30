@@ -4,7 +4,6 @@ import {
   getEffectiveStart,
   getEffectiveEnd,
   getBannerDates,
-  isEventRunning,
   parseDate,
 } from '../../utils/dates.js';
 import {
@@ -21,8 +20,6 @@ import { Operator } from '../Operator';
 import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { IntCertsIcon } from '../IntCertsIcon';
-import { PlayIcon } from '../PlayIcon';
-import { EndedIcon } from '../EndedIcon';
 import { DateText } from '../DateText';
 import { Countdown } from '../Countdown';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
@@ -95,7 +92,6 @@ export function Event({
   const end = getEffectiveEnd(event);
   const startStr = start ? <DateText date={start} /> : 'Unknown';
   const endStr = end ? <DateText date={end} /> : 'Unknown';
-  const running = isEventRunning(event);
   // A banner's own run dates, which can differ from its event's — absent in data
   // scraped before they were added, in which case the range is simply omitted.
   const bannerDates = banner ? getBannerDates(banner, event) : null;
@@ -106,12 +102,6 @@ export function Event({
   const exactBanner = banner?.globalStartAt && banner.globalEndAt;
   const bannerStartAt = exactBanner ? new Date(banner.globalStartAt as string) : bannerDates?.start;
   const bannerEndAt = exactBanner ? new Date(banner.globalEndAt as string) : bannerDates?.end;
-  // Same moment the banner's countdown switches from "Starts in" to "Ends in" and on to
-  // "Ended" (see getCountdown), so the icon and the countdown always agree.
-  const now = new Date();
-  const bannerRunning =
-    !!bannerStartAt && !!bannerEndAt && bannerStartAt <= now && now < bannerEndAt;
-  const bannerEnded = !!bannerEndAt && now >= bannerEndAt;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
 
   return (
@@ -154,7 +144,6 @@ export function Event({
             })()}
           <div className="ak-event-meta">
             <div className="ak-event-date">
-              {running && <PlayIcon />}
               {startStr} - {endStr}
               {datesPredicted && (
                 <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
@@ -279,8 +268,6 @@ export function Event({
             ) : null}
             {bannerDates?.start && bannerDates.end && (
               <div className="ak-event-banner-date">
-                {bannerRunning && <PlayIcon />}
-                {bannerEnded && <EndedIcon />}
                 <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />
                 {bannerDates.estimated && (
                   <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>

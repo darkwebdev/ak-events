@@ -10,11 +10,11 @@ export function Default() {
   return <PlayIcon />;
 }
 
-export function BeforeADateRange() {
+export function BeforeACountdown() {
   return (
     <span>
       <PlayIcon />
-      20/08/2026 - 01/10/2026
+      Ends in 2 days
     </span>
   );
 }

@@ -6,6 +6,8 @@ import {
   formatLongDate,
   formatLongDateTime,
 } from '../../utils/dates.js';
+import { PlayIcon } from '../PlayIcon';
+import { EndedIcon } from '../EndedIcon';
 import './index.css';
 
 interface CountdownProps {
@@ -16,8 +18,9 @@ interface CountdownProps {
   exact: boolean;
 }
 
-// "Starts in 3 days" / "Ends in 2h 15m", then "Ended 3 days ago", ticking every
-// minute. The exact moment is in the native tooltip.
+// "Starts in 3 days" / "▶ Ends in 2h 15m", then "✕ Ended 3 days ago", ticking every
+// minute — the play/cross icon marks the running and ended states. The exact moment
+// is in the native tooltip.
 export function Countdown({ start, end, exact }: CountdownProps) {
   const now = useNow();
   const countdown = getCountdown(start, end, exact, now);
@@ -26,6 +29,7 @@ export function Countdown({ start, end, exact }: CountdownProps) {
     if (!end || now < end) return null;
     return (
       <span className="ak-countdown ak-countdown-ended" title={tooltip(end)}>
+        <EndedIcon />
         Ended {formatEndedAgo(end, exact, now)}
       </span>
     );
@@ -33,6 +37,7 @@ export function Countdown({ start, end, exact }: CountdownProps) {
   const { phase, target, remaining } = countdown;
   return (
     <span className={`ak-countdown ak-countdown-${phase}`} title={tooltip(target)}>
+      {phase === 'ends' && <PlayIcon />}
       {phase === 'starts' ? 'Starts' : 'Ends'} in {remaining}
     </span>
   );

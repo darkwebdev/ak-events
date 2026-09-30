@@ -25,6 +25,7 @@
       "operators": [
         {
           "name": "Mantra",
+          "charId": "char_4204_mantra",
           "star": 6,
           "class": "Caster",
           "limited": false,
@@ -33,6 +34,7 @@
         },
         {
           "name": "Ulpianus",
+          "charId": "char_4145_ulpia",
           "star": 6,
           "class": "Guard",
           "limited": false,
@@ -41,6 +43,7 @@
         },
         {
           "name": "Narantuya",
+          "charId": "char_4138_narant",
           "star": 6,
           "class": "Sniper",
           "limited": false,
@@ -49,6 +52,7 @@
         },
         {
           "name": "Reed the Flame Shadow",
+          "charId": "char_1020_reed2",
           "star": 6,
           "class": "Medic",
           "limited": false,
@@ -57,6 +61,7 @@
         },
         {
           "name": "Grain Buds",
+          "charId": "char_4122_grabds",
           "star": 5,
           "class": "Supporter",
           "limited": false,
@@ -65,6 +70,7 @@
         },
         {
           "name": "Harmonie",
+          "charId": "char_297_hamoni",
           "star": 5,
           "class": "Caster",
           "limited": false,
@@ -73,6 +79,7 @@
         },
         {
           "name": "Tippi",
+          "charId": "char_4191_tippi",
           "star": 5,
           "class": "Specialist",
           "limited": false,
@@ -81,6 +88,7 @@
         },
         {
           "name": "Cantabile",
+          "charId": "char_497_ctable",
           "star": 5,
           "class": "Vanguard",
           "limited": false,
@@ -89,6 +97,7 @@
         },
         {
           "name": "Figurino",
+          "charId": "char_4155_talr",
           "star": 5,
           "class": "Specialist",
           "limited": false,
@@ -97,6 +106,7 @@
         },
         {
           "name": "Cairn",
+          "charId": "char_4214_cairn",
           "star": 5,
           "class": "Defender",
           "limited": false,
@@ -138,6 +148,7 @@
       "operators": [
         {
           "name": "Zima the Raging Tide",
+          "charId": "char_1051_headb2",
           "star": 6,
           "class": "Guard",
           "limited": false,
@@ -146,6 +157,7 @@
         },
         {
           "name": "Ukusik",
+          "charId": "char_4224_turdus",
           "star": 5,
           "class": "Medic",
           "limited": false,
@@ -154,6 +166,7 @@
         },
         {
           "name": "Kazemaru",
+          "charId": "char_4016_kazema",
           "star": 5,
           "class": "Specialist",
           "limited": false,
@@ -183,7 +196,7 @@
     "type": null,
     "image": "data/images/EN_Duel_Channel_Ivy_Vine_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Ivy_Vine",
-    "origPrime": 1,
+    "origPrime": 2,
     "hhPermits": null,
     "dailyFreePulls": null,
     "bannerPermits": null,
@@ -214,6 +227,7 @@
       "operators": [
         {
           "name": "Closure",
+          "charId": null,
           "star": 6,
           "class": "Vanguard",
           "limited": false,
@@ -222,6 +236,7 @@
         },
         {
           "name": "Crackborne",
+          "charId": null,
           "star": 5,
           "class": "Defender",
           "limited": false,
@@ -230,6 +245,7 @@
         },
         {
           "name": "Exusiai the New Covenant",
+          "charId": "char_1041_angel2",
           "star": 6,
           "class": "Specialist",
           "limited": true,
@@ -238,6 +254,7 @@
         },
         {
           "name": "Kal'tsit - Esperanta",
+          "charId": null,
           "star": 6,
           "class": "Medic",
           "limited": true,
@@ -246,6 +263,7 @@
         },
         {
           "name": "Lappland the Decadenza",
+          "charId": "char_1038_whitw2",
           "star": 6,
           "class": "Caster",
           "limited": true,
@@ -254,6 +272,7 @@
         },
         {
           "name": "Wiš'adel",
+          "charId": "char_1035_wisdel",
           "star": 6,
           "class": "Sniper",
           "limited": true,
@@ -264,6 +283,7 @@
       "storeOperators": [
         {
           "name": "W",
+          "charId": "char_113_cqbw",
           "star": 6,
           "class": "Sniper",
           "limited": true,
@@ -272,6 +292,7 @@
         },
         {
           "name": "Rosmontis",
+          "charId": "char_391_rosmon",
           "star": 6,
           "class": "Sniper",
           "limited": true,
@@ -280,6 +301,7 @@
         },
         {
           "name": "Skadi the Corrupting Heart",
+          "charId": "char_1012_skadi2",
           "star": 6,
           "class": "Supporter",
           "limited": true,
@@ -288,6 +310,7 @@
         },
         {
           "name": "Nearl the Radiant Knight",
+          "charId": "char_1014_nearl2",
           "star": 6,
           "class": "Guard",
           "limited": true,
@@ -296,6 +319,7 @@
         },
         {
           "name": "Specter the Unchained",
+          "charId": "char_1023_ghost2",
           "star": 6,
           "class": "Specialist",
           "limited": true,
@@ -304,6 +328,7 @@
         },
         {
           "name": "Texas the Omertosa",
+          "charId": "char_1028_texas2",
           "star": 6,
           "class": "Specialist",
           "limited": true,
@@ -312,6 +337,7 @@
         },
         {
           "name": "Muelsyse",
+          "charId": "char_249_mlyss",
           "star": 6,
           "class": "Vanguard",
           "limited": true,
@@ -320,6 +346,7 @@
         },
         {
           "name": "Virtuosa",
+          "charId": "char_245_cello",
           "star": 6,
           "class": "Supporter",
           "limited": true,
@@ -376,6 +403,7 @@
       "operators": [
         {
           "name": "Violet Mizutsune Orchid",
+          "charId": null,
           "star": 6,
           "class": "Sniper",
           "limited": true,
@@ -384,6 +412,7 @@
         },
         {
           "name": "Zinogre S Catapult",
+          "charId": null,
           "star": 5,
           "class": "Guard",
           "limited": true,
@@ -440,6 +469,7 @@
       "operators": [
         {
           "name": "Kirin R Yato",
+          "charId": "char_1029_yato2",
           "star": 6,
           "class": "Specialist",
           "limited": true,
@@ -448,6 +478,7 @@
         },
         {
           "name": "Rathalos S Noir Corne",
+          "charId": "char_1030_noirc2",
           "star": 5,
           "class": "Guard",
           "limited": true,
@@ -485,6 +516,7 @@
       "operators": [
         {
           "name": "Ines",
+          "charId": "char_4087_ines",
           "star": 6,
           "class": "Vanguard",
           "limited": false,
@@ -493,6 +525,7 @@
         },
         {
           "name": "Ho'olheyak",
+          "charId": "char_4027_heyak",
           "star": 6,
           "class": "Caster",
           "limited": false,
@@ -501,6 +534,7 @@
         },
         {
           "name": "Nasti",
+          "charId": "char_4212_nasti",
           "star": 6,
           "class": "Supporter",
           "limited": false,
@@ -509,6 +543,7 @@
         },
         {
           "name": "Lemuen",
+          "charId": "char_4193_lemuen",
           "star": 6,
           "class": "Sniper",
           "limited": false,
@@ -517,6 +552,7 @@
         },
         {
           "name": "Ripresa",
+          "charId": "char_4031_liesel",
           "star": 5,
           "class": "Caster",
           "limited": false,
@@ -525,6 +561,7 @@
         },
         {
           "name": "Melanite",
+          "charId": "char_4006_melnte",
           "star": 5,
           "class": "Sniper",
           "limited": false,
@@ -533,6 +570,7 @@
         },
         {
           "name": "Santalla",
+          "charId": "char_341_sntlla",
           "star": 5,
           "class": "Caster",
           "limited": false,
@@ -541,6 +579,7 @@
         },
         {
           "name": "Snow Hunter",
+          "charId": "char_4211_snhunt",
           "star": 5,
           "class": "Sniper",
           "limited": false,
@@ -549,6 +588,7 @@
         },
         {
           "name": "Gracebearer",
+          "charId": "char_4187_graceb",
           "star": 5,
           "class": "Guard",
           "limited": false,
@@ -557,6 +597,7 @@
         },
         {
           "name": "Firewhistle",
+          "charId": "char_493_firwhl",
           "star": 5,
           "class": "Defender",
           "limited": false,
@@ -613,6 +654,7 @@
       "operators": [
         {
           "name": "Aphrissa",
+          "charId": null,
           "star": 6,
           "class": "Caster",
           "limited": false,
@@ -621,6 +663,7 @@
         },
         {
           "name": "Pedro",
+          "charId": null,
           "star": 5,
           "class": "Supporter",
           "limited": false,
@@ -629,6 +672,7 @@
         },
         {
           "name": "Wulfenite",
+          "charId": "char_4171_wulfen",
           "star": 5,
           "class": "Specialist",
           "limited": false,
@@ -666,6 +710,7 @@
       "operators": [
         {
           "name": "Tragodia",
+          "charId": "char_1042_phatm2",
           "star": 6,
           "class": "Supporter",
           "limited": false,
@@ -674,6 +719,7 @@
         },
         {
           "name": "Tippi",
+          "charId": "char_4191_tippi",
           "star": 5,
           "class": "Specialist",
           "limited": false,
@@ -682,6 +728,7 @@
         },
         {
           "name": "Alanna",
+          "charId": "char_4178_alanna",
           "star": 5,
           "class": "Supporter",
           "limited": false,
@@ -719,6 +766,7 @@
       "operators": [
         {
           "name": "Angelina the Mellow Wish",
+          "charId": null,
           "star": 6,
           "class": "Specialist",
           "limited": true,
@@ -727,6 +775,7 @@
         },
         {
           "name": "Thumpy",
+          "charId": null,
           "star": 6,
           "class": "Defender",
           "limited": false,
@@ -735,6 +784,7 @@
         },
         {
           "name": "Jacinta",
+          "charId": null,
           "star": 5,
           "class": "Vanguard",
           "limited": false,
@@ -743,6 +793,7 @@
         },
         {
           "name": "Pepe",
+          "charId": "char_4058_pepe",
           "star": 6,
           "class": "Guard",
           "limited": true,
@@ -751,6 +802,7 @@
         },
         {
           "name": "Hoshiguma the Breacher",
+          "charId": "char_1044_hsgma2",
           "star": 6,
           "class": "Defender",
           "limited": true,
@@ -759,6 +811,7 @@
         },
         {
           "name": "Eyjafjalla the Hvít Aska",
+          "charId": "char_1016_agoat2",
           "star": 6,
           "class": "Medic",
           "limited": true,
@@ -769,6 +822,7 @@
       "storeOperators": [
         {
           "name": "Ch'en the Holungday",
+          "charId": "char_1013_chen2",
           "star": 6,
           "class": "Sniper",
           "limited": true,
@@ -777,6 +831,7 @@
         },
         {
           "name": "Gavial the Invincible",
+          "charId": "char_1026_gvial2",
           "star": 6,
           "class": "Guard",
           "limited": true,
@@ -833,6 +888,7 @@
       "operators": [
         {
           "name": "Makoto Yuki",
+          "charId": null,
           "star": 6,
           "class": "Specialist",
           "limited": true,
@@ -841,6 +897,7 @@
         },
         {
           "name": "Yukari Takeba",
+          "charId": null,
           "star": 5,
           "class": "Supporter",
           "limited": true,
@@ -849,6 +906,7 @@
         },
         {
           "name": "Aegis",
+          "charId": null,
           "star": 5,
           "class": "Sniper",
           "limited": true,

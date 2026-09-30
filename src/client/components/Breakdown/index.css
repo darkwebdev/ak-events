@@ -33,3 +33,21 @@
 .ak-breakdown-total {
   color: var(--ak-accent);
 }
+
+/* Phones: rows may wrap and cells get tighter, so a breakdown fits its popover instead
+   of running off the screen (e.g. "Free daily pull · 14 days × 600 · 8400 (×14)"). */
+@media (max-width: 600px) {
+  .ak-breakdown-row {
+    white-space: normal;
+  }
+
+  .ak-breakdown-item,
+  .ak-breakdown-calc,
+  .ak-breakdown-total {
+    padding: 6px 6px;
+  }
+
+  .ak-breakdown-total {
+    white-space: nowrap;
+  }
+}

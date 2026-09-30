@@ -47,7 +47,11 @@
 
 @media (max-width: 600px) {
   .info-popover {
-    max-width: 98vw;
+    /* The screen minus the 8px margin floating-ui's shift() keeps on each side (see
+       index.tsx) — 98vw was wider than that, so a wide popover ran off the edge. */
+    max-width: calc(100vw - 16px);
+    min-width: 0;
+    padding: 10px 12px;
   }
 }
 

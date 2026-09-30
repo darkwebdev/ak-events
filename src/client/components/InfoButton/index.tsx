@@ -9,6 +9,7 @@ import {
   FloatingArrow,
   useHover,
   useClick,
+  useDismiss,
   useInteractions,
   useTransitionStyles,
 } from '@floating-ui/react';
@@ -21,9 +22,15 @@ export interface InfoButtonProps {
   children: ReactNode;
   title?: string;
   label: ReactNode;
+  // Keep clicks on the label and in the popover from reaching the event card around
+  // it, whose own click toggles the event's selection — for a popup that's the point
+  // of the tap.
+  isolateClick?: boolean;
+  // No dashed underline under the label — for a non-text label like an operator icon.
+  plain?: boolean;
 }
 
-export function InfoButton({ children, title, label }: InfoButtonProps) {
+export function InfoButton({ children, title, label, isolateClick, plain }: InfoButtonProps) {
   const [open, setOpen] = useState(false);
   const arrowRef = useRef(null);
   const { refs, context, floatingStyles, isPositioned } = useFloating({
@@ -48,7 +55,10 @@ export function InfoButton({ children, title, label }: InfoButtonProps) {
   });
   const hover = useHover(context, { delay: { open: 50, close: 100 } });
   const click = useClick(context);
-  const { getReferenceProps, getFloatingProps } = useInteractions([hover, click]);
+  // A tap outside (or Escape) closes it — on a phone there's no hover to leave, so a
+  // tapped-open popup otherwise stayed until its label was tapped again.
+  const dismiss = useDismiss(context);
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover, click, dismiss]);
   // Keeps the popover mounted for the duration of the closing animation, instead of
   // being removed from the DOM the instant `open` flips false (which would skip the
   // exit transition entirely). The transition's own `transform: scale(...)` must NOT
@@ -63,7 +73,13 @@ export function InfoButton({ children, title, label }: InfoButtonProps) {
 
   return (
     <span className="info-button-wrapper">
-      <span className="info-button" ref={refs.setReference} {...getReferenceProps()}>
+      <span
+        className={`info-button${plain ? ' plain' : ''}`}
+        ref={refs.setReference}
+        {...getReferenceProps(
+          isolateClick ? { onClick: (e: React.MouseEvent) => e.stopPropagation() } : undefined
+        )}
+      >
         {label}
       </span>
       {isMounted && (
@@ -77,7 +93,11 @@ export function InfoButton({ children, title, label }: InfoButtonProps) {
           // visibly jumps to the real spot once positioning catches up a frame
           // later. Hiding it until then means it only ever appears already correct.
           style={{ ...floatingStyles, visibility: isPositioned ? 'visible' : 'hidden' }}
-          {...getFloatingProps()}
+          // The popover renders inside the label's wrapper, so its clicks (e.g. on a
+          // link in it) bubble to whatever contains the label too.
+          {...getFloatingProps(
+            isolateClick ? { onClick: (e: React.MouseEvent) => e.stopPropagation() } : undefined
+          )}
         >
           <div style={transitionStyles}>
             {title && <h3>{title}</h3>}

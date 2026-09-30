@@ -11,6 +11,11 @@
   font-size: inherit;
 }
 
+.info-button.plain {
+  text-decoration: none;
+  display: inline-block;
+}
+
 .info-popover {
   /* No `position` here on purpose: floating-ui's inline `style` (position/top/left from
      floatingStyles) always wins over this class regardless of what's declared here or in

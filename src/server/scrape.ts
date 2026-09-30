@@ -57,6 +57,7 @@ import {
   resolveOperatorDebutEvent,
 } from './lib/operatorDebuts.js';
 import {
+  bannerPoolFrom,
   limitedDebutDatesFrom,
   operatorInfoFrom,
   operatorNameKey,
@@ -671,6 +672,7 @@ export async function scrapeEvents(): Promise<void> {
       sparkEligible,
       operators,
       ...(storeOperators.length && { storeOperators }),
+      ...(sparkEligible && bannerPoolFrom(gachaTable, matchedBanner.name)),
       globalStart: matchedBanner.globalStart,
       globalEnd: matchedBanner.globalEnd,
       cnStart: matchedBanner.cnStart,

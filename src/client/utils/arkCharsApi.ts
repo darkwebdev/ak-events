@@ -86,9 +86,23 @@ export interface FetchAccountDataResult {
   orundum: number;
   originitePrime: number;
   headhuntingPermits: number;
+  // Ten-roll Headhunting Permits — 10 pulls each.
+  tenHeadhuntingPermits: number;
   // Every owned operator's potential rank (0 = Potential 1 … 5 = maxed), keyed by the
   // game's operator id — see OwnedOperators.
   roster: Record<string, number>;
+  // Banner-specific progress — see BannerProgress.
+  bannerProgress: BannerProgress;
+}
+
+// What the account holds for particular banners: item counts by the game's item id
+// (a Limited banner's Headhunting Data Contracts, LMTGS_COIN_<n>, and banner ten-roll
+// permits), and per Limited banner (by the game's pool id) the pulls made there and
+// whether its free 300-pull operator was claimed. Joined to banners through their
+// gachaPoolId / contractItemId / tenRollItemId.
+export interface BannerProgress {
+  items: Record<string, number>;
+  pools: Record<string, { pulls: number; freeCharClaimed: boolean }>;
 }
 
 interface FetchAccountDataResponse {
@@ -102,6 +116,9 @@ interface FetchAccountDataResponse {
     orundum?: number | null;
     originitePrime?: number | null;
     headhuntingPermits?: number | null;
+    tenHeadhuntingPermits?: number | null;
+    bannerItems?: { itemId: string; count: number }[] | null;
+    limitedPools?: { poolId: string; pulls: number; freeCharClaimed: boolean }[] | null;
   } | null;
   myRoster?: { charId?: string | null; potentialRank?: number | null }[] | null;
 }
@@ -131,6 +148,16 @@ export async function fetchAccountData({
         orundum
         originitePrime
         headhuntingPermits
+        tenHeadhuntingPermits
+        bannerItems {
+          itemId
+          count
+        }
+        limitedPools {
+          poolId
+          pulls
+          freeCharClaimed
+        }
       }
       myRoster(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         charId
@@ -146,6 +173,18 @@ export async function fetchAccountData({
     orundum: data.myInventory?.orundum ?? 0,
     originitePrime: data.myInventory?.originitePrime ?? 0,
     headhuntingPermits: data.myInventory?.headhuntingPermits ?? 0,
+    tenHeadhuntingPermits: data.myInventory?.tenHeadhuntingPermits ?? 0,
+    bannerProgress: {
+      items: Object.fromEntries(
+        (data.myInventory?.bannerItems ?? []).map((i) => [i.itemId, i.count])
+      ),
+      pools: Object.fromEntries(
+        (data.myInventory?.limitedPools ?? []).map((p) => [
+          p.poolId,
+          { pulls: p.pulls, freeCharClaimed: p.freeCharClaimed },
+        ])
+      ),
+    },
     roster: Object.fromEntries(
       (data.myRoster ?? [])
         .filter((op) => op.charId)

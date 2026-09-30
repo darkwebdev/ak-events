@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Event } from './index.jsx';
+import { BannerProgressContext } from '../../ownedOperators.js';
 import type { Event as EventType, ResolvedBanner, ResolvedBannerOperator } from '../../types.js';
 
 const baseEvent: EventType = {
@@ -245,5 +246,32 @@ export function ResponsiveSizes() {
         </div>
       ))}
     </div>
+  );
+}
+
+// A linked account's progress on a Limited banner that's in the game's data: pulls
+// made there, contracts and a banner ten-roll permit, and the free operator's distance.
+const PROGRESS = {
+  items: { LMTGS_COIN_7001: 150, LIMITED_TKT_GACHA_10_7001: 1 },
+  pools: { LIMITED_EN_40_0_4: { pulls: 150, freeCharClaimed: false } },
+};
+
+export function WithAccountProgress() {
+  const banner = {
+    ...(buildBanner('Limited', []) as ResolvedBanner),
+    gachaPoolId: 'LIMITED_EN_40_0_4',
+    contractItemId: 'LMTGS_COIN_7001',
+    tenRollItemId: 'LIMITED_TKT_GACHA_10_7001',
+  };
+  return (
+    <BannerProgressContext.Provider value={PROGRESS}>
+      <ul className="ak-events-list">
+        <Event
+          event={{ ...baseEvent, banner }}
+          selectedEvents={new Set()}
+          onEventToggle={() => {}}
+        />
+      </ul>
+    </BannerProgressContext.Provider>
   );
 }

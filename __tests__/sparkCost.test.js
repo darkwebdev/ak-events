@@ -1,4 +1,5 @@
 import {
+  bannerPoolFrom,
   limitedDebutDatesFrom,
   operatorInfoFrom,
   operatorNameKey,
@@ -119,5 +120,50 @@ describe('operatorInfoFrom / operatorNameKey', () => {
 
   test('skips tokens and traps', () => {
     expect(info.has(operatorNameKey('A Token'))).toBe(false);
+  });
+});
+
+describe('bannerPoolFrom', () => {
+  // Entries as in the Global client's gacha_table.json.
+  const gacha = {
+    gachaPoolClient: [
+      {
+        gachaPoolId: 'LIMITED_EN_40_0_4',
+        gachaPoolName: 'Ashes to Ashes, Ages on Ages',
+        gachaRuleType: 'LIMITED',
+        openTime: 1784214000,
+        LMTGSID: 'LMTGS_COIN_7001',
+      },
+      {
+        gachaPoolId: 'LINKAGE_EN_38_0_1',
+        gachaPoolName: 'Some Collab',
+        gachaRuleType: 'LINKAGE',
+        openTime: 1770000000,
+        LMTGSID: 'LMTGS_COIN_6501',
+      },
+      { gachaPoolId: 'NORM_EN_40_0_1', gachaPoolName: 'Standard', gachaRuleType: 'NORMAL' },
+    ],
+    limitTenGachaItem: [{ itemId: 'LIMITED_TKT_GACHA_10_7001', endTime: 1785409199 }],
+    linkageTenGachaItem: [
+      { itemId: 'LINKAGE_TKT_GACHA_10_6501', gachaPoolId: 'LINKAGE_EN_38_0_1' },
+    ],
+  };
+
+  test("finds a Limited banner's pool, contract item and ten-roll permit by name", () => {
+    expect(bannerPoolFrom(gacha, 'Ashes to Ashes, Ages on Ages')).toEqual({
+      gachaPoolId: 'LIMITED_EN_40_0_4',
+      contractItemId: 'LMTGS_COIN_7001',
+      tenRollItemId: 'LIMITED_TKT_GACHA_10_7001',
+    });
+  });
+
+  test("finds a collaboration banner's ten-roll permit by its pool", () => {
+    expect(bannerPoolFrom(gacha, 'Some Collab')?.tenRollItemId).toBe('LINKAGE_TKT_GACHA_10_6501');
+  });
+
+  test('null for a banner not in the game data yet, or not Limited', () => {
+    expect(bannerPoolFrom(gacha, 'Sealed With Time')).toBeNull();
+    expect(bannerPoolFrom(gacha, 'Standard')).toBeNull();
+    expect(bannerPoolFrom(null, 'Ashes to Ashes, Ages on Ages')).toBeNull();
   });
 });

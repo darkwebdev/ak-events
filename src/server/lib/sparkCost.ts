@@ -106,4 +106,33 @@ function operatorInfoFrom(characters: CharacterTable | null): Map<string, Operat
   return info;
 }
 
-export { limitedDebutDatesFrom, operatorInfoFrom, operatorNameKey, calcSparkCost };
+// A Limited or collaboration banner's pool in the game's gacha table, matched by name:
+// its pool id (which a linked account's per-banner pull count is keyed by), its
+// Headhunting Data Contract item and its own ten-roll permit item. A Limited
+// banner's permit shares the contract's number (LMTGS_COIN_7001 ↔
+// LIMITED_TKT_GACHA_10_7001); a collaboration one names its pool. Null until the
+// banner is in the Global client's data, which it joins with the update that
+// launches it.
+function bannerPoolFrom(
+  gacha: GachaTable | null,
+  bannerName: string
+): { gachaPoolId: string; contractItemId: string | null; tenRollItemId: string | null } | null {
+  const key = operatorNameKey(bannerName);
+  const pool = (gacha?.gachaPoolClient ?? []).find(
+    (p) =>
+      ['LIMITED', 'LINKAGE'].includes(p.gachaRuleType) &&
+      p.gachaPoolId &&
+      p.gachaPoolName &&
+      operatorNameKey(p.gachaPoolName) === key
+  );
+  if (!pool?.gachaPoolId) return null;
+  const contractItemId = pool.LMTGSID ?? null;
+  const number = contractItemId?.match(/_(\d+)$/)?.[1];
+  const tenRollItemId =
+    (number && gacha?.limitTenGachaItem?.find((i) => i.itemId.endsWith(`_${number}`))?.itemId) ||
+    gacha?.linkageTenGachaItem?.find((i) => i.gachaPoolId === pool.gachaPoolId)?.itemId ||
+    null;
+  return { gachaPoolId: pool.gachaPoolId, contractItemId, tenRollItemId };
+}
+
+export { bannerPoolFrom, limitedDebutDatesFrom, operatorInfoFrom, operatorNameKey, calcSparkCost };

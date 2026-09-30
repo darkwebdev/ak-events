@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { jpgifyLocal } from '../../utils/images.js';
 import {
   getEffectiveStart,
@@ -22,6 +22,7 @@ import { PullIcon } from '../Pulls/PullIcon.jsx';
 import { IntCertsIcon } from '../IntCertsIcon';
 import { DateText } from '../DateText';
 import { Countdown } from '../Countdown';
+import { BannerProgressContext } from '../../ownedOperators.js';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
 import './index.css';
 
@@ -55,6 +56,36 @@ interface EventProps {
   selectedEvents: SelectedEvents;
   onEventToggle: (eventName: string) => void;
   onToggleIntCerts?: (eventName: string, checked: boolean) => void;
+}
+
+// The linked account's progress on this banner, once the banner is in the game's own
+// data (its gachaPoolId etc. — see bannerPoolFrom on the server): pulls made here,
+// Headhunting Data Contracts held, its own ten-roll permit, and how far the free
+// operator at 300 pulls is. Nothing without a linked account or before then.
+const FREE_OPERATOR_PULLS = 300;
+
+function AccountBannerProgress({ banner }: { banner: NonNullable<EventType['banner']> }) {
+  const progress = useContext(BannerProgressContext);
+  if (!progress || !banner.gachaPoolId) return null;
+  const pool = progress.pools[banner.gachaPoolId];
+  const contracts = banner.contractItemId ? progress.items[banner.contractItemId] ?? 0 : 0;
+  const tenRolls = banner.tenRollItemId ? progress.items[banner.tenRollItemId] ?? 0 : 0;
+  const parts = [
+    pool && `${pool.pulls} ${pool.pulls === 1 ? 'pull' : 'pulls'} here`,
+    contracts > 0 && `${contracts} ${contracts === 1 ? 'contract' : 'contracts'}`,
+    tenRolls > 0 && `${tenRolls} banner ten-roll ${tenRolls === 1 ? 'permit' : 'permits'}`,
+  ].filter(Boolean);
+  if (!parts.length) return null;
+  let freeOperator: string | null = null;
+  if (pool?.freeCharClaimed) freeOperator = 'Free operator claimed';
+  else if (pool)
+    freeOperator = `${Math.max(0, FREE_OPERATOR_PULLS - pool.pulls)} more to the free operator`;
+  return (
+    <div className="ak-event-banner-progress">
+      You: {parts.join(' · ')}
+      {freeOperator && <div>{freeOperator}</div>}
+    </div>
+  );
 }
 
 // A breakdown row label for one source of pulls: the pull icon plus what it is.
@@ -244,6 +275,7 @@ export function Event({
                 {banner.name === name ? 'Banner' : `Banner: ${banner.name}`}
               </span>
             </div>
+            <AccountBannerProgress banner={banner} />
             <div className="ak-event-banner-columns">
               <OperatorColumn groups={sixStarGroups} />
               <OperatorColumn groups={otherGroups} />

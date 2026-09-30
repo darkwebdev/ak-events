@@ -15,7 +15,11 @@ import { EventsList } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
 import { Header } from './components/Header';
 import { Toast } from './components/Toast';
-import { OwnedOperatorsContext, type OwnedOperators } from './ownedOperators.js';
+import {
+  OwnedOperatorsContext,
+  BannerProgressContext,
+  type OwnedOperators,
+} from './ownedOperators.js';
 
 import defaultSettings from './settings.json';
 import defaultPlayerStatus from './playerStatus.json';
@@ -27,7 +31,7 @@ import type {
   PlayerStatus,
   Settings,
 } from './types.js';
-import type { FetchAccountDataResult } from './utils/arkCharsApi.js';
+import type { BannerProgress, FetchAccountDataResult } from './utils/arkCharsApi.js';
 import './App.css';
 
 // How often to recheck events.json for events that weren't there on the previous
@@ -77,6 +81,10 @@ export default function App() {
   // fetching again logs the game session out.
   const [ownedOperators, setOwnedOperators] = useStorage<OwnedOperators | null>(
     'ak-events-arknights-roster',
+    null
+  );
+  const [bannerProgress, setBannerProgress] = useStorage<BannerProgress | null>(
+    'ak-events-arknights-banner-progress',
     null
   );
   // Whether the user has opted in to counting a rerun's Intelligence Certificates
@@ -160,8 +168,10 @@ export default function App() {
   const handleAccountFetched = (data: FetchAccountDataResult) => {
     updatePlayerStatus('orundum', data.orundum);
     updatePlayerStatus('op', data.originitePrime);
-    updatePlayerStatus('hhPermits', data.headhuntingPermits);
+    // A ten-roll permit is ten pulls on any banner a single permit works on.
+    updatePlayerStatus('hhPermits', data.headhuntingPermits + 10 * data.tenHeadhuntingPermits);
     setOwnedOperators(data.roster);
+    setBannerProgress(data.bannerProgress);
   };
 
   const toggleIntCertsIncluded = (eventName: string, checked: boolean) => {
@@ -260,12 +270,14 @@ export default function App() {
 
       <div className="ak-main-content">
         <OwnedOperatorsContext.Provider value={accountImportEnabled ? ownedOperators : null}>
-          <EventsList
-            filteredEvents={futureEvents}
-            selectedEvents={selectedEvents}
-            onEventToggle={handleEventToggle}
-            onToggleIntCerts={toggleIntCertsIncluded}
-          />
+          <BannerProgressContext.Provider value={accountImportEnabled ? bannerProgress : null}>
+            <EventsList
+              filteredEvents={futureEvents}
+              selectedEvents={selectedEvents}
+              onEventToggle={handleEventToggle}
+              onToggleIntCerts={toggleIntCertsIncluded}
+            />
+          </BannerProgressContext.Provider>
         </OwnedOperatorsContext.Provider>
 
         {sidebarOpen && (
@@ -291,7 +303,10 @@ export default function App() {
                 authState={arkAuth}
                 setAuthState={setArkAuth}
                 onFetched={handleAccountFetched}
-                onLogout={() => setOwnedOperators(null)}
+                onLogout={() => {
+                  setOwnedOperators(null);
+                  setBannerProgress(null);
+                }}
               />
             )}
 

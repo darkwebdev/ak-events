@@ -93,6 +93,12 @@ export interface ResolvedBanner {
   type: BannerType | null;
   sparkEligible: boolean;
   operators: ResolvedBannerOperator[];
+  // This Limited banner's pool in the game's own data, once it's in the Global client
+  // (see bannerPoolFrom in lib/sparkCost.ts): its pool id (a linked account's pull
+  // count there), Headhunting Data Contract item and own ten-roll permit item.
+  gachaPoolId?: string | null;
+  contractItemId?: string | null;
+  tenRollItemId?: string | null;
   // The rest of this Limited banner's Headhunting Data Contract Store: its series'
   // earlier limited operators that aren't rate-ups (see seriesStoreOperators), each at
   // its spark cost — 200 for one the event page names as discounted, or 4+ years past
@@ -220,11 +226,18 @@ export interface GachaPoolEntry {
   gachaRuleType: string;
   openTime: number;
   limitParam?: { limitedCharId?: string };
+  gachaPoolId?: string;
+  gachaPoolName?: string;
+  // A Limited pool's Headhunting Data Contract item (e.g. "LMTGS_COIN_7001").
+  LMTGSID?: string | null;
   [key: string]: unknown;
 }
 
 export interface GachaTable {
   gachaPoolClient: GachaPoolEntry[];
+  // Each Limited / collaboration banner's own ten-roll permit item.
+  limitTenGachaItem?: { itemId: string }[];
+  linkageTenGachaItem?: { itemId: string; gachaPoolId?: string }[];
   [key: string]: unknown;
 }
 

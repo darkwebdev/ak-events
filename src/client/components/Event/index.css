@@ -36,14 +36,24 @@
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* Top, not centered: when the name or the type wraps onto a second line, both still
+     start on the first. */
+  align-items: flex-start;
+  gap: 8px;
 }
 
+/* The name gets at most 2/3 of the row and the type at most 1/3, each wrapping within
+   its share rather than one squeezing the other (a long type like "Main Theme (episode
+   release)" was taking room from the name). */
 .ak-event-name {
-  flex: 1;
+  flex: 0 1 auto;
+  max-width: 66.6667%;
 }
 
 .ak-event-type {
+  flex: 0 1 auto;
+  max-width: 33.3333%;
+  text-align: right;
   color: var(--ak-text-muted);
   font-size: 0.9em;
   font-weight: 400;
@@ -64,7 +74,9 @@
 .ak-event-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* Bottom: the date side is two lines (date range, then countdown), and the Orundum
+     total lines up with the last of them rather than floating between the two. */
+  align-items: flex-end;
   gap: 12px;
 }
 

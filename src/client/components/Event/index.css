@@ -229,7 +229,6 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
 
   .ak-event:has(.ak-event-image-wrap) .ak-event-image-wrap {
@@ -267,6 +266,11 @@
   }
 
   .ak-event:has(.ak-event-image-wrap) .ak-event-meta {
+    /* Pushes the dates (and a rerun's Intelligence Certificates checkbox after them)
+       to the card's bottom, with the title at the top. space-between on the card did
+       that only with two items: the checkbox made a third, and it put the dates in the
+       middle. */
+    margin-top: auto;
     position: relative;
     z-index: 1;
     padding: 10px 16px 14px;

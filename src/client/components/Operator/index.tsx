@@ -3,10 +3,16 @@ import { normalizeImageSrc } from '../../utils/images.js';
 import { SparkIcon } from './SparkIcon.jsx';
 import type { ResolvedBannerOperator } from '../../types.js';
 import { OwnedOperatorsContext } from '../../ownedOperators.js';
+import { InfoButton } from '../InfoButton';
 import './index.css';
 
 interface OperatorProps {
   operator: ResolvedBannerOperator;
+}
+
+// The operator's own page on the wiki the app's data comes from.
+function wikiUrl(name: string): string {
+  return `https://arknights.wiki.gg/wiki/${encodeURIComponent(name.replace(/ /g, '_'))}`;
 }
 
 export function Operator({ operator }: OperatorProps) {
@@ -25,15 +31,6 @@ export function Operator({ operator }: OperatorProps) {
     if (star === 5) tagVariant = 'spark-75';
     else if (sparkCost < 300) tagVariant = 'spark-200';
   }
-  const title = [
-    name,
-    star ? `${star}★` : null,
-    opClass,
-    sparkCost != null ? `Spark at ${sparkCost}` : null,
-    isOwned ? `Owned · Potential ${potentialRank + 1}` : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
 
   const badgeClassName = [
     'ak-operator-badge',
@@ -48,25 +45,47 @@ export function Operator({ operator }: OperatorProps) {
     .filter(Boolean)
     .join(' ');
 
+  // Tapping (or hovering) the badge shows who it is — a native `title` tooltip never
+  // appears on a phone. The tap stays with the popup instead of selecting the event.
   return (
-    <div className={badgeClassName} title={title}>
-      {isOwned && (
-        <span className="ak-operator-owned" aria-label="Owned">
-          ✓
-        </span>
-      )}
-      {src ? (
-        <img className="ak-operator-icon" src={src} alt={name} />
-      ) : (
-        <span className="ak-operator-icon ak-operator-icon-fallback">{name?.[0]}</span>
-      )}
-      {sparkCost != null && (
-        <span className={`ak-operator-tag${tagVariant ? ` ${tagVariant}` : ''}`}>
-          <SparkIcon className="ak-operator-tag-icon" />
-          {sparkCost}
-        </span>
-      )}
-      {sparkCost == null && limited && <span className="ak-operator-tag">LIMITED</span>}
-    </div>
+    <InfoButton
+      plain
+      isolateClick
+      label={
+        <div className={badgeClassName}>
+          {isOwned && (
+            <span className="ak-operator-owned" aria-label="Owned">
+              ✓
+            </span>
+          )}
+          {src ? (
+            <img className="ak-operator-icon" src={src} alt={name} />
+          ) : (
+            <span className="ak-operator-icon ak-operator-icon-fallback">{name?.[0]}</span>
+          )}
+          {sparkCost != null && (
+            <span className={`ak-operator-tag${tagVariant ? ` ${tagVariant}` : ''}`}>
+              <SparkIcon className="ak-operator-tag-icon" />
+              {sparkCost}
+            </span>
+          )}
+          {sparkCost == null && limited && <span className="ak-operator-tag">LIMITED</span>}
+        </div>
+      }
+    >
+      <div className="ak-operator-popup">
+        <strong>{name}</strong>
+        <div>
+          {[star ? `${star}★` : null, opClass, limited ? 'Limited' : null]
+            .filter(Boolean)
+            .join(' · ')}
+        </div>
+        {sparkCost != null && <div>Spark: {sparkCost} Headhunting Data Contracts</div>}
+        {isOwned && <div>Owned · Potential {potentialRank + 1}</div>}
+        <a href={wikiUrl(name)} target="_blank" rel="noopener noreferrer">
+          arknights.wiki.gg
+        </a>
+      </div>
+    </InfoButton>
   );
 }

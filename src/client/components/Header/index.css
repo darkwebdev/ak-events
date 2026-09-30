@@ -12,7 +12,11 @@
      a hard cutoff or (the earlier bug) a fade tall enough to make a scrolled-up card
      fully legible through the "empty" space under the title. */
   background: linear-gradient(to bottom, var(--ak-bg) 85%, transparent);
-  z-index: 1;
+  /* Above event cards' own z-index: 1 layers (the title/dates over a phone card's
+     image), which otherwise drew over the header while scrolling underneath it. Below
+     the phone sidebar panel (3); level with its backdrop (2), which comes later in the
+     page and so still dims the header. */
+  z-index: 2;
 }
 
 .ak-header-title {

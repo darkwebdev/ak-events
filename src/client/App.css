@@ -190,11 +190,8 @@ body {
 @media (max-width: 600px) {
   .ak-main-content {
     flex-direction: column;
-    /* Slightly taller than the header actually needs at this width, so that even a
-       device narrow enough to wrap the header's title onto two lines (see
-       Header/index.css) still clears it instead of the first event card peeking out
-       from underneath. */
-    margin-top: 7em;
+    /* The header is sticky here, taking its own height (see Header/index.css). */
+    margin-top: 0;
   }
 
   /* The sidebar becomes a panel sliding in from the right over the page, opened from

@@ -89,7 +89,14 @@ h1 {
    overflowing the screen. */
 @media (max-width: 600px) {
   .ak-header {
-    padding: 1em 1em 1.5em;
+    /* Sticky rather than fixed: it still stays on top while scrolling, but takes its
+       own height in the page, so the event list starts right below it however many
+       lines the title wraps to (1 to 3 across phone widths). A fixed header needed a
+       guessed offset under it instead, which left up to 64px empty when it was one
+       line and only 10px when it was three. */
+    position: sticky;
+    top: 0;
+    padding: 1em 1em 0.75em;
     display: flex;
     align-items: flex-start;
     gap: 0.5em;

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { jpgifyLocal } from '../../utils/images.js';
 import {
   getEffectiveStart,
@@ -134,6 +134,8 @@ export function Event({
   const bannerStartAt = exactBanner ? new Date(banner.globalStartAt as string) : bannerDates?.start;
   const bannerEndAt = exactBanner ? new Date(banner.globalEndAt as string) : bannerDates?.end;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
+  // Phones show a banner collapsed to its name and dates until tapped (index.css).
+  const [bannerExpanded, setBannerExpanded] = useState(false);
 
   return (
     <li
@@ -271,33 +273,51 @@ export function Event({
         {banner && (
           <div className="ak-event-banner">
             <div className="ak-event-banner-header">
-              <span className="ak-event-banner-name">
-                {banner.name === name ? 'Banner' : `Banner: ${banner.name}`}
-              </span>
+              {/* A button so phones can expand the collapsed banner (see index.css);
+                  on wider screens it's plain text and the banner is always open. Its
+                  click mustn't reach the card, which toggles the event's selection. */}
+              <button
+                type="button"
+                className="ak-event-banner-toggle"
+                aria-expanded={bannerExpanded}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setBannerExpanded((open) => !open);
+                }}
+              >
+                <span className="ak-event-banner-name">
+                  {banner.name === name ? 'Banner' : `Banner: ${banner.name}`}
+                </span>
+                <span className="ak-event-banner-chevron" aria-hidden="true">
+                  ▸
+                </span>
+              </button>
             </div>
-            <AccountBannerProgress banner={banner} />
-            <div className="ak-event-banner-columns">
-              <OperatorColumn groups={sixStarGroups} />
-              <OperatorColumn groups={otherGroups} />
-            </div>
-            {banner.storeOperators?.length ? (
-              // Not rate-ups: the series' earlier limited operators, which this banner's
-              // Headhunting Data Contract Store also sells.
-              <div className="ak-operator-group ak-event-banner-store">
-                <InfoButton label={<span className="ak-operator-group-label">Store</span>}>
-                  Not on the rate-up list, but also sold in this banner&apos;s Headhunting Data
-                  Contract Store: 300, or 200 for operators 4+ years past their debut (5+ for
-                  Festival ones) or discounted by the event.
-                </InfoButton>
-                <div className="ak-operator-group-badges">
-                  {/* Newest first: storeOperators is in the series' debut order, oldest
-                      first — so this also puts full price (300) before the aged-out 200s. */}
-                  {[...banner.storeOperators].reverse().map((op) => (
-                    <Operator key={op.name} operator={op} />
-                  ))}
-                </div>
+            <div className={`ak-event-banner-body${bannerExpanded ? ' expanded' : ''}`}>
+              <AccountBannerProgress banner={banner} />
+              <div className="ak-event-banner-columns">
+                <OperatorColumn groups={sixStarGroups} />
+                <OperatorColumn groups={otherGroups} />
               </div>
-            ) : null}
+              {banner.storeOperators?.length ? (
+                // Not rate-ups: the series' earlier limited operators, which this banner's
+                // Headhunting Data Contract Store also sells.
+                <div className="ak-operator-group ak-event-banner-store">
+                  <InfoButton label={<span className="ak-operator-group-label">Store</span>}>
+                    Not on the rate-up list, but also sold in this banner&apos;s Headhunting Data
+                    Contract Store: 300, or 200 for operators 4+ years past their debut (5+ for
+                    Festival ones) or discounted by the event.
+                  </InfoButton>
+                  <div className="ak-operator-group-badges">
+                    {/* Newest first: storeOperators is in the series' debut order, oldest
+                      first — so this also puts full price (300) before the aged-out 200s. */}
+                    {[...banner.storeOperators].reverse().map((op) => (
+                      <Operator key={op.name} operator={op} />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
             {bannerDates?.start && bannerDates.end && (
               <div className="ak-event-banner-date">
                 <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />

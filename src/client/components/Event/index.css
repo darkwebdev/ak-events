@@ -147,6 +147,25 @@
   gap: 12px;
 }
 
+/* On wider screens the toggle is plain text: the banner is always expanded. */
+.ak-event-banner-toggle {
+  all: unset;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.ak-event-banner-chevron {
+  display: none;
+  color: var(--ak-text-muted);
+  transition: transform 0.15s;
+}
+
+.ak-event-banner-toggle[aria-expanded='true'] .ak-event-banner-chevron {
+  transform: rotate(90deg);
+}
+
 .ak-event-banner-name {
   color: var(--ak-text);
 }
@@ -205,6 +224,29 @@
    narrow to read comfortably — banner-under-event first (this rule), aside-under-
    everything second (a separate, narrower breakpoint in App.css), rather than both
    collapsing at once. */
+/* Phones: a banner starts collapsed to its name and dates (and countdown); tapping the
+   name shows its operators, store and the account's progress on it. */
+@media (max-width: 600px) {
+  .ak-event-banner-toggle {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .ak-event-banner-chevron {
+    display: inline;
+  }
+
+  .ak-event-banner-toggle:focus-visible {
+    outline: 2px solid var(--ak-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .ak-event-banner-body:not(.expanded) {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .ak-event-row {
     flex-direction: column;

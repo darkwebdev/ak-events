@@ -178,9 +178,15 @@ body {
   padding-bottom: 20px;
 }
 
-/* Below this width there isn't room for the events column and the aside stats side by
-   side without squeezing event cards down to nothing — stack the aside under the
-   events list instead, same as the event/banner split does at this breakpoint. */
+/* Phone-only controls of the sidebar panel (shown by the max-width: 600px rules below). */
+.ak-sidebar-close,
+.ak-sidebar-backdrop {
+  display: none;
+}
+
+/* Below this width there isn't room for the events column and the aside side by side
+   without squeezing event cards down to nothing — the events take the full width, and
+   the aside becomes a panel opened from the header. */
 @media (max-width: 600px) {
   .ak-main-content {
     flex-direction: column;
@@ -191,21 +197,60 @@ body {
     margin-top: 7em;
   }
 
+  /* The sidebar becomes a panel sliding in from the right over the page, opened from
+     the header's button (see Header), instead of a column stacked under the events —
+     where the totals, the thing you check most, sat at the very bottom. */
   .ak-aside-column {
-    position: static;
-    /* .ak-main-content is column-direction here, so the fixed-width flex-basis from
-       the base rule would apply to height instead — reset it. */
-    flex-basis: auto;
-    width: auto;
-    margin: 0 1em;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    width: min(360px, 90vw);
+    /* The panel itself scrolls, not the content box inside it. */
+    overflow-y: auto;
+    margin: 0;
+    padding: 3.25em 1em 1em;
+    box-sizing: border-box;
+    background: var(--ak-bg);
+    box-shadow: -4px 0 16px var(--ak-shadow);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
+  }
+
+  .ak-aside-column.open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.2s ease;
   }
 
   .ak-aside-scroll {
-    /* Stacked under the events list here rather than stuck to the viewport, so the
-       height cap/scroll from the base rule (meant for the sticky sidebar) would just
-       clip content pointlessly — let it size to content like the rest of the page. */
+    /* The panel scrolls as a whole (above), so the base rule's own height cap and
+       inner scroll — meant for the sticky desktop sidebar — would only clip it. */
     max-height: none;
     overflow-y: visible;
+  }
+
+  .ak-sidebar-close {
+    display: block;
+    position: absolute;
+    top: 0.75em;
+    right: 1em;
+    padding: 4px 8px;
+    border: none;
+    background: none;
+    color: var(--ak-text-muted);
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  .ak-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.45);
   }
 }
 

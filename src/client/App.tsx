@@ -95,6 +95,18 @@ export default function App() {
   // limitation — that's the reason this stays gated rather than shipping wide open.
   const [accountImportEnabled] = useFeatureFlag('accountImport', false);
 
+  // On phones the sidebar is a panel over the page, opened from the header — see
+  // App.css. Escape closes it.
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  useEffect(() => {
+    if (!sidebarOpen) return undefined;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [sidebarOpen]);
+
   const asideScrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // Chromium can route mouse-wheel input over this sticky, internally-scrollable
@@ -240,7 +252,11 @@ export default function App() {
     <>
       {newEventsNotice && <Toast message={newEventsNotice} />}
 
-      <Header totalPulls={pullsFromOrundum(totalOrundum)} />
+      <Header
+        totalPulls={pullsFromOrundum(totalOrundum)}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen((open) => !open)}
+      />
 
       <div className="ak-main-content">
         <OwnedOperatorsContext.Provider value={accountImportEnabled ? ownedOperators : null}>
@@ -252,7 +268,23 @@ export default function App() {
           />
         </OwnedOperatorsContext.Provider>
 
-        <div className="ak-aside-column">
+        {sidebarOpen && (
+          // Phones only (hidden on wider screens): dims the page, and a tap closes.
+          <div
+            className="ak-sidebar-backdrop"
+            aria-hidden="true"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        <div id="ak-sidebar" className={`ak-aside-column${sidebarOpen ? ' open' : ''}`}>
+          <button
+            type="button"
+            className="ak-sidebar-close"
+            aria-label="Close pulls and income"
+            onClick={() => setSidebarOpen(false)}
+          >
+            ✕
+          </button>
           <div className="ak-aside-scroll" ref={asideScrollRef}>
             {accountImportEnabled && (
               <ArknightsAccount

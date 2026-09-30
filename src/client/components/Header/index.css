@@ -48,6 +48,35 @@ h1 {
   color: var(--ak-accent);
 }
 
+.ak-header-sidebar-toggle {
+  /* Phones only — see the media query below. Beside the title row rather than in it,
+     so it stays in the top-right corner when a narrow screen wraps the title. */
+  display: none;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 6px;
+  border: 1px solid var(--ak-border);
+  border-radius: 8px;
+  background: var(--ak-surface);
+  color: var(--ak-text);
+  cursor: pointer;
+  line-height: 0;
+}
+
+.ak-header-sidebar-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--ak-surface);
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.ak-header-sidebar-toggle[aria-expanded='true'] {
+  border-color: var(--ak-accent);
+  color: var(--ak-accent);
+}
+
 /* Below this the title text plus pull counter, at their default sizes, are wider
    than the viewport itself (measured: ~391px of content in as little as a 320-375px
    window) — shrink the title and reclaim some of the header's side padding so
@@ -57,6 +86,9 @@ h1 {
 @media (max-width: 600px) {
   .ak-header {
     padding: 1em 1em 1.5em;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
   }
 
   .ak-header-title {
@@ -65,5 +97,9 @@ h1 {
 
   h1 {
     font-size: 1.3em;
+  }
+
+  .ak-header-sidebar-toggle {
+    display: block;
   }
 }

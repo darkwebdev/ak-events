@@ -162,8 +162,9 @@
   transition: transform 0.15s;
 }
 
+/* Points down while collapsed, up once expanded. */
 .ak-event-banner-toggle[aria-expanded='true'] .ak-event-banner-chevron {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
 
 .ak-event-banner-name {
@@ -233,7 +234,8 @@
   }
 
   .ak-event-banner-chevron {
-    display: inline;
+    /* inline-block: a transform (the flip when expanded) doesn't apply to inline boxes. */
+    display: inline-block;
   }
 
   .ak-event-banner-toggle:focus-visible {

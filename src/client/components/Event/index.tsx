@@ -289,7 +289,7 @@ export function Event({
                   {banner.name === name ? 'Banner' : `Banner: ${banner.name}`}
                 </span>
                 <span className="ak-event-banner-chevron" aria-hidden="true">
-                  ▸
+                  ▾
                 </span>
               </button>
             </div>

@@ -134,7 +134,7 @@ export function Event({
   const bannerStartAt = exactBanner ? new Date(banner.globalStartAt as string) : bannerDates?.start;
   const bannerEndAt = exactBanner ? new Date(banner.globalEndAt as string) : bannerDates?.end;
   const [sixStarGroups, otherGroups] = banner ? splitOperatorColumns(banner.operators) : [[], []];
-  // Phones show a banner collapsed to its name and dates until tapped (index.css).
+  // Phones show a banner collapsed to just its name until tapped (index.css).
   const [bannerExpanded, setBannerExpanded] = useState(false);
 
   return (
@@ -317,23 +317,25 @@ export function Event({
                   </div>
                 </div>
               ) : null}
+              {bannerDates?.start && bannerDates.end && (
+                <div className="ak-event-banner-date">
+                  <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />
+                  {bannerDates.estimated && (
+                    <InfoButton
+                      label={<span className="ak-event-date-predicted">(estimated)</span>}
+                    >
+                      Not yet confirmed for Global — based on this banner&apos;s CN dates and how
+                      long after CN this event reaches Global.
+                    </InfoButton>
+                  )}
+                  <Countdown
+                    start={bannerStartAt ?? null}
+                    end={bannerEndAt ?? null}
+                    exact={!!exactBanner}
+                  />
+                </div>
+              )}
             </div>
-            {bannerDates?.start && bannerDates.end && (
-              <div className="ak-event-banner-date">
-                <DateText date={bannerDates.start} /> - <DateText date={bannerDates.end} />
-                {bannerDates.estimated && (
-                  <InfoButton label={<span className="ak-event-date-predicted">(estimated)</span>}>
-                    Not yet confirmed for Global — based on this banner&apos;s CN dates and how long
-                    after CN this event reaches Global.
-                  </InfoButton>
-                )}
-                <Countdown
-                  start={bannerStartAt ?? null}
-                  end={bannerEndAt ?? null}
-                  exact={!!exactBanner}
-                />
-              </div>
-            )}
           </div>
         )}
       </div>

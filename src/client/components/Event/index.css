@@ -147,6 +147,13 @@
   gap: 12px;
 }
 
+/* Everything below the banner's name. `contents` so its children still lay out as the
+   banner column's own flex items — the dates' margin-top: auto keeps them at the
+   column's bottom. */
+.ak-event-banner-body {
+  display: contents;
+}
+
 /* On wider screens the toggle is plain text: the banner is always expanded. */
 .ak-event-banner-toggle {
   all: unset;
@@ -225,8 +232,8 @@
    narrow to read comfortably — banner-under-event first (this rule), aside-under-
    everything second (a separate, narrower breakpoint in App.css), rather than both
    collapsing at once. */
-/* Phones: a banner starts collapsed to its name and dates (and countdown); tapping the
-   name shows its operators, store and the account's progress on it. */
+/* Phones: a banner starts collapsed to just its name; tapping it shows the account's
+   progress on it, its operators, store, dates and countdown. */
 @media (max-width: 600px) {
   .ak-event-banner-toggle {
     pointer-events: auto;

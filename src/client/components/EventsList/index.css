@@ -54,6 +54,27 @@
   color: var(--ak-text-muted);
 }
 
+/* Phones (the same breakpoint App.css stacks the sidebar under the events at): cards
+   run edge to edge. The column's margin plus the list's padding otherwise left 32px
+   empty on each side — a fifth of a 390px-wide screen. Square, side-borderless cards,
+   since rounded corners and side borders against the screen edge just look cut off. */
+@media (max-width: 600px) {
+  .ak-events {
+    margin: 0;
+  }
+
+  .ak-events-list {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .ak-events-list-item {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
 /* Footer */
 .ak-events-footer {
   display: flex;

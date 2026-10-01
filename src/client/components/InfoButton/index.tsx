@@ -23,9 +23,9 @@ export interface InfoButtonProps {
   children: ReactNode;
   title?: string;
   label: ReactNode;
-  // Keep clicks on the label and in the popover from reaching the event card around
-  // it, whose own click toggles the event's selection — for a popup that's the point
-  // of the tap.
+  // Keep every click on the label from reaching the event card around it (whose own
+  // click toggles the event's selection) — not only the ones that open or close the
+  // popup, as by default (see labelClick). For a label that's only ever a popup trigger.
   isolateClick?: boolean;
   // No dashed underline under the label — for a non-text label like an operator icon.
   plain?: boolean;
@@ -34,9 +34,21 @@ export interface InfoButtonProps {
 export function InfoButton({ children, title, label, isolateClick, plain }: InfoButtonProps) {
   const [open, setOpen] = useState(false);
   const arrowRef = useRef(null);
+  // For telling whether a click on the label opened or closed the popup (see
+  // labelClick): what last opened it, and — snapshotted when the pointer goes down,
+  // since useClick's own handler runs first and changes them — whether it was open
+  // and what had opened it.
+  const openedBy = useRef<string | undefined>(undefined);
+  const atPointerDown = useRef<{ open: boolean; openedBy: string | undefined }>({
+    open: false,
+    openedBy: undefined,
+  });
   const { refs, context, floatingStyles, isPositioned } = useFloating({
     open,
-    onOpenChange: setOpen,
+    onOpenChange: (nextOpen, _event, reason) => {
+      if (nextOpen) openedBy.current = reason;
+      setOpen(nextOpen);
+    },
     middleware: [
       offset(ARROW_HEIGHT + GAP),
       flip(),
@@ -72,14 +84,29 @@ export function InfoButton({ children, title, label, isolateClick, plain }: Info
     initial: { opacity: 0, transform: 'scale(0.96)' },
   });
 
+  // A click on the label that opens the popup, or closes one a click opened, does only
+  // that: it doesn't reach the event card around it, whose own click toggles the
+  // event's selection — tapping "(estimated)" on a phone to read it used to select
+  // events. A click on a popup hover already opened (desktop) leaves it open
+  // (useClick's stickIfOpen), so it carries on to the card and selects as before.
+  // isolateClick stops every click regardless.
+  const labelClick = (e: React.MouseEvent) => {
+    const { open: wasOpen, openedBy: wasOpenedBy } = atPointerDown.current;
+    const togglesPopup = !wasOpen || wasOpenedBy === 'click';
+    if (isolateClick || togglesPopup) e.stopPropagation();
+  };
+
   return (
     <span className="info-button-wrapper">
       <span
         className={`info-button${plain ? ' plain' : ''}`}
         ref={refs.setReference}
-        {...getReferenceProps(
-          isolateClick ? { onClick: (e: React.MouseEvent) => e.stopPropagation() } : undefined
-        )}
+        {...getReferenceProps({
+          onPointerDown: () => {
+            atPointerDown.current = { open, openedBy: openedBy.current };
+          },
+          onClick: labelClick,
+        })}
       >
         {label}
       </span>
@@ -88,8 +115,8 @@ export function InfoButton({ children, title, label, isolateClick, plain }: Info
         // stacking context of whatever contained its label — on a phone event card
         // the dates row (z-index: 1), so a rerun's Intelligence Certificates row or
         // the next card, level with it and later in the page, drew over the popup.
-        // React events still bubble through a portal to its React parents (hence
-        // isolateClick below still matters).
+        // React events still bubble through a portal to its React parents, hence the
+        // click handling below.
         <FloatingPortal>
           <div
             className="info-popover"
@@ -101,11 +128,10 @@ export function InfoButton({ children, title, label, isolateClick, plain }: Info
             // visibly jumps to the real spot once positioning catches up a frame
             // later. Hiding it until then means it only ever appears already correct.
             style={{ ...floatingStyles, visibility: isPositioned ? 'visible' : 'hidden' }}
-            // Though portaled, the popover's React events (e.g. a click on a link in
-            // it) still bubble to whatever contains the label.
-            {...getFloatingProps(
-              isolateClick ? { onClick: (e: React.MouseEvent) => e.stopPropagation() } : undefined
-            )}
+            // A click inside the popup (e.g. on a link) is never a click on the card
+            // around its label — and though portaled, its React events still bubble
+            // there.
+            {...getFloatingProps({ onClick: (e: React.MouseEvent) => e.stopPropagation() })}
           >
             <div style={transitionStyles}>
               {title && <h3>{title}</h3>}

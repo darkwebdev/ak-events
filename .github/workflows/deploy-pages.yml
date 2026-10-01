@@ -6,6 +6,15 @@ on:
       - main
   workflow_dispatch: {}
 
+# One gh-pages publish at a time, across this workflow and the other one that pushes
+# to gh-pages (deploy-pages.yml / deploy-storybook.yml): concurrent runs raced, and all
+# but the last were rejected as non-fast-forward (seen when several commits were pushed
+# seconds apart). Queued rather than cancelled mid-run; a queued run may be superseded
+# by a newer one, which is fine since every run builds the latest main.
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

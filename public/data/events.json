@@ -123,66 +123,6 @@
     }
   },
   {
-    "name": "People, A People",
-    "start": "2026-09-16",
-    "end": "2026-09-30",
-    "globalStart": "2026-09-16",
-    "globalEnd": "2026-09-30",
-    "cnStart": "2026-04-07",
-    "cnEnd": "2026-04-21",
-    "datesPredicted": false,
-    "globalStartAt": "2026-09-16T15:00:00.000Z",
-    "globalEndAt": "2026-09-30T10:59:59.000Z",
-    "type": "Side Story",
-    "image": "data/images/EN_People%2C_A_People_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/People,_A_People",
-    "origPrime": 27,
-    "hhPermits": 3,
-    "dailyFreePulls": null,
-    "bannerPermits": null,
-    "intCerts": null,
-    "banner": {
-      "name": "Rage of the Many",
-      "type": "Standard",
-      "sparkEligible": false,
-      "operators": [
-        {
-          "name": "Zima the Raging Tide",
-          "charId": "char_1051_headb2",
-          "star": 6,
-          "class": "Guard",
-          "limited": false,
-          "icon": "data/images/operators/60px-Zima_the_Raging_Tide_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Ukusik",
-          "charId": "char_4224_turdus",
-          "star": 5,
-          "class": "Medic",
-          "limited": false,
-          "icon": "data/images/operators/60px-Ukusik_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Kazemaru",
-          "charId": "char_4016_kazema",
-          "star": 5,
-          "class": "Specialist",
-          "limited": false,
-          "icon": "data/images/operators/60px-Kazemaru_icon.png",
-          "sparkCost": null
-        }
-      ],
-      "globalStart": "2026-09-16",
-      "globalEnd": "2026-09-30",
-      "cnStart": "2026-04-07",
-      "cnEnd": "2026-04-21",
-      "globalStartAt": "2026-09-16T15:00:00.000Z",
-      "globalEndAt": "2026-09-30T10:59:59.000Z"
-    }
-  },
-  {
     "name": "Duel Channel Ivy Vine",
     "start": "2026-09-23",
     "end": "2026-10-07",
@@ -918,6 +858,162 @@
       "globalEnd": null,
       "cnStart": "2026-09-04",
       "cnEnd": "2026-09-18"
+    }
+  },
+  {
+    "name": "Dolly's Playground",
+    "start": "2027-03-14",
+    "end": "2027-03-24",
+    "globalStart": "2027-03-14",
+    "globalEnd": "2027-03-24",
+    "cnStart": "2026-09-20",
+    "cnEnd": "2026-09-30",
+    "datesPredicted": true,
+    "type": "Limited-time game mode",
+    "image": "data/images/CN_Dolly%27s_Playground_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Dolly%27s_Playground",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": null
+  },
+  {
+    "name": "Vector Breakthrough Bio Mimicry",
+    "start": "2027-03-23",
+    "end": "2027-04-13",
+    "globalStart": "2027-03-23",
+    "globalEnd": "2027-04-13",
+    "cnStart": "2026-09-29",
+    "cnEnd": "2026-10-20",
+    "datesPredicted": true,
+    "type": null,
+    "image": "data/images/CN_Vector_Breakthrough_Bio_Mimicry_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Vector_Breakthrough_Bio_Mimicry",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "Orienteering #8",
+      "type": "Standard",
+      "sparkEligible": false,
+      "operators": [
+        {
+          "name": "Mon3tr",
+          "charId": "char_4179_monstr",
+          "star": 6,
+          "class": "Medic",
+          "limited": false,
+          "icon": "data/images/operators/60px-Mon3tr_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Mantra",
+          "charId": "char_4204_mantra",
+          "star": 6,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Mantra_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Pramanix the Prerita",
+          "charId": "char_1046_sbell2",
+          "star": 6,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Pramanix_the_Prerita_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Bellone",
+          "charId": "char_4037_demetr",
+          "star": 6,
+          "class": "Guard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Bellone_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Degenbrecher",
+          "charId": "char_4116_blkkgt",
+          "star": 6,
+          "class": "Guard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Degenbrecher_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Blaze the Igniting Spark",
+          "charId": "char_1040_blaze2",
+          "star": 6,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Blaze_the_Igniting_Spark_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Mitm",
+          "charId": "char_4147_mitm",
+          "star": 5,
+          "class": "Vanguard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Mitm_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Kichisei",
+          "charId": "char_4203_kichi",
+          "star": 5,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Kichisei_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Surfer",
+          "charId": "char_4052_surfer",
+          "star": 5,
+          "class": "Vanguard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Surfer_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Paprika",
+          "charId": "char_4071_peper",
+          "star": 5,
+          "class": "Medic",
+          "limited": false,
+          "icon": "data/images/operators/60px-Paprika_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Cairn",
+          "charId": "char_4214_cairn",
+          "star": 5,
+          "class": "Defender",
+          "limited": false,
+          "icon": "data/images/operators/60px-Cairn_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Ripresa",
+          "charId": "char_4031_liesel",
+          "star": 5,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Ripresa_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-09-29",
+      "cnEnd": "2026-10-13"
     }
   }
 ]

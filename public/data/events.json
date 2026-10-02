@@ -291,7 +291,7 @@
           "class": "Specialist",
           "limited": true,
           "icon": "data/images/operators/60px-Kirin_R_Yato_icon.png",
-          "sparkCost": null
+          "sparkCost": 300
         },
         {
           "name": "Rathalos S Noir Corne",
@@ -300,7 +300,7 @@
           "class": "Guard",
           "limited": true,
           "icon": "data/images/operators/60px-Rathalos_S_Noir_Corne_icon.png",
-          "sparkCost": null
+          "sparkCost": 75
         }
       ],
       "globalStart": null,

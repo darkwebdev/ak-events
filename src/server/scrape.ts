@@ -588,7 +588,10 @@ export async function scrapeEvents(): Promise<void> {
         // match means this is their first-ever appearance.
         const debutInfo = operatorDebutCache[op.name as string];
         const debutObj = debutInfo && typeof debutInfo === 'object' ? debutInfo : null;
-        const isDebutingOnThisEvent = debutObj?.event === event.name;
+        // A rerun keeps its original event's name (A Flurry to the Flame's rerun is
+        // still "A Flurry to the Flame"), so a name match alone would treat the rerun
+        // as the debut too — only its wiki link says which run this is.
+        const isDebutingOnThisEvent = debutObj?.event === event.name && !isRerunLink(event.link);
         // The banner page's own per-operator marking when it has one; otherwise the
         // operator page's categories (see resolveOperatorLimited), which a brand-new
         // operator's page doesn't have yet — that marked new standard operators

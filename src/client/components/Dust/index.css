@@ -1,0 +1,11 @@
+/* Over the page content, so the smoke drifts across the event cards rather than only
+   showing in the gaps between them — but under the info popups (z-index 9999) and
+   toasts, which need to stay readable. It never takes clicks or scrolls. */
+.ak-dust {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}

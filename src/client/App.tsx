@@ -10,6 +10,7 @@ import {
 
 import { ArknightsAccount } from './components/ArknightsAccount';
 import { CurrentlyOwned } from './components/CurrentlyOwned';
+import { Dust } from './components/Dust';
 import { DailyOrundum } from './components/DailyOrundum';
 import { EventsList } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
@@ -102,6 +103,8 @@ export default function App() {
   // every fetch (see ArknightsAccount's own warning) with no fix, only an accepted
   // limitation — that's the reason this stays gated rather than shipping wide open.
   const [accountImportEnabled] = useFeatureFlag('accountImport', false);
+  // The animated smoke and dust over the page (see components/Dust), ?ff_dust=1.
+  const [dustEnabled] = useFeatureFlag('dust', false);
 
   // On phones the sidebar is a panel over the page, opened from the header — see
   // App.css. Escape closes it.
@@ -260,6 +263,7 @@ export default function App() {
 
   return (
     <>
+      {dustEnabled && <Dust />}
       {newEventsNotice && <Toast message={newEventsNotice} />}
 
       <Header

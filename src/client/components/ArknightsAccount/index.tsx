@@ -59,6 +59,9 @@ export function ArknightsAccount({
     'ak-events-arknights-linked-account',
     null
   );
+  // Whether the third-party/logout warning was dismissed — remembered, so it stays
+  // closed on later visits.
+  const [warningHidden, setWarningHidden] = useStorage('ak-events-arknights-warning-hidden', false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -161,17 +164,31 @@ export function ArknightsAccount({
 
       {!connected && pendingStep === 'email' && (
         <form className="ak-ark-account-form" onSubmit={handleSendCode}>
-          <div className="ak-ark-account-warning">
-            <p>
-              This is not an official Yostar or Hypergryph service. Your login goes through an
-              unofficial third-party server, which receives access to your account. Logging in
-              through third-party tools may break the game&apos;s terms of service and can put your
-              account at risk. Use it at your own risk.
-            </p>
-            <p>
-              Connecting, and every data refresh after that, logs you out of the Arknights game.
-            </p>
-          </div>
+          {!warningHidden && (
+            <div className="ak-ark-account-warning">
+              <button
+                type="button"
+                className="ak-ark-account-warning-close"
+                onClick={() => setWarningHidden(true)}
+                aria-label="Hide this warning"
+                title="Hide"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
+                  <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" />
+                </svg>
+              </button>
+              <p>
+                This is not an official Yostar or Hypergryph service. Your login goes through an
+                unofficial third-party server, which receives access to your account. Logging in
+                through third-party tools may break the game&apos;s terms of service and can put
+                your account at risk. Use it at your own risk.
+              </p>
+              <p>
+                Connecting, and every data refresh after that, logs you out of the Arknights game.
+              </p>
+            </div>
+          )}
           <input
             type="email"
             className="ak-text-input"

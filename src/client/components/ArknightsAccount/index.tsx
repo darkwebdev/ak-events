@@ -161,10 +161,17 @@ export function ArknightsAccount({
 
       {!connected && pendingStep === 'email' && (
         <form className="ak-ark-account-form" onSubmit={handleSendCode}>
-          <p className="ak-ark-account-warning">
-            Fetching your data will log you out of Arknights on this device, every time you refresh
-            it.
-          </p>
+          <div className="ak-ark-account-warning">
+            <p>
+              This is not an official Yostar or Hypergryph service. Your login goes through an
+              unofficial third-party server, which receives access to your account. Logging in
+              through third-party tools may break the game&apos;s terms of service and can put your
+              account at risk. Use it at your own risk.
+            </p>
+            <p>
+              Connecting, and every data refresh after that, logs you out of the Arknights game.
+            </p>
+          </div>
           <input
             type="email"
             className="ak-text-input"

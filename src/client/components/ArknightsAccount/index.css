@@ -137,10 +137,21 @@
 .ak-ark-account-warning {
   margin: 0;
   font-size: 13px;
-  color: var(--ak-limited-text);
+  /* The regular text color, not --ak-limited-text: that dark brown is made for the
+     solid yellow tag, and over this translucent yellow on the dark theme's background
+     it was barely readable. */
+  color: var(--ak-text);
   background: color-mix(in srgb, var(--ak-limited) 35%, transparent);
   padding: 8px 10px;
   border-radius: 4px;
+}
+
+.ak-ark-account-warning p {
+  margin: 0;
+}
+
+.ak-ark-account-warning p + p {
+  margin-top: 6px;
 }
 
 .ak-ark-account-error {

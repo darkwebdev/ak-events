@@ -1,0 +1,1 @@
+import{j as e}from"./jsx-runtime-BOyQ8YBs.js";function i({className:n}){return e.jsxs("svg",{className:`ak-ended-icon${n?` ${n}`:""}`,viewBox:"0 0 16 16",role:"img","aria-label":"Ended",children:[e.jsx("title",{children:"Ended"}),e.jsx("path",{d:"M4 4l8 8M12 4l-8 8"})]})}export{i as E};

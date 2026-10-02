@@ -103,8 +103,9 @@ export default function App() {
   // every fetch (see ArknightsAccount's own warning) with no fix, only an accepted
   // limitation — that's the reason this stays gated rather than shipping wide open.
   const [accountImportEnabled] = useFeatureFlag('accountImport', false);
-  // The animated smoke and dust over the page (see components/Dust), ?ff_dust=1.
-  const [dustEnabled] = useFeatureFlag('dust', false);
+  // The animated smoke and dust over the page (see components/Dust): on unless turned
+  // off with ?ff_dust=0.
+  const [dustEnabled] = useFeatureFlag('dust', true);
 
   // On phones the sidebar is a panel over the page, opened from the header — see
   // App.css. Escape closes it.

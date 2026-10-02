@@ -5,7 +5,6 @@ import './index.css';
 // from the bottom-right corner, with small grey shards flying across the page.
 
 const SMOKE_SPAWN_PER_FRAME = 2;
-const SMOKE_INITIAL_COUNT = 300;
 const DUST_COUNT = 50;
 const SMOKE_SPREAD = -2;
 const SMOKE_ANGLE = 1;
@@ -115,9 +114,9 @@ export function Dust() {
     resize();
     window.addEventListener('resize', resize);
 
-    let smoke = Array.from({ length: SMOKE_INITIAL_COUNT }, () =>
-      newSmoke(canvas.width, canvas.height)
-    );
+    // No initial batch: it all started at the same spot as one dense puff, so the
+    // plume builds up from the steady spawn instead.
+    let smoke: Smoke[] = [];
     const shards = Array.from({ length: DUST_COUNT }, () => newShard(canvas.width, canvas.height));
     let toSpawn = 0;
     let last = performance.now();

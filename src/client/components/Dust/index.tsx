@@ -22,15 +22,17 @@ const DUST_MAX_SIZE = 3;
 // Speeds above are per frame at 60fps; `step` scales them to the real frame time so the
 // animation runs at the same pace on a 120Hz display.
 const FRAME_MS = 1000 / 60;
-// Speeds above suit a desktop-wide window; on a narrower screen the same pixels per
-// frame cross it far sooner and look rushed, so movement scales with the width —
-// down to this fraction on a phone.
+// The smoke's speeds above suit a desktop-wide window; on a narrower screen the same
+// pixels per frame cross it far sooner and look rushed, so its movement scales with
+// the width — down to this fraction on a phone.
 const FULL_SPEED_WIDTH = 1280;
 const MIN_SPEED_SCALE = 0.3;
 // On a phone the plume would otherwise climb most of the way up the (tall, narrow)
 // screen and cover the content, so there it rises less, starts lower and is fainter:
 // its rise is scaled by the width scale once more, its opacity down to this fraction.
 const MIN_SMOKE_OPACITY_SCALE = 0.4;
+// The page's phone layout (see App.css), where the shards are left out: busy enough.
+const PHONE_QUERY = '(max-width: 600px)';
 
 interface Smoke {
   x: number;
@@ -125,6 +127,7 @@ export function Dust() {
     let toSpawn = 0;
     let last = performance.now();
     let frame = 0;
+    const phone = window.matchMedia(PHONE_QUERY);
 
     const animate = (now: number) => {
       // Capped so a long pause (a background tab) doesn't jump everything at once.
@@ -153,9 +156,9 @@ export function Dust() {
       toSpawn += SMOKE_SPAWN_PER_FRAME * step;
       for (; toSpawn >= 1; toSpawn--) smoke.push(newSmoke(width, height, scale));
 
-      for (const s of shards) {
-        s.x += s.speedX * move;
-        s.y += s.speedY * move;
+      for (const s of phone.matches ? [] : shards) {
+        s.x += s.speedX * step;
+        s.y += s.speedY * step;
         if (s.x + s.size < 0) {
           s.x = width + s.size;
           s.y = Math.random() * height;

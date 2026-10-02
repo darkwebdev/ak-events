@@ -27,6 +27,10 @@ const FRAME_MS = 1000 / 60;
 // down to this fraction on a phone.
 const FULL_SPEED_WIDTH = 1280;
 const MIN_SPEED_SCALE = 0.3;
+// On a phone the plume would otherwise climb most of the way up the (tall, narrow)
+// screen and cover the content, so there it rises less, starts lower and is fainter:
+// its rise is scaled by the width scale once more, its opacity down to this fraction.
+const MIN_SMOKE_OPACITY_SCALE = 0.4;
 
 interface Smoke {
   x: number;
@@ -47,12 +51,12 @@ interface Shard {
   vertices: { x: number; y: number }[];
 }
 
-function newSmoke(width: number, height: number): Smoke {
+function newSmoke(width: number, height: number, scale: number): Smoke {
   const angle = Math.random() * SMOKE_ANGLE - SMOKE_ANGLE / 2;
   const speed = SMOKE_SPREAD * SMOKE_SPEED * (Math.random() * 0.5 + 0.75);
   return {
     x: width + 100,
-    y: height - 50,
+    y: height - 50 * scale,
     size: (Math.random() * 20 + 10) * SMOKE_SIZE,
     speedX: Math.cos(angle) * speed,
     speedY: Math.sin(angle) * speed,
@@ -127,15 +131,19 @@ export function Dust() {
       const step = Math.min((now - last) / FRAME_MS, 3);
       last = now;
       const { width, height } = canvas;
-      const move = step * Math.max(MIN_SPEED_SCALE, Math.min(1, width / FULL_SPEED_WIDTH));
+      const scale = Math.max(MIN_SPEED_SCALE, Math.min(1, width / FULL_SPEED_WIDTH));
+      const move = step * scale;
+      const smokeOpacity = MIN_SMOKE_OPACITY_SCALE + (1 - MIN_SMOKE_OPACITY_SCALE) * scale;
       ctx.clearRect(0, 0, width, height);
 
       for (const p of smoke) {
         p.x += p.speedX * move;
-        p.y += p.speedY * move;
+        p.y += p.speedY * move * scale;
         p.size *= SMOKE_GROWTH ** step;
         p.opacity -= 0.01 * SMOKE_OPACITY * SMOKE_FADE * step;
-        ctx.fillStyle = `rgba(${SMOKE_GREY}, ${SMOKE_GREY}, ${SMOKE_GREY}, ${p.opacity})`;
+        ctx.fillStyle = `rgba(${SMOKE_GREY}, ${SMOKE_GREY}, ${SMOKE_GREY}, ${
+          p.opacity * smokeOpacity
+        })`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
@@ -143,7 +151,7 @@ export function Dust() {
       // Faded out, or carried past the left or top edge.
       smoke = smoke.filter((p) => p.opacity > 0 && p.x + p.size > 0 && p.y + p.size > 0);
       toSpawn += SMOKE_SPAWN_PER_FRAME * step;
-      for (; toSpawn >= 1; toSpawn--) smoke.push(newSmoke(width, height));
+      for (; toSpawn >= 1; toSpawn--) smoke.push(newSmoke(width, height, scale));
 
       for (const s of shards) {
         s.x += s.speedX * move;

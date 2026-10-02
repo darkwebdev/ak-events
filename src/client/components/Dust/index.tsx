@@ -10,7 +10,9 @@ const DUST_COUNT = 50;
 const SMOKE_SPREAD = -2;
 const SMOKE_ANGLE = 1;
 const SMOKE_OPACITY = 0.03;
-const SMOKE_SPEED = 2;
+// A neutral mid grey: darkens the light theme and lightens the dark one alike.
+const SMOKE_GREY = 128;
+const SMOKE_SPEED = 1;
 const SMOKE_SIZE = 1.5;
 const SMOKE_GROWTH = 1.001;
 const SMOKE_FADE = 0.08;
@@ -123,14 +125,12 @@ export function Dust() {
       const { width, height } = canvas;
       ctx.clearRect(0, 0, width, height);
 
-      // Read every frame so the smoke follows a theme switch.
-      const smokeRgb = getComputedStyle(canvas).getPropertyValue('--ak-dust-smoke').trim();
       for (const p of smoke) {
         p.x += p.speedX * step;
         p.y += p.speedY * step;
         p.size *= SMOKE_GROWTH ** step;
         p.opacity -= 0.01 * SMOKE_OPACITY * SMOKE_FADE * step;
-        ctx.fillStyle = `rgba(${smokeRgb}, ${p.opacity})`;
+        ctx.fillStyle = `rgba(${SMOKE_GREY}, ${SMOKE_GREY}, ${SMOKE_GREY}, ${p.opacity})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();

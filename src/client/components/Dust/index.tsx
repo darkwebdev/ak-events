@@ -23,6 +23,11 @@ const DUST_MAX_SIZE = 3;
 // Speeds above are per frame at 60fps; `step` scales them to the real frame time so the
 // animation runs at the same pace on a 120Hz display.
 const FRAME_MS = 1000 / 60;
+// Speeds above suit a desktop-wide window; on a narrower screen the same pixels per
+// frame cross it far sooner and look rushed, so movement scales with the width —
+// down to this fraction on a phone.
+const FULL_SPEED_WIDTH = 1280;
+const MIN_SPEED_SCALE = 0.3;
 
 interface Smoke {
   x: number;
@@ -123,11 +128,12 @@ export function Dust() {
       const step = Math.min((now - last) / FRAME_MS, 3);
       last = now;
       const { width, height } = canvas;
+      const move = step * Math.max(MIN_SPEED_SCALE, Math.min(1, width / FULL_SPEED_WIDTH));
       ctx.clearRect(0, 0, width, height);
 
       for (const p of smoke) {
-        p.x += p.speedX * step;
-        p.y += p.speedY * step;
+        p.x += p.speedX * move;
+        p.y += p.speedY * move;
         p.size *= SMOKE_GROWTH ** step;
         p.opacity -= 0.01 * SMOKE_OPACITY * SMOKE_FADE * step;
         ctx.fillStyle = `rgba(${SMOKE_GREY}, ${SMOKE_GREY}, ${SMOKE_GREY}, ${p.opacity})`;
@@ -141,8 +147,8 @@ export function Dust() {
       for (; toSpawn >= 1; toSpawn--) smoke.push(newSmoke(width, height));
 
       for (const s of shards) {
-        s.x += s.speedX * step;
-        s.y += s.speedY * step;
+        s.x += s.speedX * move;
+        s.y += s.speedY * move;
         if (s.x + s.size < 0) {
           s.x = width + s.size;
           s.y = Math.random() * height;

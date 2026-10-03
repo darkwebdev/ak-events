@@ -249,6 +249,15 @@
     display: inline-block;
   }
 
+  /* A collapsed banner's name is dash-underlined, the app's mark for expandable
+     content (dotted is a popup trigger, see InfoButton), so it reads as something to
+     tap rather than a plain heading. */
+  .ak-event-banner-toggle[aria-expanded='false'] .ak-event-banner-name {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: var(--ak-accent);
+  }
+
   .ak-event-banner-toggle:focus-visible {
     outline: 2px solid var(--ak-accent);
     outline-offset: 2px;

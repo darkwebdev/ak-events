@@ -107,10 +107,14 @@
 }
 
 .ak-event-date-predicted {
-  margin-left: 0.4em;
   font-style: italic;
   cursor: help;
-  text-decoration: underline dotted;
+}
+
+/* The gap before "(estimated)" sits outside its InfoButton, so the button's underline
+   starts at the text instead of running under the gap too. */
+.info-button-wrapper:has(.ak-event-date-predicted) {
+  margin-left: 0.4em;
 }
 
 .ak-event-orundum {

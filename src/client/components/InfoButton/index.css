@@ -5,8 +5,10 @@
 .info-button {
   /* line-height: 1.5; */
   cursor: pointer;
+  /* Dotted marks a popup trigger across the app; dashed is for expandable content
+     (a phone's collapsed banner, see Event/index.css). */
   text-decoration-line: underline;
-  text-decoration-style: dashed;
+  text-decoration-style: dotted;
   text-decoration-color: var(--ak-accent);
   font-size: inherit;
 }

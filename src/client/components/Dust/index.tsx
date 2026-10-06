@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import './index.css';
 
-// The animated smoke over the page, ported from the ric project: a plume drifting in
-// from the bottom-right corner, with small grey shards flying across the page.
+// The animated page background, ported from the ric project: a smoke plume drifting in
+// from the bottom-right corner, behind the page's blocks, with small grey shards flying
+// across the page over them. Two canvases, one per layer.
 
 const SMOKE_SPAWN_PER_FRAME = 2;
 const DUST_COUNT = 50;
@@ -95,18 +96,23 @@ function newShard(width: number, height: number): Shard {
 }
 
 export function Dust() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const smokeRef = useRef<HTMLCanvasElement>(null);
+  const shardsRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     // A moving background is exactly what reduced motion asks to leave out.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const canvas = canvasRef.current;
+    const canvas = smokeRef.current;
     const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const shardsCanvas = shardsRef.current;
+    const shardsCtx = shardsCanvas?.getContext('2d');
+    if (!canvas || !ctx || !shardsCanvas || !shardsCtx) return;
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      for (const c of [canvas, shardsCanvas]) {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+      }
     };
     resize();
     window.addEventListener('resize', resize);
@@ -126,6 +132,7 @@ export function Dust() {
       last = now;
       const { width, height } = canvas;
       ctx.clearRect(0, 0, width, height);
+      shardsCtx.clearRect(0, 0, width, height);
       // Checked every frame, so turning a tablet to a phone-width layout clears it.
       if (phone.matches) {
         frame = requestAnimationFrame(animate);
@@ -154,12 +161,12 @@ export function Dust() {
           s.x = width + s.size;
           s.y = Math.random() * height;
         }
-        ctx.fillStyle = s.color;
-        ctx.beginPath();
-        ctx.moveTo(s.x + s.vertices[0].x, s.y + s.vertices[0].y);
-        for (const v of s.vertices.slice(1)) ctx.lineTo(s.x + v.x, s.y + v.y);
-        ctx.closePath();
-        ctx.fill();
+        shardsCtx.fillStyle = s.color;
+        shardsCtx.beginPath();
+        shardsCtx.moveTo(s.x + s.vertices[0].x, s.y + s.vertices[0].y);
+        for (const v of s.vertices.slice(1)) shardsCtx.lineTo(s.x + v.x, s.y + v.y);
+        shardsCtx.closePath();
+        shardsCtx.fill();
       }
 
       frame = requestAnimationFrame(animate);
@@ -172,5 +179,10 @@ export function Dust() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="ak-dust" aria-hidden="true" />;
+  return (
+    <>
+      <canvas ref={smokeRef} className="ak-dust ak-dust-smoke" aria-hidden="true" />
+      <canvas ref={shardsRef} className="ak-dust ak-dust-shards" aria-hidden="true" />
+    </>
+  );
 }

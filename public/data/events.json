@@ -1,26 +1,5 @@
 [
   {
-    "name": "Duel Channel Ivy Vine",
-    "start": "2026-09-23",
-    "end": "2026-10-07",
-    "globalStart": "2026-09-23",
-    "globalEnd": "2026-10-07",
-    "cnStart": "2026-04-25",
-    "cnEnd": "2026-05-09",
-    "datesPredicted": false,
-    "globalStartAt": "2026-09-23T15:00:00.000Z",
-    "globalEndAt": "2026-10-07T10:59:59.000Z",
-    "type": null,
-    "image": "data/images/EN_Duel_Channel_Ivy_Vine_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Ivy_Vine",
-    "origPrime": 2,
-    "hhPermits": null,
-    "dailyFreePulls": null,
-    "bannerPermits": null,
-    "intCerts": null,
-    "banner": null
-  },
-  {
     "name": "Critical Phase Transition",
     "start": "2026-10-14",
     "end": "2026-10-28",

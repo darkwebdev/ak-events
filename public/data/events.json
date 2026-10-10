@@ -9,10 +9,10 @@
     "cnEnd": "2026-05-15",
     "datesPredicted": false,
     "type": "Main Theme (episode release)",
-    "image": "data/images/CN_Critical_Phase_Transition_banner.png",
+    "image": "data/images/EN_Critical_Phase_Transition_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
     "origPrime": null,
-    "hhPermits": null,
+    "hhPermits": 1,
     "dailyFreePulls": 14,
     "bannerPermits": null,
     "intCerts": null,
@@ -150,10 +150,12 @@
           "sparkCost": 300
         }
       ],
-      "globalStart": null,
-      "globalEnd": null,
+      "globalStart": "2026-10-14",
+      "globalEnd": "2026-10-28",
       "cnStart": "2026-05-01",
-      "cnEnd": "2026-05-15"
+      "cnEnd": "2026-05-15",
+      "globalStartAt": "2026-10-14T15:00:00.000Z",
+      "globalEndAt": "2026-10-28T10:59:59.000Z"
     }
   },
   {

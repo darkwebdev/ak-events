@@ -86,5 +86,9 @@
   "Aegis": {
     "event": "Sur le lac lune vivante",
     "isFestival": false
+  },
+  "Kal'tsit Esperanta": {
+    "event": "Critical Phase Transition",
+    "isFestival": false
   }
 }

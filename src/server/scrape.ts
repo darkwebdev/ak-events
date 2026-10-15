@@ -140,12 +140,17 @@ export async function scrapeEvents(): Promise<void> {
     // lib/arkpedia.js — verified to match the wiki's own extraction exactly, but
     // structured rather than heuristic), tried before the wiki fetch below so a hit
     // here can skip that fetch entirely.
+    // Its reward stores also list the banner's free pulls, which the wiki's event
+    // pages sometimes leave out (Critical Phase Transition's page never mentions its
+    // sign-in event's ten-roll permit) — merged over the wiki's below.
     const arkpediaName = arkpediaNameByKey.get(arkpediaNameKey(event.name));
-    if (event.hhPermits == null && arkpediaName) {
+    let arkpediaDetail: ReturnType<typeof parseArkpediaEventDetail> = null;
+    if (arkpediaName) {
       try {
         const html = await fetchArkpediaEventDetailHtml(arkpediaName);
         const detail = html ? parseArkpediaEventDetail(html) : null;
-        if (detail?.headhuntingPermits != null) {
+        arkpediaDetail = detail;
+        if (event.hhPermits == null && detail?.headhuntingPermits != null) {
           event.hhPermits = detail.headhuntingPermits;
           console.log('Found Headhunting Permits (arkpedia) for', event.name, ':', event.hhPermits);
         }
@@ -191,8 +196,8 @@ export async function scrapeEvents(): Promise<void> {
       // A rerun's fetch above reads the ORIGINAL run's page, whose banner perks
       // belonged to the original banner — so they're only taken from an event's own page.
       if (!isRerunLink(event.link)) {
-        event.dailyFreePull = parsed.dailyFreePull;
-        event.bannerPermits = parsed.bannerPermits;
+        event.dailyFreePull = parsed.dailyFreePull || !!arkpediaDetail?.dailyFreePull;
+        event.bannerPermits = arkpediaDetail?.bannerPermits ?? parsed.bannerPermits;
         event.headhuntingDescribed = parsed.headhuntingDescribed;
         event.bannerKind = parsed.bannerKind;
         event.sparkDiscounts = parsed.sparkDiscounts;

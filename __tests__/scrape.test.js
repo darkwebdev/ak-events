@@ -1093,4 +1093,58 @@ describe('scrapeEvents', () => {
 
     vi.doUnmock('../src/server/lib/arkpedia.js');
   });
+
+  test("arkpedia's banner free pulls fill in what the wiki page leaves out", async () => {
+    mockFetchBannersPageHtml.mockResolvedValue(buildBannerPageHtml());
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Story Event',
+        link: 'https://example.com/wiki/Story_Event',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        origPrime: 10,
+      },
+    ]);
+    mockFetchArkpediaEventsHtml.mockResolvedValue('fake-html');
+    mockFetchArkpediaEventDetailHtml.mockResolvedValue('fake-html');
+    // Like Critical Phase Transition: the wiki page states the daily pull, not the permit.
+    mockFetchEventDetailsViaApi.mockResolvedValue({
+      parse: {
+        text: {
+          '*': '<p>Every day, the player can perform one headhunting pull for free in <i>X</i>.</p>',
+        },
+      },
+    });
+    vi.doMock('../src/server/lib/arkpedia.js', async (importOriginal) => ({
+      ...(await importOriginal()),
+      parseArkpediaEventsList: () => [],
+      parseArkpediaEventNames: () => ['[Side Story] Story Event'],
+      parseArkpediaEventDetail: () => ({
+        dateStr: null,
+        isPredicted: false,
+        bannerName: null,
+        featuredOperators: [],
+        headhuntingPermits: null,
+        dailyFreePull: true,
+        bannerPermits: 10,
+      }),
+    }));
+    vi.resetModules();
+    const { scrapeEvents: scrapeEventsWithMockedArkpedia } = await import(
+      '../src/server/scrape.js'
+    );
+
+    await scrapeEventsWithMockedArkpedia();
+
+    const eventsJsonCalls = mockSaveJson.mock.calls.filter(
+      ([path]) => path === 'public/data/events.json'
+    );
+    const [, savedEvents] = eventsJsonCalls[eventsJsonCalls.length - 1];
+    expect(savedEvents[0]).toMatchObject({ dailyFreePulls: 14, bannerPermits: 10 });
+    expect(savedEvents[0].freePullsEstimated).toBeFalsy();
+    expect(reportedIssues()).toEqual([]);
+
+    vi.doUnmock('../src/server/lib/arkpedia.js');
+  });
 });

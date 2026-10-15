@@ -226,6 +226,81 @@ describe('parseArkpediaEventDetail', () => {
     expect(parseArkpediaEventDetail(html).headhuntingPermits).toBeNull();
   });
 
+  test("reads the banner's daily free roll and its banner-only ten-roll permit", () => {
+    // Shaped like Critical Phase Transition's page (2026-10).
+    const html = wrapNextData({
+      rewardStores: [
+        {
+          type: 'Headhunting',
+          name: 'DAILY FREE ROLL IN [SEALED WITH TIME] LIMITED HEADHUNTING',
+          items: [
+            {
+              name: 'Daily free headhunting roll',
+              quantity: 14,
+              stock: '1',
+              iconPath: '/material-icons/Headhunting Permit.webp',
+            },
+          ],
+        },
+        {
+          type: 'Login event',
+          name: '2026 CELEBRATION SIGN-IN EVENT OPEN',
+          items: [
+            {
+              name: 'A Sealed Vow Headhunting Permit',
+              quantity: 1,
+              stock: '1',
+              iconPath: '/material-icons/A Sealed Vow Headhunting Permit (ten-roll).webp',
+            },
+            {
+              name: 'Recruitment Permit',
+              quantity: 5,
+              stock: '1',
+              iconPath: '/material-icons/Recruitment Permit.webp',
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(parseArkpediaEventDetail(html)).toMatchObject({
+      headhuntingPermits: null,
+      dailyFreePull: true,
+      bannerPermits: 10,
+    });
+  });
+
+  test("doesn't count a regular or Kernel ten-roll permit as the banner's own", () => {
+    const html = wrapNextData({
+      rewardStores: [
+        {
+          type: 'Login event',
+          name: 'Sign-in',
+          items: [
+            {
+              name: 'Ten-roll Kernel Headhunting Permit',
+              quantity: 1,
+              stock: '1',
+              iconPath: '/material-icons/Ten-roll Kernel Headhunting Permit (ten-roll).webp',
+            },
+            {
+              name: 'Headhunting Permit',
+              quantity: 1,
+              stock: '2',
+              iconPath: '/material-icons/Headhunting Permit.webp',
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(parseArkpediaEventDetail(html)).toMatchObject({
+      headhuntingPermits: 2,
+      dailyFreePull: false,
+      bannerPermits: null,
+    });
+  });
+
   test('returns null when the page has no __NEXT_DATA__ at all', () => {
     expect(parseArkpediaEventDetail('<html><body>404</body></html>')).toBeNull();
     expect(parseArkpediaEventDetail(null)).toBeNull();

@@ -204,6 +204,10 @@ export interface ArkpediaEventDetail {
   bannerName: string | null;
   featuredOperators: ArkpediaFeaturedOperator[];
   headhuntingPermits: number | null;
+  // The featured banner's free pulls as the page's reward stores list them — see
+  // parseArkpediaEventDetail. False/null when the page lists none.
+  dailyFreePull: boolean;
+  bannerPermits: number | null;
 }
 
 // --- Operator caches (public/data/operators.json, operator_debuts.json) ---

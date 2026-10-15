@@ -112,6 +112,7 @@ interface ArkpediaRewardItem {
   name?: string;
   quantity?: number | string;
   stock?: number | string;
+  iconPath?: string | null;
 }
 
 interface ArkpediaRewardStore {
@@ -127,20 +128,47 @@ interface ArkpediaEventDetailProps {
 }
 
 // Parse a single arkpedia.net event detail page (arkpedia.net/events/<arkpedia name>) into
-// { dateStr, isPredicted, bannerName, featuredOperators, headhuntingPermits }.
+// { dateStr, isPredicted, bannerName, featuredOperators, headhuntingPermits,
+// dailyFreePull, bannerPermits }.
 // featuredOperators is [{ name, rarity, percent }] — percent is the rate-up chance,
 // which the wiki's own banner pages don't expose. headhuntingPermits is summed from
 // any reward-store item literally named "Headhunting Permit" (quantity × stock);
 // null if the page has no such item, which callers should treat as "unknown" (fall
 // back to the wiki), not "zero" — most events simply don't sell permits at all.
+//
+// The featured banner's free pulls are read from the same stores:
+// - dailyFreePull: a "Daily free headhunting roll" item (in a "Headhunting" store).
+// - bannerPermits: 10 per banner-only ten-roll permit, e.g. Critical Phase
+//   Transition's "A Sealed Vow Headhunting Permit" from its sign-in event — named
+//   "<something> Headhunting Permit", with a "(ten-roll)" icon. The wiki's event pages
+//   don't always mention these, so arkpedia's take precedence (see scrape.ts).
+const BANNER_PERMIT_PULLS = 10;
+
+function isBannerTenRollPermit(item: ArkpediaRewardItem): boolean {
+  const name = item.name || '';
+  return (
+    /\S\s+Headhunting Permit$/.test(name) &&
+    !/^Ten-roll\b|\bKernel\b/i.test(name) &&
+    /\(ten-roll\)/i.test(item.iconPath || '')
+  );
+}
+
 function parseArkpediaEventDetail(html: string | null | undefined): ArkpediaEventDetail | null {
   const data = extractNextData(html) as NextDataShape | null;
   const props = data?.props?.pageProps as ArkpediaEventDetailProps | undefined;
   if (!props) return null;
 
   let headhuntingPermits: number | null = null;
+  let dailyFreePull = false;
+  let bannerPermits: number | null = null;
   for (const store of props.rewardStores || []) {
     for (const item of store.items || []) {
+      if (/^Daily free headhunting roll$/i.test(item.name || '')) dailyFreePull = true;
+      if (isBannerTenRollPermit(item)) {
+        const count =
+          (parseInt(String(item.quantity), 10) || 1) * (parseInt(String(item.stock), 10) || 1);
+        bannerPermits = (bannerPermits || 0) + count * BANNER_PERMIT_PULLS;
+      }
       if (item.name !== 'Headhunting Permit') continue;
       if (item.stock === '∞' || item.stock == null) continue;
       const stock = parseInt(String(item.stock), 10);
@@ -156,6 +184,8 @@ function parseArkpediaEventDetail(html: string | null | undefined): ArkpediaEven
     bannerName: props.bannerName || null,
     featuredOperators: Array.isArray(props.featuredOperators) ? props.featuredOperators : [],
     headhuntingPermits,
+    dailyFreePull,
+    bannerPermits,
   };
 }
 

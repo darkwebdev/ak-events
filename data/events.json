@@ -1,26 +1,5 @@
 [
   {
-    "name": "Duel Channel Ivy Vine",
-    "start": "2026-09-23",
-    "end": "2026-10-07",
-    "globalStart": "2026-09-23",
-    "globalEnd": "2026-10-07",
-    "cnStart": "2026-04-25",
-    "cnEnd": "2026-05-09",
-    "datesPredicted": false,
-    "globalStartAt": "2026-09-23T15:00:00.000Z",
-    "globalEndAt": "2026-10-07T10:59:59.000Z",
-    "type": null,
-    "image": "data/images/EN_Duel_Channel_Ivy_Vine_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Duel_Channel_Ivy_Vine",
-    "origPrime": 2,
-    "hhPermits": null,
-    "dailyFreePulls": null,
-    "bannerPermits": null,
-    "intCerts": null,
-    "banner": null
-  },
-  {
     "name": "Critical Phase Transition",
     "start": "2026-10-14",
     "end": "2026-10-28",
@@ -29,13 +8,15 @@
     "cnStart": "2026-05-01",
     "cnEnd": "2026-05-15",
     "datesPredicted": false,
+    "globalStartAt": "2026-10-14T12:00:00.000Z",
+    "globalEndAt": "2026-10-28T10:59:59.000Z",
     "type": "Main Theme (episode release)",
-    "image": "data/images/CN_Critical_Phase_Transition_banner.png",
+    "image": "data/images/EN_Critical_Phase_Transition_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
     "origPrime": null,
-    "hhPermits": null,
+    "hhPermits": 1,
     "dailyFreePulls": 14,
-    "bannerPermits": 10,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": {
       "name": "Sealed With Time",
@@ -44,7 +25,7 @@
       "operators": [
         {
           "name": "Closure",
-          "charId": null,
+          "charId": "char_4228_closur",
           "star": 6,
           "class": "Vanguard",
           "limited": false,
@@ -53,7 +34,7 @@
         },
         {
           "name": "Crackborne",
-          "charId": null,
+          "charId": "char_4225_tanya",
           "star": 5,
           "class": "Defender",
           "limited": false,
@@ -70,12 +51,12 @@
           "sparkCost": 300
         },
         {
-          "name": "Kal'tsit - Esperanta",
-          "charId": null,
+          "name": "Kal'tsit Esperanta",
+          "charId": "char_1052_kalts2",
           "star": 6,
           "class": "Medic",
           "limited": true,
-          "icon": "data/images/operators/60px-Kal%27tsit_-_Esperanta_icon.png",
+          "icon": "data/images/operators/60px-Kal%27tsit_Esperanta_icon.png",
           "sparkCost": null
         },
         {
@@ -171,21 +152,26 @@
           "sparkCost": 300
         }
       ],
-      "globalStart": null,
-      "globalEnd": null,
+      "gachaPoolId": "LIMITED_EN_42_0_1",
+      "contractItemId": "LMTGS_COIN_7301",
+      "tenRollItemId": "LIMITED_TKT_GACHA_10_7301",
+      "globalStart": "2026-10-14",
+      "globalEnd": "2026-10-28",
       "cnStart": "2026-05-01",
-      "cnEnd": "2026-05-15"
+      "cnEnd": "2026-05-15",
+      "globalStartAt": "2026-10-14T15:00:00.000Z",
+      "globalEndAt": "2026-10-28T10:59:59.000Z"
     }
   },
   {
     "name": "The Masses' Travels",
-    "start": "2026-10-28",
-    "end": "2026-11-07",
-    "globalStart": "2026-10-28",
-    "globalEnd": "2026-11-07",
+    "start": "2026-11-05",
+    "end": "2026-11-15",
+    "globalStart": "2026-11-05",
+    "globalEnd": "2026-11-15",
     "cnStart": "2026-05-22",
     "cnEnd": "2026-06-01",
-    "datesPredicted": true,
+    "datesPredicted": false,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_The_Masses%27_Travels_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
@@ -198,13 +184,13 @@
   },
   {
     "name": "Thunder in the Azure Dream",
-    "start": "2026-11-07",
-    "end": "2026-11-21",
-    "globalStart": "2026-11-07",
-    "globalEnd": "2026-11-21",
+    "start": "2026-11-16",
+    "end": "2026-11-30",
+    "globalStart": "2026-11-16",
+    "globalEnd": "2026-11-30",
     "cnStart": "2026-06-01",
     "cnEnd": "2026-06-15",
-    "datesPredicted": true,
+    "datesPredicted": false,
     "type": "Crossover (Side Story)",
     "image": "data/images/CN_Thunder_in_the_Azure_Dream_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
@@ -244,33 +230,14 @@
     }
   },
   {
-    "name": "Positional Football Championship",
-    "start": "2026-11-14",
-    "end": "2026-11-28",
-    "globalStart": "2026-11-14",
-    "globalEnd": "2026-11-28",
-    "cnStart": "2026-06-08",
-    "cnEnd": "2026-06-22",
-    "datesPredicted": true,
-    "type": null,
-    "image": "data/images/CN_Positional_Football_Championship_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Positional_Football_Championship",
-    "origPrime": null,
-    "hhPermits": null,
-    "dailyFreePulls": null,
-    "bannerPermits": null,
-    "intCerts": null,
-    "banner": null
-  },
-  {
     "name": "A Flurry to the Flame",
-    "start": "2026-11-21",
-    "end": "2026-12-01",
-    "globalStart": "2026-11-21",
-    "globalEnd": "2026-12-01",
+    "start": "2026-11-30",
+    "end": "2026-12-10",
+    "globalStart": "2026-11-30",
+    "globalEnd": "2026-12-10",
     "cnStart": "2026-06-15",
     "cnEnd": "2026-06-25",
-    "datesPredicted": true,
+    "datesPredicted": false,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
@@ -311,13 +278,13 @@
   },
   {
     "name": "Contingency Contract Obliteration",
-    "start": "2026-12-02",
-    "end": "2026-12-16",
-    "globalStart": "2026-12-02",
-    "globalEnd": "2026-12-16",
+    "start": "2026-12-10",
+    "end": "2026-12-24",
+    "globalStart": "2026-12-10",
+    "globalEnd": "2026-12-24",
     "cnStart": "2026-06-26",
     "cnEnd": "2026-07-10",
-    "datesPredicted": true,
+    "datesPredicted": false,
     "type": null,
     "image": "data/images/CN_Contingency_Contract_Obliteration_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Contingency_Contract_Obliteration",
@@ -429,11 +396,30 @@
     }
   },
   {
+    "name": "Positional Football Championship",
+    "start": "2026-11-23",
+    "end": "2026-12-07",
+    "globalStart": "2026-11-23",
+    "globalEnd": "2026-12-07",
+    "cnStart": "2026-06-08",
+    "cnEnd": "2026-06-22",
+    "datesPredicted": true,
+    "type": null,
+    "image": "data/images/CN_Positional_Football_Championship_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Positional_Football_Championship",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": null
+  },
+  {
     "name": "Magic and Friendship",
-    "start": "2026-12-09",
-    "end": "2026-12-30",
-    "globalStart": "2026-12-09",
-    "globalEnd": "2026-12-30",
+    "start": "2026-12-17",
+    "end": "2027-01-07",
+    "globalStart": "2026-12-17",
+    "globalEnd": "2027-01-07",
     "cnStart": "2026-07-03",
     "cnEnd": "2026-07-24",
     "datesPredicted": true,
@@ -449,10 +435,10 @@
   },
   {
     "name": "Bolívar Diagnosed",
-    "start": "2026-12-16",
-    "end": "2026-12-23",
-    "globalStart": "2026-12-16",
-    "globalEnd": "2026-12-23",
+    "start": "2026-12-24",
+    "end": "2026-12-31",
+    "globalStart": "2026-12-24",
+    "globalEnd": "2026-12-31",
     "cnStart": "2026-07-10",
     "cnEnd": "2026-07-17",
     "datesPredicted": true,
@@ -505,13 +491,13 @@
   },
   {
     "name": "Act or Die",
-    "start": "2026-12-26",
-    "end": "2027-01-05",
-    "globalStart": "2026-12-26",
-    "globalEnd": "2027-01-05",
-    "cnStart": "2026-07-20",
-    "cnEnd": "2026-07-30",
-    "datesPredicted": true,
+    "start": "2025-11-13",
+    "end": "2025-11-27",
+    "globalStart": "2025-11-13",
+    "globalEnd": "2025-11-27",
+    "cnStart": "2025-06-05",
+    "cnEnd": "2025-06-19",
+    "datesPredicted": false,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_Act_or_Die_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Act_or_Die/Rerun",
@@ -520,44 +506,7 @@
     "dailyFreePulls": null,
     "bannerPermits": null,
     "intCerts": null,
-    "banner": {
-      "name": "Dithyramb Unending Rerun",
-      "type": "Standard",
-      "sparkEligible": false,
-      "operators": [
-        {
-          "name": "Tragodia",
-          "charId": "char_1042_phatm2",
-          "star": 6,
-          "class": "Supporter",
-          "limited": false,
-          "icon": "data/images/operators/60px-Tragodia_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Tippi",
-          "charId": "char_4191_tippi",
-          "star": 5,
-          "class": "Specialist",
-          "limited": false,
-          "icon": "data/images/operators/60px-Tippi_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Alanna",
-          "charId": "char_4178_alanna",
-          "star": 5,
-          "class": "Supporter",
-          "limited": false,
-          "icon": "data/images/operators/60px-Alanna_icon.png",
-          "sparkCost": null
-        }
-      ],
-      "globalStart": null,
-      "globalEnd": null,
-      "cnStart": "2026-07-20",
-      "cnEnd": "2026-08-03"
-    }
+    "banner": null
   },
   {
     "name": "Till the Lands Become an Orange",
@@ -663,14 +612,33 @@
     }
   },
   {
-    "name": "Ato",
-    "start": "2027-02-06",
-    "end": "2027-02-16",
-    "globalStart": "2027-02-06",
-    "globalEnd": "2027-02-16",
-    "cnStart": "2026-08-22",
-    "cnEnd": "2026-09-01",
+    "name": "Interactive Exhibition",
+    "start": "2027-01-24",
+    "end": "2027-02-20",
+    "globalStart": "2027-01-24",
+    "globalEnd": "2027-02-20",
+    "cnStart": "2026-08-08",
+    "cnEnd": "2026-09-04",
     "datesPredicted": true,
+    "type": "Limited-time game mode",
+    "image": "data/images/CN_Interactive_Exhibition_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Interactive_Exhibition",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": null
+  },
+  {
+    "name": "Ato",
+    "start": "2026-01-16",
+    "end": "2026-02-06",
+    "globalStart": "2026-01-16",
+    "globalEnd": "2026-02-06",
+    "cnStart": "2025-08-02",
+    "cnEnd": "2025-08-23",
+    "datesPredicted": false,
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_Ato_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Ato_Rerun",
@@ -679,7 +647,87 @@
     "dailyFreePulls": null,
     "bannerPermits": null,
     "intCerts": 1715,
-    "banner": null
+    "banner": {
+      "name": "Hanabi Exiled",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Eyjafjalla the Hvít Aska",
+          "charId": "char_1016_agoat2",
+          "star": 6,
+          "class": "Medic",
+          "limited": true,
+          "icon": "data/images/operators/60px-Eyjafjalla_the_Hv%C3%ADt_Aska_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Gavial the Invincible",
+          "charId": "char_1026_gvial2",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Gavial_the_Invincible_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Haruka",
+          "charId": "char_4202_haruka",
+          "star": 6,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Haruka_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Hoshiguma the Breacher",
+          "charId": "char_1044_hsgma2",
+          "star": 6,
+          "class": "Defender",
+          "limited": true,
+          "icon": "data/images/operators/60px-Hoshiguma_the_Breacher_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Kichisei",
+          "charId": "char_4203_kichi",
+          "star": 5,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Kichisei_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Pepe",
+          "charId": "char_4058_pepe",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Pepe_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "storeOperators": [
+        {
+          "name": "Ch'en the Holungday",
+          "charId": "char_1013_chen2",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Ch%27en_the_Holungday_icon.png",
+          "sparkCost": 200
+        }
+      ],
+      "gachaPoolId": "LIMITED_EN_37_0_5",
+      "contractItemId": "LMTGS_COIN_6401",
+      "tenRollItemId": "LIMITED_TKT_GACHA_10_6401",
+      "globalStart": "2026-01-16",
+      "globalEnd": "2026-01-30",
+      "cnStart": "2025-08-02",
+      "cnEnd": "2025-08-16",
+      "globalStartAt": "2026-01-16T15:00:00.000Z",
+      "globalEndAt": "2026-01-30T10:59:59.000Z"
+    }
   },
   {
     "name": "Sur le lac lune vivante",
@@ -891,6 +939,62 @@
       "globalEnd": null,
       "cnStart": "2026-09-29",
       "cnEnd": "2026-10-13"
+    }
+  },
+  {
+    "name": "Yet Another Wave",
+    "start": "2027-04-02",
+    "end": "2027-04-16",
+    "globalStart": "2027-04-02",
+    "globalEnd": "2027-04-16",
+    "cnStart": "2026-10-09",
+    "cnEnd": "2026-10-23",
+    "datesPredicted": true,
+    "type": "Side Story",
+    "image": "data/images/CN_Yet_Another_Wave_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Yet_Another_Wave",
+    "origPrime": null,
+    "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "Drifter of the Depth",
+      "type": "Standard",
+      "sparkEligible": false,
+      "operators": [
+        {
+          "name": "Clementia",
+          "charId": null,
+          "star": 6,
+          "class": "Guard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Clementia_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "De Toledo",
+          "charId": null,
+          "star": 5,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-De_Toledo_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Firewhistle",
+          "charId": "char_493_firwhl",
+          "star": 5,
+          "class": "Defender",
+          "limited": false,
+          "icon": "data/images/operators/60px-Firewhistle_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-10-09",
+      "cnEnd": "2026-10-23"
     }
   }
 ]

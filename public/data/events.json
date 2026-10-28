@@ -1,169 +1,5 @@
 [
   {
-    "name": "Critical Phase Transition",
-    "start": "2026-10-14",
-    "end": "2026-10-28",
-    "globalStart": "2026-10-14",
-    "globalEnd": "2026-10-28",
-    "cnStart": "2026-05-01",
-    "cnEnd": "2026-05-15",
-    "datesPredicted": false,
-    "globalStartAt": "2026-10-14T12:00:00.000Z",
-    "globalEndAt": "2026-10-28T10:59:59.000Z",
-    "type": "Main Theme (episode release)",
-    "image": "data/images/EN_Critical_Phase_Transition_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Critical_Phase_Transition",
-    "origPrime": null,
-    "hhPermits": 1,
-    "dailyFreePulls": 14,
-    "bannerPermits": null,
-    "intCerts": null,
-    "banner": {
-      "name": "Sealed With Time",
-      "type": "Limited",
-      "sparkEligible": true,
-      "operators": [
-        {
-          "name": "Closure",
-          "charId": "char_4228_closur",
-          "star": 6,
-          "class": "Vanguard",
-          "limited": false,
-          "icon": "data/images/operators/60px-Closure_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Crackborne",
-          "charId": "char_4225_tanya",
-          "star": 5,
-          "class": "Defender",
-          "limited": false,
-          "icon": "data/images/operators/60px-Crackborne_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Exusiai the New Covenant",
-          "charId": "char_1041_angel2",
-          "star": 6,
-          "class": "Specialist",
-          "limited": true,
-          "icon": "data/images/operators/60px-Exusiai_the_New_Covenant_icon.png",
-          "sparkCost": 300
-        },
-        {
-          "name": "Kal'tsit Esperanta",
-          "charId": "char_1052_kalts2",
-          "star": 6,
-          "class": "Medic",
-          "limited": true,
-          "icon": "data/images/operators/60px-Kal%27tsit_Esperanta_icon.png",
-          "sparkCost": null
-        },
-        {
-          "name": "Lappland the Decadenza",
-          "charId": "char_1038_whitw2",
-          "star": 6,
-          "class": "Caster",
-          "limited": true,
-          "icon": "data/images/operators/60px-Lappland_the_Decadenza_icon.png",
-          "sparkCost": 300
-        },
-        {
-          "name": "Wiš'adel",
-          "charId": "char_1035_wisdel",
-          "star": 6,
-          "class": "Sniper",
-          "limited": true,
-          "icon": "data/images/operators/60px-Wi%C5%A1%27adel_icon.png",
-          "sparkCost": 300
-        }
-      ],
-      "storeOperators": [
-        {
-          "name": "W",
-          "charId": "char_113_cqbw",
-          "star": 6,
-          "class": "Sniper",
-          "limited": true,
-          "icon": "data/images/operators/60px-W_icon.png",
-          "sparkCost": 200
-        },
-        {
-          "name": "Rosmontis",
-          "charId": "char_391_rosmon",
-          "star": 6,
-          "class": "Sniper",
-          "limited": true,
-          "icon": "data/images/operators/60px-Rosmontis_icon.png",
-          "sparkCost": 200
-        },
-        {
-          "name": "Skadi the Corrupting Heart",
-          "charId": "char_1012_skadi2",
-          "star": 6,
-          "class": "Supporter",
-          "limited": true,
-          "icon": "data/images/operators/60px-Skadi_the_Corrupting_Heart_icon.png",
-          "sparkCost": 200
-        },
-        {
-          "name": "Nearl the Radiant Knight",
-          "charId": "char_1014_nearl2",
-          "star": 6,
-          "class": "Guard",
-          "limited": true,
-          "icon": "data/images/operators/60px-Nearl_the_Radiant_Knight_icon.png",
-          "sparkCost": 200
-        },
-        {
-          "name": "Specter the Unchained",
-          "charId": "char_1023_ghost2",
-          "star": 6,
-          "class": "Specialist",
-          "limited": true,
-          "icon": "data/images/operators/60px-Specter_the_Unchained_icon.png",
-          "sparkCost": 200
-        },
-        {
-          "name": "Texas the Omertosa",
-          "charId": "char_1028_texas2",
-          "star": 6,
-          "class": "Specialist",
-          "limited": true,
-          "icon": "data/images/operators/60px-Texas_the_Omertosa_icon.png",
-          "sparkCost": 300
-        },
-        {
-          "name": "Muelsyse",
-          "charId": "char_249_mlyss",
-          "star": 6,
-          "class": "Vanguard",
-          "limited": true,
-          "icon": "data/images/operators/60px-Muelsyse_icon.png",
-          "sparkCost": 300
-        },
-        {
-          "name": "Virtuosa",
-          "charId": "char_245_cello",
-          "star": 6,
-          "class": "Supporter",
-          "limited": true,
-          "icon": "data/images/operators/60px-Virtuosa_icon.png",
-          "sparkCost": 300
-        }
-      ],
-      "gachaPoolId": "LIMITED_EN_42_0_1",
-      "contractItemId": "LMTGS_COIN_7301",
-      "tenRollItemId": "LIMITED_TKT_GACHA_10_7301",
-      "globalStart": "2026-10-14",
-      "globalEnd": "2026-10-28",
-      "cnStart": "2026-05-01",
-      "cnEnd": "2026-05-15",
-      "globalStartAt": "2026-10-14T15:00:00.000Z",
-      "globalEndAt": "2026-10-28T10:59:59.000Z"
-    }
-  },
-  {
     "name": "The Masses' Travels",
     "start": "2026-11-05",
     "end": "2026-11-15",
@@ -172,6 +8,8 @@
     "cnStart": "2026-05-22",
     "cnEnd": "2026-06-01",
     "datesPredicted": false,
+    "globalStartAt": "2026-11-05T15:00:00.000Z",
+    "globalEndAt": "2026-11-15T10:59:59.000Z",
     "type": "Side Story (Rerun)",
     "image": "data/images/CN_The_Masses%27_Travels_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
@@ -505,7 +343,7 @@
     "hhPermits": 3,
     "dailyFreePulls": null,
     "bannerPermits": null,
-    "intCerts": null,
+    "intCerts": 1800,
     "banner": null
   },
   {

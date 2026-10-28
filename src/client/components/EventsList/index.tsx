@@ -34,22 +34,22 @@ export function EventsList({
   return (
     <div className="ak-events">
       {onFiltersChange && (
-        <div className="ak-events-filters" role="group" aria-label="Show only">
-          <label>
-            <input
-              type="checkbox"
-              checked={filters.rewardsOnly}
-              onChange={(e) => onFiltersChange({ ...filters, rewardsOnly: e.target.checked })}
-            />
-            With rewards
-          </label>
+        <div className="ak-events-filters" role="group" aria-label="Filter events">
           <label>
             <input
               type="checkbox"
               checked={filters.limitedOnly}
               onChange={(e) => onFiltersChange({ ...filters, limitedOnly: e.target.checked })}
             />
-            Limited banners
+            Only limited
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={filters.rewardsOnly}
+              onChange={(e) => onFiltersChange({ ...filters, rewardsOnly: e.target.checked })}
+            />
+            Only with rewards
           </label>
         </div>
       )}

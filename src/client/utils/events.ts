@@ -14,6 +14,40 @@ export function filterUpcomingEvents(events: Event[], today: Date): Event[] {
   });
 }
 
+export interface EventFilters {
+  // Only events that give something toward pulls: Originite Prime, Headhunting
+  // Permits, free pulls, or (for a rerun) Intelligence Certificates.
+  rewardsOnly: boolean;
+  // Only events whose banner is a Limited one.
+  limitedOnly: boolean;
+}
+
+export const NO_EVENT_FILTERS: EventFilters = { rewardsOnly: false, limitedOnly: false };
+
+export function hasRewards(event: Event): boolean {
+  return !!(
+    event.origPrime ||
+    event.hhPermits ||
+    event.dailyFreePulls ||
+    event.bannerPermits ||
+    event.intCerts
+  );
+}
+
+export function isLimited(event: Event): boolean {
+  return event.banner?.type === 'Limited';
+}
+
+/**
+ * Narrow the list of events shown to those matching every filter that's on
+ */
+export function filterEvents(events: Event[], filters: EventFilters): Event[] {
+  return events.filter(
+    (event) =>
+      (!filters.rewardsOnly || hasRewards(event)) && (!filters.limitedOnly || isLimited(event))
+  );
+}
+
 interface SelectedEventData {
   selectedList: Event[];
   selectedEventStarts: Date[];

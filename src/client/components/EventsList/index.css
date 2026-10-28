@@ -6,6 +6,25 @@
   margin: 0 1em;
 }
 
+.ak-events-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 0 16px 10px;
+  color: var(--ak-text-muted);
+}
+
+.ak-events-filters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.ak-events-filters input[type='checkbox'] {
+  margin: 0;
+}
+
 .ak-events-list {
   list-style: none;
   margin: 0;
@@ -61,6 +80,10 @@
 @media (max-width: 600px) {
   .ak-events {
     margin: 0;
+  }
+
+  .ak-events-filters {
+    padding-top: 10px;
   }
 
   .ak-events-list {

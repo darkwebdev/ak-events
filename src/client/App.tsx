@@ -4,8 +4,11 @@ import { useFeatureFlag } from './utils/featureFlags.js';
 import { calcDailyOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
 import {
   filterUpcomingEvents,
+  filterEvents,
   calculateSelectedEventData,
   calculateLatestEventStart,
+  NO_EVENT_FILTERS,
+  type EventFilters,
 } from './utils/events.js';
 
 import { ArknightsAccount } from './components/ArknightsAccount';
@@ -87,6 +90,12 @@ export default function App() {
   const [bannerProgress, setBannerProgress] = useStorage<BannerProgress | null>(
     'ak-events-arknights-banner-progress',
     null
+  );
+  // Which events the list shows. Only narrows the list: the totals still count every
+  // selected event, hidden or not, since a hidden event's rewards are still income.
+  const [eventFilters, setEventFilters] = useStorage<EventFilters>(
+    'ak-events-filters',
+    NO_EVENT_FILTERS
   );
   // Whether the user has opted in to counting a rerun's Intelligence Certificates
   // (event.intCerts, a scraped maximum — see extractIntCertsFromHtml on the server)
@@ -274,7 +283,10 @@ export default function App() {
         <OwnedOperatorsContext.Provider value={accountImportEnabled ? ownedOperators : null}>
           <BannerProgressContext.Provider value={accountImportEnabled ? bannerProgress : null}>
             <EventsList
-              filteredEvents={futureEvents}
+              filteredEvents={filterEvents(futureEvents, eventFilters)}
+              allEvents={futureEvents}
+              filters={eventFilters}
+              onFiltersChange={setEventFilters}
               selectedEvents={selectedEvents}
               onEventToggle={handleEventToggle}
               onToggleIntCerts={toggleIntCertsIncluded}

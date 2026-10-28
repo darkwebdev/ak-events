@@ -67,3 +67,46 @@ describe('calculateSelectedEventData / calculateLatestEventStart', () => {
     expect(daysUntilLastEvent).toBeGreaterThanOrEqual(0);
   });
 });
+
+describe('filterEvents', () => {
+  let filterEvents;
+  beforeAll(async () => {
+    ({ filterEvents } = await import('../../src/client/utils/events.js'));
+  });
+
+  const events = [
+    { name: 'Limited with rewards', origPrime: 20, banner: { type: 'Limited' } },
+    { name: 'Rerun with certificates', intCerts: 1000 },
+    { name: 'Free pulls only', dailyFreePulls: 14, banner: { type: 'Limited' } },
+    { name: 'Standard, nothing', origPrime: 0, banner: { type: 'Standard' } },
+    { name: 'Limited, nothing', banner: { type: 'Limited' } },
+  ];
+  const names = (list) => list.map((e) => e.name);
+
+  test('shows everything with no filters on', () => {
+    expect(filterEvents(events, { rewardsOnly: false, limitedOnly: false })).toEqual(events);
+  });
+
+  test('with rewards only: any Originite Prime, permits, free pulls or certificates', () => {
+    expect(names(filterEvents(events, { rewardsOnly: true, limitedOnly: false }))).toEqual([
+      'Limited with rewards',
+      'Rerun with certificates',
+      'Free pulls only',
+    ]);
+  });
+
+  test('limited only: events whose banner is Limited', () => {
+    expect(names(filterEvents(events, { rewardsOnly: false, limitedOnly: true }))).toEqual([
+      'Limited with rewards',
+      'Free pulls only',
+      'Limited, nothing',
+    ]);
+  });
+
+  test('both filters together', () => {
+    expect(names(filterEvents(events, { rewardsOnly: true, limitedOnly: true }))).toEqual([
+      'Limited with rewards',
+      'Free pulls only',
+    ]);
+  });
+});

@@ -51,6 +51,11 @@ export function Default() {
   return <EventsList {...defaultProps} />;
 }
 
+export function WithFilters() {
+  const [filters, setFilters] = React.useState({ rewardsOnly: true, limitedOnly: false });
+  return <EventsList {...defaultProps} filters={filters} onFiltersChange={setFilters} />;
+}
+
 const noEventsProps = {
   filteredEvents: [],
   selectedEvents: new Set<string>(),

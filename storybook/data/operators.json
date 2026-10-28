@@ -15,8 +15,8 @@
   "Ukusik": false,
   "Zima the Raging Tide": false,
   "Mitm": false,
-  "Closure": true,
-  "Crackborne": true,
+  "Closure": false,
+  "Crackborne": false,
   "Kal'tsit - Esperanta": true,
   "Exusiai the New Covenant": true,
   "Lappland the Decadenza": true,
@@ -58,5 +58,8 @@
   "Bellone": false,
   "Blaze the Igniting Spark": false,
   "Paprika": false,
-  "Surfer": false
+  "Surfer": false,
+  "Kal'tsit Esperanta": true,
+  "Clementia": true,
+  "De Toledo": true
 }

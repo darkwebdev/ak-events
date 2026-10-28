@@ -397,7 +397,38 @@ describe('scrapeEvents', () => {
     });
   });
 
-  test("never takes banner perks from a rerun, whose fetch reads the original run's page", async () => {
+  test("reads a '/Rerun' event's Intelligence Certificates from the rerun's own page", async () => {
+    mockFetchEventsViaApi.mockResolvedValue([
+      {
+        name: 'Act or Die',
+        link: 'https://example.com/wiki/Act_or_Die/Rerun',
+        image: null,
+        globalDateStr: '2026/06/01–2026/06/20',
+        cnDateStr: null,
+        origPrime: 28,
+        hhPermits: 3,
+      },
+    ]);
+    mockFetchEventDetailsViaApi.mockImplementation(async (urlOrTitle) => ({
+      parse: {
+        text: {
+          '*': /Rerun$/.test(urlOrTitle)
+            ? `<table><tr><td><span data-name="Intelligence Certificate"></span>
+                <span class="quantity">75</span></td></tr></table>`
+            : '<div>Original run, no certificates</div>',
+        },
+      },
+    }));
+
+    await scrapeEvents();
+
+    expect(mockFetchEventDetailsViaApi).toHaveBeenCalledWith(
+      'https://example.com/wiki/Act_or_Die/Rerun'
+    );
+    expect(lastSavedEvents()[0].intCerts).toBe(75);
+  });
+
+  test('never takes banner perks from a rerun, whose page describes the original banner', async () => {
     mockFetchEventsViaApi.mockResolvedValue([
       {
         name: 'Story Event Rerun',
@@ -658,7 +689,7 @@ describe('scrapeEvents', () => {
       ]);
     });
 
-    test("never takes a discount from a rerun, whose fetch reads the original run's page", async () => {
+    test('never takes a discount from a rerun, whose page describes the original banner', async () => {
       mockFetchEventsViaApi.mockResolvedValue([
         {
           name: 'Story Event Rerun',

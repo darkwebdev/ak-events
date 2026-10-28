@@ -163,13 +163,13 @@ export async function scrapeEvents(): Promise<void> {
     // it's the only source for a banner's free pulls (see extractBannerFreePulls), and
     // for a rerun's Intelligence Certificates (see extractIntCertsFromHtml).
     if (!event.link) return event;
-    // If the link ends with '/Rerun', we should fetch the original event page
-    // (without '/Rerun') and then mark the parsed type as a rerun by appending
-    // ' (Rerun)'. This ensures types like 'Side Story (Carnival)' become
-    // 'Side Story (Carnival) (Rerun)'. Avoid appending twice if type already
-    // includes '(Rerun)'.
-    const linkEndsWithRerun = /\/Rerun$/.test(event.link);
-    const fetchUrl = linkEndsWithRerun ? event.link.replace(/\/Rerun$/, '') : event.link;
+    // Fetch the page the link names — for a rerun, its own page ("X/Rerun" or
+    // "X_Rerun"), the only one listing its Intelligence Certificates. Fetching the
+    // original run's page for "/Rerun" links instead left Act or Die's rerun without
+    // them. Whatever the rerun's page lacks (origPrime, hhPermits, type) is taken
+    // from the original page in the fallback below; a parsed type gets ' (Rerun)'
+    // appended by applyRerunSuffix.
+    const fetchUrl = event.link;
     let jsonStatus = 'err';
     try {
       console.log('Fetching wiki for', event.name, fetchUrl);
@@ -193,8 +193,8 @@ export async function scrapeEvents(): Promise<void> {
       if (parsed.intCerts != null) {
         event.intCerts = parsed.intCerts;
       }
-      // A rerun's fetch above reads the ORIGINAL run's page, whose banner perks
-      // belonged to the original banner — so they're only taken from an event's own page.
+      // Banner perks are only taken from a first run's page: a rerun's page (or the
+      // original page it falls back to) describes the original banner's perks.
       if (!isRerunLink(event.link)) {
         event.dailyFreePull = parsed.dailyFreePull || !!arkpediaDetail?.dailyFreePull;
         event.bannerPermits = arkpediaDetail?.bannerPermits ?? parsed.bannerPermits;

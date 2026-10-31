@@ -7,8 +7,9 @@
 }
 
 .ak-events-toolbar {
+  /* One row always: the filters wrap inside their own box instead of pushing the
+     view toggle onto a line of its own. */
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px 16px;
@@ -18,6 +19,8 @@
 .ak-events-filters {
   display: flex;
   flex-wrap: wrap;
+  flex: 1 1 0;
+  min-width: 0;
   gap: 4px 16px;
   color: var(--ak-text-muted);
 }
@@ -25,6 +28,7 @@
 /* Cards | List, a two-button segmented control. */
 .ak-events-view-toggle {
   display: inline-flex;
+  flex: none;
   margin-left: auto;
   border: 1px solid var(--ak-border);
   border-radius: 6px;

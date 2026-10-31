@@ -10,6 +10,24 @@ import './index.css';
 // How the events are shown: picture cards, or a dense text-only list.
 export type EventsView = 'cards' | 'list';
 
+// The view toggle's icons: two stacked picture cards, and rows of a list.
+const VIEW_ICONS = {
+  cards: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="4" y="4" width="16" height="7" rx="1.5" />
+      <rect x="4" y="13" width="16" height="7" rx="1.5" />
+    </svg>
+  ),
+  list: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 6h11M9 12h11M9 18h11" />
+      <circle cx="5" cy="6" r="0.5" />
+      <circle cx="5" cy="12" r="0.5" />
+      <circle cx="5" cy="18" r="0.5" />
+    </svg>
+  ),
+};
+
 interface EventsListProps {
   // The events shown, after the filters below.
   filteredEvents: EventType[];
@@ -104,9 +122,11 @@ export function EventsList({
                   key={v}
                   type="button"
                   aria-pressed={view === v}
+                  aria-label={v === 'cards' ? 'Cards' : 'List'}
+                  title={v === 'cards' ? 'Cards' : 'List'}
                   onClick={() => onViewChange(v)}
                 >
-                  {v === 'cards' ? 'Cards' : 'List'}
+                  {v === 'cards' ? VIEW_ICONS.cards : VIEW_ICONS.list}
                 </button>
               ))}
             </div>

@@ -6,12 +6,67 @@
   margin: 0 1em;
 }
 
+.ak-events-toolbar {
+  /* One row always: the filters wrap inside their own box instead of pushing the
+     view toggle onto a line of its own. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 0 16px 10px;
+}
+
 .ak-events-filters {
   display: flex;
   flex-wrap: wrap;
+  flex: 1 1 0;
+  min-width: 0;
   gap: 4px 16px;
-  padding: 0 16px 10px;
   color: var(--ak-text-muted);
+}
+
+/* Cards | List, a two-button segmented control. */
+.ak-events-view-toggle {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  border: 1px solid var(--ak-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ak-events-view-toggle button {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border: none;
+  background: none;
+  color: var(--ak-text-muted);
+  font: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.ak-events-view-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.ak-events-view-toggle button + button {
+  border-left: 1px solid var(--ak-border);
+}
+
+.ak-events-view-toggle button[aria-pressed='true'] {
+  background: var(--ak-accent);
+  color: var(--ak-bg);
+}
+
+.ak-events-table-head-pulls {
+  text-align: right;
 }
 
 .ak-events-filters label {
@@ -82,8 +137,8 @@
     margin: 0;
   }
 
-  .ak-events-filters {
-    padding-top: 10px;
+  .ak-events-toolbar {
+    padding: 10px 10px;
   }
 
   .ak-events-list {

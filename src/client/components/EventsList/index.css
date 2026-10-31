@@ -6,12 +6,52 @@
   margin: 0 1em;
 }
 
+.ak-events-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 0 16px 10px;
+}
+
 .ak-events-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 16px;
-  padding: 0 16px 10px;
   color: var(--ak-text-muted);
+}
+
+/* Cards | List, a two-button segmented control. */
+.ak-events-view-toggle {
+  display: inline-flex;
+  margin-left: auto;
+  border: 1px solid var(--ak-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ak-events-view-toggle button {
+  padding: 3px 12px;
+  border: none;
+  background: none;
+  color: var(--ak-text-muted);
+  font: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.ak-events-view-toggle button + button {
+  border-left: 1px solid var(--ak-border);
+}
+
+.ak-events-view-toggle button[aria-pressed='true'] {
+  background: var(--ak-accent);
+  color: var(--ak-bg);
+}
+
+.ak-events-table-head-pulls {
+  text-align: right;
 }
 
 .ak-events-filters label {
@@ -82,8 +122,8 @@
     margin: 0;
   }
 
-  .ak-events-filters {
-    padding-top: 10px;
+  .ak-events-toolbar {
+    padding: 10px 10px;
   }
 
   .ak-events-list {

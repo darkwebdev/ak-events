@@ -2,9 +2,13 @@ import React from 'react';
 import { calcTotalOrundum } from '../../utils/orundum.js';
 import { Orundum } from '../Orundum';
 import { Event } from '../Event';
+import { EventRow } from '../EventRow';
 import { NO_EVENT_FILTERS, type EventFilters } from '../../utils/events.js';
 import type { Event as EventType, SelectedEvents } from '../../types.js';
 import './index.css';
+
+// How the events are shown: picture cards, or a dense text-only list.
+export type EventsView = 'cards' | 'list';
 
 interface EventsListProps {
   // The events shown, after the filters below.
@@ -17,6 +21,8 @@ interface EventsListProps {
   selectedEvents: SelectedEvents;
   onEventToggle: (eventName: string) => void;
   onToggleIntCerts?: (eventName: string, checked: boolean) => void;
+  view?: EventsView;
+  onViewChange?: (view: EventsView) => void;
 }
 
 export function EventsList({
@@ -27,30 +33,84 @@ export function EventsList({
   selectedEvents,
   onEventToggle,
   onToggleIntCerts,
+  view = 'cards',
+  onViewChange,
 }: EventsListProps) {
   const totalEventsOrundum = calcTotalOrundum(allEvents, selectedEvents, 0, 0);
   const filtering = filters.rewardsOnly || filters.limitedOnly;
 
+  const events =
+    view === 'list' ? (
+      <ul className="ak-events-table">
+        <li className="ak-events-table-head" aria-hidden="true">
+          <span />
+          <span>Event</span>
+          <span>Dates</span>
+          <span>Banner</span>
+          <span className="ak-events-table-head-pulls">Pulls</span>
+        </li>
+        {filteredEvents.map((event) => (
+          <EventRow
+            key={event.name}
+            event={event}
+            selectedEvents={selectedEvents}
+            onEventToggle={onEventToggle}
+            onToggleIntCerts={onToggleIntCerts}
+          />
+        ))}
+      </ul>
+    ) : (
+      <ul className="ak-events-list">
+        {filteredEvents.map((event) => (
+          <Event
+            key={event.name}
+            event={event}
+            selectedEvents={selectedEvents}
+            onEventToggle={onEventToggle}
+            onToggleIntCerts={onToggleIntCerts}
+          />
+        ))}
+      </ul>
+    );
+
   return (
     <div className="ak-events">
-      {onFiltersChange && (
-        <div className="ak-events-filters" role="group" aria-label="Filter events">
-          <label>
-            <input
-              type="checkbox"
-              checked={filters.limitedOnly}
-              onChange={(e) => onFiltersChange({ ...filters, limitedOnly: e.target.checked })}
-            />
-            Only limited
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={filters.rewardsOnly}
-              onChange={(e) => onFiltersChange({ ...filters, rewardsOnly: e.target.checked })}
-            />
-            Only with rewards
-          </label>
+      {(onFiltersChange || onViewChange) && (
+        <div className="ak-events-toolbar">
+          {onFiltersChange && (
+            <div className="ak-events-filters" role="group" aria-label="Filter events">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={filters.limitedOnly}
+                  onChange={(e) => onFiltersChange({ ...filters, limitedOnly: e.target.checked })}
+                />
+                Only limited
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={filters.rewardsOnly}
+                  onChange={(e) => onFiltersChange({ ...filters, rewardsOnly: e.target.checked })}
+                />
+                Only with rewards
+              </label>
+            </div>
+          )}
+          {onViewChange && (
+            <div className="ak-events-view-toggle" role="group" aria-label="Show events as">
+              {(['cards', 'list'] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  aria-pressed={view === v}
+                  onClick={() => onViewChange(v)}
+                >
+                  {v === 'cards' ? 'Cards' : 'List'}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
       {filteredEvents.length === 0 ? (
@@ -60,17 +120,7 @@ export function EventsList({
             : 'No upcoming events'}
         </div>
       ) : (
-        <ul className="ak-events-list">
-          {filteredEvents.map((event) => (
-            <Event
-              key={event.name}
-              event={event}
-              selectedEvents={selectedEvents}
-              onEventToggle={onEventToggle}
-              onToggleIntCerts={onToggleIntCerts}
-            />
-          ))}
-        </ul>
+        events
       )}
 
       <div className="ak-events-footer">

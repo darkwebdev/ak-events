@@ -15,7 +15,7 @@ import { ArknightsAccount } from './components/ArknightsAccount';
 import { CurrentlyOwned } from './components/CurrentlyOwned';
 import { Dust } from './components/Dust';
 import { DailyOrundum } from './components/DailyOrundum';
-import { EventsList } from './components/EventsList';
+import { EventsList, type EventsView } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
 import { Header } from './components/Header';
 import { Toast } from './components/Toast';
@@ -97,6 +97,8 @@ export default function App() {
     'ak-events-filters',
     NO_EVENT_FILTERS
   );
+  // Picture cards or the dense text-only list, remembered across visits.
+  const [eventsView, setEventsView] = useStorage<EventsView>('ak-events-view', 'cards');
   // Whether the user has opted in to counting a rerun's Intelligence Certificates
   // (event.intCerts, a scraped maximum — see extractIntCertsFromHtml on the server)
   // toward its Orundum total. Keyed by event name; only reruns with scraped data
@@ -290,6 +292,8 @@ export default function App() {
               selectedEvents={selectedEvents}
               onEventToggle={handleEventToggle}
               onToggleIntCerts={toggleIntCertsIncluded}
+              view={eventsView}
+              onViewChange={setEventsView}
             />
           </BannerProgressContext.Provider>
         </OwnedOperatorsContext.Provider>

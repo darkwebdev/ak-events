@@ -1,0 +1,192 @@
+/* The list view (EventsList with view="list"): one dense text row per event, no
+   images. The list is the grid and each row a subgrid, so the columns line up down
+   the whole list while each row stays its own clickable element. */
+.ak-events-table {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px 6px;
+  display: grid;
+  grid-template-columns: 1.25em minmax(9em, 1.3fr) max-content minmax(10em, 2fr) max-content;
+  font-size: 0.9em;
+}
+
+.ak-events-table-head,
+.ak-event-row-compact {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  column-gap: 12px;
+  align-items: baseline;
+  padding: 5px 8px;
+}
+
+.ak-events-table-head {
+  position: sticky;
+  /* Under the fixed desktop header (see .ak-main-content's top margin). */
+  top: 5.5em;
+  z-index: 1;
+  background: var(--ak-bg);
+  border-bottom: 1px solid var(--ak-border-strong);
+  color: var(--ak-text-muted);
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ak-event-row-compact {
+  border-bottom: 1px solid color-mix(in srgb, var(--ak-border) 45%, transparent);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.ak-event-row-compact:hover:not(.selected) {
+  background: var(--ak-surface-hover);
+}
+
+.ak-event-row-compact.selected {
+  background: color-mix(in srgb, var(--ak-accent) 18%, var(--ak-bg) 82%);
+}
+
+.ak-event-row-compact:focus-visible {
+  outline: 2px solid var(--ak-accent);
+  outline-offset: -2px;
+}
+
+.ak-erc-check {
+  color: var(--ak-accent);
+  font-weight: 700;
+  text-align: center;
+}
+
+.ak-erc-name {
+  min-width: 0;
+}
+
+.ak-erc-title {
+  font-weight: 600;
+}
+
+.ak-erc-type {
+  display: block;
+  font-size: 0.85em;
+  color: var(--ak-text-muted);
+}
+
+.ak-erc-range {
+  white-space: nowrap;
+}
+
+.ak-erc-estimated {
+  color: var(--ak-text-muted);
+  font-size: 0.85em;
+  text-decoration: none;
+}
+
+.ak-event-row-compact .ak-countdown {
+  margin-top: 0;
+}
+
+.ak-erc-banner {
+  min-width: 0;
+}
+
+.ak-erc-banner-type {
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: 3px;
+  border: 1px solid var(--ak-border);
+  color: var(--ak-text-muted);
+  font-size: 0.8em;
+  line-height: 1.5;
+}
+
+.ak-erc-banner-type.limited {
+  background: var(--ak-limited);
+  border-color: var(--ak-limited);
+  color: var(--ak-limited-text);
+  font-weight: 600;
+}
+
+.ak-erc-banner-dates,
+.ak-erc-none {
+  color: var(--ak-text-muted);
+}
+
+.ak-erc-banner-dates {
+  font-size: 0.85em;
+}
+
+.ak-erc-pulls {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ak-erc-int-certs {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85em;
+  color: var(--ak-text-muted);
+  cursor: pointer;
+}
+
+.ak-erc-int-certs input {
+  margin: 0;
+}
+
+/* Phones: no header row, and each row wraps into three lines — name and pulls, then
+   dates, then banner — still with no images. */
+@media (max-width: 600px) {
+  .ak-events-table {
+    display: block;
+    padding: 0;
+  }
+
+  .ak-events-table-head {
+    display: none;
+  }
+
+  .ak-event-row-compact {
+    grid-template-columns: 1.1em minmax(0, 1fr) max-content;
+    grid-template-areas:
+      'check name pulls'
+      'check dates dates'
+      'check banner banner';
+    row-gap: 2px;
+    column-gap: 8px;
+    padding: 7px 10px 7px 6px;
+  }
+
+  .ak-erc-check {
+    grid-area: check;
+  }
+  .ak-erc-name {
+    grid-area: name;
+  }
+  .ak-erc-pulls {
+    grid-area: pulls;
+  }
+  .ak-erc-dates {
+    grid-area: dates;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+    font-size: 0.9em;
+  }
+  .ak-erc-banner {
+    grid-area: banner;
+    font-size: 0.9em;
+  }
+
+  /* The type sits after the name on the same line, to keep rows short. */
+  .ak-erc-type {
+    display: inline;
+    margin-left: 6px;
+  }
+
+  /* No banner: nothing worth a line of its own. */
+  .ak-erc-banner:has(.ak-erc-none) {
+    display: none;
+  }
+}

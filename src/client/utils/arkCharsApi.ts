@@ -93,6 +93,11 @@ export interface FetchAccountDataResult {
   roster: Record<string, number>;
   // Banner-specific progress — see BannerProgress.
   bannerProgress: BannerProgress;
+  // Sanity right now and its cap.
+  sanity: number | null;
+  maxSanity: number | null;
+  // Stages cleared with 3 stars — their one-time Originite Prime is claimed.
+  threeStarStages: string[];
 }
 
 // What the account holds for particular banners: item counts by the game's item id
@@ -111,6 +116,8 @@ interface FetchAccountDataResponse {
     level?: number | null;
     uid?: string | null;
     avatarUrl?: string | null;
+    sanity?: number | null;
+    maxSanity?: number | null;
   } | null;
   myInventory?: {
     orundum?: number | null;
@@ -121,11 +128,15 @@ interface FetchAccountDataResponse {
     limitedPools?: { poolId: string; pulls: number; freeCharClaimed: boolean }[] | null;
   } | null;
   myRoster?: { charId?: string | null; potentialRank?: number | null }[] | null;
+  myStages?: { stageId: string; state: number }[] | null;
 }
+
+// dungeon.stages' state for "cleared with 3 stars".
+const STAGE_STATE_COMPLETE = 3;
 
 // Fetches the linked account's nickname/level/uid/avatar (for display, confirming
 // which account is connected), current Orundum / Originite Prime / Headhunting
-// Permit counts, and its operator roster — all in one request, since every
+// Permit counts, operator roster, sanity and stage progress — all in one request, since every
 // authenticated request logs the game session out, using a previously obtained { channelUid, yostarToken, server }.
 // avatarUrl comes straight from myStatus as a ready-to-use image URL (resolved
 // server-side from the account's own chosen portrait — this only works for the
@@ -143,6 +154,8 @@ export async function fetchAccountData({
         level
         uid
         avatarUrl
+        sanity
+        maxSanity
       }
       myInventory(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         orundum
@@ -163,6 +176,10 @@ export async function fetchAccountData({
         charId
         potentialRank
       }
+      myStages(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
+        stageId
+        state
+      }
     }`,
     { channelUid, yostarToken, server }
   );
@@ -170,6 +187,11 @@ export async function fetchAccountData({
     nickName: data.myStatus?.nickName ?? null,
     level: data.myStatus?.level ?? null,
     avatarUrl: data.myStatus?.avatarUrl ?? null,
+    sanity: data.myStatus?.sanity ?? null,
+    maxSanity: data.myStatus?.maxSanity ?? null,
+    threeStarStages: (data.myStages ?? [])
+      .filter((s) => s.state >= STAGE_STATE_COMPLETE)
+      .map((s) => s.stageId),
     orundum: data.myInventory?.orundum ?? 0,
     originitePrime: data.myInventory?.originitePrime ?? 0,
     headhuntingPermits: data.myInventory?.headhuntingPermits ?? 0,

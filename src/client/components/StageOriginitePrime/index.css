@@ -1,0 +1,105 @@
+.ak-stage-op-note {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: var(--ak-text-muted);
+}
+
+.ak-stage-op-list {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.ak-stage-op-list > summary {
+  cursor: pointer;
+  color: var(--ak-accent);
+  font-weight: 600;
+}
+
+.ak-stage-op-groups,
+.ak-stage-op-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ak-stage-op-groups {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ak-stage-op-groups summary {
+  display: flex;
+  gap: 8px;
+  align-items: first baseline;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+/* The disclosure triangle, kept with display:flex on the summary. */
+.ak-stage-op-groups summary::before {
+  content: '▸';
+  color: var(--ak-text-muted);
+}
+
+.ak-stage-op-groups details[open] > summary::before {
+  content: '▾';
+}
+
+.ak-stage-op-groups summary::-webkit-details-marker {
+  display: none;
+}
+
+.ak-stage-op-group-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.ak-stage-op-group-value {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.ak-stage-op-muted,
+.ak-stage-op-group-meta,
+.ak-stage-op-mode {
+  color: var(--ak-text-muted);
+  font-weight: normal;
+}
+
+.ak-stage-op-group-meta {
+  font-size: 12px;
+  margin: 2px 0 4px 18px;
+}
+
+.ak-stage-op-stages {
+  margin: 0 0 6px 18px;
+  font-size: 13px;
+}
+
+.ak-stage-op-stages li {
+  display: flex;
+  gap: 8px;
+  padding: 1px 0;
+}
+
+.ak-stage-op-code {
+  min-width: 56px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ak-stage-op-name {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Sanity per clear. */
+.ak-stage-op-ap {
+  color: var(--ak-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ak-stage-op-ap::after {
+  content: ' ⚡';
+}

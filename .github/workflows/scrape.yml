@@ -40,8 +40,8 @@ jobs:
         # finds no actual event changes, that reformatting alone was collapsing an
         # already-empty diff into "empty after formatting," which lint-staged's own
         # empty-commit guard then hard-failed on instead of just skipping quietly.
-        yarn prettier --write public/data/events.json public/data/operators.json public/data/operator_debuts.json
-        git add public/data/events.json public/data/images/ public/data/operators.json public/data/operator_debuts.json
+        yarn prettier --write public/data/events.json public/data/operators.json public/data/operator_debuts.json public/data/stage_op.json
+        git add public/data/events.json public/data/images/ public/data/operators.json public/data/operator_debuts.json public/data/stage_op.json
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else

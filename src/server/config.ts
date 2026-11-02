@@ -22,6 +22,13 @@ export const activityTableUrl =
 // (the `diamondOnceDrop` field) — see lib/gameData.js's originitePrimeFromStages.
 export const stageTableUrl =
   'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/stage_table.json';
+// Zone names (main story episodes) and the permanent Side Story / Intermezzi
+// archive — with stageTableUrl and activityTableUrl, the inputs to
+// public/data/stage_op.json (see lib/stageOp.js).
+export const zoneTableUrl =
+  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/zone_table.json';
+export const retroTableUrl =
+  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/retro_table.json';
 
 // Community site with predicted Global dates for CN-only-announced events (a gap
 // none of our other sources fill) and structured per-event reward-store data — see
@@ -37,6 +44,8 @@ const config = {
   characterTableUrl,
   activityTableUrl,
   stageTableUrl,
+  zoneTableUrl,
+  retroTableUrl,
   arkpediaBase,
 };
 export default config;

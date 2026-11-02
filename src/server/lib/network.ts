@@ -11,11 +11,14 @@ import {
   characterTableUrl,
   activityTableUrl,
   stageTableUrl,
+  zoneTableUrl,
+  retroTableUrl,
   arkpediaBase,
 } from '../config.js';
 import { parseIndexHtml, type ParsedIndexEvent } from './parser.js';
 import { rawTitleFromUrl } from './wiki.js';
 import type { ActivityTable, CharacterTable, GachaTable, StageTable } from '../types.js';
+import type { RetroTable, ZoneTable } from './stageOp.js';
 
 interface WikiApiResult {
   statusCode?: number;
@@ -352,6 +355,15 @@ function fetchStageTable(): Promise<StageTable | null> {
   return fetchJsonUrl<StageTable>(stageTableUrl);
 }
 
+// Zone names and the Side Story / Intermezzi archive, for lib/stageOp.js.
+function fetchZoneTable(): Promise<ZoneTable | null> {
+  return fetchJsonUrl<ZoneTable>(zoneTableUrl);
+}
+
+function fetchRetroTable(): Promise<RetroTable | null> {
+  return fetchJsonUrl<RetroTable>(retroTableUrl);
+}
+
 // Fetch arkpedia.net's schedule page (formerly /events, which now 308-redirects here)
 // and return its raw HTML (for
 // lib/arkpedia.js to parse the embedded __NEXT_DATA__ JSON out of). Resolves to null
@@ -408,6 +420,8 @@ export {
   fetchCharacterTable,
   fetchActivityTable,
   fetchStageTable,
+  fetchZoneTable,
+  fetchRetroTable,
   fetchArkpediaEventsHtml,
   fetchArkpediaEventDetailHtml,
 };

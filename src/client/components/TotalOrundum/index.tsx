@@ -13,6 +13,10 @@ interface TotalOrundumProps {
   totalDailyOrundum: number;
   dailyOrundumCalc: string;
   playerOrundumTotal: number;
+  // Originite Prime from stages cleared by then (see StageOriginitePrime), when
+  // counted.
+  stageOrundum?: number | null;
+  stageOrundumCalc?: string;
 }
 
 export function TotalOrundum({
@@ -23,7 +27,10 @@ export function TotalOrundum({
   totalDailyOrundum,
   dailyOrundumCalc,
   playerOrundumTotal,
+  stageOrundum = null,
+  stageOrundumCalc = '',
 }: TotalOrundumProps) {
+  const withStages = stageOrundum != null;
   return (
     <div className="ak-total-section">
       <div className="ak-total-orundum">
@@ -40,9 +47,19 @@ export function TotalOrundum({
             }
           >
             <Breakdown
-              items={['Events', 'Daily', 'Owned']}
-              calcs={[eventsOrundumCalc, dailyOrundumCalc, '-']}
-              totals={[totalEventsOrundum, totalDailyOrundum, playerOrundumTotal]}
+              items={['Events', 'Daily', ...(withStages ? ['Stages'] : []), 'Owned']}
+              calcs={[
+                eventsOrundumCalc,
+                dailyOrundumCalc,
+                ...(withStages ? [stageOrundumCalc] : []),
+                '-',
+              ]}
+              totals={[
+                totalEventsOrundum,
+                totalDailyOrundum,
+                ...(withStages ? [stageOrundum] : []),
+                playerOrundumTotal,
+              ]}
             />
           </InfoButton>
         </strong>

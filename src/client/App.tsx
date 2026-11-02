@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useStorage } from './hooks/useStorage.js';
+import { useNow } from './hooks/useNow.js';
 import { useFeatureFlag } from './utils/featureFlags.js';
-import { calcDailyOrundum, calcTotalOrundum, pullsFromOrundum } from './utils/orundum.js';
+import {
+  calcDailyOrundum,
+  calcTotalOrundum,
+  orundumFromOP,
+  pullsFromOrundum,
+} from './utils/orundum.js';
 import {
   filterUpcomingEvents,
   filterEvents,
@@ -10,11 +16,19 @@ import {
   NO_EVENT_FILTERS,
   type EventFilters,
 } from './utils/events.js';
+import {
+  NATURAL_SANITY_PER_DAY,
+  sanityNow,
+  summarizeStageOp,
+  type StageOpData,
+  type StageProgress,
+} from './utils/stageOp.js';
 
 import { ArknightsAccount } from './components/ArknightsAccount';
 import { CurrentlyOwned } from './components/CurrentlyOwned';
 import { Dust } from './components/Dust';
 import { DailyOrundum } from './components/DailyOrundum';
+import { StageOriginitePrime } from './components/StageOriginitePrime';
 import { EventsList, type EventsView } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
 import { Header } from './components/Header';
@@ -91,6 +105,23 @@ export default function App() {
     'ak-events-arknights-banner-progress',
     null
   );
+  // Which stages the account has cleared with 3 stars, and its sanity, as of the
+  // last fetch — see utils/stageOp.ts.
+  const [stageProgress, setStageProgress] = useStorage<StageProgress | null>(
+    'ak-events-arknights-stage-progress',
+    null
+  );
+  // Sanity a day the user puts into stages, and whether the Originite Prime that
+  // clears by the selected event counts toward the total.
+  const [stageSanityPerDay, setStageSanityPerDay] = useStorage<number>(
+    'ak-events-stage-sanity-per-day',
+    NATURAL_SANITY_PER_DAY
+  );
+  const [stageOpIncluded, setStageOpIncluded] = useStorage<boolean>(
+    'ak-events-stage-op-included',
+    true
+  );
+  const [stageOpData, setStageOpData] = useState<StageOpData | null>(null);
   // Which events the list shows. Only narrows the list: the totals still count every
   // selected event, hidden or not, since a hidden event's rewards are still income.
   const [eventFilters, setEventFilters] = useStorage<EventFilters>(
@@ -184,6 +215,12 @@ export default function App() {
     updatePlayerStatus('hhPermits', data.headhuntingPermits + 10 * data.tenHeadhuntingPermits);
     setOwnedOperators(data.roster);
     setBannerProgress(data.bannerProgress);
+    setStageProgress({
+      claimed: data.threeStarStages,
+      sanity: data.sanity,
+      maxSanity: data.maxSanity,
+      fetchedAt: new Date().toISOString(),
+    });
   };
 
   const toggleIntCertsIncluded = (eventName: string, checked: boolean) => {
@@ -220,6 +257,16 @@ export default function App() {
     const interval = setInterval(fetchEvents, EVENTS_POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, []);
+
+  // Only with account import on: the stage list (~50KB gzipped) is only useful
+  // next to an account's own progress.
+  useEffect(() => {
+    if (!accountImportEnabled) return;
+    fetch('./data/stage_op.json')
+      .then((response) => response.json() as Promise<StageOpData>)
+      .then(setStageOpData)
+      .catch((error) => console.error('Failed to fetch stage_op.json:', error));
+  }, [accountImportEnabled]);
 
   useEffect(() => {
     if (!newEventsNotice) return undefined;
@@ -263,12 +310,20 @@ export default function App() {
   );
   const dailyOrundum = calcDailyOrundum(settings);
   const totalDailyOrundum = dailyOrundum * daysUntilLastEvent;
-  const totalOrundum = calcTotalOrundum(
-    futureEvents,
-    selectedEvents,
-    totalDailyOrundum,
-    playerOrundumTotal
-  );
+  const now = useNow();
+  const stageOpSummary =
+    accountImportEnabled && stageOpData
+      ? summarizeStageOp(stageOpData, stageProgress, {
+          now,
+          days: daysUntilLastEvent,
+          sanityPerDay: stageSanityPerDay,
+        })
+      : null;
+  const stageOrundum =
+    stageOpSummary && stageOpIncluded ? orundumFromOP(stageOpSummary.plan.op) : 0;
+  const totalOrundum =
+    calcTotalOrundum(futureEvents, selectedEvents, totalDailyOrundum, playerOrundumTotal) +
+    stageOrundum;
 
   return (
     <>
@@ -324,6 +379,7 @@ export default function App() {
                 onLogout={() => {
                   setOwnedOperators(null);
                   setBannerProgress(null);
+                  setStageProgress(null);
                 }}
               />
             )}
@@ -341,6 +397,20 @@ export default function App() {
               settingsTotal={dailyOrundum}
             />
 
+            {accountImportEnabled && (
+              <StageOriginitePrime
+                summary={stageOpSummary}
+                hasProgress={stageProgress != null}
+                sanityNow={sanityNow(stageProgress, now)}
+                sanityPerDay={stageSanityPerDay}
+                onSanityPerDayChange={setStageSanityPerDay}
+                included={stageOpIncluded}
+                onIncludedChange={setStageOpIncluded}
+                deadline={calculateLatestEventStart(selectedList)}
+                days={daysUntilLastEvent}
+              />
+            )}
+
             <TotalOrundum
               latestEventStart={calculateLatestEventStart(selectedList)}
               totalOrundum={totalOrundum}
@@ -353,6 +423,8 @@ export default function App() {
                 daysUntilLastEvent === 1 ? '' : 's'
               }`}
               playerOrundumTotal={playerOrundumTotal}
+              stageOrundum={stageOpSummary && stageOpIncluded ? stageOrundum : null}
+              stageOrundumCalc={stageOpSummary ? `${stageOpSummary.plan.op} × 180` : ''}
             />
           </div>
         </div>

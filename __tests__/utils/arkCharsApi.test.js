@@ -54,4 +54,26 @@ describe('fetchAccountData', () => {
     expect(result.roster).toEqual({});
     expect(result.bannerProgress).toEqual({ items: {}, pools: {} });
   });
+
+  test('returns sanity and the stages cleared with 3 stars, in the same request', async () => {
+    respond({
+      myStatus: { nickName: 'Doctor', sanity: 80, maxSanity: 135 },
+      myInventory: null,
+      myRoster: null,
+      myStages: [
+        { stageId: 'main_01-07', state: 3 },
+        { stageId: 'main_01-08', state: 2 },
+        { stageId: 'main_01-09', state: 0 },
+      ],
+    });
+
+    const result = await fetchAccountData({ channelUid: 'u', yostarToken: 't', server: 'en' });
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const { query } = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(query).toMatch(/myStages[\s\S]*stageId[\s\S]*state/);
+    expect(result.sanity).toBe(80);
+    expect(result.maxSanity).toBe(135);
+    expect(result.threeStarStages).toEqual(['main_01-07']);
+  });
 });

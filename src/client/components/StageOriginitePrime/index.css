@@ -111,11 +111,53 @@
   text-align: right;
 }
 
-.ak-stage-op-plans {
-  margin-top: 16px;
+.ak-stage-op-table {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }
 
-.ak-stage-op-plans .ak-stage-op-note {
-  margin: 0;
+.ak-stage-op-table th,
+.ak-stage-op-table td {
+  padding: 3px 0;
+  text-align: right;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.ak-stage-op-table th:first-child {
+  text-align: left;
+}
+
+.ak-stage-op-table thead th {
+  color: var(--ak-text-muted);
   font-size: 12px;
+}
+
+.ak-stage-op-table td + td,
+.ak-stage-op-table th + th {
+  padding-left: 12px;
+}
+
+.ak-stage-op-table-result th,
+.ak-stage-op-table-result td {
+  border-top: 1px solid var(--ak-border);
+  padding-top: 6px;
+  font-weight: 600;
+  color: var(--ak-accent);
+}
+
+.ak-stage-op-table-result th {
+  color: var(--ak-text);
+}
+
+.ak-stage-op-table + .ak-stage-op-note {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+}
+
+.ak-stage-op-settings {
+  margin-top: 12px;
 }

@@ -90,23 +90,23 @@ describe('summarizeStageOp', () => {
     expect(s.endedOp).toBe(1);
     expect(s.totalGameOp).toBe(5);
     // 10 sanity now: c (0) and b (9).
-    expect(s.budget).toBe(10);
+    expect(s.sanity).toEqual({ now: 10, byDeadline: 10 });
+    expect(s.stagesLeft).toBe(3);
     expect(s.plan).toEqual({ op: 2, sanity: 9, stages: 2 });
   });
 
   test('adds sanity per day until the deadline', () => {
     const s = summarizeStageOp(data, progress, { now, days: 1, sanityPerDay: 30 });
-    expect(s.budget).toBe(40);
+    expect(s.sanity).toEqual({ now: 10, byDeadline: 40 });
     expect(s.plan).toEqual({ op: 3, sanity: 39, stages: 3 });
     // With only the 10 on hand now.
-    expect(s.budgetNow).toBe(10);
     expect(s.planNow).toEqual({ op: 2, sanity: 9, stages: 2 });
   });
 
   test('without account progress every stage counts', () => {
     const s = summarizeStageOp(data, null, { now, days: 0, sanityPerDay: 240 });
     expect(s.opLeft).toBe(4);
-    expect(s.budget).toBe(0);
+    expect(s.sanity.byDeadline).toBe(0);
     expect(s.plan.op).toBe(1); // the 0-sanity stage
   });
 
@@ -166,9 +166,14 @@ describe('minigame events and potions', () => {
         { sanity: 10, count: 1, expiresAt: null },
       ],
     };
-    const s = summarizeStageOp(data, progress, { now, days: 2, sanityPerDay: 100 });
-    expect(s.potions).toBe(170);
-    expect(s.budget).toBe(370);
+    const s = summarizeStageOp(data, progress, {
+      now,
+      days: 2,
+      sanityPerDay: 100,
+      potionSanityPerDay: 80,
+    });
+    expect(s.potions).toEqual({ now: 170, byDeadline: 330 });
+    expect(s.sanity).toEqual({ now: 0, byDeadline: 200 });
   });
 });
 

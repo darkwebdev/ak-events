@@ -17,7 +17,6 @@ interface StageOriginitePrimeProps {
   // Whether a linked account's stage progress is known; without it every stage
   // counts as unclaimed.
   hasProgress: boolean;
-  sanityNow: number | null;
   sanityPerDay: number;
   onSanityPerDayChange: (value: number) => void;
   // The Monthly Card's daily potion, 0 when the card isn't ticked.
@@ -111,7 +110,6 @@ function GroupList({ groups }: { groups: GroupSummary[] }) {
 export function StageOriginitePrime({
   summary,
   hasProgress,
-  sanityNow,
   sanityPerDay,
   onSanityPerDayChange,
   monthlyCardSanity,
@@ -139,8 +137,11 @@ export function StageOriginitePrime({
             <div className="ak-aside-item">
               <div className="ak-aside-label">
                 <span className="ak-aside-name">
-                  <InfoButton label="Left to claim">
-                    <div>First 3-star clears of stages you can play now.</div>
+                  <InfoButton label="Stages left">
+                    <div>
+                      Stages you can play now whose first 3-star clear you haven&apos;t done, worth{' '}
+                      <Op>{summary.opLeft}</Op>.
+                    </div>
                     <div>
                       <Op>{summary.endedOp + summary.endedOtherOp}</Op> more in events that have
                       ended. Those can&apos;t be cleared unless the event comes back, which most
@@ -151,35 +152,63 @@ export function StageOriginitePrime({
                     </div>
                   </InfoButton>
                 </span>
-                <span className="ak-aside-value">
-                  <Op>{summary.opLeft}</Op>
-                </span>
+                <span className="ak-aside-value">{summary.stagesLeft}</span>
               </div>
             </div>
-            <div className="ak-aside-item">
-              <div className="ak-aside-label">
-                <span className="ak-aside-name">Sanity to clear them</span>
-                <span className="ak-aside-value">{summary.sanityLeft}</span>
-              </div>
-            </div>
-            <div className="ak-aside-item">
-              <div className="ak-aside-label">
-                <span className="ak-aside-name">Sanity now</span>
-                <span className="ak-aside-value">{sanityNow ?? '–'}</span>
-              </div>
-            </div>
-            <div className="ak-aside-item">
-              <div className="ak-aside-label">
-                <span className="ak-aside-name">Sanity in potions</span>
-                <span className="ak-aside-value">{hasProgress ? summary.potions : '–'}</span>
-              </div>
-            </div>
+          </div>
+
+          <table className="ak-stage-op-table">
+            <thead>
+              <tr>
+                <th aria-label="What" />
+                <th>Today</th>
+                {deadline && (
+                  <th>
+                    By <DateText date={deadline} />
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Sanity</th>
+                <td>{hasProgress ? summary.sanity.now : '–'}</td>
+                {deadline && <td>{summary.sanity.byDeadline}</td>}
+              </tr>
+              <tr>
+                <th>In potions</th>
+                <td>{hasProgress ? summary.potions.now : '–'}</td>
+                {deadline && <td>{summary.potions.byDeadline}</td>}
+              </tr>
+              <tr className="ak-stage-op-table-result">
+                <th>
+                  <InfoButton label="You can get">
+                    Cheapest stages first, each 3-starred on the first try, ignoring what has to be
+                    cleared first to unlock a stage.
+                  </InfoButton>
+                </th>
+                <td>
+                  <Op>{summary.planNow.op}</Op>
+                </td>
+                {deadline && (
+                  <td>
+                    <Op>{summary.plan.op}</Op>
+                  </td>
+                )}
+              </tr>
+            </tbody>
+          </table>
+          {!deadline && (
+            <p className="ak-stage-op-note">Select an event to plan up to its start.</p>
+          )}
+
+          <div className="ak-aside-list ak-stage-op-settings">
             <div className="ak-aside-item">
               <label className="ak-aside-label">
                 <span className="ak-aside-name">
                   <InfoButton label="Sanity per day for stages">
                     Natural regen is {NATURAL_SANITY_PER_DAY} a day. Lower it for sanity you spend
-                    elsewhere, raise it for potions and refills.
+                    elsewhere.
                   </InfoButton>
                 </span>
                 <input
@@ -197,8 +226,8 @@ export function StageOriginitePrime({
                 <div className="ak-aside-label">
                   <span className="ak-aside-name">
                     <InfoButton label="Monthly Card potion">
-                      Its daily Emergency Sanity Booster. Counted because Monthly Card is ticked in
-                      Daily Orundum.
+                      Its daily Emergency Sanity Booster, in the potions column. Counted because
+                      Monthly Card is ticked in Daily Orundum.
                     </InfoButton>
                   </span>
                   <span className="ak-aside-value">+{monthlyCardSanity} a day</span>
@@ -209,7 +238,7 @@ export function StageOriginitePrime({
 
           <details className="ak-stage-op-list">
             <summary>
-              Stages left ({summary.available.length} group
+              Show stages ({summary.available.length} group
               {summary.available.length === 1 ? '' : 's'})
             </summary>
             <GroupList groups={summary.available} />
@@ -239,35 +268,6 @@ export function StageOriginitePrime({
             </details>
           )}
 
-          <div className="ak-aside-list ak-stage-op-plans">
-            <div className="ak-aside-item">
-              <div className="ak-aside-label">
-                <span className="ak-aside-name">With sanity now ({summary.budgetNow})</span>
-                <span className="ak-aside-value">
-                  {summary.planNow.stages} stage{summary.planNow.stages === 1 ? '' : 's'} ·{' '}
-                  <Op>{summary.planNow.op}</Op>
-                </span>
-              </div>
-            </div>
-            {deadline && (
-              <div className="ak-aside-item">
-                <div className="ak-aside-label">
-                  <span className="ak-aside-name">
-                    By <DateText date={deadline} /> ({summary.budget})
-                  </span>
-                  <span className="ak-aside-value">
-                    {summary.plan.stages} stage{summary.plan.stages === 1 ? '' : 's'} ·{' '}
-                    <Op>{summary.plan.op}</Op>
-                  </span>
-                </div>
-              </div>
-            )}
-            <p className="ak-stage-op-note">
-              Sanity in brackets; cheapest stages first, each 3-starred on the first try. Pick an
-              event to plan up to its start.
-            </p>
-          </div>
-
           <div className="ak-aside-total">
             <div className="ak-aside-item">
               <label className="ak-aside-label">
@@ -289,9 +289,8 @@ export function StageOriginitePrime({
                     }
                   >
                     <div>
-                      {sanityNow ?? 0} now + {summary.potions} in potions +{' '}
-                      {sanityPerDay + monthlyCardSanity} × {days} day{days === 1 ? '' : 's'} ={' '}
-                      {summary.budget} sanity
+                      {summary.sanity.byDeadline + summary.potions.byDeadline} sanity with potions
+                      over {days} day{days === 1 ? '' : 's'}
                     </div>
                     <div>
                       clears <Op>{summary.plan.op}</Op> (cheapest stages first,{' '}

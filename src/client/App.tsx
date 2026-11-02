@@ -19,7 +19,6 @@ import {
 import {
   MONTHLY_CARD_SANITY_PER_DAY,
   NATURAL_SANITY_PER_DAY,
-  sanityNow,
   summarizeStageOp,
   type StageOpData,
   type StageProgress,
@@ -320,7 +319,8 @@ export default function App() {
       ? summarizeStageOp(stageOpData, stageProgress, {
           now,
           days: daysUntilLastEvent,
-          sanityPerDay: stageSanityPerDay + monthlyCardSanity,
+          sanityPerDay: stageSanityPerDay,
+          potionSanityPerDay: monthlyCardSanity,
         })
       : null;
   const stageOrundum =
@@ -405,7 +405,6 @@ export default function App() {
               <StageOriginitePrime
                 summary={stageOpSummary}
                 hasProgress={stageProgress != null}
-                sanityNow={sanityNow(stageProgress, now)}
                 sanityPerDay={stageSanityPerDay}
                 onSanityPerDayChange={setStageSanityPerDay}
                 monthlyCardSanity={monthlyCardSanity}

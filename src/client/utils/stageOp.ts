@@ -122,14 +122,15 @@ export interface StageOpSummary {
   endedOtherOp: number;
   // Every one-time Originite Prime reward in the game, claimed or not.
   totalGameOp: number;
-  // Sanity to spend on stages by the deadline (now + potions + per-day × days),
-  // and the Originite Prime that clears.
-  potions: number;
-  budget: number;
-  plan: SanityPlan;
-  // The same with only the sanity on hand now (current + potions).
-  budgetNow: number;
+  // Unclaimed stages you can play now.
+  stagesLeft: number;
+  // Sanity and sanity in potions on hand now, and by the deadline (now + natural
+  // regen / potions gained per day × days).
+  sanity: { now: number; byDeadline: number };
+  potions: { now: number; byDeadline: number };
+  // What all of it clears: today, and by the deadline.
   planNow: SanityPlan;
+  plan: SanityPlan;
 }
 
 export function summarizeStageOp(
@@ -139,11 +140,14 @@ export function summarizeStageOp(
     now,
     days,
     sanityPerDay,
+    potionSanityPerDay = 0,
   }: {
     now: Date;
     days: number;
-    // Natural regen the user puts into stages, plus the Monthly Card potion if on.
+    // Natural regen the user puts into stages.
     sanityPerDay: number;
+    // Potions gained a day (the Monthly Card's).
+    potionSanityPerDay?: number;
   }
 ): StageOpSummary {
   const claimed = new Set(progress?.claimed ?? []);
@@ -161,9 +165,10 @@ export function summarizeStageOp(
       upcoming.push(summary);
     } else (group.story === false ? endedOther : ended).push(summary);
   }
-  const potions = potionSanity(progress, now);
-  const budgetNow = (sanityNow(progress, now) ?? 0) + potions;
-  const budget = budgetNow + Math.max(0, sanityPerDay) * days;
+  const sanity0 = sanityNow(progress, now) ?? 0;
+  const potions0 = potionSanity(progress, now);
+  const sanity = { now: sanity0, byDeadline: sanity0 + Math.max(0, sanityPerDay) * days };
+  const potions = { now: potions0, byDeadline: potions0 + Math.max(0, potionSanityPerDay) * days };
   const playable = available.flatMap((g) => g.unclaimed);
   return {
     available,
@@ -175,10 +180,10 @@ export function summarizeStageOp(
     endedOp: ended.reduce((n, g) => n + g.op, 0),
     endedOtherOp: endedOther.reduce((n, g) => n + g.op, 0),
     totalGameOp,
+    stagesLeft: playable.length,
+    sanity,
     potions,
-    budget,
-    plan: opForSanity(playable, budget),
-    budgetNow,
-    planNow: opForSanity(playable, budgetNow),
+    planNow: opForSanity(playable, sanity.now + potions.now),
+    plan: opForSanity(playable, sanity.byDeadline + potions.byDeadline),
   };
 }

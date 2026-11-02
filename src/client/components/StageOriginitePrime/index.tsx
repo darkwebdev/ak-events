@@ -208,6 +208,14 @@ export function StageOriginitePrime({
             </summary>
             <GroupList groups={summary.available} />
           </details>
+          {summary.upcoming.length > 0 && (
+            <details className="ak-stage-op-list">
+              <summary>
+                Coming up (<Op>{summary.upcoming.reduce((n, g) => n + g.op, 0)}</Op>)
+              </summary>
+              <GroupList groups={summary.upcoming} />
+            </details>
+          )}
           {summary.ended.length > 0 && (
             <details className="ak-stage-op-list">
               <summary>

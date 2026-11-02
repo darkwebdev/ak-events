@@ -167,3 +167,9 @@ describe('minigame events and potions', () => {
     expect(s.budget).toBe(370);
   });
 });
+
+test('an event whose rerun starts later is upcoming, not ended', () => {
+  const s = summarizeStageOp(data, null, { now: new Date(500 * 1000), days: 0, sanityPerDay: 0 });
+  expect(s.upcoming.map((g) => g.group.id)).toEqual(['ev']);
+  expect(s.ended).toEqual([]);
+});

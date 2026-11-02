@@ -104,6 +104,8 @@ export interface StageOpSummary {
   // (back only if they rerun; not counted in opLeft) — story events and the rest
   // (Duel Channel, Icebreaker Games…) apart.
   available: GroupSummary[];
+  // Events whose next run (a scheduled rerun) hasn't started yet.
+  upcoming: GroupSummary[];
   ended: GroupSummary[];
   endedOther: GroupSummary[];
   opLeft: number;
@@ -135,6 +137,7 @@ export function summarizeStageOp(
 ): StageOpSummary {
   const claimed = new Set(progress?.claimed ?? []);
   const available: GroupSummary[] = [];
+  const upcoming: GroupSummary[] = [];
   const ended: GroupSummary[] = [];
   const endedOther: GroupSummary[] = [];
   let totalGameOp = 0;
@@ -143,12 +146,15 @@ export function summarizeStageOp(
     totalGameOp += summary.totalOp;
     if (summary.op === 0) continue;
     if (isAvailableNow(group, now)) available.push(summary);
-    else (group.story === false ? endedOther : ended).push(summary);
+    else if (group.startTime != null && group.startTime * 1000 > now.getTime()) {
+      upcoming.push(summary);
+    } else (group.story === false ? endedOther : ended).push(summary);
   }
   const potions = potionSanity(progress, now);
   const budget = (sanityNow(progress, now) ?? 0) + potions + Math.max(0, sanityPerDay) * days;
   return {
     available,
+    upcoming,
     ended,
     endedOther,
     opLeft: available.reduce((n, g) => n + g.op, 0),

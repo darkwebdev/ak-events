@@ -87,16 +87,24 @@ export function sanityNow(progress: StageProgress | null, now: Date): number | n
 // the most Originite Prime for the sanity since every stage pays the same 1.
 // Assumes each stage is cleared with 3 stars on the first try and ignores what has
 // to be cleared first to unlock it.
-export function opForSanity(stages: OpStage[], budget: number): { op: number; sanity: number } {
+export interface SanityPlan {
+  op: number;
+  sanity: number;
+  stages: number;
+}
+
+export function opForSanity(stages: OpStage[], budget: number): SanityPlan {
   const sorted = [...stages].sort((a, b) => a.ap / a.op - b.ap / b.op);
   let op = 0;
   let sanity = 0;
+  let count = 0;
   for (const stage of sorted) {
     if (sanity + stage.ap > budget) break;
     sanity += stage.ap;
     op += stage.op;
+    count += 1;
   }
-  return { op, sanity };
+  return { op, sanity, stages: count };
 }
 
 export interface StageOpSummary {
@@ -118,7 +126,10 @@ export interface StageOpSummary {
   // and the Originite Prime that clears.
   potions: number;
   budget: number;
-  plan: { op: number; sanity: number };
+  plan: SanityPlan;
+  // The same with only the sanity on hand now (current + potions).
+  budgetNow: number;
+  planNow: SanityPlan;
 }
 
 export function summarizeStageOp(
@@ -151,7 +162,9 @@ export function summarizeStageOp(
     } else (group.story === false ? endedOther : ended).push(summary);
   }
   const potions = potionSanity(progress, now);
-  const budget = (sanityNow(progress, now) ?? 0) + potions + Math.max(0, sanityPerDay) * days;
+  const budgetNow = (sanityNow(progress, now) ?? 0) + potions;
+  const budget = budgetNow + Math.max(0, sanityPerDay) * days;
+  const playable = available.flatMap((g) => g.unclaimed);
   return {
     available,
     upcoming,
@@ -164,9 +177,8 @@ export function summarizeStageOp(
     totalGameOp,
     potions,
     budget,
-    plan: opForSanity(
-      available.flatMap((g) => g.unclaimed),
-      budget
-    ),
+    plan: opForSanity(playable, budget),
+    budgetNow,
+    planNow: opForSanity(playable, budgetNow),
   };
 }

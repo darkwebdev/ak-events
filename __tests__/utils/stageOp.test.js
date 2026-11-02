@@ -68,8 +68,9 @@ describe('opForSanity', () => {
     expect(opForSanity([st('x', 20), st('y', 6), st('z', 0), st('w', 10)], 16)).toEqual({
       op: 3,
       sanity: 16,
+      stages: 3,
     });
-    expect(opForSanity([st('x', 20)], 19)).toEqual({ op: 0, sanity: 0 });
+    expect(opForSanity([st('x', 20)], 19)).toEqual({ op: 0, sanity: 0, stages: 0 });
   });
 });
 
@@ -90,13 +91,16 @@ describe('summarizeStageOp', () => {
     expect(s.totalGameOp).toBe(5);
     // 10 sanity now: c (0) and b (9).
     expect(s.budget).toBe(10);
-    expect(s.plan).toEqual({ op: 2, sanity: 9 });
+    expect(s.plan).toEqual({ op: 2, sanity: 9, stages: 2 });
   });
 
   test('adds sanity per day until the deadline', () => {
     const s = summarizeStageOp(data, progress, { now, days: 1, sanityPerDay: 30 });
     expect(s.budget).toBe(40);
-    expect(s.plan).toEqual({ op: 3, sanity: 39 });
+    expect(s.plan).toEqual({ op: 3, sanity: 39, stages: 3 });
+    // With only the 10 on hand now.
+    expect(s.budgetNow).toBe(10);
+    expect(s.planNow).toEqual({ op: 2, sanity: 9, stages: 2 });
   });
 
   test('without account progress every stage counts', () => {

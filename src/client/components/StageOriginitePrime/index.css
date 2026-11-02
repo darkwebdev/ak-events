@@ -110,3 +110,12 @@
   min-width: 28px;
   text-align: right;
 }
+
+.ak-stage-op-plans {
+  margin-top: 16px;
+}
+
+.ak-stage-op-plans .ak-stage-op-note {
+  margin: 0;
+  font-size: 12px;
+}

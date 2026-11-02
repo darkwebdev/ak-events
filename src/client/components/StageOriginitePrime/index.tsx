@@ -239,6 +239,35 @@ export function StageOriginitePrime({
             </details>
           )}
 
+          <div className="ak-aside-list ak-stage-op-plans">
+            <div className="ak-aside-item">
+              <div className="ak-aside-label">
+                <span className="ak-aside-name">With sanity now ({summary.budgetNow})</span>
+                <span className="ak-aside-value">
+                  {summary.planNow.stages} stage{summary.planNow.stages === 1 ? '' : 's'} ·{' '}
+                  <Op>{summary.planNow.op}</Op>
+                </span>
+              </div>
+            </div>
+            {deadline && (
+              <div className="ak-aside-item">
+                <div className="ak-aside-label">
+                  <span className="ak-aside-name">
+                    By <DateText date={deadline} /> ({summary.budget})
+                  </span>
+                  <span className="ak-aside-value">
+                    {summary.plan.stages} stage{summary.plan.stages === 1 ? '' : 's'} ·{' '}
+                    <Op>{summary.plan.op}</Op>
+                  </span>
+                </div>
+              </div>
+            )}
+            <p className="ak-stage-op-note">
+              Sanity in brackets; cheapest stages first, each 3-starred on the first try. Pick an
+              event to plan up to its start.
+            </p>
+          </div>
+
           <div className="ak-aside-total">
             <div className="ak-aside-item">
               <label className="ak-aside-label">

@@ -16,7 +16,28 @@ export interface StageProgress {
   claimed: string[];
   sanity: number | null;
   maxSanity: number | null;
+  // Unexpired sanity potions at the fetch. Optional: snapshots from before it
+  // was added don't have it.
+  potions?: SanityPotion[];
   fetchedAt: string;
+}
+
+export interface SanityPotion {
+  sanity: number;
+  count: number;
+  // Unix seconds, or null when it never expires.
+  expiresAt: number | null;
+}
+
+// The Monthly Card's daily Emergency Sanity Booster (checkin_table's monthlySubItem).
+export const MONTHLY_CARD_SANITY_PER_DAY = 80;
+
+// Sanity in potions still unexpired at `now`.
+export function potionSanity(progress: StageProgress | null, now: Date): number {
+  const t = now.getTime() / 1000;
+  return (progress?.potions ?? [])
+    .filter((p) => p.expiresAt == null || p.expiresAt > t)
+    .reduce((n, p) => n + p.sanity * p.count, 0);
 }
 
 export interface GroupSummary {
@@ -79,17 +100,21 @@ export function opForSanity(stages: OpStage[], budget: number): { op: number; sa
 }
 
 export interface StageOpSummary {
-  // Groups playable now with something left to claim, and those only playable on a
-  // rerun (not counted in opLeft).
+  // Groups playable now with something left to claim, and events that have ended
+  // (back only if they rerun; not counted in opLeft) — story events and the rest
+  // (Duel Channel, Icebreaker Games…) apart.
   available: GroupSummary[];
-  rerunOnly: GroupSummary[];
+  ended: GroupSummary[];
+  endedOther: GroupSummary[];
   opLeft: number;
   sanityLeft: number;
-  rerunOnlyOp: number;
+  endedOp: number;
+  endedOtherOp: number;
   // Every one-time Originite Prime reward in the game, claimed or not.
   totalGameOp: number;
-  // Sanity to spend on stages by the deadline (now + per-day × days), and the
-  // Originite Prime that clears.
+  // Sanity to spend on stages by the deadline (now + potions + per-day × days),
+  // and the Originite Prime that clears.
+  potions: number;
   budget: number;
   plan: { op: number; sanity: number };
 }
@@ -97,26 +122,41 @@ export interface StageOpSummary {
 export function summarizeStageOp(
   data: StageOpData,
   progress: StageProgress | null,
-  { now, days, sanityPerDay }: { now: Date; days: number; sanityPerDay: number }
+  {
+    now,
+    days,
+    sanityPerDay,
+  }: {
+    now: Date;
+    days: number;
+    // Natural regen the user puts into stages, plus the Monthly Card potion if on.
+    sanityPerDay: number;
+  }
 ): StageOpSummary {
   const claimed = new Set(progress?.claimed ?? []);
   const available: GroupSummary[] = [];
-  const rerunOnly: GroupSummary[] = [];
+  const ended: GroupSummary[] = [];
+  const endedOther: GroupSummary[] = [];
   let totalGameOp = 0;
   for (const group of data.groups) {
     const summary = summarizeGroup(group, claimed);
     totalGameOp += summary.totalOp;
     if (summary.op === 0) continue;
-    (isAvailableNow(group, now) ? available : rerunOnly).push(summary);
+    if (isAvailableNow(group, now)) available.push(summary);
+    else (group.story === false ? endedOther : ended).push(summary);
   }
-  const budget = (sanityNow(progress, now) ?? 0) + Math.max(0, sanityPerDay) * days;
+  const potions = potionSanity(progress, now);
+  const budget = (sanityNow(progress, now) ?? 0) + potions + Math.max(0, sanityPerDay) * days;
   return {
     available,
-    rerunOnly,
+    ended,
+    endedOther,
     opLeft: available.reduce((n, g) => n + g.op, 0),
     sanityLeft: available.reduce((n, g) => n + g.sanity, 0),
-    rerunOnlyOp: rerunOnly.reduce((n, g) => n + g.op, 0),
+    endedOp: ended.reduce((n, g) => n + g.op, 0),
+    endedOtherOp: endedOther.reduce((n, g) => n + g.op, 0),
     totalGameOp,
+    potions,
     budget,
     plan: opForSanity(
       available.flatMap((g) => g.unclaimed),

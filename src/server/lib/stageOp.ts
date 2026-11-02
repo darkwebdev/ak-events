@@ -53,6 +53,10 @@ export interface StageGroup {
   // the EN client has no run with stages for it.
   startTime?: number | null;
   endTime?: number | null;
+  // For kind "event": a story event (Side Story or Story Collection), the kind that
+  // can come back as a rerun. Minigame events (Duel Channel, Icebreaker Games, April
+  // Fools…) only count while they're on.
+  story?: boolean;
   stages: OpStage[];
 }
 
@@ -119,6 +123,19 @@ function sortStages(stages: OpStage[]): OpStage[] {
     .map((s, i) => ({ s, i }))
     .sort((a, b) => MODE_ORDER[a.s.mode] - MODE_ORDER[b.s.mode] || a.i - b.i)
     .map(({ s }) => s);
+}
+
+// Side Stories are TYPE_ACT<n>SIDE / TYPE_ACT9D0 (several share that template) or
+// displayType SIDESTORY; Story Collections are MINISTORY (older ones TYPE_ACT<n>D0/D5).
+function isStoryEvent(entry: object): boolean {
+  const activity = entry as { type?: unknown; displayType?: unknown };
+  const type = String(activity.type ?? '');
+  return (
+    activity.displayType === 'SIDESTORY' ||
+    activity.displayType === 'MINISTORY' ||
+    type === 'MINISTORY' ||
+    /^TYPE_ACT\d+(SIDE|D0|D5)$/.test(type)
+  );
 }
 
 export function buildStageOpData({
@@ -245,6 +262,7 @@ export function buildStageOpData({
       name,
       startTime: run?.startTime ?? null,
       endTime: run?.endTime ?? null,
+      story: isStoryEvent(activities[firstId]),
       stages: sortStages(stages),
     };
   });

@@ -15869,6 +15869,7 @@
       "name": "The Masses' Travels",
       "startTime": 1793890800,
       "endTime": 1794740399,
+      "story": true,
       "stages": [
         {
           "id": "act42side_st01",
@@ -16206,6 +16207,7 @@
       "name": "Duel Channel: Ivy Vine",
       "startTime": 1790175600,
       "endTime": 1791370799,
+      "story": false,
       "stages": [
         {
           "id": "act3enemyduel_01a",
@@ -16231,6 +16233,7 @@
       "name": "People, A People",
       "startTime": 1789570800,
       "endTime": 1790765999,
+      "story": true,
       "stages": [
         {
           "id": "act51side_st01",
@@ -16456,6 +16459,7 @@
       "name": "Crossing",
       "startTime": 1786622400,
       "endTime": 1787223599,
+      "story": true,
       "stages": [
         {
           "id": "act20mini_01",
@@ -16609,6 +16613,7 @@
       "name": "First of A Thousand Autumns",
       "startTime": 1784214000,
       "endTime": 1786013999,
+      "story": true,
       "stages": [
         {
           "id": "act49side_st01",
@@ -16930,6 +16935,7 @@
       "name": "Medjehtiqedti Bound",
       "startTime": 1782129600,
       "endTime": 1783335599,
+      "story": true,
       "stages": [
         {
           "id": "act48side_st01",
@@ -17163,6 +17169,7 @@
       "name": "Unrealized Realities",
       "startTime": 1779375600,
       "endTime": 1780570799,
+      "story": true,
       "stages": [
         {
           "id": "act47side_st01",
@@ -17396,6 +17403,7 @@
       "name": "Retracing Our Steps",
       "startTime": 1776168000,
       "endTime": 1777978799,
+      "story": true,
       "stages": [
         {
           "id": "act46side_st01",
@@ -17733,6 +17741,7 @@
       "name": "Icebreaker Games #2",
       "startTime": 1775055600,
       "endTime": 1776855599,
+      "story": false,
       "stages": [
         {
           "id": "act2multi_tr01",
@@ -18094,6 +18103,7 @@
       "name": "April Fools' Day Event",
       "startTime": 1775055600,
       "endTime": 1775645999,
+      "story": false,
       "stages": [
         {
           "id": "act17d7_01",
@@ -18111,6 +18121,7 @@
       "name": "Rebuilding Mandate",
       "startTime": 1772809200,
       "endTime": 1774609199,
+      "story": false,
       "stages": [
         {
           "id": "act1halfidle_tr01",
@@ -18128,6 +18139,7 @@
       "name": "Somniloquium Serenum",
       "startTime": 1770724800,
       "endTime": 1771930799,
+      "story": true,
       "stages": [
         {
           "id": "act45side_st01",
@@ -18345,6 +18357,7 @@
       "name": "Duel Channel: Honeydew",
       "startTime": 1770130800,
       "endTime": 1771325999,
+      "story": false,
       "stages": [
         {
           "id": "act2enemyduel_01a",
@@ -18370,6 +18383,7 @@
       "name": "Ato",
       "startTime": 1768575600,
       "endTime": 1770375599,
+      "story": true,
       "stages": [
         {
           "id": "act44side_st01",
@@ -18699,6 +18713,7 @@
       "name": "Fantasy in the Mirage",
       "startTime": 1765454400,
       "endTime": 1766055599,
+      "story": true,
       "stages": [
         {
           "id": "act19mini_01",
@@ -18852,6 +18867,7 @@
       "name": "Act or Die",
       "startTime": 1763046000,
       "endTime": 1764241199,
+      "story": true,
       "stages": [
         {
           "id": "act43side_st01",
@@ -19085,6 +19101,7 @@
       "name": "Duel Channel: Green Grassville",
       "startTime": 1760443200,
       "endTime": 1761821999,
+      "story": false,
       "stages": [
         {
           "id": "act1enemyduel_01a",
@@ -19126,6 +19143,7 @@
       "name": "Icebreaker Games #1",
       "startTime": 1756994400,
       "endTime": 1758797999,
+      "story": false,
       "stages": [
         {
           "id": "act1multi_tr01",
@@ -19487,6 +19505,7 @@
       "name": "See You Soon",
       "startTime": 1754586000,
       "endTime": 1755169199,
+      "story": true,
       "stages": [
         {
           "id": "act18mini_01",
@@ -19640,6 +19659,7 @@
       "name": "Delicious On Terra",
       "startTime": 1741626000,
       "endTime": 1742813999,
+      "story": true,
       "stages": [
         {
           "id": "act36side_01",
@@ -19849,6 +19869,7 @@
       "name": "A Kazdelian Rescue",
       "startTime": 1738929600,
       "endTime": 1739530799,
+      "story": true,
       "stages": [
         {
           "id": "act17mini_01",
@@ -20002,6 +20023,7 @@
       "name": "Rhodes Island Icebreaker Games",
       "startTime": 1731603600,
       "endTime": 1732791599,
+      "story": false,
       "stages": [
         {
           "id": "act2vmulti-tr01",
@@ -20179,6 +20201,7 @@
       "name": "Operation Originium Dust - Retrospection",
       "startTime": 1726765200,
       "endTime": 1727607599,
+      "story": true,
       "stages": [
         {
           "id": "act17d0_st01",
@@ -20412,6 +20435,7 @@
       "name": "Operation Lucent Arrowhead",
       "startTime": 1725555600,
       "endTime": 1726743599,
+      "story": true,
       "stages": [
         {
           "id": "act32side_st01",
@@ -20653,6 +20677,7 @@
       "name": "To the Grinning Valley",
       "startTime": 1720544400,
       "endTime": 1721127599,
+      "story": true,
       "stages": [
         {
           "id": "act16mini_01",
@@ -20806,6 +20831,7 @@
       "name": "The Black Forest Wills A Dream",
       "startTime": 1709035200,
       "endTime": 1709636399,
+      "story": true,
       "stages": [
         {
           "id": "act15mini_01",
@@ -20959,6 +20985,7 @@
       "name": "A Flurry to the Flame",
       "startTime": 1694088000,
       "endTime": 1695293999,
+      "story": true,
       "stages": [
         {
           "id": "act24side_st01",
@@ -21208,6 +21235,7 @@
       "name": "A Death in Chunfen",
       "startTime": 1692723600,
       "endTime": 1693306799,
+      "story": true,
       "stages": [
         {
           "id": "act14mini_01",
@@ -21361,6 +21389,7 @@
       "name": "It's Been a While",
       "startTime": 1680886800,
       "endTime": 1681469999,
+      "story": true,
       "stages": [
         {
           "id": "act13mini_01",
@@ -21506,6 +21535,7 @@
       "name": "An Obscure Wanderer",
       "startTime": 1680282000,
       "endTime": 1680865199,
+      "story": true,
       "stages": [
         {
           "id": "act12mini_01",
@@ -21659,6 +21689,7 @@
       "name": "To Be Continued",
       "startTime": 1676653200,
       "endTime": 1677236399,
+      "story": true,
       "stages": [
         {
           "id": "act11mini_01",
@@ -21796,6 +21827,7 @@
       "name": "A Light Spark in Darkness",
       "startTime": 1660824000,
       "endTime": 1661425199,
+      "story": true,
       "stages": [
         {
           "id": "act10mini_01",
@@ -21949,6 +21981,7 @@
       "name": "Pinus Sylvestris",
       "startTime": 1649948400,
       "endTime": 1650538799,
+      "story": true,
       "stages": [
         {
           "id": "act9mini_01",
@@ -22054,6 +22087,7 @@
       "name": "Vigilo",
       "startTime": 1645110000,
       "endTime": 1645700399,
+      "story": true,
       "stages": [
         {
           "id": "act8mini_01",
@@ -22175,6 +22209,7 @@
       "name": "Hymnoi Wisdom",
       "startTime": 1640790000,
       "endTime": 1641380399,
+      "story": false,
       "stages": [
         {
           "id": "act1lock_a-01",
@@ -22256,6 +22291,7 @@
       "name": "Preluding Lights",
       "startTime": 1639051200,
       "endTime": 1639652399,
+      "story": true,
       "stages": [
         {
           "id": "act7mini_01",
@@ -22345,6 +22381,7 @@
       "name": "Beyond Here",
       "startTime": 1625583600,
       "endTime": 1626173999,
+      "story": true,
       "stages": [
         {
           "id": "act15d5_01",
@@ -22482,6 +22519,7 @@
       "name": "Rewinding Breeze",
       "startTime": 1616673600,
       "endTime": 1617274799,
+      "story": true,
       "stages": [
         {
           "id": "act13d0_01",
@@ -22619,6 +22657,7 @@
       "name": "Children of Ursus",
       "startTime": 1601380800,
       "endTime": 1602241199,
+      "story": true,
       "stages": [
         {
           "id": "act10d5_01",

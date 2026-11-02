@@ -83,10 +83,10 @@ describe('summarizeStageOp', () => {
       ['episode_1', 2, 9],
       ['supply', 1, 30],
     ]);
-    expect(s.rerunOnly.map((g) => g.group.id)).toEqual(['ev']);
+    expect(s.ended.map((g) => g.group.id)).toEqual(['ev']);
     expect(s.opLeft).toBe(3);
     expect(s.sanityLeft).toBe(39);
-    expect(s.rerunOnlyOp).toBe(1);
+    expect(s.endedOp).toBe(1);
     expect(s.totalGameOp).toBe(5);
     // 10 sanity now: c (0) and b (9).
     expect(s.budget).toBe(10);
@@ -113,5 +113,57 @@ describe('summarizeStageOp', () => {
       { now, days: 0, sanityPerDay: 0 }
     );
     expect(s.available.map((g) => g.group.id)).toEqual(['episode_1']);
+  });
+});
+
+describe('minigame events and potions', () => {
+  const now = new Date(5000 * 1000);
+  const withDuel = {
+    groups: [
+      ...data.groups,
+      {
+        id: 'duel',
+        kind: 'event',
+        name: 'Duel',
+        story: false,
+        startTime: 1,
+        endTime: 2,
+        stages: [st('v', 0)],
+      },
+      {
+        id: 'duelNow',
+        kind: 'event',
+        name: 'Duel 2',
+        story: false,
+        startTime: 4000,
+        endTime: 6000,
+        stages: [st('w', 0)],
+      },
+    ],
+  };
+
+  test('ended minigame events are listed apart from story events; one running now counts', () => {
+    const s = summarizeStageOp(withDuel, null, { now, days: 0, sanityPerDay: 0 });
+    expect(s.ended.map((g) => g.group.id)).toEqual(['ev']);
+    expect(s.endedOther.map((g) => g.group.id)).toEqual(['duel']);
+    expect(s.endedOtherOp).toBe(1);
+    expect(s.available.map((g) => g.group.id)).toContain('duelNow');
+  });
+
+  test('unexpired potions add to the budget', () => {
+    const progress = {
+      claimed: [],
+      sanity: 0,
+      maxSanity: 135,
+      fetchedAt: now.toISOString(),
+      potions: [
+        { sanity: 80, count: 2, expiresAt: 6000 },
+        { sanity: 120, count: 1, expiresAt: 4000 }, // expired
+        { sanity: 10, count: 1, expiresAt: null },
+      ],
+    };
+    const s = summarizeStageOp(data, progress, { now, days: 2, sanityPerDay: 100 });
+    expect(s.potions).toBe(170);
+    expect(s.budget).toBe(370);
   });
 });

@@ -17,6 +17,7 @@ import {
   type EventFilters,
 } from './utils/events.js';
 import {
+  MONTHLY_CARD_SANITY_PER_DAY,
   NATURAL_SANITY_PER_DAY,
   sanityNow,
   summarizeStageOp,
@@ -219,6 +220,7 @@ export default function App() {
       claimed: data.threeStarStages,
       sanity: data.sanity,
       maxSanity: data.maxSanity,
+      potions: data.sanityPotions,
       fetchedAt: new Date().toISOString(),
     });
   };
@@ -311,12 +313,14 @@ export default function App() {
   const dailyOrundum = calcDailyOrundum(settings);
   const totalDailyOrundum = dailyOrundum * daysUntilLastEvent;
   const now = useNow();
+  // The Monthly Card's daily sanity potion counts when it's ticked in Daily Orundum.
+  const monthlyCardSanity = settings['Monthly Card']?.enabled ? MONTHLY_CARD_SANITY_PER_DAY : 0;
   const stageOpSummary =
     accountImportEnabled && stageOpData
       ? summarizeStageOp(stageOpData, stageProgress, {
           now,
           days: daysUntilLastEvent,
-          sanityPerDay: stageSanityPerDay,
+          sanityPerDay: stageSanityPerDay + monthlyCardSanity,
         })
       : null;
   const stageOrundum =
@@ -404,6 +408,7 @@ export default function App() {
                 sanityNow={sanityNow(stageProgress, now)}
                 sanityPerDay={stageSanityPerDay}
                 onSanityPerDayChange={setStageSanityPerDay}
+                monthlyCardSanity={monthlyCardSanity}
                 included={stageOpIncluded}
                 onIncludedChange={setStageOpIncluded}
                 deadline={calculateLatestEventStart(selectedList)}

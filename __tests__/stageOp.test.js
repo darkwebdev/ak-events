@@ -25,6 +25,11 @@ const tables = {
       act9d0_01: stage('act9d0_zone1', { stageType: 'ACTIVITY', code: 'DM-1' }),
       act42side_01: stage('act42side_zone1', { stageType: 'ACTIVITY', code: 'TMT-1' }),
       act10d5_01: stage('act10d5_zone1', { stageType: 'ACTIVITY', code: 'CU-1' }),
+      act1enemyduel_01a: stage('act1enemyduel_zone1', {
+        stageType: 'ACTIVITY',
+        code: 'VS-1',
+        apCost: 0,
+      }),
       camp_01: stage('camp_1', { stageType: 'CAMPAIGN', diamondOnceDrop: 0 }),
     },
   },
@@ -46,19 +51,39 @@ const tables = {
   },
   activityTable: {
     basicInfo: {
-      act42side: { id: 'act42side', name: "The Masses' Travels", startTime: 100, endTime: 200 },
+      act42side: {
+        id: 'act42side',
+        type: 'TYPE_ACT42SIDE',
+        name: "The Masses' Travels",
+        startTime: 100,
+        endTime: 200,
+      },
       act42sre: {
         id: 'act42sre',
         name: "The Masses' Travels - Rerun",
         startTime: 1000,
         endTime: 2000,
       },
-      act10d5: { id: 'act10d5', name: 'Children of Ursus', startTime: 10, endTime: 20 },
+      act10d5: {
+        id: 'act10d5',
+        type: 'MINISTORY',
+        name: 'Children of Ursus',
+        startTime: 10,
+        endTime: 20,
+      },
+      act1enemyduel: {
+        id: 'act1enemyduel',
+        type: 'ENEMY_DUEL',
+        name: 'Duel Channel',
+        startTime: 1,
+        endTime: 2,
+      },
       act9d0: { id: 'act9d0', name: 'Darknights Memoir', startTime: 5, endTime: 6 },
     },
     zoneToActivity: {
       act42side_zone1: 'act42side',
       act10d5_zone1: 'act10d5',
+      act1enemyduel_zone1: 'act1enemyduel',
       act9d0_zone1: 'act9d0',
     },
   },
@@ -106,9 +131,10 @@ describe('buildStageOpData', () => {
 
   test("an event takes its latest run's times, rerun included, newest first", () => {
     const events = groups.filter((g) => g.kind === 'event');
-    expect(events.map((g) => [g.name, g.startTime, g.endTime])).toEqual([
-      ["The Masses' Travels", 1000, 2000],
-      ['Children of Ursus', 10, 20],
+    expect(events.map((g) => [g.name, g.startTime, g.endTime, g.story])).toEqual([
+      ["The Masses' Travels", 1000, 2000, true],
+      ['Children of Ursus', 10, 20, true],
+      ['Duel Channel', 1, 2, false],
     ]);
   });
 

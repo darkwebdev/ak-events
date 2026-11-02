@@ -20,6 +20,8 @@ interface StageOriginitePrimeProps {
   sanityNow: number | null;
   sanityPerDay: number;
   onSanityPerDayChange: (value: number) => void;
+  // The Monthly Card's daily potion, 0 when the card isn't ticked.
+  monthlyCardSanity: number;
   included: boolean;
   onIncludedChange: (included: boolean) => void;
   deadline: Date | null;
@@ -106,6 +108,7 @@ export function StageOriginitePrime({
   sanityNow,
   sanityPerDay,
   onSanityPerDayChange,
+  monthlyCardSanity,
   included,
   onIncludedChange,
   deadline,
@@ -133,7 +136,9 @@ export function StageOriginitePrime({
                   <InfoButton label="Left to claim">
                     <div>First 3-star clears of stages you can play now.</div>
                     <div>
-                      <Op>{summary.rerunOnlyOp}</Op> more in events that are only back on a rerun.
+                      <Op>{summary.endedOp + summary.endedOtherOp}</Op> more in events that have
+                      ended. Those can&apos;t be cleared unless the event comes back, which most
+                      never do.
                     </div>
                     <div>
                       <Op>{summary.totalGameOp}</Op> in the whole game.
@@ -158,6 +163,12 @@ export function StageOriginitePrime({
               </div>
             </div>
             <div className="ak-aside-item">
+              <div className="ak-aside-label">
+                <span className="ak-aside-name">Sanity in potions</span>
+                <span className="ak-aside-value">{hasProgress ? summary.potions : '–'}</span>
+              </div>
+            </div>
+            <div className="ak-aside-item">
               <label className="ak-aside-label">
                 <span className="ak-aside-name">
                   <InfoButton label="Sanity per day for stages">
@@ -175,6 +186,19 @@ export function StageOriginitePrime({
                 />
               </label>
             </div>
+            {monthlyCardSanity > 0 && (
+              <div className="ak-aside-item">
+                <div className="ak-aside-label">
+                  <span className="ak-aside-name">
+                    <InfoButton label="Monthly Card potion">
+                      Its daily Emergency Sanity Booster. Counted because Monthly Card is ticked in
+                      Daily Orundum.
+                    </InfoButton>
+                  </span>
+                  <span className="ak-aside-value">+{monthlyCardSanity} a day</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <details className="ak-stage-op-list">
@@ -184,12 +208,20 @@ export function StageOriginitePrime({
             </summary>
             <GroupList groups={summary.available} />
           </details>
-          {summary.rerunOnly.length > 0 && (
+          {summary.ended.length > 0 && (
             <details className="ak-stage-op-list">
               <summary>
-                Rerun only (<Op>{summary.rerunOnlyOp}</Op>)
+                Ended story events (<Op>{summary.endedOp}</Op>)
               </summary>
-              <GroupList groups={summary.rerunOnly} />
+              <GroupList groups={summary.ended} />
+            </details>
+          )}
+          {summary.endedOther.length > 0 && (
+            <details className="ak-stage-op-list">
+              <summary>
+                Ended other events (<Op>{summary.endedOtherOp}</Op>)
+              </summary>
+              <GroupList groups={summary.endedOther} />
             </details>
           )}
 
@@ -214,7 +246,8 @@ export function StageOriginitePrime({
                     }
                   >
                     <div>
-                      {sanityNow ?? 0} now + {sanityPerDay} × {days} day{days === 1 ? '' : 's'} ={' '}
+                      {sanityNow ?? 0} now + {summary.potions} in potions +{' '}
+                      {sanityPerDay + monthlyCardSanity} × {days} day{days === 1 ? '' : 's'} ={' '}
                       {summary.budget} sanity
                     </div>
                     <div>

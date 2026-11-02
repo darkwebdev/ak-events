@@ -77,3 +77,34 @@ describe('fetchAccountData', () => {
     expect(result.threeStarStages).toEqual(['main_01-07']);
   });
 });
+
+describe('fetchAccountData against an older ak-account', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  test('retries without sanity/myStages when the API does not know them', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        json: async () => ({
+          data: null,
+          errors: [{ message: 'Cannot query field "myStages" on type "Query".' }],
+        }),
+      })
+      .mockResolvedValueOnce({
+        json: async () => ({
+          data: { myStatus: { nickName: 'Doctor' }, myInventory: null, myRoster: null },
+        }),
+      });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await fetchAccountData({ channelUid: 'u', yostarToken: 't', server: 'en' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const retry = JSON.parse(fetchMock.mock.calls[1][1].body).query;
+    expect(retry).not.toMatch(/myStages|sanity/);
+    expect(retry).toMatch(/myRoster[\s\S]*potentialRank/);
+    expect(result.nickName).toBe('Doctor');
+    expect(result.sanity).toBeNull();
+    expect(result.threeStarStages).toEqual([]);
+  });
+});

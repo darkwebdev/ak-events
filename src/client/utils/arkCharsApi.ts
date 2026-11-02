@@ -131,24 +131,7 @@ interface FetchAccountDataResponse {
   myStages?: { stageId: string; state: number }[] | null;
 }
 
-// dungeon.stages' state for "cleared with 3 stars".
-const STAGE_STATE_COMPLETE = 3;
-
-// Fetches the linked account's nickname/level/uid/avatar (for display, confirming
-// which account is connected), current Orundum / Originite Prime / Headhunting
-// Permit counts, operator roster, sanity and stage progress — all in one request, since every
-// authenticated request logs the game session out, using a previously obtained { channelUid, yostarToken, server }.
-// avatarUrl comes straight from myStatus as a ready-to-use image URL (resolved
-// server-side from the account's own chosen portrait — this only works for the
-// logged-in user's own avatar, not an arbitrary player id) and may be null if the
-// portrait couldn't be resolved.
-export async function fetchAccountData({
-  channelUid,
-  yostarToken,
-  server,
-}: ArkAuth): Promise<FetchAccountDataResult> {
-  const data = await graphqlRequest<FetchAccountDataResponse>(
-    `query FetchAccountData($channelUid: String!, $yostarToken: String!, $server: String!) {
+const FETCH_ACCOUNT_QUERY = `query FetchAccountData($channelUid: String!, $yostarToken: String!, $server: String!) {
       myStatus(channelUid: $channelUid, yostarToken: $yostarToken, server: $server) {
         nickName
         level
@@ -180,9 +163,46 @@ export async function fetchAccountData({
         stageId
         state
       }
-    }`,
-    { channelUid, yostarToken, server }
-  );
+    }`;
+
+// The same query without the fields an older ak-account deploy doesn't have.
+function stripStageFields(query: string): string {
+  return query
+    .replace(/\n\s*sanity\n\s*maxSanity/, '')
+    .replace(/\n\s*myStages\([^)]*\) \{[^}]*\}/, '');
+}
+
+// dungeon.stages' state for "cleared with 3 stars".
+const STAGE_STATE_COMPLETE = 3;
+
+// Fetches the linked account's nickname/level/uid/avatar (for display, confirming
+// which account is connected), current Orundum / Originite Prime / Headhunting
+// Permit counts, operator roster, sanity and stage progress — all in one request, since every
+// authenticated request logs the game session out, using a previously obtained { channelUid, yostarToken, server }.
+// avatarUrl comes straight from myStatus as a ready-to-use image URL (resolved
+// server-side from the account's own chosen portrait — this only works for the
+// logged-in user's own avatar, not an arbitrary player id) and may be null if the
+// portrait couldn't be resolved.
+export async function fetchAccountData({
+  channelUid,
+  yostarToken,
+  server,
+}: ArkAuth): Promise<FetchAccountDataResult> {
+  const vars = { channelUid, yostarToken, server };
+  let data: FetchAccountDataResponse;
+  try {
+    data = await graphqlRequest<FetchAccountDataResponse>(FETCH_ACCOUNT_QUERY, vars);
+  } catch (err) {
+    // An ak-account deploy from before sanity/myStages rejects the whole query at
+    // validation — before any Yostar call, so retrying costs no extra game logout.
+    if (!/Cannot query field "(myStages|sanity|maxSanity)"/.test(String((err as Error)?.message))) {
+      throw err;
+    }
+    data = await graphqlRequest<FetchAccountDataResponse>(
+      stripStageFields(FETCH_ACCOUNT_QUERY),
+      vars
+    );
+  }
   return {
     nickName: data.myStatus?.nickName ?? null,
     level: data.myStatus?.level ?? null,

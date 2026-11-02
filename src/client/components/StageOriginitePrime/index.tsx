@@ -88,7 +88,13 @@ function GroupList({ groups }: { groups: GroupSummary[] }) {
                     )}
                   </span>
                   <span className="ak-stage-op-ap" title="Sanity per clear">
-                    {stage.ap}
+                    {stage.ap} sanity
+                  </span>
+                  <span
+                    className="ak-stage-op-reward"
+                    title="Originite Prime for the first 3-star clear"
+                  >
+                    <Op>{stage.op}</Op>
                   </span>
                 </li>
               ))}

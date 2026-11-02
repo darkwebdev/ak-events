@@ -195,7 +195,12 @@ export async function fetchAccountData({
   } catch (err) {
     // An ak-account deploy from before sanity/myStages rejects the whole query at
     // validation — before any Yostar call, so retrying costs no extra game logout.
-    if (!/Cannot query field "(myStages|sanity|maxSanity)"/.test(String((err as Error)?.message))) {
+    // (ak-account's GraphQL server quotes the field name with single quotes.)
+    if (
+      !/Cannot query field ['"](myStages|sanity|maxSanity)['"]/.test(
+        String((err as Error)?.message)
+      )
+    ) {
       throw err;
     }
     data = await graphqlRequest<FetchAccountDataResponse>(

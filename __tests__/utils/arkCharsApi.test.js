@@ -87,7 +87,11 @@ describe('fetchAccountData against an older ak-account', () => {
       .mockResolvedValueOnce({
         json: async () => ({
           data: null,
-          errors: [{ message: 'Cannot query field "myStages" on type "Query".' }],
+          errors: [
+            // Exactly what the live ak-account (Strawberry / graphql-core) answers.
+            { message: "Cannot query field 'myStages' on type 'Query'. Did you mean 'myStatus'?" },
+            { message: "Cannot query field 'sanity' on type 'UserStatus'." },
+          ],
         }),
       })
       .mockResolvedValueOnce({

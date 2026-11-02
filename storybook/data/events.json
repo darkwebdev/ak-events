@@ -834,5 +834,24 @@
       "cnStart": "2026-10-09",
       "cnEnd": "2026-10-23"
     }
+  },
+  {
+    "name": "Vremya, v Put'!",
+    "start": "2027-04-25",
+    "end": "2027-05-16",
+    "globalStart": "2027-04-25",
+    "globalEnd": "2027-05-16",
+    "cnStart": "2026-11-01",
+    "cnEnd": "2026-11-22",
+    "datesPredicted": true,
+    "type": "Side Story",
+    "image": "data/images/CN_Vremya%2C_v_Put%27%21_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Vremya,_v_Put%27!",
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": 14,
+    "bannerPermits": 10,
+    "intCerts": null,
+    "banner": null
   }
 ]

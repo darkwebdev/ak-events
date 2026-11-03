@@ -63,6 +63,16 @@ function Op({ children }: { children: number }) {
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 const storyCount = (n: number) => `${n} ${n === 1 ? 'story' : 'stories'}`;
 
+// A storyline's name, with its faction in a hover popup when it has one.
+function StorylineName({ line }: { line: { name: string; faction?: string } }) {
+  if (!line.faction) return <span>{line.name}</span>;
+  return (
+    <InfoButton label={line.name} title={line.name}>
+      Faction: {line.faction}
+    </InfoButton>
+  );
+}
+
 function StoryMeta({
   story,
   storylines,
@@ -79,7 +89,7 @@ function StoryMeta({
     parts.push(group.kind === 'intermezzi' ? 'Intermezzo' : TYPE_LABEL[info.type]);
     const line = storylines.find((l) => l.id === info.storyline);
     if (info.movement) parts.push(info.movement);
-    else if (line) parts.push(line.name);
+    else if (line) parts.push(<StorylineName key="line" line={line} />);
     const start = server === 'cn' ? info.cnStart : info.enStart;
     if (start) parts.push(<DateText key="date" date={new Date(start * 1000)} />);
   } else if (group.kind === 'supply') {
@@ -174,7 +184,8 @@ function Section({
     <details className="ak-stage-op-section">
       <summary>
         <span className="ak-stage-op-group-name">
-          {section.title} <span className="ak-stage-op-muted">({storyCount(count)})</span>
+          <StorylineName line={{ name: section.title, faction: section.faction }} />{' '}
+          <span className="ak-stage-op-muted">({storyCount(count)})</span>
         </span>
         <span className="ak-stage-op-group-value">
           <Op>{section.op}</Op>

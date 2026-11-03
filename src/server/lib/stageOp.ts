@@ -88,6 +88,8 @@ export interface Storyline {
   name: string;
   // Main storyline only: its movements, in order.
   movements: string[];
+  // The nation or group its stories are about, when it has one.
+  faction?: string;
 }
 
 export interface SanityItem {
@@ -189,6 +191,7 @@ interface StorySet {
 interface StorylineEntry {
   storylineId: string;
   storylineName: string;
+  storylineLogoId?: string | null;
   sortId: number;
   locations: Record<
     string,
@@ -221,6 +224,23 @@ function titleCase(text: string): string {
     .map((w, i) => (i > 0 && small.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
     .join(' ');
 }
+
+// Each storyline's faction, by the abbreviation in its logo id (storyline_Si). The
+// game data has no name for it; Summertime Beats, Tales of Terra and the main story
+// have none.
+const STORYLINE_FACTIONS: Record<string, string> = {
+  Rl: 'Rhodes Island',
+  Ur: 'Ursus',
+  La: 'Laterano',
+  Kj: 'Kjerag',
+  Si: 'Siracusa',
+  Ka: 'Kazimierz',
+  Su: 'Yan',
+  Rh: 'Columbia',
+  Ae: 'Ægir',
+  Le: 'Leithanien',
+  Ta: 'Kazdel',
+};
 
 // Puts each group where the game's Storyline screen lists it: its story type,
 // storyline (and movement for the main story), year, and release dates.
@@ -267,7 +287,8 @@ function annotateStories(
     // The main storyline (the one split into movements) is called "For Tomorrow" in
     // the game; "Main Story" is what people know it as.
     const name = movements.length ? 'Main Story' : line.storylineName;
-    storylines.push({ id: line.storylineId, name, movements });
+    const faction = STORYLINE_FACTIONS[(line.storylineLogoId ?? '').replace(/^storyline_/, '')];
+    storylines.push({ id: line.storylineId, name, movements, ...(faction && { faction }) });
   }
 
   // Episodes 15+ are archived (permanent_main_*) rather than in a main_<n> zone.

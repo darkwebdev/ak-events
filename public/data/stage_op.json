@@ -23588,57 +23588,68 @@
     {
       "id": "ssLine_1",
       "name": "The Ark",
-      "movements": []
+      "movements": [],
+      "faction": "Rhodes Island"
     },
     {
       "id": "ssLine_13",
       "name": "Wildfire",
-      "movements": []
+      "movements": [],
+      "faction": "Ursus"
     },
     {
       "id": "ssLine_2",
       "name": "The Blessed",
-      "movements": []
+      "movements": [],
+      "faction": "Laterano"
     },
     {
       "id": "ssLine_3",
       "name": "Snow and Silver Steel",
-      "movements": []
+      "movements": [],
+      "faction": "Kjerag"
     },
     {
       "id": "ssLine_4",
       "name": "Sette Colli's Sprouts",
-      "movements": []
+      "movements": [],
+      "faction": "Siracusa"
     },
     {
       "id": "ssLine_5",
       "name": "Under the Neon",
-      "movements": []
+      "movements": [],
+      "faction": "Kazimierz"
     },
     {
       "id": "ssLine_6",
       "name": "Through the Ages",
-      "movements": []
+      "movements": [],
+      "faction": "Yan"
     },
     {
       "id": "ssLine_7",
       "name": "Those Who Take The Future",
-      "movements": []
+      "movements": [],
+      "faction": "Columbia"
     },
     {
       "id": "ssLine_8",
       "name": "Glimpse of the Depths",
-      "movements": []
+      "movements": [],
+      "faction": "Ægir"
     },
     {
       "id": "ssLine_9",
       "name": "Spire Mirages",
-      "movements": []
+      "movements": [],
+      "faction": "Leithanien"
     },
     {
       "id": "ssLine_10",
       "name": "Rekindled Flame",
-      "movements": []
+      "movements": [],
+      "faction": "Kazdel"
     },
     {
       "id": "ssLine_11",

@@ -168,6 +168,7 @@ describe('story info', () => {
         ark: {
           storylineId: 'ark',
           storylineName: 'The Ark',
+          storylineLogoId: 'storyline_Rl',
           sortId: 2,
           locations: {
             a: { sortId: 1, locationType: 'STORY_SET', relevantStorySetId: 'set_tmt' },
@@ -203,7 +204,7 @@ describe('story info', () => {
   test("lists storylines with the main story's movements", () => {
     expect(data.storylines).toEqual([
       { id: 'mainLine', name: 'Main Story', movements: ['Hour of an Awakening'] },
-      { id: 'ark', name: 'The Ark', movements: [] },
+      { id: 'ark', name: 'The Ark', movements: [], faction: 'Rhodes Island' },
     ]);
   });
 

@@ -197,6 +197,7 @@ export function summarizeStageOp(
 export interface StorySection {
   key: string;
   title: string;
+  faction?: string;
   op: number;
   stories: GroupSummary[];
   subsections: { key: string; title: string; op: number; stories: GroupSummary[] }[];
@@ -231,6 +232,7 @@ export function sectionsFor(
       sections.push({
         key: line.id,
         title: line.name,
+        faction: line.faction,
         op: sumOp(inLine),
         stories: subsections.length ? [] : inLine,
         subsections,

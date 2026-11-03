@@ -17,6 +17,7 @@ import { ensureDir, saveJson, fileExists, loadJson } from './lib/storage.js';
 import { checkScrapeHealth, reportScrapeHealth } from './lib/scrapeHealth.js';
 import { applyRerunSuffix, isRerunLink, titleFromUrl } from './lib/wiki.js';
 import { parseDateRange } from './lib/dateRange.js';
+import { carryOverEvents } from './lib/carryOver.js';
 import {
   parseBannersPage,
   indexBannersByDate,
@@ -715,6 +716,18 @@ export async function scrapeEvents(): Promise<void> {
         beforeFilterCount - processed.length
       } event(s) with no start date, no orundum value, and no banner`
     );
+  }
+
+  // arkpedia down: keep last run's events it alone was dating (see lib/carryOver.ts).
+  if (arkpediaEvents.length === 0) {
+    const kept = carryOverEvents(processed, previousEvents, new Date().toISOString().slice(0, 10));
+    if (kept.length) {
+      console.log(
+        `arkpedia returned nothing; kept ${kept.length} event(s) from the last run:`,
+        kept.map((e) => e.name)
+      );
+      processed.push(...kept);
+    }
   }
 
   // Check each event's banner free pulls against the rules for its banner's type (see

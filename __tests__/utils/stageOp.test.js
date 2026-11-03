@@ -2,6 +2,7 @@ import {
   isAvailableNow,
   opForSanity,
   sanityNow,
+  sectionsFor,
   summarizeStageOp,
 } from '../../src/client/utils/stageOp.js';
 
@@ -23,6 +24,7 @@ const data = {
       name: 'Event',
       startTime: 1000,
       endTime: 2000,
+      info: { type: 'sideStory' },
       stages: [st('e', 12)],
     },
   ],
@@ -78,16 +80,13 @@ describe('summarizeStageOp', () => {
   const now = new Date(5000 * 1000); // the event is over
   const progress = { claimed: ['a'], sanity: 10, maxSanity: 10, fetchedAt: now.toISOString() };
 
-  test('counts unclaimed stages you can play now; ended events only as rerun-only', () => {
+  test('counts unclaimed stages you can play now; ended Side Stories wait for a rerun', () => {
     const s = summarizeStageOp(data, progress, { now, days: 0, sanityPerDay: 240 });
-    expect(s.available.map((g) => [g.group.id, g.op, g.sanity])).toEqual([
-      ['episode_1', 2, 9],
-      ['supply', 1, 30],
-    ]);
-    expect(s.ended.map((g) => g.group.id)).toEqual(['ev']);
+    expect(s.available.map((g) => [g.group.id, g.op, g.sanity])).toEqual([['episode_1', 2, 9]]);
+    expect([s.supply.group.id, s.supply.op, s.supply.sanity]).toEqual(['supply', 1, 30]);
+    expect(s.waiting.map((g) => g.group.id)).toEqual(['ev']);
     expect(s.opLeft).toBe(3);
     expect(s.sanityLeft).toBe(39);
-    expect(s.endedOp).toBe(1);
     expect(s.totalGameOp).toBe(5);
     // 10 sanity now: c (0) and b (9).
     expect(s.sanity).toEqual({ now: 10, byDeadline: 10 });
@@ -117,6 +116,7 @@ describe('summarizeStageOp', () => {
       { now, days: 0, sanityPerDay: 0 }
     );
     expect(s.available.map((g) => g.group.id)).toEqual(['episode_1']);
+    expect(s.supply).toBeNull();
   });
 });
 
@@ -146,12 +146,16 @@ describe('minigame events and potions', () => {
     ],
   };
 
-  test('ended minigame events are listed apart from story events; one running now counts', () => {
-    const s = summarizeStageOp(withDuel, null, { now, days: 0, sanityPerDay: 0 });
-    expect(s.ended.map((g) => g.group.id)).toEqual(['ev']);
-    expect(s.endedOther.map((g) => g.group.id)).toEqual(['duel']);
-    expect(s.endedOtherOp).toBe(1);
+  test('ended minigames, collabs and vignettes are left out; one running now counts', () => {
+    const groups = [
+      ...withDuel.groups,
+      { ...data.groups[2], id: 'vignette', info: { type: 'vignette' } },
+      { ...data.groups[2], id: 'collab', info: undefined },
+    ];
+    const s = summarizeStageOp({ groups }, null, { now, days: 0, sanityPerDay: 0 });
+    expect(s.waiting.map((g) => g.group.id)).toEqual(['ev']);
     expect(s.available.map((g) => g.group.id)).toContain('duelNow');
+    expect(s.totalGameOp).toBe(9);
   });
 
   test('unexpired potions add to the budget', () => {
@@ -180,5 +184,61 @@ describe('minigame events and potions', () => {
 test('an event whose rerun starts later is upcoming, not ended', () => {
   const s = summarizeStageOp(data, null, { now: new Date(500 * 1000), days: 0, sanityPerDay: 0 });
   expect(s.upcoming.map((g) => g.group.id)).toEqual(['ev']);
-  expect(s.ended).toEqual([]);
+  expect(s.waiting).toEqual([]);
+});
+
+describe('sectionsFor', () => {
+  const story = (id, info, op = 1) => ({
+    group: { id, kind: 'event', name: id, stages: [], info },
+    unclaimed: [],
+    op,
+    totalOp: op,
+    sanity: 0,
+  });
+  const info = (storyline, storylineOrder, movement, year, yearOrder) => ({
+    type: 'main',
+    storyline,
+    storylineOrder,
+    movement,
+    year,
+    yearOrder,
+    enStart: null,
+    cnStart: null,
+  });
+  const storylines = [
+    { id: 'main', name: 'For Tomorrow', movements: ['Awakening', 'Vision'] },
+    { id: 'ark', name: 'The Ark', movements: [] },
+  ];
+  const stories = [
+    story('ep2', info('main', 2, 'Vision', 2020, 1), 3),
+    story('ep1', info('main', 1, 'Awakening', 2019, 1), 2),
+    story('ss', info('ark', 1, null, 2019, 2)),
+    story('collab', undefined, 4),
+  ];
+
+  test('by storyline, with the main story split into movements', () => {
+    const sections = sectionsFor(stories, 'storyline', storylines);
+    expect(sections.map((s) => [s.title, s.op])).toEqual([
+      ['For Tomorrow', 5],
+      ['The Ark', 1],
+      ['Other stories', 4],
+    ]);
+    expect(sections[0].stories).toEqual([]);
+    expect(sections[0].subsections.map((s) => [s.title, s.stories.map((g) => g.group.id)])).toEqual(
+      [
+        ['Awakening', ['ep1']],
+        ['Vision', ['ep2']],
+      ]
+    );
+    expect(sections[1].stories.map((g) => g.group.id)).toEqual(['ss']);
+  });
+
+  test('by year, in release order', () => {
+    const sections = sectionsFor(stories, 'year', storylines);
+    expect(sections.map((s) => [s.title, s.stories.map((g) => g.group.id)])).toEqual([
+      ['Year 2019', ['ep1', 'ss']],
+      ['Year 2020', ['ep2']],
+      ['Other stories', ['collab']],
+    ]);
+  });
 });

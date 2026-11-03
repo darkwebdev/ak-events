@@ -1,9 +1,9 @@
 // Originite Prime still to claim from stages: public/data/stage_op.json (every
 // stage with a one-time Originite Prime reward, see src/server/lib/stageOp.ts)
 // joined with the linked account's own stage progress.
-import type { OpStage, StageGroup, StageOpData } from '../../server/lib/stageOp.js';
+import type { OpStage, StageGroup, StageOpData, Storyline } from '../../server/lib/stageOp.js';
 
-export type { OpStage, StageGroup, StageOpData };
+export type { OpStage, StageGroup, StageOpData, Storyline };
 
 // The game regains 1 sanity every 6 minutes.
 export const SANITY_REGEN_MINUTES = 6;
@@ -23,6 +23,8 @@ export interface StageProgress {
 }
 
 export interface SanityPotion {
+  // Optional: snapshots from before it was kept don't have it.
+  itemId?: string;
   sanity: number;
   count: number;
   // Unix seconds, or null when it never expires.
@@ -108,18 +110,17 @@ export function opForSanity(stages: OpStage[], budget: number): SanityPlan {
 }
 
 export interface StageOpSummary {
-  // Groups playable now with something left to claim, and events that have ended
-  // (back only if they rerun; not counted in opLeft) — story events and the rest
-  // (Duel Channel, Icebreaker Games…) apart.
+  // Stories playable now with something left to claim (supply stages apart), events
+  // whose next run hasn't started yet, and ended Side Stories not in the archive
+  // that a rerun would bring back. Nothing else that has ended is listed: Vignette
+  // stages aren't playable after their event, and collabs and minigame events
+  // don't come back.
   available: GroupSummary[];
-  // Events whose next run (a scheduled rerun) hasn't started yet.
+  supply: GroupSummary | null;
   upcoming: GroupSummary[];
-  ended: GroupSummary[];
-  endedOther: GroupSummary[];
+  waiting: GroupSummary[];
   opLeft: number;
   sanityLeft: number;
-  endedOp: number;
-  endedOtherOp: number;
   // Every one-time Originite Prime reward in the game, claimed or not.
   totalGameOp: number;
   // Unclaimed stages you can play now.
@@ -153,32 +154,35 @@ export function summarizeStageOp(
   const claimed = new Set(progress?.claimed ?? []);
   const available: GroupSummary[] = [];
   const upcoming: GroupSummary[] = [];
-  const ended: GroupSummary[] = [];
-  const endedOther: GroupSummary[] = [];
+  const waiting: GroupSummary[] = [];
+  let supply: GroupSummary | null = null;
   let totalGameOp = 0;
   for (const group of data.groups) {
     const summary = summarizeGroup(group, claimed);
     totalGameOp += summary.totalOp;
     if (summary.op === 0) continue;
-    if (isAvailableNow(group, now)) available.push(summary);
-    else if (group.startTime != null && group.startTime * 1000 > now.getTime()) {
+    if (isAvailableNow(group, now)) {
+      if (group.kind === 'supply') supply = summary;
+      else available.push(summary);
+    } else if (group.startTime != null && group.startTime * 1000 > now.getTime()) {
       upcoming.push(summary);
-    } else (group.story === false ? endedOther : ended).push(summary);
+    } else if (group.info?.type === 'sideStory') {
+      waiting.push(summary);
+    }
   }
+  const playableGroups = supply ? [...available, supply] : available;
   const sanity0 = sanityNow(progress, now) ?? 0;
   const potions0 = potionSanity(progress, now);
   const sanity = { now: sanity0, byDeadline: sanity0 + Math.max(0, sanityPerDay) * days };
   const potions = { now: potions0, byDeadline: potions0 + Math.max(0, potionSanityPerDay) * days };
-  const playable = available.flatMap((g) => g.unclaimed);
+  const playable = playableGroups.flatMap((g) => g.unclaimed);
   return {
     available,
+    supply,
     upcoming,
-    ended,
-    endedOther,
-    opLeft: available.reduce((n, g) => n + g.op, 0),
-    sanityLeft: available.reduce((n, g) => n + g.sanity, 0),
-    endedOp: ended.reduce((n, g) => n + g.op, 0),
-    endedOtherOp: endedOther.reduce((n, g) => n + g.op, 0),
+    waiting,
+    opLeft: playableGroups.reduce((n, g) => n + g.op, 0),
+    sanityLeft: playableGroups.reduce((n, g) => n + g.sanity, 0),
     totalGameOp,
     stagesLeft: playable.length,
     sanity,
@@ -186,4 +190,79 @@ export function summarizeStageOp(
     planNow: opForSanity(playable, sanity.now + potions.now),
     plan: opForSanity(playable, sanity.byDeadline + potions.byDeadline),
   };
+}
+
+// One heading of the stage list: a storyline (with the main story's movements as
+// sub-headings) or a year, holding its stories.
+export interface StorySection {
+  key: string;
+  title: string;
+  op: number;
+  stories: GroupSummary[];
+  subsections: { key: string; title: string; op: number; stories: GroupSummary[] }[];
+}
+
+export type StoryGrouping = 'storyline' | 'year';
+
+const sumOp = (stories: GroupSummary[]) => stories.reduce((n, g) => n + g.op, 0);
+
+// The game's Storyline screen order: by storyline (the main story split into its
+// movements), or by year. Stories it doesn't list go last under "Other stories".
+export function sectionsFor(
+  stories: GroupSummary[],
+  grouping: StoryGrouping,
+  storylines: Storyline[]
+): StorySection[] {
+  const other = stories.filter((g) => !g.group.info);
+  const listed = stories.filter((g) => g.group.info);
+  const sections: StorySection[] = [];
+  if (grouping === 'storyline') {
+    for (const line of storylines) {
+      const inLine = listed
+        .filter((g) => g.group.info!.storyline === line.id)
+        .sort((a, b) => a.group.info!.storylineOrder - b.group.info!.storylineOrder);
+      if (!inLine.length) continue;
+      const subsections = line.movements
+        .map((movement) => {
+          const inMovement = inLine.filter((g) => g.group.info!.movement === movement);
+          return { key: movement, title: movement, op: sumOp(inMovement), stories: inMovement };
+        })
+        .filter((sub) => sub.stories.length);
+      sections.push({
+        key: line.id,
+        title: line.name,
+        op: sumOp(inLine),
+        stories: subsections.length ? [] : inLine,
+        subsections,
+      });
+    }
+    const unplaced = listed.filter(
+      (g) => !storylines.some((line) => line.id === g.group.info!.storyline)
+    );
+    other.push(...unplaced);
+  } else {
+    const years = [...new Set(listed.map((g) => g.group.info!.year))].sort((a, b) => a - b);
+    for (const year of years) {
+      const inYear = listed
+        .filter((g) => g.group.info!.year === year)
+        .sort((a, b) => a.group.info!.yearOrder - b.group.info!.yearOrder);
+      sections.push({
+        key: `year_${year}`,
+        title: `Year ${year}`,
+        op: sumOp(inYear),
+        stories: inYear,
+        subsections: [],
+      });
+    }
+  }
+  if (other.length) {
+    sections.push({
+      key: 'other',
+      title: 'Other stories',
+      op: sumOp(other),
+      stories: other,
+      subsections: [],
+    });
+  }
+  return sections;
 }

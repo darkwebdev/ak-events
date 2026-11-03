@@ -57,13 +57,51 @@ export interface StageGroup {
   // can come back as a rerun. Minigame events (Duel Channel, Icebreaker Games, April
   // Fools…) only count while they're on.
   story?: boolean;
+  // Where the game's Storyline screen puts it (stage_table's storylines /
+  // storylineStorySets) — see annotateStories. Absent for stories the screen
+  // doesn't list (collabs, minigames, supply stages).
+  info?: StoryInfo;
   stages: OpStage[];
+}
+
+// main / sideStory / vignette: the Storyline screen's MAINLINE / SS / COLLECT sets.
+export type StoryType = 'main' | 'sideStory' | 'vignette';
+
+export interface StoryInfo {
+  type: StoryType;
+  // The storyline it's listed under (its id in StageOpData.storylines), and its
+  // place there.
+  storyline: string | null;
+  storylineOrder: number;
+  // Main story only: the movement ("Shadow of a Dying Sun").
+  movement: string | null;
+  // The Storyline screen's "by year" order.
+  year: number;
+  yearOrder: number;
+  // Release (its first run's start, Unix seconds) on the EN and CN servers.
+  enStart: number | null;
+  cnStart: number | null;
+}
+
+export interface Storyline {
+  id: string;
+  name: string;
+  // Main storyline only: its movements, in order.
+  movements: string[];
+}
+
+export interface SanityItem {
+  name: string;
+  sanity: number;
 }
 
 // No timestamp on purpose: the daily job only commits when the stage list itself
 // changed.
 export interface StageOpData {
   groups: StageGroup[];
+  storylines: Storyline[];
+  // Sanity packs by item id, for naming the account's own.
+  sanityItems: Record<string, SanityItem>;
 }
 
 interface RawStage {
@@ -138,16 +176,168 @@ function isStoryEvent(entry: object): boolean {
   );
 }
 
+interface StorySet {
+  storySetId: string;
+  storySetType: string;
+  sortByYear?: number;
+  sortWithinYear?: number;
+  relevantActivityId?: string | null;
+  mainlineData?: { zoneId?: string | null; retroId?: string | null } | null;
+  ssData?: { retroActivityId?: string | null } | null;
+}
+
+interface StorylineEntry {
+  storylineId: string;
+  storylineName: string;
+  sortId: number;
+  locations: Record<
+    string,
+    {
+      locationType: string;
+      sortId: number;
+      relevantStorySetId?: string | null;
+      mainlineSplitData?: { subName?: string | null } | null;
+    }
+  >;
+}
+
+export interface ItemTable {
+  items: Record<string, { name?: string }>;
+  apSupplies?: Record<string, { id: string; ap: number }>;
+}
+
+const STORY_TYPES: Record<string, StoryType> = {
+  MAINLINE: 'main',
+  SS: 'sideStory',
+  COLLECT: 'vignette',
+};
+
+// "SHADOW OF A DYING SUN" → "Shadow of a Dying Sun".
+function titleCase(text: string): string {
+  const small = new Set(['a', 'an', 'the', 'of', 'to', 'in', 'on', 'and']);
+  return text
+    .toLowerCase()
+    .split(/\s+/)
+    .map((w, i) => (i > 0 && small.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(' ');
+}
+
+// Puts each group where the game's Storyline screen lists it: its story type,
+// storyline (and movement for the main story), year, and release dates.
+function annotateStories(
+  groups: StageGroup[],
+  {
+    stageTable,
+    activityTable,
+    cnActivityTable,
+    retroTable,
+  }: {
+    stageTable: StageTable;
+    activityTable: ActivityTable;
+    cnActivityTable: ActivityTable | null;
+    retroTable: RetroTable;
+  }
+): Storyline[] {
+  const sets = (stageTable.storylineStorySets ?? {}) as Record<string, StorySet>;
+  const lines = Object.values((stageTable.storylines ?? {}) as Record<string, StorylineEntry>).sort(
+    (a, b) => a.sortId - b.sortId
+  );
+
+  // Each set's own storyline: the one listing it as a STORY_SET (BEFORE/AFTER
+  // entries only point at sets that belong to another storyline).
+  const placement = new Map<
+    string,
+    { storyline: string; order: number; movement: string | null }
+  >();
+  const storylines: Storyline[] = [];
+  for (const line of lines) {
+    const movements: string[] = [];
+    let movement: string | null = null;
+    const locations = Object.values(line.locations ?? {}).sort((a, b) => a.sortId - b.sortId);
+    locations.forEach((loc, order) => {
+      if (loc.locationType === 'MAINLINE_SPLIT' && loc.mainlineSplitData?.subName) {
+        movement = titleCase(loc.mainlineSplitData.subName);
+        movements.push(movement);
+      } else if (loc.locationType === 'STORY_SET' && loc.relevantStorySetId) {
+        if (!placement.has(loc.relevantStorySetId)) {
+          placement.set(loc.relevantStorySetId, { storyline: line.storylineId, order, movement });
+        }
+      }
+    });
+    storylines.push({ id: line.storylineId, name: line.storylineName, movements });
+  }
+
+  // Episodes 15+ are archived (permanent_main_*) rather than in a main_<n> zone.
+  const retroEpisode = new Map<string, number>();
+  for (const [stageId, stage] of Object.entries(retroTable.stageList ?? {})) {
+    const retroId = retroTable.zoneToRetro?.[stage.zoneId];
+    const episode = episodeFromId(stageId);
+    if (retroId && episode != null && !retroEpisode.has(retroId))
+      retroEpisode.set(retroId, episode);
+  }
+  const setFor = new Map<string, StorySet>();
+  for (const set of Object.values(sets)) {
+    const zone = set.mainlineData?.zoneId;
+    const zoneEpisode = zone ? /^main_(\d+)$/.exec(zone) : null;
+    if (zoneEpisode) setFor.set(`episode_${zoneEpisode[1]}`, set);
+    const mainRetro = set.mainlineData?.retroId;
+    if (mainRetro && retroEpisode.has(mainRetro)) {
+      setFor.set(`episode_${retroEpisode.get(mainRetro)}`, set);
+    }
+    if (set.ssData?.retroActivityId) setFor.set(set.ssData.retroActivityId, set);
+    if (set.relevantActivityId && set.storySetType !== 'MAINLINE') {
+      setFor.set(set.relevantActivityId, set);
+    }
+  }
+
+  const en = activityTable.basicInfo ?? {};
+  const cn = cnActivityTable?.basicInfo ?? {};
+  for (const group of groups) {
+    // An event's stages are named after its original activity (act42side_01), even
+    // when the group came from a rerun's activity id.
+    const stagePrefix = group.stages[0]?.id.split('_')[0];
+    const set =
+      setFor.get(group.id) ??
+      (group.kind === 'event' && stagePrefix ? setFor.get(stagePrefix) : undefined);
+    if (!set || !STORY_TYPES[set.storySetType]) continue;
+    const where = placement.get(set.storySetId);
+    const activityId = set.relevantActivityId ?? null;
+    group.info = {
+      type: STORY_TYPES[set.storySetType],
+      storyline: where?.storyline ?? null,
+      storylineOrder: where?.order ?? 0,
+      movement: where?.movement ?? null,
+      year: set.sortByYear ?? 0,
+      yearOrder: set.sortWithinYear ?? 0,
+      enStart: (activityId && en[activityId]?.startTime) || null,
+      cnStart: (activityId && cn[activityId]?.startTime) || null,
+    };
+  }
+  return storylines;
+}
+
+function sanityItemsFrom(itemTable: ItemTable | null): Record<string, SanityItem> {
+  const out: Record<string, SanityItem> = {};
+  for (const supply of Object.values(itemTable?.apSupplies ?? {})) {
+    out[supply.id] = { name: itemTable?.items?.[supply.id]?.name ?? supply.id, sanity: supply.ap };
+  }
+  return out;
+}
+
 export function buildStageOpData({
   stageTable,
   zoneTable,
   activityTable,
   retroTable,
+  cnActivityTable = null,
+  itemTable = null,
 }: {
   stageTable: StageTable;
   zoneTable: ZoneTable;
   activityTable: ActivityTable;
   retroTable: RetroTable;
+  cnActivityTable?: ActivityTable | null;
+  itemTable?: ItemTable | null;
 }): StageOpData {
   const zones = zoneTable.zones ?? {};
   const zoneToActivity = (activityTable.zoneToActivity ?? {}) as Record<string, string>;
@@ -270,5 +460,11 @@ export function buildStageOpData({
   eventEntries.sort((a, b) => (b.endTime ?? 0) - (a.endTime ?? 0));
   groups.push(...eventEntries);
 
-  return { groups };
+  const storylines = annotateStories(groups, {
+    stageTable,
+    activityTable,
+    cnActivityTable,
+    retroTable,
+  });
+  return { groups, storylines, sanityItems: sanityItemsFrom(itemTable) };
 }

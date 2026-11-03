@@ -4,6 +4,8 @@
 // the events scrape in the daily job.
 import {
   fetchActivityTable,
+  fetchCnActivityTable,
+  fetchItemTable,
   fetchRetroTable,
   fetchStageTable,
   fetchZoneTable,
@@ -20,19 +22,30 @@ async function retryOnce<T>(fetch: () => Promise<T | null>): Promise<T | null> {
 }
 
 async function main() {
-  const [stageTable, zoneTable, activityTable, retroTable] = await Promise.all([
-    retryOnce(fetchStageTable),
-    retryOnce(fetchZoneTable),
-    retryOnce(fetchActivityTable),
-    retryOnce(fetchRetroTable),
-  ]);
+  const [stageTable, zoneTable, activityTable, retroTable, cnActivityTable, itemTable] =
+    await Promise.all([
+      retryOnce(fetchStageTable),
+      retryOnce(fetchZoneTable),
+      retryOnce(fetchActivityTable),
+      retryOnce(fetchRetroTable),
+      // Extras: without them, no CN dates / sanity pack names, nothing else lost.
+      retryOnce(fetchCnActivityTable),
+      retryOnce(fetchItemTable),
+    ]);
   if (!stageTable || !zoneTable || !activityTable || !retroTable) {
     // Keep yesterday's file rather than writing a partial one — the stage list
     // changes rarely, and a stale day is harmless.
     console.warn(`Could not download the game data; leaving ${OUT} as it is.`);
     return;
   }
-  const data = buildStageOpData({ stageTable, zoneTable, activityTable, retroTable });
+  const data = buildStageOpData({
+    stageTable,
+    zoneTable,
+    activityTable,
+    retroTable,
+    cnActivityTable,
+    itemTable,
+  });
   const stageCount = data.groups.reduce((n, g) => n + g.stages.length, 0);
   saveJson(OUT, data);
   console.log(`Saved ${data.groups.length} groups, ${stageCount} Originite Prime stages to ${OUT}`);

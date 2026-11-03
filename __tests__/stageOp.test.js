@@ -145,3 +145,88 @@ describe('buildStageOpData', () => {
     expect(all).not.toContain('camp_01');
   });
 });
+
+describe('story info', () => {
+  const withStorylines = {
+    ...tables,
+    stageTable: {
+      ...tables.stageTable,
+      storylines: {
+        mainLine: {
+          storylineId: 'mainLine',
+          storylineName: 'For Tomorrow',
+          sortId: 1,
+          locations: {
+            a: {
+              sortId: 1,
+              locationType: 'MAINLINE_SPLIT',
+              mainlineSplitData: { subName: 'HOUR OF AN AWAKENING' },
+            },
+            b: { sortId: 2, locationType: 'STORY_SET', relevantStorySetId: 'set_ep1' },
+          },
+        },
+        ark: {
+          storylineId: 'ark',
+          storylineName: 'The Ark',
+          sortId: 2,
+          locations: {
+            a: { sortId: 1, locationType: 'STORY_SET', relevantStorySetId: 'set_tmt' },
+          },
+        },
+      },
+      storylineStorySets: {
+        set_ep1: {
+          storySetId: 'set_ep1',
+          storySetType: 'MAINLINE',
+          sortByYear: 2019,
+          sortWithinYear: 1,
+          mainlineData: { zoneId: 'main_1' },
+        },
+        set_tmt: {
+          storySetId: 'set_tmt',
+          storySetType: 'SS',
+          sortByYear: 2025,
+          sortWithinYear: 3,
+          relevantActivityId: 'act42side',
+        },
+      },
+    },
+    cnActivityTable: { basicInfo: { act42side: { startTime: 50 } } },
+    itemTable: {
+      items: { ap_supply_lt_80: { name: 'Emergency Sanity Sampler' } },
+      apSupplies: { a: { id: 'ap_supply_lt_80', ap: 80 } },
+    },
+  };
+  const data = buildStageOpData(withStorylines);
+  const byId = Object.fromEntries(data.groups.map((g) => [g.id, g]));
+
+  test("lists storylines with the main story's movements", () => {
+    expect(data.storylines).toEqual([
+      { id: 'mainLine', name: 'For Tomorrow', movements: ['Hour of an Awakening'] },
+      { id: 'ark', name: 'The Ark', movements: [] },
+    ]);
+  });
+
+  test('places stories with their type, movement, year and EN/CN release', () => {
+    expect(byId.episode_1.info).toMatchObject({
+      type: 'main',
+      storyline: 'mainLine',
+      movement: 'Hour of an Awakening',
+      year: 2019,
+    });
+    expect(byId.act42side.info).toMatchObject({
+      type: 'sideStory',
+      storyline: 'ark',
+      movement: null,
+      enStart: 100,
+      cnStart: 50,
+    });
+    expect(byId.act1enemyduel.info).toBeUndefined();
+  });
+
+  test('names sanity packs from the item table', () => {
+    expect(data.sanityItems).toEqual({
+      ap_supply_lt_80: { name: 'Emergency Sanity Sampler', sanity: 80 },
+    });
+  });
+});

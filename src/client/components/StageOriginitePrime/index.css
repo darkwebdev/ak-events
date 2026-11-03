@@ -161,3 +161,65 @@
 .ak-stage-op-settings {
   margin-top: 12px;
 }
+
+/* By storyline / By year, like the game's Storyline screen toggle. */
+.ak-stage-op-switch {
+  display: inline-flex;
+  margin: 12px 0 4px 0;
+  border: 1px solid var(--ak-border, var(--ak-text-muted));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ak-stage-op-switch button {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--ak-text-muted);
+  cursor: pointer;
+}
+
+.ak-stage-op-switch button.active {
+  background: var(--ak-accent);
+  color: var(--ak-bg, #fff);
+  font-weight: 600;
+}
+
+.ak-stage-op-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.ak-stage-op-section > summary {
+  display: flex;
+  gap: 8px;
+  align-items: first baseline;
+  cursor: pointer;
+  padding: 2px 0;
+  font-weight: 600;
+}
+
+.ak-stage-op-section > summary::before {
+  content: '▸';
+  color: var(--ak-text-muted);
+}
+
+.ak-stage-op-section[open] > summary::before {
+  content: '▾';
+}
+
+.ak-stage-op-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ak-stage-op-section > .ak-stage-op-groups,
+.ak-stage-op-subsection {
+  margin-left: 14px;
+}
+
+.ak-stage-op-subsection > summary {
+  font-weight: normal;
+}

@@ -99,7 +99,7 @@ export interface FetchAccountDataResult {
   // Stages cleared with 3 stars — their one-time Originite Prime is claimed.
   threeStarStages: string[];
   // Unexpired sanity potions.
-  sanityPotions: { sanity: number; count: number; expiresAt: number | null }[];
+  sanityPotions: { itemId: string; sanity: number; count: number; expiresAt: number | null }[];
 }
 
 // What the account holds for particular banners: item counts by the game's item id
@@ -128,7 +128,9 @@ interface FetchAccountDataResponse {
     tenHeadhuntingPermits?: number | null;
     bannerItems?: { itemId: string; count: number }[] | null;
     limitedPools?: { poolId: string; pulls: number; freeCharClaimed: boolean }[] | null;
-    sanityPotions?: { sanity: number; count: number; expiresAt?: number | null }[] | null;
+    sanityPotions?:
+      | { itemId: string; sanity: number; count: number; expiresAt?: number | null }[]
+      | null;
   } | null;
   myRoster?: { charId?: string | null; potentialRank?: number | null }[] | null;
   myStages?: { stageId: string; state: number }[] | null;
@@ -158,6 +160,7 @@ const FETCH_ACCOUNT_QUERY = `query FetchAccountData($channelUid: String!, $yosta
           freeCharClaimed
         }
         sanityPotions {
+          itemId
           sanity
           count
           expiresAt
@@ -224,6 +227,7 @@ export async function fetchAccountData({
     sanity: data.myStatus?.sanity ?? null,
     maxSanity: data.myStatus?.maxSanity ?? null,
     sanityPotions: (data.myInventory?.sanityPotions ?? []).map((p) => ({
+      itemId: p.itemId,
       sanity: p.sanity,
       count: p.count,
       expiresAt: p.expiresAt ?? null,

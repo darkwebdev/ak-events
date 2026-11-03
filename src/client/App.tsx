@@ -22,6 +22,7 @@ import {
   summarizeStageOp,
   type StageOpData,
   type StageProgress,
+  type StoryGrouping,
 } from './utils/stageOp.js';
 
 import { ArknightsAccount } from './components/ArknightsAccount';
@@ -113,9 +114,10 @@ export default function App() {
   );
   // Sanity a day the user puts into stages, and whether the Originite Prime that
   // clears by the selected event counts toward the total.
-  const [stageSanityPerDay, setStageSanityPerDay] = useStorage<number>(
-    'ak-events-stage-sanity-per-day',
-    NATURAL_SANITY_PER_DAY
+  // The stage list's grouping: by storyline or by year, like the game's switch.
+  const [storyGrouping, setStoryGrouping] = useStorage<StoryGrouping>(
+    'ak-events-stage-op-grouping',
+    'storyline'
   );
   const [stageOpIncluded, setStageOpIncluded] = useStorage<boolean>(
     'ak-events-stage-op-included',
@@ -319,7 +321,7 @@ export default function App() {
       ? summarizeStageOp(stageOpData, stageProgress, {
           now,
           days: daysUntilLastEvent,
-          sanityPerDay: stageSanityPerDay,
+          sanityPerDay: NATURAL_SANITY_PER_DAY,
           potionSanityPerDay: monthlyCardSanity,
         })
       : null;
@@ -405,8 +407,12 @@ export default function App() {
               <StageOriginitePrime
                 summary={stageOpSummary}
                 hasProgress={stageProgress != null}
-                sanityPerDay={stageSanityPerDay}
-                onSanityPerDayChange={setStageSanityPerDay}
+                storylines={stageOpData?.storylines ?? []}
+                sanityItems={stageOpData?.sanityItems ?? {}}
+                potions={stageProgress?.potions ?? []}
+                grouping={storyGrouping}
+                onGroupingChange={setStoryGrouping}
+                server={arkAuth?.server ?? 'en'}
                 monthlyCardSanity={monthlyCardSanity}
                 included={stageOpIncluded}
                 onIncludedChange={setStageOpIncluded}

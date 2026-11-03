@@ -29,6 +29,12 @@ export const zoneTableUrl =
   'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/zone_table.json';
 export const retroTableUrl =
   'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/retro_table.json';
+// The CN server's activity table (release dates there; ArknightsAssets has no CN data) and the item table (sanity
+// pack names), also for stage_op.json.
+export const cnActivityTableUrl =
+  'https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/activity_table.json';
+export const itemTableUrl =
+  'https://raw.githubusercontent.com/ArknightsAssets/ArknightsGameData/master/en/gamedata/excel/item_table.json';
 
 // Community site with predicted Global dates for CN-only-announced events (a gap
 // none of our other sources fill) and structured per-event reward-store data — see
@@ -46,6 +52,8 @@ const config = {
   stageTableUrl,
   zoneTableUrl,
   retroTableUrl,
+  cnActivityTableUrl,
+  itemTableUrl,
   arkpediaBase,
 };
 export default config;

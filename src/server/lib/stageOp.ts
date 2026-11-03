@@ -264,7 +264,10 @@ function annotateStories(
         }
       }
     });
-    storylines.push({ id: line.storylineId, name: line.storylineName, movements });
+    // The main storyline (the one split into movements) is called "For Tomorrow" in
+    // the game; "Main Story" is what people know it as.
+    const name = movements.length ? 'Main Story' : line.storylineName;
+    storylines.push({ id: line.storylineId, name, movements });
   }
 
   // Episodes 15+ are archived (permanent_main_*) rather than in a main_<n> zone.

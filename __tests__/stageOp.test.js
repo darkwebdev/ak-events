@@ -202,7 +202,7 @@ describe('story info', () => {
 
   test("lists storylines with the main story's movements", () => {
     expect(data.storylines).toEqual([
-      { id: 'mainLine', name: 'For Tomorrow', movements: ['Hour of an Awakening'] },
+      { id: 'mainLine', name: 'Main Story', movements: ['Hour of an Awakening'] },
       { id: 'ark', name: 'The Ark', movements: [] },
     ]);
   });

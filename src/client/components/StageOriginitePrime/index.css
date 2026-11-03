@@ -223,3 +223,8 @@
 .ak-stage-op-subsection > summary {
   font-weight: normal;
 }
+
+.ak-stage-op-packs {
+  margin: 0 0 8px 0;
+  padding-left: 16px;
+}

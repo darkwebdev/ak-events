@@ -409,7 +409,7 @@ export default function App() {
                 hasProgress={stageProgress != null}
                 storylines={stageOpData?.storylines ?? []}
                 sanityItems={stageOpData?.sanityItems ?? {}}
-                potions={stageProgress?.potions ?? []}
+                potions={stageProgress?.potions}
                 grouping={storyGrouping}
                 onGroupingChange={setStoryGrouping}
                 server={arkAuth?.server ?? 'en'}

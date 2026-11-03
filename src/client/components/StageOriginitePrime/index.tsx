@@ -27,7 +27,7 @@ interface StageOriginitePrimeProps {
   monthlyCardSanity: number;
   storylines: Storyline[];
   sanityItems: Record<string, SanityItem>;
-  potions: SanityPotion[];
+  potions: SanityPotion[] | undefined;
   grouping: StoryGrouping;
   onGroupingChange: (grouping: StoryGrouping) => void;
   // The account's server: release dates are the CN ones for a CN account, EN otherwise.
@@ -198,36 +198,36 @@ function Section({
   );
 }
 
-function SanityPacks({
+// The account's unexpired sanity packs, soonest to expire first. `potions` is
+// undefined for an account snapshot saved before packs were fetched.
+function SanityPackList({
   potions,
   sanityItems,
-  total,
 }: {
-  potions: SanityPotion[];
+  potions: SanityPotion[] | undefined;
   sanityItems: Record<string, SanityItem>;
-  total: number;
 }) {
+  if (!potions) return <p>Refresh the account to load your packs.</p>;
   const now = Date.now() / 1000;
-  const live = potions.filter((p) => p.expiresAt == null || p.expiresAt > now);
-  if (!live.length) return <span>{total}</span>;
+  const live = potions
+    .filter((p) => p.expiresAt == null || p.expiresAt > now)
+    .sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity));
+  if (!live.length) return <p>You have no sanity packs.</p>;
   return (
-    <InfoButton label={String(total)} title="Sanity packs">
-      {live
-        .slice()
-        .sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
-        .map((p, i) => (
-          <div key={i}>
-            {(p.itemId && sanityItems[p.itemId]?.name) || `${p.sanity}-sanity pack`} × {p.count} ={' '}
-            {p.sanity * p.count}
-            {p.expiresAt != null && (
-              <>
-                {' '}
-                · expires <DateText date={new Date(p.expiresAt * 1000)} />
-              </>
-            )}
-          </div>
-        ))}
-    </InfoButton>
+    <ul className="ak-stage-op-packs">
+      {live.map((p, i) => (
+        <li key={i}>
+          {(p.itemId && sanityItems[p.itemId]?.name) || `${p.sanity}-sanity pack`} × {p.count} ={' '}
+          {p.sanity * p.count}
+          {p.expiresAt != null && (
+            <>
+              {' '}
+              · expires <DateText date={new Date(p.expiresAt * 1000)} />
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -316,24 +316,17 @@ export function StageOriginitePrime({
           </tr>
           <tr>
             <th>
-              <InfoButton label="Sanity packs">
-                Your unexpired sanity packs
-                {monthlyCardSanity > 0 &&
-                  `, plus the Monthly Card's ${monthlyCardSanity}-sanity pack a day (it's ticked in Daily Orundum)`}
-                .
+              <InfoButton label="Sanity packs" title="Sanity packs">
+                {hasProgress && <SanityPackList potions={potions} sanityItems={sanityItems} />}
+                <p>
+                  Counted: your unexpired packs
+                  {monthlyCardSanity > 0 &&
+                    `, plus the Monthly Card's ${monthlyCardSanity}-sanity pack a day (it's ticked in Daily Orundum)`}
+                  .
+                </p>
               </InfoButton>
             </th>
-            <td>
-              {hasProgress ? (
-                <SanityPacks
-                  potions={potions}
-                  sanityItems={sanityItems}
-                  total={summary.potions.now}
-                />
-              ) : (
-                '–'
-              )}
-            </td>
+            <td>{hasProgress ? summary.potions.now : '–'}</td>
             {deadline && <td>{summary.potions.byDeadline}</td>}
           </tr>
           <tr className="ak-stage-op-table-result">

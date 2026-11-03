@@ -136,6 +136,7 @@ describe('buildStageOpData', () => {
       ['Children of Ursus', 10, 20, true],
       ['Duel Channel', 1, 2, false],
     ]);
+    expect(events.map((g) => g.rerun ?? false)).toEqual([true, false, false]);
   });
 
   test('supply stages, and nothing without Originite Prime', () => {

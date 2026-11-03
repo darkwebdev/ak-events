@@ -228,3 +228,14 @@
   margin: 0 0 8px 0;
   padding-left: 16px;
 }
+
+/* Supply stages, upcoming events and reruns, apart from the stories above. */
+.ak-stage-op-other {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ak-border);
+}
+
+.ak-stage-op-section > .ak-stage-op-stages {
+  margin-left: 14px;
+}

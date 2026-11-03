@@ -117,6 +117,29 @@ function StoryMeta({
   );
 }
 
+function StageRows({ stages }: { stages: OpStage[] }) {
+  return (
+    <ul className="ak-stage-op-stages">
+      {stages.map((stage) => (
+        <li key={stage.id}>
+          <span className="ak-stage-op-code">
+            {stage.code}
+            {MODE_LABEL[stage.mode] && (
+              <span className="ak-stage-op-mode"> {MODE_LABEL[stage.mode]}</span>
+            )}
+          </span>
+          <span className="ak-stage-op-ap" title="Sanity per clear">
+            {stage.ap} sanity
+          </span>
+          <span className="ak-stage-op-reward" title="Originite Prime for the first 3-star clear">
+            <Op>{stage.op}</Op>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function StoryList({
   stories,
   storylines,
@@ -141,27 +164,7 @@ function StoryList({
               </span>
             </summary>
             <StoryMeta story={story} storylines={storylines} server={server} />
-            <ul className="ak-stage-op-stages">
-              {story.unclaimed.map((stage) => (
-                <li key={stage.id}>
-                  <span className="ak-stage-op-code">
-                    {stage.code}
-                    {MODE_LABEL[stage.mode] && (
-                      <span className="ak-stage-op-mode"> {MODE_LABEL[stage.mode]}</span>
-                    )}
-                  </span>
-                  <span className="ak-stage-op-ap" title="Sanity per clear">
-                    {stage.ap} sanity
-                  </span>
-                  <span
-                    className="ak-stage-op-reward"
-                    title="Originite Prime for the first 3-star clear"
-                  >
-                    <Op>{stage.op}</Op>
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <StageRows stages={story.unclaimed} />
           </details>
         </li>
       ))}
@@ -378,30 +381,43 @@ export function StageOriginitePrime({
         {sections.map((section) => (
           <Section key={section.key} section={section} storylines={storylines} server={server} />
         ))}
+      </div>
+      <div className="ak-stage-op-sections ak-stage-op-other">
         {summary.supply && (
           <details className="ak-stage-op-section">
             <summary>
-              <span className="ak-stage-op-group-name">Supply stages</span>
+              <span className="ak-stage-op-group-name">
+                Supply stages{' '}
+                <span className="ak-stage-op-muted">({summary.supply.unclaimed.length} left)</span>
+              </span>
               <span className="ak-stage-op-group-value">
                 <Op>{summary.supply.op}</Op>
               </span>
             </summary>
-            <StoryList stories={[summary.supply]} storylines={storylines} server={server} />
+            <StageRows stages={summary.supply.unclaimed} />
           </details>
         )}
-        {summary.upcoming.length > 0 && (
-          <details className="ak-stage-op-section">
-            <summary>
-              <span className="ak-stage-op-group-name">
-                Coming up{' '}
-                <span className="ak-stage-op-muted">({storyCount(summary.upcoming.length)})</span>
-              </span>
-              <span className="ak-stage-op-group-value">
-                <Op>{sumOp(summary.upcoming)}</Op>
-              </span>
-            </summary>
-            <StoryList stories={summary.upcoming} storylines={storylines} server={server} />
-          </details>
+        {(
+          [
+            ['Coming up', summary.upcoming],
+            ['Reruns coming up', summary.upcomingReruns],
+          ] as const
+        ).map(
+          ([title, stories]) =>
+            stories.length > 0 && (
+              <details key={title} className="ak-stage-op-section">
+                <summary>
+                  <span className="ak-stage-op-group-name">
+                    {title}{' '}
+                    <span className="ak-stage-op-muted">({storyCount(stories.length)})</span>
+                  </span>
+                  <span className="ak-stage-op-group-value">
+                    <Op>{sumOp(stories)}</Op>
+                  </span>
+                </summary>
+                <StoryList stories={stories} storylines={storylines} server={server} />
+              </details>
+            )
         )}
         {summary.waiting.length > 0 && (
           <details className="ak-stage-op-section">

@@ -118,6 +118,8 @@ export interface StageOpSummary {
   available: GroupSummary[];
   supply: GroupSummary | null;
   upcoming: GroupSummary[];
+  // Of those, the ones that ran before.
+  upcomingReruns: GroupSummary[];
   waiting: GroupSummary[];
   opLeft: number;
   sanityLeft: number;
@@ -154,6 +156,7 @@ export function summarizeStageOp(
   const claimed = new Set(progress?.claimed ?? []);
   const available: GroupSummary[] = [];
   const upcoming: GroupSummary[] = [];
+  const upcomingReruns: GroupSummary[] = [];
   const waiting: GroupSummary[] = [];
   let supply: GroupSummary | null = null;
   let totalGameOp = 0;
@@ -165,7 +168,7 @@ export function summarizeStageOp(
       if (group.kind === 'supply') supply = summary;
       else available.push(summary);
     } else if (group.startTime != null && group.startTime * 1000 > now.getTime()) {
-      upcoming.push(summary);
+      (group.rerun ? upcomingReruns : upcoming).push(summary);
     } else if (group.info?.type === 'sideStory') {
       waiting.push(summary);
     }
@@ -180,6 +183,7 @@ export function summarizeStageOp(
     available,
     supply,
     upcoming,
+    upcomingReruns,
     waiting,
     opLeft: playableGroups.reduce((n, g) => n + g.op, 0),
     sanityLeft: playableGroups.reduce((n, g) => n + g.sanity, 0),

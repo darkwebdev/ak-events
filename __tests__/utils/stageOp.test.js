@@ -185,6 +185,10 @@ test('an event whose rerun starts later is upcoming, not ended', () => {
   const s = summarizeStageOp(data, null, { now: new Date(500 * 1000), days: 0, sanityPerDay: 0 });
   expect(s.upcoming.map((g) => g.group.id)).toEqual(['ev']);
   expect(s.waiting).toEqual([]);
+  const rerun = { groups: data.groups.map((g) => (g.id === 'ev' ? { ...g, rerun: true } : g)) };
+  const r = summarizeStageOp(rerun, null, { now: new Date(500 * 1000), days: 0, sanityPerDay: 0 });
+  expect(r.upcoming).toEqual([]);
+  expect(r.upcomingReruns.map((g) => g.group.id)).toEqual(['ev']);
 });
 
 describe('sectionsFor', () => {

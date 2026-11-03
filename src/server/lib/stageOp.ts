@@ -57,6 +57,8 @@ export interface StageGroup {
   // can come back as a rerun. Minigame events (Duel Channel, Icebreaker Games, April
   // Fools…) only count while they're on.
   story?: boolean;
+  // Events only: the latest run is a rerun (the event ran before).
+  rerun?: boolean;
   // Where the game's Storyline screen puts it (stage_table's storylines /
   // storylineStorySets) — see annotateStories. Absent for stories the screen
   // doesn't list (collabs, minigames, supply stages).
@@ -457,13 +459,16 @@ export function buildStageOpData({
 
   // A rerun is its own activity (act42sre) sharing the original's stage ids, so its
   // run times come from any activity with the same name — the latest one wins.
-  const runsByName = new Map<string, { startTime: number; endTime: number }>();
+  const runsByName = new Map<string, { startTime: number; endTime: number; runs: number }>();
   for (const activity of Object.values(activities)) {
     if (!activity.startTime || !activity.endTime) continue;
     const key = normalizeEventName(activity.name);
     const prev = runsByName.get(key);
+    const runs = (prev?.runs ?? 0) + 1;
     if (!prev || activity.endTime > prev.endTime) {
-      runsByName.set(key, { startTime: activity.startTime, endTime: activity.endTime });
+      runsByName.set(key, { startTime: activity.startTime, endTime: activity.endTime, runs });
+    } else {
+      prev.runs = runs;
     }
   }
   const eventEntries = [...eventGroups].map(([key, { activityIds, stages }]) => {
@@ -477,6 +482,7 @@ export function buildStageOpData({
       startTime: run?.startTime ?? null,
       endTime: run?.endTime ?? null,
       story: isStoryEvent(activities[firstId]),
+      ...((run?.runs ?? 0) > 1 && { rerun: true }),
       stages: sortStages(stages),
     };
   });

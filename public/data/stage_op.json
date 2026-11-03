@@ -16430,6 +16430,7 @@
       "startTime": 1793890800,
       "endTime": 1794740399,
       "story": true,
+      "rerun": true,
       "stages": [
         {
           "id": "act42side_st01",
@@ -18734,6 +18735,7 @@
       "startTime": 1775055600,
       "endTime": 1775645999,
       "story": false,
+      "rerun": true,
       "stages": [
         {
           "id": "act17d7_01",

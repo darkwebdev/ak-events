@@ -328,6 +328,25 @@
     }
   },
   {
+    "name": "Act or Die",
+    "start": "2025-11-13",
+    "end": "2025-11-27",
+    "globalStart": "2025-11-13",
+    "globalEnd": "2025-11-27",
+    "cnStart": "2025-06-05",
+    "cnEnd": "2025-06-19",
+    "datesPredicted": false,
+    "type": "Side Story (Rerun)",
+    "image": "data/images/CN_Act_or_Die_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Act_or_Die/Rerun",
+    "origPrime": 28,
+    "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": 1800,
+    "banner": null
+  },
+  {
     "name": "Till the Lands Become an Orange",
     "start": "2027-01-17",
     "end": "2027-02-06",
@@ -448,6 +467,105 @@
     "bannerPermits": null,
     "intCerts": null,
     "banner": null
+  },
+  {
+    "name": "Ato",
+    "start": "2026-01-16",
+    "end": "2026-02-06",
+    "globalStart": "2026-01-16",
+    "globalEnd": "2026-02-06",
+    "cnStart": "2025-08-02",
+    "cnEnd": "2025-08-23",
+    "datesPredicted": false,
+    "type": "Side Story (Rerun)",
+    "image": "data/images/CN_Ato_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Ato_Rerun",
+    "origPrime": 40,
+    "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": 1715,
+    "banner": {
+      "name": "Hanabi Exiled",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Eyjafjalla the Hvít Aska",
+          "charId": "char_1016_agoat2",
+          "star": 6,
+          "class": "Medic",
+          "limited": true,
+          "icon": "data/images/operators/60px-Eyjafjalla_the_Hv%C3%ADt_Aska_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Gavial the Invincible",
+          "charId": "char_1026_gvial2",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Gavial_the_Invincible_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Haruka",
+          "charId": "char_4202_haruka",
+          "star": 6,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Haruka_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Hoshiguma the Breacher",
+          "charId": "char_1044_hsgma2",
+          "star": 6,
+          "class": "Defender",
+          "limited": true,
+          "icon": "data/images/operators/60px-Hoshiguma_the_Breacher_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Kichisei",
+          "charId": "char_4203_kichi",
+          "star": 5,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Kichisei_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Pepe",
+          "charId": "char_4058_pepe",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Pepe_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "storeOperators": [
+        {
+          "name": "Ch'en the Holungday",
+          "charId": "char_1013_chen2",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Ch%27en_the_Holungday_icon.png",
+          "sparkCost": 200
+        }
+      ],
+      "gachaPoolId": "LIMITED_EN_37_0_5",
+      "contractItemId": "LMTGS_COIN_6401",
+      "tenRollItemId": "LIMITED_TKT_GACHA_10_6401",
+      "globalStart": "2026-01-16",
+      "globalEnd": "2026-01-30",
+      "cnStart": "2025-08-02",
+      "cnEnd": "2025-08-16",
+      "globalStartAt": "2026-01-16T15:00:00.000Z",
+      "globalEndAt": "2026-01-30T10:59:59.000Z"
+    }
   },
   {
     "name": "Sur le lac lune vivante",
@@ -730,10 +848,157 @@
     "image": "data/images/CN_Vremya%2C_v_Put%27%21_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Vremya,_v_Put%27!",
     "origPrime": null,
-    "hhPermits": null,
+    "hhPermits": 3,
     "dailyFreePulls": 14,
     "bannerPermits": 10,
     "intCerts": null,
-    "banner": null
+    "banner": {
+      "name": "Cinders of Snow",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Talulah",
+          "charId": null,
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Talulah_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Toska",
+          "charId": null,
+          "star": 6,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Toska_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Olga",
+          "charId": null,
+          "star": 5,
+          "class": "Guard",
+          "limited": false,
+          "icon": "data/images/operators/60px-Olga_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Lappland the Decadenza",
+          "charId": "char_1038_whitw2",
+          "star": 6,
+          "class": "Caster",
+          "limited": true,
+          "icon": "data/images/operators/60px-Lappland_the_Decadenza_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "SilverAsh the Reignfrost",
+          "charId": "char_1045_svash2",
+          "star": 6,
+          "class": "Vanguard",
+          "limited": true,
+          "icon": "data/images/operators/60px-SilverAsh_the_Reignfrost_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Exusiai the New Covenant",
+          "charId": "char_1041_angel2",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Exusiai_the_New_Covenant_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "storeOperators": [
+        {
+          "name": "W",
+          "charId": "char_113_cqbw",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-W_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Rosmontis",
+          "charId": "char_391_rosmon",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Rosmontis_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Skadi the Corrupting Heart",
+          "charId": "char_1012_skadi2",
+          "star": 6,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Skadi_the_Corrupting_Heart_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Nearl the Radiant Knight",
+          "charId": "char_1014_nearl2",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Nearl_the_Radiant_Knight_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Specter the Unchained",
+          "charId": "char_1023_ghost2",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Specter_the_Unchained_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Texas the Omertosa",
+          "charId": "char_1028_texas2",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Texas_the_Omertosa_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Muelsyse",
+          "charId": "char_249_mlyss",
+          "star": 6,
+          "class": "Vanguard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Muelsyse_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Virtuosa",
+          "charId": "char_245_cello",
+          "star": 6,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Virtuosa_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Wiš'adel",
+          "charId": "char_1035_wisdel",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Wi%C5%A1%27adel_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "globalStart": null,
+      "globalEnd": null,
+      "cnStart": "2026-11-01",
+      "cnEnd": "2026-11-15"
+    }
   }
 ]

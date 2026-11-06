@@ -14545,6 +14545,351 @@
       }
     },
     {
+      "id": "permanent_sidestory_32_The_Masses_Travels",
+      "kind": "sideStory",
+      "name": "The Masses' Travels",
+      "stages": [
+        {
+          "id": "act42side_st01",
+          "code": "MT-ST-1",
+          "name": "Fallen",
+          "ap": 0,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_01",
+          "code": "MT-1",
+          "name": "Order",
+          "ap": 9,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_tr01",
+          "code": "MT-TR-1",
+          "name": "Strange Days in the Holy City",
+          "ap": 0,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_02",
+          "code": "MT-2",
+          "name": "Prayer",
+          "ap": 9,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_03",
+          "code": "MT-3",
+          "name": "Worship",
+          "ap": 9,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_04",
+          "code": "MT-4",
+          "name": "Wayfinder",
+          "ap": 12,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_st02",
+          "code": "MT-ST-2",
+          "name": "Enlightenment",
+          "ap": 0,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_05",
+          "code": "MT-5",
+          "name": "Communion",
+          "ap": 12,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_06",
+          "code": "MT-6",
+          "name": "Confess",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_07",
+          "code": "MT-7",
+          "name": "Funeral",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_08",
+          "code": "MT-8",
+          "name": "Pilgrimage",
+          "ap": 21,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_09",
+          "code": "MT-9",
+          "name": "Interpretation",
+          "ap": 21,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_10",
+          "code": "MT-10",
+          "name": "Birth",
+          "ap": 21,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_st03",
+          "code": "MT-ST-3",
+          "name": "Reunion",
+          "ap": 0,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_st04",
+          "code": "MT-ST-4",
+          "name": "Voyage",
+          "ap": 0,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex01",
+          "code": "MT-EX-1",
+          "name": "Garden of the Sankta",
+          "ap": 10,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex02",
+          "code": "MT-EX-2",
+          "name": "Hall of Sweet Dreams",
+          "ap": 10,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex03",
+          "code": "MT-EX-3",
+          "name": "Dining Hall of the Saints",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex04",
+          "code": "MT-EX-4",
+          "name": "Fowlbeasts' Perch",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex05",
+          "code": "MT-EX-5",
+          "name": "Saint's Prayer Room",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex06",
+          "code": "MT-EX-6",
+          "name": "Distillery of Faith",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex07",
+          "code": "MT-EX-7",
+          "name": "The First Nursery",
+          "ap": 20,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex08",
+          "code": "MT-EX-8",
+          "name": "'Puzzle of Laterano'",
+          "ap": 20,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_s01",
+          "code": "MT-S-1",
+          "name": "Dessert Expo",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_s02",
+          "code": "MT-S-2",
+          "name": "Preaching Practice",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_s03",
+          "code": "MT-S-3",
+          "name": "Nationwide Parade",
+          "ap": 20,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_s04",
+          "code": "MT-S-4",
+          "name": "Summit of Nations",
+          "ap": 20,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_s05",
+          "code": "MT-S-5",
+          "name": "Sacrament of the Law",
+          "ap": 25,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act42side_ex01#f#",
+          "code": "MT-EX-1",
+          "name": "Garden of the Sankta",
+          "ap": 10,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex02#f#",
+          "code": "MT-EX-2",
+          "name": "Hall of Sweet Dreams",
+          "ap": 10,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex03#f#",
+          "code": "MT-EX-3",
+          "name": "Dining Hall of the Saints",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex04#f#",
+          "code": "MT-EX-4",
+          "name": "Fowlbeasts' Perch",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex05#f#",
+          "code": "MT-EX-5",
+          "name": "Saint's Prayer Room",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex06#f#",
+          "code": "MT-EX-6",
+          "name": "Distillery of Faith",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex07#f#",
+          "code": "MT-EX-7",
+          "name": "The First Nursery",
+          "ap": 20,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_ex08#f#",
+          "code": "MT-EX-8",
+          "name": "'Puzzle of Laterano'",
+          "ap": 20,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_s01#f#",
+          "code": "MT-S-1",
+          "name": "Dessert Expo",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_s02#f#",
+          "code": "MT-S-2",
+          "name": "Preaching Practice",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_s03#f#",
+          "code": "MT-S-3",
+          "name": "Nationwide Parade",
+          "ap": 20,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_s04#f#",
+          "code": "MT-S-4",
+          "name": "Summit of Nations",
+          "ap": 20,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act42side_s05#f#",
+          "code": "MT-S-5",
+          "name": "Sacrament of the Law",
+          "ap": 25,
+          "op": 1,
+          "mode": "challenge"
+        }
+      ],
+      "info": {
+        "type": "sideStory",
+        "storyline": "ssLine_2",
+        "storylineOrder": 5,
+        "movement": null,
+        "year": 6,
+        "yearOrder": 10,
+        "enStart": 1760443200,
+        "cnStart": 1746072000
+      }
+    },
+    {
       "id": "permanent_sub_1_Darknights_Memoir",
       "kind": "intermezzi",
       "name": "Darknights Memoir",
@@ -16421,355 +16766,6 @@
         "yearOrder": 3,
         "enStart": 1744113600,
         "cnStart": 1728446400
-      }
-    },
-    {
-      "id": "act42sre",
-      "kind": "event",
-      "name": "The Masses' Travels",
-      "startTime": 1793890800,
-      "endTime": 1794740399,
-      "story": true,
-      "rerun": true,
-      "stages": [
-        {
-          "id": "act42side_st01",
-          "code": "MT-ST-1",
-          "name": "Fallen",
-          "ap": 0,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_01",
-          "code": "MT-1",
-          "name": "Order",
-          "ap": 9,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_tr01",
-          "code": "MT-TR-1",
-          "name": "Strange Days in the Holy City",
-          "ap": 0,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_02",
-          "code": "MT-2",
-          "name": "Prayer",
-          "ap": 9,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_03",
-          "code": "MT-3",
-          "name": "Worship",
-          "ap": 9,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_04",
-          "code": "MT-4",
-          "name": "Wayfinder",
-          "ap": 12,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_st02",
-          "code": "MT-ST-2",
-          "name": "Enlightenment",
-          "ap": 0,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_05",
-          "code": "MT-5",
-          "name": "Communion",
-          "ap": 12,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_06",
-          "code": "MT-6",
-          "name": "Confess",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_07",
-          "code": "MT-7",
-          "name": "Funeral",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_08",
-          "code": "MT-8",
-          "name": "Pilgrimage",
-          "ap": 21,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_09",
-          "code": "MT-9",
-          "name": "Interpretation",
-          "ap": 21,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_10",
-          "code": "MT-10",
-          "name": "Birth",
-          "ap": 21,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_st03",
-          "code": "MT-ST-3",
-          "name": "Reunion",
-          "ap": 0,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_st04",
-          "code": "MT-ST-4",
-          "name": "Voyage",
-          "ap": 0,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex01",
-          "code": "MT-EX-1",
-          "name": "Garden of the Sankta",
-          "ap": 10,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex02",
-          "code": "MT-EX-2",
-          "name": "Hall of Sweet Dreams",
-          "ap": 10,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex03",
-          "code": "MT-EX-3",
-          "name": "Dining Hall of the Saints",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex04",
-          "code": "MT-EX-4",
-          "name": "Fowlbeasts' Perch",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex05",
-          "code": "MT-EX-5",
-          "name": "Saint's Prayer Room",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex06",
-          "code": "MT-EX-6",
-          "name": "Distillery of Faith",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex07",
-          "code": "MT-EX-7",
-          "name": "The First Nursery",
-          "ap": 20,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex08",
-          "code": "MT-EX-8",
-          "name": "'Puzzle of Laterano'",
-          "ap": 20,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_s01",
-          "code": "MT-S-1",
-          "name": "Dessert Expo",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_s02",
-          "code": "MT-S-2",
-          "name": "Preaching Practice",
-          "ap": 15,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_s03",
-          "code": "MT-S-3",
-          "name": "Nationwide Parade",
-          "ap": 20,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_s04",
-          "code": "MT-S-4",
-          "name": "Summit of Nations",
-          "ap": 20,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_s05",
-          "code": "MT-S-5",
-          "name": "Sacrament of the Law",
-          "ap": 25,
-          "op": 1,
-          "mode": "standard"
-        },
-        {
-          "id": "act42side_ex01#f#",
-          "code": "MT-EX-1",
-          "name": "Garden of the Sankta",
-          "ap": 10,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex02#f#",
-          "code": "MT-EX-2",
-          "name": "Hall of Sweet Dreams",
-          "ap": 10,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex03#f#",
-          "code": "MT-EX-3",
-          "name": "Dining Hall of the Saints",
-          "ap": 15,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex04#f#",
-          "code": "MT-EX-4",
-          "name": "Fowlbeasts' Perch",
-          "ap": 15,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex05#f#",
-          "code": "MT-EX-5",
-          "name": "Saint's Prayer Room",
-          "ap": 15,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex06#f#",
-          "code": "MT-EX-6",
-          "name": "Distillery of Faith",
-          "ap": 15,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex07#f#",
-          "code": "MT-EX-7",
-          "name": "The First Nursery",
-          "ap": 20,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_ex08#f#",
-          "code": "MT-EX-8",
-          "name": "'Puzzle of Laterano'",
-          "ap": 20,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_s01#f#",
-          "code": "MT-S-1",
-          "name": "Dessert Expo",
-          "ap": 15,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_s02#f#",
-          "code": "MT-S-2",
-          "name": "Preaching Practice",
-          "ap": 15,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_s03#f#",
-          "code": "MT-S-3",
-          "name": "Nationwide Parade",
-          "ap": 20,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_s04#f#",
-          "code": "MT-S-4",
-          "name": "Summit of Nations",
-          "ap": 20,
-          "op": 1,
-          "mode": "challenge"
-        },
-        {
-          "id": "act42side_s05#f#",
-          "code": "MT-S-5",
-          "name": "Sacrament of the Law",
-          "ap": 25,
-          "op": 1,
-          "mode": "challenge"
-        }
-      ],
-      "info": {
-        "type": "sideStory",
-        "storyline": "ssLine_2",
-        "storylineOrder": 5,
-        "movement": null,
-        "year": 6,
-        "yearOrder": 10,
-        "enStart": 1760443200,
-        "cnStart": 1746072000
       }
     },
     {

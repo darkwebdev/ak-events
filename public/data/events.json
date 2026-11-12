@@ -30,12 +30,12 @@
     "cnEnd": "2026-06-15",
     "datesPredicted": false,
     "type": "Crossover (Side Story)",
-    "image": "data/images/CN_Thunder_in_the_Azure_Dream_banner.png",
+    "image": "data/images/EN_Thunder_in_the_Azure_Dream_banner.png",
     "link": "https://arknights.wiki.gg/wiki/Thunder_in_the_Azure_Dream",
     "origPrime": null,
-    "hhPermits": null,
+    "hhPermits": 2,
     "dailyFreePulls": null,
-    "bannerPermits": 10,
+    "bannerPermits": null,
     "intCerts": null,
     "banner": {
       "name": "Hunters of the Umbral Wilds",
@@ -61,10 +61,12 @@
           "sparkCost": null
         }
       ],
-      "globalStart": null,
-      "globalEnd": null,
+      "globalStart": "2026-11-16",
+      "globalEnd": "2026-11-30",
       "cnStart": "2026-06-01",
-      "cnEnd": "2026-06-15"
+      "cnEnd": "2026-06-15",
+      "globalStartAt": "2026-11-16T15:00:00.000Z",
+      "globalEndAt": "2026-11-30T10:59:59.000Z"
     }
   },
   {

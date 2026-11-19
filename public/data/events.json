@@ -1,24 +1,5 @@
 [
   {
-    "name": "The Masses' Travels",
-    "start": "2026-11-05",
-    "end": "2026-11-15",
-    "globalStart": "2026-11-05",
-    "globalEnd": "2026-11-15",
-    "cnStart": "2026-05-22",
-    "cnEnd": "2026-06-01",
-    "datesPredicted": false,
-    "type": "Side Story (Rerun)",
-    "image": "data/images/EN_The_Masses%27_Travels_Rerun_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/The_Masses%27_Travels_Rerun",
-    "origPrime": 41,
-    "hhPermits": 3,
-    "dailyFreePulls": null,
-    "bannerPermits": null,
-    "intCerts": 1825,
-    "banner": null
-  },
-  {
     "name": "Thunder in the Azure Dream",
     "start": "2026-11-16",
     "end": "2026-11-30",
@@ -1004,6 +985,217 @@
       "globalEnd": null,
       "cnStart": "2026-11-01",
       "cnEnd": "2026-11-15"
+    }
+  },
+  {
+    "name": "Retracing Our Steps",
+    "start": "2026-04-14",
+    "end": "2026-05-05",
+    "globalStart": "2026-04-14",
+    "globalEnd": "2026-05-05",
+    "cnStart": "2025-11-01",
+    "cnEnd": "2025-11-22",
+    "datesPredicted": false,
+    "type": "Side Story (Rerun)",
+    "image": "data/images/CN_Retracing_Our_Steps_Rerun_banner.png",
+    "link": "https://arknights.wiki.gg/wiki/Retracing_Our_Steps_Rerun",
+    "origPrime": 42,
+    "hhPermits": 3,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "A Shared Oath of Guardianship",
+      "type": "Limited",
+      "sparkEligible": true,
+      "operators": [
+        {
+          "name": "Lappland the Decadenza",
+          "charId": "char_1038_whitw2",
+          "star": 6,
+          "class": "Caster",
+          "limited": true,
+          "icon": "data/images/operators/60px-Lappland_the_Decadenza_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Pramanix the Prerita",
+          "charId": "char_1046_sbell2",
+          "star": 6,
+          "class": "Caster",
+          "limited": false,
+          "icon": "data/images/operators/60px-Pramanix_the_Prerita_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "SilverAsh the Reignfrost",
+          "charId": "char_1045_svash2",
+          "star": 6,
+          "class": "Vanguard",
+          "limited": true,
+          "icon": "data/images/operators/60px-SilverAsh_the_Reignfrost_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Snow Hunter",
+          "charId": "char_4211_snhunt",
+          "star": 5,
+          "class": "Sniper",
+          "limited": false,
+          "icon": "data/images/operators/60px-Snow_Hunter_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Virtuosa",
+          "charId": "char_245_cello",
+          "star": 6,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Virtuosa_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Wiš'adel",
+          "charId": "char_1035_wisdel",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Wi%C5%A1%27adel_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "storeOperators": [
+        {
+          "name": "W",
+          "charId": "char_113_cqbw",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-W_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Rosmontis",
+          "charId": "char_391_rosmon",
+          "star": 6,
+          "class": "Sniper",
+          "limited": true,
+          "icon": "data/images/operators/60px-Rosmontis_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Skadi the Corrupting Heart",
+          "charId": "char_1012_skadi2",
+          "star": 6,
+          "class": "Supporter",
+          "limited": true,
+          "icon": "data/images/operators/60px-Skadi_the_Corrupting_Heart_icon.png",
+          "sparkCost": 200
+        },
+        {
+          "name": "Nearl the Radiant Knight",
+          "charId": "char_1014_nearl2",
+          "star": 6,
+          "class": "Guard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Nearl_the_Radiant_Knight_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Specter the Unchained",
+          "charId": "char_1023_ghost2",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Specter_the_Unchained_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Texas the Omertosa",
+          "charId": "char_1028_texas2",
+          "star": 6,
+          "class": "Specialist",
+          "limited": true,
+          "icon": "data/images/operators/60px-Texas_the_Omertosa_icon.png",
+          "sparkCost": 300
+        },
+        {
+          "name": "Muelsyse",
+          "charId": "char_249_mlyss",
+          "star": 6,
+          "class": "Vanguard",
+          "limited": true,
+          "icon": "data/images/operators/60px-Muelsyse_icon.png",
+          "sparkCost": 300
+        }
+      ],
+      "gachaPoolId": "LIMITED_EN_39_0_1",
+      "contractItemId": "LMTGS_COIN_6701",
+      "tenRollItemId": "LIMITED_TKT_GACHA_10_6701",
+      "globalStart": "2026-04-14",
+      "globalEnd": "2026-04-28",
+      "cnStart": "2025-11-01",
+      "cnEnd": "2025-11-15",
+      "globalStartAt": "2026-04-14T15:00:00.000Z",
+      "globalEndAt": "2026-04-28T10:59:59.000Z"
+    }
+  },
+  {
+    "name": "Unrealized Realities",
+    "start": "2026-05-21",
+    "end": "2026-06-04",
+    "globalStart": "2026-05-21",
+    "globalEnd": "2026-06-04",
+    "cnStart": "2025-12-05",
+    "cnEnd": "2025-12-19",
+    "datesPredicted": false,
+    "type": null,
+    "image": "data/images/CN_Unrealized_Realities_Rerun_teaser.png",
+    "link": null,
+    "origPrime": null,
+    "hhPermits": null,
+    "dailyFreePulls": null,
+    "bannerPermits": null,
+    "intCerts": null,
+    "banner": {
+      "name": "600 Meters Over The Facts",
+      "type": "Standard",
+      "sparkEligible": false,
+      "operators": [
+        {
+          "name": "Cairn",
+          "charId": "char_4214_cairn",
+          "star": 5,
+          "class": "Defender",
+          "limited": false,
+          "icon": "data/images/operators/60px-Cairn_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Figurino",
+          "charId": "char_4155_talr",
+          "star": 5,
+          "class": "Specialist",
+          "limited": false,
+          "icon": "data/images/operators/60px-Figurino_icon.png",
+          "sparkCost": null
+        },
+        {
+          "name": "Nasti",
+          "charId": "char_4212_nasti",
+          "star": 6,
+          "class": "Supporter",
+          "limited": false,
+          "icon": "data/images/operators/60px-Nasti_icon.png",
+          "sparkCost": null
+        }
+      ],
+      "globalStart": "2026-05-21",
+      "globalEnd": "2026-06-04",
+      "cnStart": "2025-12-05",
+      "cnEnd": "2025-12-19",
+      "globalStartAt": "2026-05-21T15:00:00.000Z",
+      "globalEndAt": "2026-06-04T10:59:00.000Z"
     }
   }
 ]

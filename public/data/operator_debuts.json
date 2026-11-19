@@ -106,5 +106,17 @@
   "Olga": {
     "event": "Vremya, v Put'!",
     "isFestival": false
+  },
+  "Pramanix the Prerita": {
+    "event": "Retracing Our Steps",
+    "isFestival": false
+  },
+  "Snow Hunter": {
+    "event": "Retracing Our Steps",
+    "isFestival": false
+  },
+  "Virtuosa": {
+    "event": "Zwillingstürme im Herbst",
+    "isFestival": false
   }
 }

@@ -220,25 +220,6 @@
     }
   },
   {
-    "name": "Positional Football Championship",
-    "start": "2026-11-23",
-    "end": "2026-12-07",
-    "globalStart": "2026-11-23",
-    "globalEnd": "2026-12-07",
-    "cnStart": "2026-06-08",
-    "cnEnd": "2026-06-22",
-    "datesPredicted": true,
-    "type": null,
-    "image": "data/images/CN_Positional_Football_Championship_banner.png",
-    "link": "https://arknights.wiki.gg/wiki/Positional_Football_Championship",
-    "origPrime": null,
-    "hhPermits": null,
-    "dailyFreePulls": null,
-    "bannerPermits": null,
-    "intCerts": null,
-    "banner": null
-  },
-  {
     "name": "Magic and Friendship",
     "start": "2026-12-17",
     "end": "2027-01-07",

@@ -5,6 +5,17 @@ on:
     branches:
       - main
   workflow_dispatch: {}
+  # The daily scrape commits fresh events.json with the default GITHUB_TOKEN, and
+  # GitHub doesn't start other workflows from pushes made with that token, so the
+  # push trigger above never fires for it: the live site kept the Nov 3 data for
+  # weeks, e.g. Violet Mizutsune Orchid without the charId that marks her owned.
+  # Deploy after every scrape instead, whatever its conclusion (its free-pull rule
+  # check fails the run after the data is already committed). Checkout then gets
+  # main's latest commit, the scrape's own included.
+  workflow_run:
+    workflows: ['Scrape Events Daily']
+    types: [completed]
+    branches: [main]
 
 # One gh-pages publish at a time, across this workflow and the other one that pushes
 # to gh-pages (deploy-pages.yml / deploy-storybook.yml): concurrent runs raced, and all

@@ -90,5 +90,33 @@
   "Kal'tsit Esperanta": {
     "event": "Critical Phase Transition",
     "isFestival": false
+  },
+  "Toska": {
+    "event": "Vremya, v Put'!",
+    "isFestival": false
+  },
+  "Talulah": {
+    "event": "Vremya, v Put'!",
+    "isFestival": false
+  },
+  "SilverAsh the Reignfrost": {
+    "event": "Retracing Our Steps",
+    "isFestival": false
+  },
+  "Olga": {
+    "event": "Vremya, v Put'!",
+    "isFestival": false
+  },
+  "Pramanix the Prerita": {
+    "event": "Retracing Our Steps",
+    "isFestival": false
+  },
+  "Snow Hunter": {
+    "event": "Retracing Our Steps",
+    "isFestival": false
+  },
+  "Virtuosa": {
+    "event": "Zwillingstürme im Herbst",
+    "isFestival": false
   }
 }

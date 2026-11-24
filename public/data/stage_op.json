@@ -16871,6 +16871,142 @@
           "ap": 10,
           "op": 1,
           "mode": "standard"
+        },
+        {
+          "id": "act50side_ex01",
+          "code": "TD-EX-1",
+          "name": "For Houei's Future?",
+          "ap": 10,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex02",
+          "code": "TD-EX-2",
+          "name": "Migration Season",
+          "ap": 10,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex03",
+          "code": "TD-EX-3",
+          "name": "Perfect Training Grounds",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex04",
+          "code": "TD-EX-4",
+          "name": "Protect the Gyorin",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex05",
+          "code": "TD-EX-5",
+          "name": "Brand New Sentry Post",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex06",
+          "code": "TD-EX-6",
+          "name": "A New Beast Outbreak?",
+          "ap": 15,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex07",
+          "code": "TD-EX-7",
+          "name": "The Final Curse",
+          "ap": 20,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex08",
+          "code": "TD-EX-8",
+          "name": "Cry of Thunder, Sky Asunder",
+          "ap": 20,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_s01",
+          "code": "TD-S-1",
+          "name": "Earthshakers in the Night",
+          "ap": 10,
+          "op": 1,
+          "mode": "standard"
+        },
+        {
+          "id": "act50side_ex01#f#",
+          "code": "TD-EX-1",
+          "name": "For Houei's Future?",
+          "ap": 10,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex02#f#",
+          "code": "TD-EX-2",
+          "name": "Migration Season",
+          "ap": 10,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex03#f#",
+          "code": "TD-EX-3",
+          "name": "Perfect Training Grounds",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex04#f#",
+          "code": "TD-EX-4",
+          "name": "Protect the Gyorin",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex05#f#",
+          "code": "TD-EX-5",
+          "name": "Brand New Sentry Post",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex06#f#",
+          "code": "TD-EX-6",
+          "name": "A New Beast Outbreak?",
+          "ap": 15,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex07#f#",
+          "code": "TD-EX-7",
+          "name": "The Final Curse",
+          "ap": 20,
+          "op": 1,
+          "mode": "challenge"
+        },
+        {
+          "id": "act50side_ex08#f#",
+          "code": "TD-EX-8",
+          "name": "Cry of Thunder, Sky Asunder",
+          "ap": 20,
+          "op": 1,
+          "mode": "challenge"
         }
       ]
     },

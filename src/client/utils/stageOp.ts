@@ -207,9 +207,15 @@ export interface StorySection {
   subsections: { key: string; title: string; op: number; stories: GroupSummary[] }[];
 }
 
-export type StoryGrouping = 'storyline' | 'year';
+// 'none' is both switches off: one flat list, see byOpDesc.
+export type StoryGrouping = 'storyline' | 'year' | 'none';
 
 const sumOp = (stories: GroupSummary[]) => stories.reduce((n, g) => n + g.op, 0);
+
+// Every story in one list, the most Originite Prime (so Orundum) left first.
+export function byOpDesc(stories: GroupSummary[]): GroupSummary[] {
+  return [...stories].sort((a, b) => b.op - a.op);
+}
 
 // The game's Storyline screen order: by storyline (the main story split into its
 // movements), or by year. Stories it doesn't list go last under "Other stories".
@@ -221,6 +227,7 @@ export function sectionsFor(
   const other = stories.filter((g) => !g.group.info);
   const listed = stories.filter((g) => g.group.info);
   const sections: StorySection[] = [];
+  if (grouping === 'none') return [];
   if (grouping === 'storyline') {
     for (const line of storylines) {
       const inLine = listed

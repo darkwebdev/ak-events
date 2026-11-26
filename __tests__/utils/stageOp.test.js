@@ -2,6 +2,7 @@ import {
   isAvailableNow,
   opForSanity,
   sanityNow,
+  byOpDesc,
   sectionsFor,
   summarizeStageOp,
 } from '../../src/client/utils/stageOp.js';
@@ -244,5 +245,11 @@ describe('sectionsFor', () => {
       ['Year 2020', ['ep2']],
       ['Other stories', ['collab']],
     ]);
+  });
+
+  test('ungrouped: every story in one list, most Originite Prime first', () => {
+    expect(sectionsFor(stories, 'none', storylines)).toEqual([]);
+    expect(byOpDesc(stories).map((g) => g.group.id)).toEqual(['collab', 'ep2', 'ep1', 'ss']);
+    expect(stories.map((g) => g.group.id)).toEqual(['ep2', 'ep1', 'ss', 'collab']);
   });
 });

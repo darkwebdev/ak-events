@@ -6,6 +6,7 @@ import { OriginitePrimeIcon } from '../OriginitePrimeIcon';
 import { orundumFromOP } from '../../utils/orundum.js';
 import {
   NATURAL_SANITY_PER_DAY,
+  byOpDesc,
   sectionsFor,
   type GroupSummary,
   type OpStage,
@@ -363,24 +364,35 @@ export function StageOriginitePrime({
       </table>
       {!deadline && <p className="ak-stage-op-note">Select an event to plan up to its start.</p>}
 
-      <div className="ak-stage-op-switch" role="radiogroup" aria-label="Group stories">
+      {/* Click the active switch again to turn grouping off: one flat list by Originite Prime. */}
+      <div className="ak-stage-op-switch" role="group" aria-label="Group stories">
         {(['storyline', 'year'] as const).map((value) => (
           <button
             key={value}
             type="button"
-            role="radio"
-            aria-checked={grouping === value}
+            aria-pressed={grouping === value}
             className={grouping === value ? 'active' : ''}
-            onClick={() => onGroupingChange(value)}
+            title={
+              grouping === value ? 'Click again to list every story by Originite Prime' : undefined
+            }
+            onClick={() => onGroupingChange(grouping === value ? 'none' : value)}
           >
             {value === 'storyline' ? 'By storyline' : 'By year'}
           </button>
         ))}
       </div>
       <div className="ak-stage-op-sections">
-        {sections.map((section) => (
-          <Section key={section.key} section={section} storylines={storylines} server={server} />
-        ))}
+        {grouping === 'none' ? (
+          <StoryList
+            stories={byOpDesc(summary.available)}
+            storylines={storylines}
+            server={server}
+          />
+        ) : (
+          sections.map((section) => (
+            <Section key={section.key} section={section} storylines={storylines} server={server} />
+          ))
+        )}
       </div>
       <div className="ak-stage-op-sections ak-stage-op-other">
         {summary.supply && (

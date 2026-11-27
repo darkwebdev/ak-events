@@ -62,8 +62,8 @@
     "cnStart": "2026-06-15",
     "cnEnd": "2026-06-25",
     "datesPredicted": false,
-    "type": "Side Story (Rerun)",
-    "image": "data/images/CN_A_Flurry_to_the_Flame_Rerun_banner.png",
+    "type": "Crossover (Side Story Rerun) (Rerun)",
+    "image": "data/images/EN_A_Flurry_to_the_Flame_Rerun_banner.png",
     "link": "https://arknights.wiki.gg/wiki/A_Flurry_to_the_Flame_Rerun",
     "origPrime": 31,
     "hhPermits": 3,
@@ -94,10 +94,12 @@
           "sparkCost": 75
         }
       ],
-      "globalStart": null,
-      "globalEnd": null,
+      "globalStart": "2026-11-30",
+      "globalEnd": "2026-12-14",
       "cnStart": "2026-06-15",
-      "cnEnd": "2026-06-29"
+      "cnEnd": "2026-06-29",
+      "globalStartAt": "2026-11-30T15:00:00.000Z",
+      "globalEndAt": "2026-12-14T10:59:59.000Z"
     }
   },
   {

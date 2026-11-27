@@ -33,7 +33,7 @@ import { StageOriginitePrime } from './components/StageOriginitePrime';
 import { EventsList, type EventsView } from './components/EventsList';
 import { TotalOrundum } from './components/TotalOrundum';
 import { Header } from './components/Header';
-import { Toast } from './components/Toast';
+import { Toast, ToastStack } from './components/Toast';
 import {
   OwnedOperatorsContext,
   BannerProgressContext,
@@ -51,6 +51,12 @@ import type {
   Settings,
 } from './types.js';
 import type { BannerProgress, FetchAccountDataResult } from './utils/arkCharsApi.js';
+import {
+  formatGain,
+  resourceGains,
+  snapshotFromFetch,
+  type ResourceSnapshot,
+} from './utils/resourceGains.js';
 import './App.css';
 
 // How often to recheck events.json for events that weren't there on the previous
@@ -59,6 +65,8 @@ import './App.css';
 // open across that daily update.
 const EVENTS_POLL_INTERVAL_MS = 5 * 60 * 1000;
 const NEW_EVENTS_NOTICE_DURATION_MS = 5000;
+// Longer than the new-events toast: it can list several lines to read.
+const RESOURCE_GAINS_NOTICE_DURATION_MS = 8000;
 
 // Persists the event names seen as of the last successful fetch, so a fresh page
 // load (not just a tab left open across a poll) can also tell "an event that was
@@ -88,6 +96,8 @@ function saveKnownEventNames(names: Set<string>) {
 export default function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [newEventsNotice, setNewEventsNotice] = useState<string | null>(null);
+  // What the last Refresh data brought in since the one before it.
+  const [gainsNotice, setGainsNotice] = useState<{ message: string; items: string[] } | null>(null);
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
   const [settings, setSettings] = useStorage<Settings>('ak-events-settings', defaultSettings);
   const [playerStatus, setPlayerStatus] = useStorage<PlayerStatus>(
@@ -110,6 +120,13 @@ export default function App() {
   // last fetch — see utils/stageOp.ts.
   const [stageProgress, setStageProgress] = useStorage<StageProgress | null>(
     'ak-events-arknights-stage-progress',
+    null
+  );
+  // The fetched resource counts as of the last fetch — the baseline the next
+  // Refresh data compares against to say what was gained. Kept across reloads, so
+  // "since last refresh" spans sessions too.
+  const [resourceSnapshot, setResourceSnapshot] = useStorage<ResourceSnapshot | null>(
+    'ak-events-arknights-resource-snapshot',
     null
   );
   // Sanity a day the user puts into stages, and whether the Originite Prime that
@@ -211,6 +228,17 @@ export default function App() {
   };
 
   const handleAccountFetched = (data: FetchAccountDataResult) => {
+    const snapshot = snapshotFromFetch(data);
+    // No toast on the first fetch: with no baseline, everything would look new.
+    if (resourceSnapshot) {
+      const gains = resourceGains(resourceSnapshot, snapshot);
+      setGainsNotice(
+        gains.length
+          ? { message: 'Since last refresh:', items: gains.map(formatGain) }
+          : { message: 'No new resources since last refresh', items: [] }
+      );
+    }
+    setResourceSnapshot(snapshot);
     updatePlayerStatus('orundum', data.orundum);
     updatePlayerStatus('op', data.originitePrime);
     // A ten-roll permit is ten pulls on any banner a single permit works on.
@@ -277,6 +305,12 @@ export default function App() {
     return () => clearTimeout(timeout);
   }, [newEventsNotice]);
 
+  useEffect(() => {
+    if (!gainsNotice) return undefined;
+    const timeout = setTimeout(() => setGainsNotice(null), RESOURCE_GAINS_NOTICE_DURATION_MS);
+    return () => clearTimeout(timeout);
+  }, [gainsNotice]);
+
   const playerOrundumTotal =
     playerStatus.orundum + playerStatus.op * 180 + playerStatus.hhPermits * 600;
 
@@ -334,7 +368,10 @@ export default function App() {
   return (
     <>
       <Dust />
-      {newEventsNotice && <Toast message={newEventsNotice} />}
+      <ToastStack>
+        {newEventsNotice && <Toast message={newEventsNotice} />}
+        {gainsNotice && <Toast message={gainsNotice.message} items={gainsNotice.items} />}
+      </ToastStack>
 
       <Header
         totalPulls={pullsFromOrundum(totalOrundum)}
@@ -386,6 +423,8 @@ export default function App() {
                   setOwnedOperators(null);
                   setBannerProgress(null);
                   setStageProgress(null);
+                  // A different account may log in next — its counts are no baseline.
+                  setResourceSnapshot(null);
                 }}
               />
             )}

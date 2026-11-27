@@ -13,3 +13,12 @@ export function Default() {
 export function SingleEvent() {
   return <Toast message="New event: Stronghold Protocol Alliance Part 2" />;
 }
+
+export function ResourcesGained() {
+  return (
+    <Toast
+      message="Since last refresh:"
+      items={['+1,200 Orundum', '+3 Originite Prime', '+2 Headhunting Permits']}
+    />
+  );
+}
